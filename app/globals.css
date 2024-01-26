@@ -31,3 +31,69 @@ body {
     text-wrap: balance;
   }
 }
+
+.hebrow_font{
+  font-family: 'Varela Round', sans-serif;
+}
+
+.smalling_font_pages{
+  font-size: 9px !important;
+}
+
+.smalling_font_pages1{
+  font-size: 8px !important;
+}
+
+.hatema{
+  position: absolute;
+  margin-top: -30px;
+  margin-left: 420px;
+  text-align: center;
+  transform: rotate(-10deg);
+  font-family: 'Varela Round', sans-serif !important;
+  font-weight: 900;
+}
+
+.rotate_page{
+  transform: rotate(90deg);
+  height: 33rem;
+}
+
+.fulling_rotate_page{
+  width: 58rem;
+}
+.margning_rotate_page{
+  margin-top: 22.5rem;
+}
+
+.margin_top_pagetwo{
+  margin-bottom: 10000px;
+}
+
+
+
+.absoulte_date_page_four{
+  position: absolute;
+  margin-left: 55px;
+  margin-top: 10px;
+}
+.absoulte_date_page_four1{
+  position: absolute;
+  margin-left: 55px;
+  margin-top: 36px;
+}
+.absoulte_date_page_four2{
+  position: absolute;
+  margin-right: 350px;
+  margin-top: 14px;
+}
+.absoulte_date_page_four3{
+  position: absolute;
+  margin-right: 60px;
+  margin-top: -5px;
+}
+.absoulte_date_page_four4{
+  position: absolute;
+  margin-right: 50px;
+  margin-top: -5px;
+}
