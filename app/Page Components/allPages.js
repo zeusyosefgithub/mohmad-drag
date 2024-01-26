@@ -272,7 +272,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                 </div>
             </div>
             <div className="p-10 mb-96">
-                <div className="text-2xl">
+                <div className="text-3xl mt-24 font-black hebrow_font">
                     <div className="flex justify-center">
                         ח.ח גורטאות הואדי
                     </div>
@@ -280,7 +280,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                         053-7464428
                     </div>
                 </div>
-                <div className="flex justify-center w-full">
+                <div className="flex justify-center w-full text-base font-black hebrow_font">
                     <div className="flex justify-around text-lg mt-16 w-1/2">
                         <div>
                             {props?.data?.drag.idwight}
@@ -290,7 +290,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                         </div>
                     </div>
                 </div>
-                <div className="flex justify-center w-full">
+                <div className="flex justify-center w-full text-base font-black hebrow_font">
                     <div className="flex justify-around text-lg mt-16 w-9/12">
                         <div className="flex">
                             <div>
@@ -310,7 +310,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                         </div>
                     </div>
                 </div>
-                <div className="flex justify-center w-full">
+                <div className="flex justify-center w-full text-base font-black hebrow_font">
                     <div className="flex justify-around text-lg mt-5 w-9/12">
                         <div className="flex">
                             <div>
@@ -919,7 +919,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                     <div className="mt-2 flex justify-around w-full">
                         <div className="w-1/2 flex justify-center">
                             <div className="w-full">
-                                <div dir="rtl">&nbsp;</div>
+                                <div dir="rtl" className="text-xs font-black hebrow_font">&nbsp;</div>
                                 <table className="w-full">
                                     <tbody>
                                         <tr>
