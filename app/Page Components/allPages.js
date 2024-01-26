@@ -122,8 +122,10 @@ export const AllPages = React.forwardRef((props, ref) => {
                         <ImageTwo />
                     </div>
                 </div>
-                <div className="flex justify-center underline text-base hebrow_font">
-                    בקשה לרישום רכב
+                <div className="flex justify-center">
+                    <div className="font-black text-sm hebrow_font border-b-1 border-b-black">
+                        בקשה לרישום רכב
+                    </div>
                 </div>
                 <div className="flex justify-around text-xs mr-10 ml-10 mt-5">
                     <div className="w-full">
@@ -487,16 +489,28 @@ export const AllPages = React.forwardRef((props, ref) => {
                         1. פרטי הרכב
                     </div>
                     <div className="flex">
+                        <div className="absoulte_date_page_four5">
+                            {props?.data?.drag.prodction}
+                        </div>
                         <div>
                             תוצר : _______________________
+                        </div>
+                        <div className="absoulte_date_page_four7">
+                            {props?.data?.drag.chassisnum}
                         </div>
                         <div className="mr-2">
                             מספר שילדה : _______________________
                         </div>
                     </div>
                     <div className="flex mt-1">
+                        <div className="absoulte_date_page_four6">
+                            {props?.data?.drag.model}
+                        </div>
                         <div>
                             דגם : _______________________
+                        </div>
+                        <div className="absoulte_date_page_four7">
+                            {props?.data?.drag.licenseid}
                         </div>
                         <div className="mr-2">
                             מספר רישוי : _______________________
