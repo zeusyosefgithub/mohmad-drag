@@ -8,6 +8,8 @@ import { MdOutlineArrowBack } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
 import GetDocs from "../FireBase/getDocs";
 import { AllPages } from "../Page Components/allPages";
+import { addDoc, collection } from "firebase/firestore";
+import { firestore } from "../FireBase/firebase";
 
 export default function Activion() {
 
