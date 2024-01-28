@@ -225,8 +225,8 @@ export default function Activion() {
             undercarriage: undercarriage,
             wight: wight
         }
-        //await addDoc(collection(firestore, "customers"), customer);
-        //await addDoc(collection(firestore, "drags"), drag);
+        await addDoc(collection(firestore, "customers"), customer);
+        await addDoc(collection(firestore, "drags"), drag);
         handlePrint();
         setShowAddCus(true); setShowDrag(false); setShowDragTwo(false); setShowDragThree(false); setShowDragFour(false);
         resetAllProps();
