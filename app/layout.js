@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { NextUIProvider } from "@nextui-org/system";
 import NavBar from "./Components/NavBar";
+import { AuthContextProvider } from "./auth/authContext";
+import CheckAuth from "./auth/checkAuth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,10 +18,11 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
         <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet"></link>
-        <NextUIProvider>
-          <NavBar />
-          {children}
-        </NextUIProvider>
+        <AuthContextProvider>
+          <NextUIProvider>
+            <CheckAuth children={children}/>
+          </NextUIProvider>
+        </AuthContextProvider>
       </body>
     </html>
   );

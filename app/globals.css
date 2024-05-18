@@ -70,6 +70,43 @@ body {
   margin-bottom: 10000px;
 }
 
+/* Styles the scrollbar track */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 10px; /* Adds rounded corners to the track */
+}
+
+/* Styles the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #3b82f6;
+  border-radius: 10px; /* Adds rounded corners to the thumb */
+  border: 3px solid #f1f1f1; /* Optional: Adds a border around the thumb */
+}
+
+/* Styles the scrollbar itself (width for vertical bars, height for horizontal) */
+::-webkit-scrollbar {
+  width: 10px; /* Adjust width of the scrollbar */
+}
+
+/* Optional: style the scrollbar button (arrows) */
+::-webkit-scrollbar-button {
+  display: none; /* Often it's aesthetically better not to display these */
+}
+
+
+.my-custom-scrollbar::-webkit-scrollbar {
+  width: 12px;
+}
+
+.my-custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #dedede;
+}
+
+.my-custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 6px;
+}
+
 
 
 .absoulte_date_page_four{
@@ -116,4 +153,9 @@ body {
   position: absolute;
   margin-right: 50px;
   margin-top: -2px;
+}
+
+.row-spacing td, .row-spacing th {
+  padding-bottom: 20px;
+  padding-top: 20px; /* Adjust padding as needed */
 }
