@@ -32,7 +32,6 @@ export default function ModalTokhnetYetsor({ show, disable }) {
             try {
                 const docSnap = await getDoc(doc(firestore, 'balotX', 'X1'));
                 if (docSnap.exists()) {
-                    console.log(docSnap)
                     setMotsaremShekhem(docSnap.data().motsaremShekhem);
                 } else {
                     console.log("No such document!");

@@ -18,7 +18,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     <th colSpan={4} className="border-1 border-[#a1a1aa] p-3">מסכי חובה בתיק גרור חדש</th>
                                 </tr>
                                 <tr>
-                                    <th colSpan={3} className="border-1 border-[#a1a1aa] p-3">מספר גרור : {props?.data?.drag.dragnum}</th>
+                                    <th colSpan={3} className="border-1 border-[#a1a1aa] p-3">מספר גרור : {props?.data?.drag?.dragnum}</th>
                                     <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
                                 </tr>
                                 <tr>
@@ -133,7 +133,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                         <table className="w-9/12">
                             <tbody>
                                 <tr>
-                                    <th className="border-1 border-[#a1a1aa]">{props?.data?.drag.dragnum}</th>
+                                    <th className="border-1 border-[#a1a1aa]">{props?.data?.drag?.dragnum}</th>
                                 </tr>
                             </tbody>
                         </table>
@@ -212,13 +212,13 @@ export const AllPages = React.forwardRef((props, ref) => {
                                 </th>
                             </tr>
                             <tr>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus.postal}</th>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus.houseid}</th>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus.street}</th>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus.city}</th>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus.cusid}</th>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus.name}</th>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus.lastname}</th>
+                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.postal}</th>
+                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.houseid}</th>
+                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.street}</th>
+                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.city}</th>
+                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.cusid}</th>
+                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.name}</th>
+                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.lastname}</th>
                              
                             </tr>
                             <tr>
@@ -283,7 +283,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                 <div className="flex justify-center w-full text-base font-black hebrow_font">
                     <div className="flex justify-around text-lg mt-16 w-1/2">
                         <div>
-                            {props?.data?.drag.idwight}
+                            {props?.data?.drag?.idwight}
                         </div>
                         <div>
                             תעודת שקילה מספר
@@ -294,7 +294,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                     <div className="flex justify-around text-lg mt-16 w-9/12">
                         <div className="flex">
                             <div>
-                                {props?.data?.drag.opentime}
+                                {props?.data?.drag?.opentime}
                             </div>
                             <div dir="rtl" className="ml-3">
                                 שעה כניסה :
@@ -302,7 +302,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                         </div>
                         <div className="flex">
                             <div>
-                                {props?.data?.drag.opendate}
+                                {props?.data?.drag?.opendate}
                             </div>
                             <div dir="rtl" className="ml-3">
                                 תאריך כניסה :
@@ -314,7 +314,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                     <div className="flex justify-around text-lg mt-5 w-9/12">
                         <div className="flex">
                             <div>
-                                {props?.data?.drag.closetime}
+                                {props?.data?.drag?.closetime}
                             </div>
                             <div dir="rtl" className="ml-3">
                                 שעה יצאה :
@@ -322,7 +322,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                         </div>
                         <div className="flex">
                             <div>
-                                {props?.data?.drag.closedate}
+                                {props?.data?.drag?.closedate}
                             </div>
                             <div dir="rtl" className="ml-3">
                                 תאריך יציאה :
@@ -398,7 +398,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     </div>
                                     <div className="border-1 border-[#e4e4e7] mt-1 mb-1" />
                                     <div className="p-1 pb-2">
-                                        {props?.data?.drag.wight}
+                                        {props?.data?.drag?.wight}
                                     </div>
                                 </th>
                                 <th className="border-1 border-[#a1a1aa]">
@@ -407,7 +407,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     </div>
                                     <div className="border-1 border-[#e4e4e7] mt-1 mb-1" />
                                     <div className="p-1 pb-2">
-                                        {props?.data?.drag.wight}
+                                        {props?.data?.drag?.wight}
                                     </div>
                                 </th>
                                 <th className="border-1 border-[#a1a1aa]">
@@ -416,7 +416,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     </div>
                                     <div className="border-1 border-[#e4e4e7] mt-1 mb-1" />
                                     <div className="p-1 pb-2">
-                                        {props?.data?.drag.wight}
+                                        {props?.data?.drag?.wight}
                                     </div>
                                 </th>
                                 <th className="border-1 border-[#a1a1aa] w-1/4">
@@ -462,10 +462,10 @@ export const AllPages = React.forwardRef((props, ref) => {
                     </div>
                 </div>
                 <div className="absoulte_date_page_four">
-                    {props?.data?.drag.daterecord}
+                    {props?.data?.drag?.daterecord}
                 </div>
                 <div className="absoulte_date_page_four1">
-                    {props?.data?.cus.name}
+                    {props?.data?.cus?.name}
                 </div>
                 <div className="flex justify-start mt-3">
                     ______________________________ : תאריך
@@ -490,13 +490,13 @@ export const AllPages = React.forwardRef((props, ref) => {
                     </div>
                     <div className="flex">
                         <div className="absoulte_date_page_four5">
-                            {props?.data?.drag.prodction}
+                            {props?.data?.drag?.prodction}
                         </div>
                         <div>
                             תוצר : _______________________
                         </div>
                         <div className="absoulte_date_page_four7">
-                            {props?.data?.drag.chassisnum}
+                            {props?.data?.drag?.chassisnum}
                         </div>
                         <div className="mr-2">
                             מספר שילדה : _______________________
@@ -504,13 +504,13 @@ export const AllPages = React.forwardRef((props, ref) => {
                     </div>
                     <div className="flex mt-1">
                         <div className="absoulte_date_page_four6">
-                            {props?.data?.drag.model}
+                            {props?.data?.drag?.model}
                         </div>
                         <div>
                             דגם : _______________________
                         </div>
                         <div className="absoulte_date_page_four7">
-                            {props?.data?.drag.licenseid}
+                            {props?.data?.drag?.licenseid}
                         </div>
                         <div className="mr-2">
                             מספר רישוי : _______________________
@@ -570,7 +570,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                         א. סרן/ים קדמ/ים : _________________________________&nbsp;&nbsp;&nbsp;(ק"מ)&nbsp;&nbsp;&nbsp;ב. סרן/ים אחורי/ים : _________________________________&nbsp;&nbsp;&nbsp;(ק"מ)
                     </div>
                     <div className="absoulte_date_page_four2">
-                        {props?.data?.drag.wight}
+                        {props?.data?.drag?.wight}
                     </div>
                     <div className="mt-5">
                         ג. משקל כללי : &nbsp;&nbsp;רצ"ב תעודות שקילה של מכון השקילה ________________________________________
@@ -583,14 +583,14 @@ export const AllPages = React.forwardRef((props, ref) => {
                     <div className="flex justify-around">
                         <div>
                             <div className="absoulte_date_page_four3">
-                                {props?.data?.cus.name}
+                                {props?.data?.cus?.name}
                             </div>
                             <div>_________________________________</div>
                             <div className="flex justify-center">שם בעל הרכב/מנכ"ל החברה</div>
                         </div>
                         <div>
                             <div className="absoulte_date_page_four4">
-                                {props?.data?.cus.cusid}
+                                {props?.data?.cus?.cusid}
                             </div>
                             <div>_________________________________</div>
                             <div className="flex justify-center">ת.ז.</div>
@@ -657,12 +657,12 @@ export const AllPages = React.forwardRef((props, ref) => {
                                 <table className="w-full mb-2">
                                     <tbody>
                                         <tr>
-                                            <th className="border-1 border-black w-56">{props?.data?.drag.bodymodel}</th>
+                                            <th className="border-1 border-black w-56">{props?.data?.drag?.bodymodel}</th>
                                             <th className="border-1 border-black w-56 text-right pr-2">דגם מרכב</th>
                                             <th className="border-1 border-black w-14">2.3</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.undercarriage}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.undercarriage}</th>
                                             <th className="border-1 border-black text-right pr-2">מס"ד מרכב</th>
                                             <th className="border-1 border-black w-14">2.4</th>
                                         </tr>
@@ -672,22 +672,22 @@ export const AllPages = React.forwardRef((props, ref) => {
                                 <table className="w-full mb-2">
                                     <tbody>
                                         <tr>
-                                            <th className="border-1 border-black w-56">{props?.data?.drag.selfweightaxles}</th>
+                                            <th className="border-1 border-black w-56">{props?.data?.drag?.selfweightaxles}</th>
                                             <th className="border-1 border-black w-56 text-right pr-2">משקל עצמי על הסרנים</th>
                                             <th className="border-1 border-black w-14">3.6</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.totalselfweight}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.totalselfweight}</th>
                                             <th className="border-1 border-black text-right pr-2">משקל עצמי כולל</th>
                                             <th className="border-1 border-black w-14">3.7</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.authorizedweight}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.authorizedweight}</th>
                                             <th className="border-1 border-black text-right pr-2">משקל מורשה</th>
                                             <th className="border-1 border-black w-14">3.8</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.distributionloads}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.distributionloads}</th>
                                             <th className="border-1 border-black text-right pr-2">חלוקת העומסים</th>
                                             <th className="border-1 border-black w-14">3.9</th>
                                         </tr>
@@ -747,37 +747,37 @@ export const AllPages = React.forwardRef((props, ref) => {
                                 <table className="w-full mb-2">
                                     <tbody>
                                         <tr>
-                                            <th className="border-1 border-black w-56">{props?.data?.drag.licenseid}</th>
+                                            <th className="border-1 border-black w-56">{props?.data?.drag?.licenseid}</th>
                                             <th className="border-1 border-black w-56 text-right pr-2">מספר רישוי</th>
                                             <th className="border-1 border-black w-14">1.1</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.chassisnum}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.chassisnum}</th>
                                             <th className="border-1 border-black text-right pr-2">מספר שלדה</th>
                                             <th className="border-1 border-black w-14">1.2</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.prodction}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.prodction}</th>
                                             <th className="border-1 border-black text-right pr-2">תוצר</th>
                                             <th className="border-1 border-black w-14">1.3</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.model}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.model}</th>
                                             <th className="border-1 border-black text-right pr-2">קוד דגם</th>
                                             <th className="border-1 border-black w-14">1.4</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.categore}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.categore}</th>
                                             <th className="border-1 border-black text-right pr-2">קטגוריה</th>
                                             <th className="border-1 border-black w-14">1.5</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.color}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.color}</th>
                                             <th className="border-1 border-black text-right pr-2">צבע</th>
                                             <th className="border-1 border-black w-14">1.6</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.kinddrag}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.kinddrag}</th>
                                             <th className="border-1 border-black text-right pr-2">סוג הרכב</th>
                                             <th className="border-1 border-black w-14">1.7</th>
                                         </tr>
@@ -792,12 +792,12 @@ export const AllPages = React.forwardRef((props, ref) => {
                                 <table className="w-full mb-2">
                                     <tbody>
                                         <tr>
-                                            <th className="border-1 border-black w-56">{props?.data?.drag.producer}</th>
+                                            <th className="border-1 border-black w-56">{props?.data?.drag?.producer}</th>
                                             <th className="border-1 border-black w-56 text-right pr-2">יצרן</th>
                                             <th className="border-1 border-black w-14">2.1</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.bodytype}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.bodytype}</th>
                                             <th className="border-1 border-black text-right pr-2">סוג מרכב</th>
                                             <th className="border-1 border-black w-14">2.2</th>
                                         </tr>
@@ -837,37 +837,37 @@ export const AllPages = React.forwardRef((props, ref) => {
                                 <table className="w-full">
                                     <tbody>
                                         <tr>
-                                            <th className="border-1 border-black w-56">{props?.data?.drag.long}</th>
+                                            <th className="border-1 border-black w-56">{props?.data?.drag?.long}</th>
                                             <th className="border-1 border-black w-56 text-right pr-2">אורך כללי</th>
                                             <th className="border-1 border-black w-14">4.1</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.space}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.space}</th>
                                             <th className="border-1 border-black text-right pr-2">רוחב כללי</th>
                                             <th className="border-1 border-black w-14">4.2</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.height}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.height}</th>
                                             <th className="border-1 border-black text-right pr-2">גובה כללי</th>
                                             <th className="border-1 border-black w-14">4.3</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.rearextension}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.rearextension}</th>
                                             <th className="border-1 border-black text-right pr-2">שלוחה אחורית</th>
                                             <th className="border-1 border-black w-14">4.4</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.lengthhatch}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.lengthhatch}</th>
                                             <th className="border-1 border-black text-right pr-2">אורך יצול</th>
                                             <th className="border-1 border-black w-14">4.5</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.heightloading}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.heightloading}</th>
                                             <th className="border-1 border-black text-right pr-2">גובה משטח העמסה</th>
                                             <th className="border-1 border-black w-14">4.6</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag.sizeloading}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.sizeloading}</th>
                                             <th className="border-1 border-black text-right pr-2">גובה משטח העמסה (מ"ר)</th>
                                             <th className="border-1 border-black w-14">4.7</th>
                                         </tr>
@@ -892,14 +892,14 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     <th className="border-1 border-black w-11">&nbsp;</th>
                                 </tr>
                                 <tr>
-                                    <th className="border-1 border-black">{props?.data?.drag.labid}</th>
-                                    <th className="border-1 border-black">{props?.data?.drag.labreport}</th>
-                                    <th className="border-1 border-black">{props?.data?.drag.reviewerid}</th>
-                                    <th className="border-1 border-black">{props?.data?.drag.safetyreview}</th>
-                                    <th className="border-1 border-black">{props?.data?.drag.foundation}</th>
-                                    <th className="border-1 border-black">{props?.data?.drag.producer}</th>
-                                    <th className="border-1 border-black">{props?.data?.drag.installer}</th>
-                                    <th className="border-1 border-black">{props?.data?.drag.device}</th>
+                                    <th className="border-1 border-black">{props?.data?.drag?.labid}</th>
+                                    <th className="border-1 border-black">{props?.data?.drag?.labreport}</th>
+                                    <th className="border-1 border-black">{props?.data?.drag?.reviewerid}</th>
+                                    <th className="border-1 border-black">{props?.data?.drag?.safetyreview}</th>
+                                    <th className="border-1 border-black">{props?.data?.drag?.foundation}</th>
+                                    <th className="border-1 border-black">{props?.data?.drag?.producer}</th>
+                                    <th className="border-1 border-black">{props?.data?.drag?.installer}</th>
+                                    <th className="border-1 border-black">{props?.data?.drag?.device}</th>
                                     <th className="border-1 border-black w-11">5.1</th>
                                 </tr>
                                 <tr>

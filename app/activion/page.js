@@ -8,7 +8,7 @@ import { MdOutlineArrowBack } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
 import GetDocs from "../FireBase/getDocs";
 import { AllPages } from "../Page Components/allPages";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, count, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../FireBase/firebase";
 
 export default function Activion() {
@@ -93,83 +93,82 @@ export default function Activion() {
     const Customers = GetDocs('customers');
     const Drags = GetDocs('drags');
 
+    const counter = GetDocs('metadata').find((count) => count.id === 'counterLkhot');
+    const counter2 = GetDocs('metadata').find((count) => count.id === 'counterAglot');
 
     const GetIdWight = () => {
         let newDate = new Date();
         let month = newDate.getMonth();
         let year = newDate.getFullYear();
-        let id = 50 + GetDragId();
+        let id = 50 + counter2?.count;
         let yearr = year.toString();
         let idwight = `${yearr[2]}${yearr[3]}${(month + 1) < 10 ? "0" : null}${month + 1}-0${id}`;
         return idwight;
     }
-    const GetCustomerId = () => {
-        let maxValue = 0;
-        for (let index = 0; index < Customers?.length; index++) {
-            maxValue = Math.max(maxValue, parseFloat(Customers[index]?.idnum))
-        }
-        return maxValue + 1;
-    }
-    const GetDragId = () => {
-        let maxValue = 0;
-        for (let index = 0; index < Drags?.length; index++) {
-            maxValue = Math.max(maxValue, parseFloat(Drags[index]?.idnum))
-        }
-        return maxValue + 1;
-    }
 
     const sendDataToPages = () => {
-        const cus = {
-            city: customerCity,
-            cusid: customerId,
-            houseid: customerHouseId,
-            idnum: GetCustomerId(),
-            lastname: customerName,
-            name: customerLastName,
-            phone: customerPhone,
-            postal: customerPostal,
-            street: customerStreet
+        let cus,drag;
+        if(lkohKeam){
+            cus = lkoh;
         }
-        const drag = {
-            authorizedweight: authorizedweight,
-            bodymodel: bodymodel,
-            bodytype: bodytype,
-            categore: categore,
-            chassisnum: chassisnum,
-            closedate: closedate,
-            closetime: closetime,
-            color: color,
-            daterecord: currentdate,
-            device: device,
-            distributionloads: distributionloads,
-            dragnum: dragnum,
-            foundation: foundation,
-            height: height,
-            heightloading: heightloading,
-            idnum: GetDragId(),
-            idcustomer: GetCustomerId(),
-            idwight: GetIdWight(),
-            installer: installer,
-            kinddrag: kinddrag,
-            labid: labid,
-            labreport: labreport,
-            lengthhatch: lengthhatch,
-            licenseid: licenseid,
-            long: long,
-            model: model,
-            opendate: opendate,
-            opentime: opentime,
-            prodction: prodction,
-            producer: producer,
-            rearextension: rearextension,
-            reviewerid: reviewerid,
-            safetyreview: safetyreview,
-            selfweightaxles: selfweightaxles,
-            sizeloading: sizeloading,
-            space: space,
-            totalselfweight: totalselfweight,
-            undercarriage: undercarriage,
-            wight: wight
+        else{
+            cus = {
+                city: customerCity,
+                cusid: customerId,
+                houseid: customerHouseId,
+                idnum: counter?.count,
+                lastname: customerName,
+                name: customerLastName,
+                phone: customerPhone,
+                postal: customerPostal,
+                street: customerStreet
+            }
+        }
+        if(aglaKeamet){
+            drag = Agla;
+        }
+        else{
+            drag = {
+                authorizedweight: authorizedweight,
+                bodymodel: bodymodel,
+                bodytype: bodytype,
+                categore: categore,
+                chassisnum: chassisnum,
+                closedate: closedate,
+                closetime: closetime,
+                color: color,
+                daterecord: currentdate,
+                device: device,
+                distributionloads: distributionloads,
+                dragnum: dragnum,
+                foundation: foundation,
+                height: height,
+                heightloading: heightloading,
+                idnum: counter2?.count,
+                idcustomer: counter?.count,
+                idwight: GetIdWight(),
+                installer: installer,
+                kinddrag: kinddrag,
+                labid: labid,
+                labreport: labreport,
+                lengthhatch: lengthhatch,
+                licenseid: licenseid,
+                long: long,
+                model: model,
+                opendate: opendate,
+                opentime: opentime,
+                prodction: prodction,
+                producer: producer,
+                rearextension: rearextension,
+                reviewerid: reviewerid,
+                safetyreview: safetyreview,
+                selfweightaxles: selfweightaxles,
+                sizeloading: sizeloading,
+                space: space,
+                totalselfweight: totalselfweight,
+                undercarriage: undercarriage,
+                wight: wight
+            }
         }
         return { cus, drag };
     }
@@ -179,7 +178,7 @@ export default function Activion() {
             city: customerCity,
             cusid: customerId,
             houseid: customerHouseId,
-            idnum: GetCustomerId(),
+            idnum: counter?.count,
             lastname: customerName,
             name: customerLastName,
             phone: customerPhone,
@@ -202,8 +201,8 @@ export default function Activion() {
             foundation: foundation,
             height: height,
             heightloading: heightloading,
-            idnum: GetDragId(),
-            idcustomer: GetCustomerId(),
+            idnum: counter2?.count,
+            idcustomer: lkohKeam ? lkoh.idnum : counter?.count,
             idwight: GetIdWight(),
             installer: installer,
             kinddrag: kinddrag,
@@ -227,8 +226,10 @@ export default function Activion() {
             undercarriage: undercarriage,
             wight: wight
         }
-        await addDoc(collection(firestore, "customers"), customer);
-        await addDoc(collection(firestore, "drags"), drag);
+        !lkohKeam && await addDoc(collection(firestore, "customers"), customer);
+        !aglaKeamet && await addDoc(collection(firestore, "drags"), drag);
+        !lkohKeam && await updateDoc(doc(firestore, 'metadata', counter?.id), { count: counter?.count + 1 });
+        !aglaKeamet && await updateDoc(doc(firestore, 'metadata', counter2?.id), { count: counter2?.count + 1 });
         handlePrint();
         setShowAddCus(true); setShowDrag(false); setShowDragTwo(false); setShowDragThree(false); setShowDragFour(false);
         resetAllProps();
@@ -280,48 +281,143 @@ export default function Activion() {
         setDragnum('');
     }
 
+    const [lkohKeam,setLkohKeam] = useState(false);
+    const [lkoh,setLkoh] = useState();
+    const lkhot = GetDocs('customers');
+    const [aglaKeamet,setAglaKeamet] = useState(false);
+    const [Agla,setAgla] = useState();
+    const aglot = GetDocs('drags');
+
     return (
         <div className="hebrow_font">
             <div className="flex justify-center">
                 <div className="w-9/12 mt-20">
 
-                    <div className="flex justify-around p-5 rounded-lg bg-slate-400">
-                        <Button onClick={() => setShowAddCus(true)} variant="shadow" >הוספת לקוח</Button>
-                    </div>
-
                     <div className="mt-8 p-5">
                         {
                             showAddCus && <div>
-                                <div className="text-center text-2xl">לקוח</div>
-                                <div dir="rtl" className="mt-5 text-xl">
-                                    פרטיים הלקוח החדש :
+                                <div className="flex justify-center text-2xl">
+                                    <div onClick={() => {setLkohKeam(false);setLkoh(null);}} className={`ml-1 mr-1 cursor-pointer ${!lkohKeam && 'text-primary'}`}>חדש</div>
+                                    <div className="ml-1 mr-1">או</div>
+                                    <div onClick={() => setLkohKeam(true)} className={`ml-1 mr-1 cursor-pointer ${lkohKeam && 'text-primary'}`}>קיים</div>
+                                    <div className="ml-1 mr-1">לקוח</div>
                                 </div>
-                                <div dir="rtl" className="mt-5">
-                                    <div className="flex justify-around">
-                                        <div className="w-1/3">
-                                            <Input value={customerName} size="sm" onValueChange={(value) => { setCustomerName(value) }} type="text" label="שם לקוח" />
-                                            <Input value={customerLastName} className="mt-10" size="sm" onValueChange={(value) => { setCustomerLastName(value) }} type="text" label="שם משפחה" />
-                                            <Input value={customerPhone} className="mt-10" size="sm" onValueChange={(value) => { setCustomerPhone(value) }} type="number" label="מס טלפון" />
-                                            <Input value={customerStreet} className="mt-10" size="sm" onValueChange={(value) => { setCustomerStreet(value) }} type="text" label="רחוב" />
-                                        </div>
-                                        <div className="w-1/3">
-                                            <Input value={customerId} size="sm" onValueChange={(value) => { setCustomerId(value) }} type="number" label="מס תעודת זהות" />
-                                            <Input value={customerPostal} className="mt-10" size="sm" onValueChange={(value) => { setCustomerPostal(value) }} type="number" label="מס מיקוד" />
-                                            <Input value={customerHouseId} className="mt-10" size="sm" onValueChange={(value) => { setCustomerHouseId(value) }} type="number" label="מס בית" />
-                                            <Input value={customerCity} className="mt-10" size="sm" onValueChange={(value) => { setCustomerCity(value) }} type="text" label="ישוב" />
-                                        </div>
-                                    </div>
-                                </div>
+                                {
+                                    lkohKeam ?
+                                        <>
+                                            <div dir="rtl" className="mt-5 text-xl">
+                                                פרטיים הלקוח הקיים :
+                                            </div>
+                                            <div dir="ltr" className="mt-5">
+                                                <div className='mt-5 bg-gray-300 h-[450px] overflow-auto'>
+                                                    <table className="w-full table-auto border-collapse">
+                                                        <thead>
+                                                            <tr className="bg-gray-500 dark:bg-gray-800 sticky top-0">
+                                                                <th className="px-4 py-3 text-center font-medium text-white">עיר</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-white">מיקוד</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-white">כתובת</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-white">רחוב</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-white">מספר טלפון</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-white">מס ת.ז</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-white">שם משפחה</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-white">שם פרטי</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {lkhot.map((item, index) => (
+                                                                <tr onClick={() => setLkoh(item)} key={index} className={`border-b border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-primary-200 ${lkoh?.idnum === item.idnum && 'bg-primary-200'}`}>
+                                                                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.city}</td>
+                                                                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item?.postal}</td>
+                                                                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.houseid}</td>
+                                                                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.street}</td>
+                                                                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.phone}</td>
+                                                                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.cusid}</td>
+                                                                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.lastname}</td>
+                                                                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.name}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </>
+                                        :
+                                        <>
+                                            <div dir="rtl" className="mt-5 text-xl">
+                                                פרטיים הלקוח החדש :
+                                            </div>
+                                            <div dir="rtl" className="mt-5">
+                                                <div className="flex justify-around">
+                                                    <div className="w-1/3">
+                                                        <Input value={customerName} size="sm" onValueChange={(value) => { setCustomerName(value) }} type="text" label="שם לקוח" />
+                                                        <Input value={customerLastName} className="mt-10" size="sm" onValueChange={(value) => { setCustomerLastName(value) }} type="text" label="שם משפחה" />
+                                                        <Input value={customerPhone} className="mt-10" size="sm" onValueChange={(value) => { setCustomerPhone(value) }} type="number" label="מס טלפון" />
+                                                        <Input value={customerStreet} className="mt-10" size="sm" onValueChange={(value) => { setCustomerStreet(value) }} type="text" label="רחוב" />
+                                                    </div>
+                                                    <div className="w-1/3">
+                                                        <Input value={customerId} size="sm" onValueChange={(value) => { setCustomerId(value) }} type="number" label="מס תעודת זהות" />
+                                                        <Input value={customerPostal} className="mt-10" size="sm" onValueChange={(value) => { setCustomerPostal(value) }} type="number" label="מס מיקוד" />
+                                                        <Input value={customerHouseId} className="mt-10" size="sm" onValueChange={(value) => { setCustomerHouseId(value) }} type="number" label="מס בית" />
+                                                        <Input value={customerCity} className="mt-10" size="sm" onValueChange={(value) => { setCustomerCity(value) }} type="text" label="ישוב" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </>
+                                }
                                 <div className="flex justify-center mt-28">
-                                    <Button onClick={() => { setShowAddCus(false); setShowDrag(true) }} size="lg" color="primary">המשך <MdOutlineArrowForward className="text-xl" /></Button>
+                                    <Button disabled={lkohKeam && !lkoh} onClick={() => { setShowAddCus(false); setShowDrag(true) }} size="lg" color="primary">המשך <MdOutlineArrowForward className="text-xl" /></Button>
                                 </div>
                             </div>
                         }
                         {
-                            showDrag && <div>
-                                <div className="text-center text-2xl">עגלה</div>
-                                <div dir="rtl" className="mt-5 text-xl">
-                                    פרטיים העגלה החדשה :
+                            showDrag && aglaKeamet &&
+                            <div>
+                                <div className="flex justify-center text-2xl">
+                                    <div onClick={() => { setAglaKeamet(false); setAgla(null); }} className={`ml-1 mr-1 cursor-pointer ${!aglaKeamet && 'text-primary'}`}>חדשה</div>
+                                    <div className="ml-1 mr-1">או</div>
+                                    <div onClick={() => setAglaKeamet(true)} className={`ml-1 mr-1 cursor-pointer ${aglaKeamet && 'text-primary'}`}>קיימת</div>
+                                    <div className="ml-1 mr-1">עגלה</div>
+                                </div>
+                                <div dir="ltr" className="mt-5">
+                                    <div className='mt-5 bg-gray-300 h-[450px] overflow-auto'>
+                                        <table className="w-full table-auto border-collapse">
+                                            <thead>
+                                                <tr className="bg-gray-500 dark:bg-gray-800 sticky top-0">
+                                                    <th className="px-4 py-3 text-center font-medium text-white">רוחב</th>
+                                                    <th className="px-4 py-3 text-center font-medium text-white">אורך</th>
+                                                    <th className="px-4 py-3 text-center font-medium text-white">משקל</th>
+                                                    <th className="px-4 py-3 text-center font-medium text-white">מספר עגלה</th>
+                                                    <th className="px-4 py-3 text-center font-medium text-white">זהות העגלה</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {aglot.map((item, index) => (
+                                                    <tr onClick={() => setAgla(item)} key={index} className={`border-b border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-primary-200 ${Agla?.idnum === item.idnum && 'bg-primary-200'}`}>
+                                                        <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.space}</td>
+                                                        <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.long}</td>
+                                                        <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.wight}</td>
+                                                        <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.dragnum}</td>
+                                                        <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.idwight}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div className="flex justify-center mt-28">
+                                    <Button onClick={() => { setShowAddCus(true); setShowDrag(false); }} size="lg" color="primary">לחזור <MdOutlineArrowBack className="text-xl" /></Button>
+                                    <div className="m-20"></div>
+                                    <Button onClick={addNewDrag} size="lg" color="primary">הוספה <IoMdAdd className="text-xl" /></Button>
+                                </div>
+                            </div>
+                        }
+                        {
+                            showDrag && !aglaKeamet && <div>
+                                <div className="flex justify-center text-2xl">
+                                    <div onClick={() => {setAglaKeamet(false);setAgla(null);}} className={`ml-1 mr-1 cursor-pointer ${!aglaKeamet && 'text-primary'}`}>חדשה</div>
+                                    <div className="ml-1 mr-1">או</div>
+                                    <div onClick={() => setAglaKeamet(true)} className={`ml-1 mr-1 cursor-pointer ${aglaKeamet && 'text-primary'}`}>קיימת</div>
+                                    <div className="ml-1 mr-1">עגלה</div>
                                 </div>
                                 <div dir="rtl" className="mt-5">
                                     <div className="flex justify-around">

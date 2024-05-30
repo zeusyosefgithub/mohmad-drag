@@ -105,7 +105,7 @@ export const MathX3 = (msbartsrem,remez) => {
             return 2;
         }
         else if(remez === 'A10'){
-            return 21;
+            return 1;
         }
         else if(remez === 'A3'){
             return 2;

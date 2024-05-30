@@ -8,7 +8,6 @@ const CountdownComponent = ({ constantDate }) => {
     minutes: 0,
     seconds: 0,
   });
-
   useEffect(() => {
     const updateDifference = () => {
       const parsedConstantDate = parseISO(constantDate);
@@ -17,7 +16,6 @@ const CountdownComponent = ({ constantDate }) => {
       const hoursDifference = differenceInHours(parsedConstantDate, currentDate) % 24;
       const minutesDifference = differenceInMinutes(parsedConstantDate, currentDate) % 60;
       const secondsDifference = differenceInSeconds(parsedConstantDate, currentDate) % 60;
-
       setTimeDifference({
         days: daysDifference,
         hours: hoursDifference,
@@ -25,24 +23,29 @@ const CountdownComponent = ({ constantDate }) => {
         seconds: secondsDifference,
       });
     };
-
-    // Update the difference immediately
     updateDifference();
-
-    // Set up an interval to update the difference every second
-    const intervalId = setInterval(updateDifference, 1000); // 1000ms = 1 second
-
-    // Clean up the interval on component unmount
+    const intervalId = setInterval(updateDifference, 1000);
     return () => clearInterval(intervalId);
-  }, [constantDate]); // Ensure useEffect only runs when constantDate changes
-
+  }, [constantDate]);
+  const formatTimeUnit = (unit) => String(unit).padStart(2, '0');
   return (
     <div>
       <p>
-        {timeDifference.days}:{timeDifference.hours}:{timeDifference.minutes}:{timeDifference.seconds}
+        {timeDifference.days > 0 && `${timeDifference.days}:`}
+        {formatTimeUnit(timeDifference.hours)[0] === '-' ? formatTimeUnit(timeDifference.hours).slice(1) : formatTimeUnit(timeDifference.hours)}:
+        {formatTimeUnit(timeDifference.minutes)[0] === '-' ? formatTimeUnit(timeDifference.minutes).slice(1) : formatTimeUnit(timeDifference.minutes)}:
+        {formatTimeUnit(timeDifference.seconds)[0] === '-' ? formatTimeUnit(timeDifference.seconds).slice(1) : formatTimeUnit(timeDifference.seconds)}
       </p>
     </div>
   );
 };
 
 export default CountdownComponent;
+
+
+// the output : 00:-10:-6
+
+
+
+
+

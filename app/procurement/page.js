@@ -118,6 +118,7 @@ export default function Procurement() {
         setVisibleCategory(index);
     };
 
+    
     const [shopCategory, setShopCategory] = useState({});
     const [showBerotAska,setShowBerotAska] = useState(false);
     const [aska,setAska] = useState(null);
@@ -133,12 +134,12 @@ export default function Procurement() {
         }
         return;
     }
-
+    
     const fetchDataForCategoryShop = async (categoryShem) => {
         let res = await useGetDataByConditionWithoutUseEffect('category', 'shem', '==', categoryShem);
         setShopCategory(res[0].motsarem);
     };
-
+    
     const [motsaremMlae,setMotsaremMlae] = useState({});
     const [kolMotsaremMlaeNebhro,setKolMotsaremMaleNebhro] = useState([]);
     const fetchDataForCategoryShopSogMotsar = async(Remez) => {
@@ -146,6 +147,9 @@ export default function Procurement() {
         setKolMotsaremMaleNebhro([...kolMotsaremMlaeNebhro,res]);
         setMotsaremMlae(res);
     } 
+    console.log(categoryList);
+    console.log(motsaremMlae);
+    
 
     const ConvertCategoryNames = (val) => {
         if (val === 'פחים') {

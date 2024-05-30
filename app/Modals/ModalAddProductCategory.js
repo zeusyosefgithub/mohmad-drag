@@ -6,7 +6,7 @@ import GetDocs from "../FireBase/getDocs";
 import { useState } from "react";
 import { useGetDataByCondition } from "../FireBase/getDataByCondition";
 
-export default function ModalAddProductCategory({ show, disable, category }) {
+export default function ModalAddProductCategory({ show, disable, category,Aeshor,sckhom,msbarTfaol }) {
 
     //const counter = useGetDataByCondition('category', 'msbar', '==', category?.msbar || 'default-msbar-value');
     const [shem, setShem] = useState('');
@@ -17,19 +17,23 @@ export default function ModalAddProductCategory({ show, disable, category }) {
         let count = category?.dlbak + 1;
         await addDoc(collection(firestore, "mlae"), {
             category: category?.id,
-            categoryMotsar : GetCategory(shem).sog,
-            msbar: `${GetCategory(shem).sog}0${category?.dlbak}`,
+            categoryMotsar : GetCategory(shem)?.sog,
+            msbar: `${GetCategory(shem)?.sog}0${category?.dlbak}`,
             shem: sog,
-            alot: 0,
-            alotLeheda: 0,
-            kmot: 0,
+            alot: sckhom || 0,
+            alotLeheda: sckhom || 0,
+            kmot: sckhom ? 1 : 0,
             zmanHsbaka: zmanAsbka,
-            mededa: GetCategory(shem).mededa,
+            mededa: GetCategory(shem)?.mededa,
+            msbarTfaol : msbarTfaol || 0
         });
         await updateDoc(doc(firestore, 'category', category?.id), { dlbak: count });
         setShem('');
         setZmanAsbka('');
         setSog('');
+        if(Aeshor){
+            Aeshor(true);
+        }
         disable();
     }
 
@@ -82,7 +86,12 @@ export default function ModalAddProductCategory({ show, disable, category }) {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <Button size="lg" color="primary" onClick={disable}>
+                        <Button size="lg" color="primary" onClick={() => {
+                            if(Aeshor){
+                                Aeshor(false);
+                            }
+                            disable();
+                        }}>
                             סגור
                         </Button>
                         <Button size="lg" color="primary" onClick={AddSbak}>

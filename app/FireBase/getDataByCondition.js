@@ -58,3 +58,30 @@ export const useGetDataByLimit = async (myCollection, limt) => {
 }
 
 
+
+export const fetchDocumentByCondition = async (collectionName, conditionField, conditionValue) => {
+    try {
+        const q = query(
+            collection(firestore, collectionName),
+            where(conditionField, '==', conditionValue),
+            limit(1)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            return null; // No matching document found
+        }
+
+        const doc = querySnapshot.docs[0];
+        const data = doc.data();
+        data.id = doc.id;
+
+        return data;
+    } catch (error) {
+        console.error("Error fetching document:", error);
+        throw new Error("Error fetching document");
+    }
+};
+
+
