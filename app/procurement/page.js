@@ -12,22 +12,138 @@ import { FaPlus } from "react-icons/fa6";
 import GetDocs from '../FireBase/getDocs';
 import ModalAddProductCategory from '../Modals/ModalAddProductCategory';
 import { useGetDataByCondition, useGetDataByConditionWithoutUseEffect, useGetDataByConditionWithoutUseEffectWithTwo, useGetDataByLimit } from '../FireBase/getDataByCondition';
-import { addDoc, collection, count, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, setDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, count, deleteDoc, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, setDoc, updateDoc } from 'firebase/firestore';
 import { firestore } from '../FireBase/firebase';
 import { format } from 'date-fns';
 import ModalShowBerotAska from '../Modals/ModalShowBerotAska';
+import Image from 'next/image';
+import { GetTmonatHelek } from '../page';
 
 
 export default function Procurement() {
 
     const [sbak, setSbak] = useState('');
-    const [sbakID,setSbakID] = useState(null);
-    const [entries, setEntries] = useState([{ category: '', id: '',sogMotsar : '', amount: '', price: '' }]);
-
+    const [sbakID, setSbakID] = useState(null);
+    const [entries, setEntries] = useState([{ category: '', id: '', sogMotsar: '', remez: '', amount: '', price: '' }]);
     const sbkemA = useGetDataByCondition('sbkem', 'sherot', '==', 'A');
     const category = GetDocs('category');
-
+    const mlae = GetDocs('mlae');
     const [hestoriaKneot, setHestoriaKneot] = useState([]);
+    const containerRef = useRef(null);
+    const endOfFormRef = useRef(null);
+    const topOfFormRef = useRef(null);
+    const [showModalAddProductCategory, setShowModalAddProductCategory] = useState(false);
+    const [categoryData, setCategoryData] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [showBerotAska, setShowBerotAska] = useState(false);
+    const [showModalAddSbak, setShowModalAddSbak] = useState(false);
+    const [aska, setAska] = useState(null);
+
+    const handleInputChange = (index, field, value) => {
+        const newEntries = [...entries];
+        newEntries[index][field] = value;
+        setEntries(newEntries);
+    };
+    const handleAddFields = () => {
+        setEntries([...entries, { category: '', id: '', remez: '', sogMotsar: '', amount: '', price: '' }]);
+        setTimeout(() => {
+            scrollToBottomRef();
+        }, 100);
+    };
+    const scrollToBottomRef = () => {
+        const scrollableContainer = containerRef.current;
+        const targetElement = endOfFormRef.current;
+        if (scrollableContainer && targetElement) {
+            const topPos = targetElement.offsetTop;
+            scrollableContainer.scrollTo({
+                top: topPos,
+                behavior: "smooth"
+            });
+        }
+    };
+    const scrollToRef = () => {
+        const scrollableContainer = containerRef.current;
+        const topElement = topOfFormRef.current;
+        if (scrollableContainer && topElement) {
+            scrollableContainer.scrollTo({
+                top: topElement.offsetTop,
+                behavior: "smooth"
+            });
+        }
+    };
+    function removeItem(index) {
+        const newItems = entries.filter((item, idx) => idx !== index);
+        setEntries(newItems);
+    }
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+        }
+    };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        const counterRef = doc(firestore, 'metadata', 'counterTnoahBkneot');
+        const counterSnap = await getDoc(counterRef);
+        for (let index = 0; index < entries.length; index++) {
+            let data = GetMsbarMotsar(entries[index].id);
+            await updateDoc(doc(firestore, 'mlae', data.id), {
+                kmot: (parseFloat(data.kmot) + parseFloat(entries[index].amount)),
+                alot: ((parseFloat(entries[index].price) * parseFloat(entries[index].amount)) + parseFloat(data.alot)),
+                alotLeheda: parseInt(((parseFloat(entries[index].amount) * parseFloat(entries[index].price)) + parseFloat(data.alot)) / (parseFloat(entries[index].amount) + parseFloat(data.kmot))),
+            });
+        }
+        const tnoah = {
+            berot: convertStringEnteries(entries),
+            msbar: counterSnap.data().count,
+            skhom: GetTotalPriceShop(entries),
+            shaa: format(new Date, 'HH:mm'),
+            tarekh: format(new Date, 'yyyy-MM-dd'),
+            msbarSbak: sbakID
+        }
+        console.log(tnoah);
+        try {
+            await addDoc(collection(firestore, 'tnoahBkneot'), tnoah);
+        }
+        catch (e) {
+            console.log(e);
+        }
+        await updateDoc(doc(firestore, 'metadata', 'counterTnoahBkneot'), { count: (counterSnap.data().count + 1) });
+        setEntries([{ category: '', id: '', remez: '', sogMotsar: '', amount: '', price: '' }]);
+        setLoading(false);
+    };
+
+    function GetMsbarMotsar(val) {
+        for (let index = 0; index < mlae.length; index++) {
+            if(mlae[index].shem === val){
+                return mlae[index];
+            }
+        }
+    }
+
+    function convertStringEnteries(val) {
+        let res = [];
+        for (let index = 0; index < val.length; index++) {
+            res.push({
+                amount: parseFloat(val[index].amount),
+                category: val[index].category,
+                id: val[index].id,
+                price: parseFloat(val[index].price),
+                remez: val[index].remez,
+                sogMotsar: val[index].sogMotsar,
+                msbarMotsar: GetMsbarMotsar(val[index].id).msbar
+            });
+        }
+        return res;
+    }
+
+    function GetTotalPriceShop(val) {
+        let res = 0;
+        for (let index = 0; index < val.length; index++) {
+            res += (parseFloat(val[index].amount) * parseFloat(entries[index].price));
+        }
+        return res;
+    }
 
     useEffect(() => {
         const q = query(collection(firestore, 'tnoahBkneot'), orderBy("msbar", 'desc'), limit(20));
@@ -41,234 +157,24 @@ export default function Procurement() {
         return () => unsubscribe();
     }, []);
 
-
-    const handleInputChange = (index, field, value) => {
-        const newEntries = [...entries];
-        newEntries[index][field] = value;
-        setEntries(newEntries);
-    };
-
-    const handleAddFields = () => {
-        setEntries([...entries, { category: '', id: '',sogMotsar : '', amount: '', price: '' }]);
-        setTimeout(() => {
-            scrollToBottomRef();
-        }, 100);
-    };
-
-    const scrollToBottomRef = () => {
-        const scrollableContainer = containerRef.current;
-        const targetElement = endOfFormRef.current;
-    
-        if (scrollableContainer && targetElement) {
-            // Calculate the position to scroll to
-            const topPos = targetElement.offsetTop;
-            scrollableContainer.scrollTo({
-                top: topPos,  // Scroll to the top position of the targetElement within the container
-                behavior: "smooth"
-            });
-        }
-    };
-    
-    const scrollToRef = () => {
-        const scrollableContainer = containerRef.current;
-        const topElement = topOfFormRef.current;
-
-        if (scrollableContainer && topElement) {
-            // Scroll to the top element
-            scrollableContainer.scrollTo({
-                top: topElement.offsetTop,
-                behavior: "smooth"
-            });
-        }
-    };
-
-    const containerRef = useRef(null);
-    const endOfFormRef = useRef(null);
-    const topOfFormRef = useRef(null);
-
-
-
-
-
-
-    function removeItem(index) {
-        const newItems = entries.filter((item, idx) => idx !== index);
-        setEntries(newItems);
-    }
-
-    const [showModalAddSbak, setShowModalAddSbak] = useState(false);
-
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-        }
-    };
-    const [showModalAddProductCategory, setShowModalAddProductCategory] = useState(false);
-    const [categoryData, setCategoryData] = useState(null);
-    const [visibleCategory, setVisibleCategory] = useState(null);
-    const [categoryList, setCategoryList] = useState({});
-
-
-    const [loading, setLoading] = useState(false);
-
-    const fetchDataForCategory = async (index, category) => {
-        if (!categoryList[category.id]) {
-            setCategoryList(await useGetDataByConditionWithoutUseEffect('mlae', 'category', '==', category?.id));
-        }
-        setVisibleCategory(index);
-    };
-
-    
-    const [shopCategory, setShopCategory] = useState({});
-    const [showBerotAska,setShowBerotAska] = useState(false);
-    const [aska,setAska] = useState(null);
-    
-    function GetMotsarRemez(val){
-        if(!shopCategory.length){
-            return;
-        }
-        for (let index = 0; index < shopCategory?.length; index++) {
-            if(shopCategory[index].shem === val){
-                return shopCategory[index].sog;
-            }
-        }
-        return;
-    }
-    
-    const fetchDataForCategoryShop = async (categoryShem) => {
-        let res = await useGetDataByConditionWithoutUseEffect('category', 'shem', '==', categoryShem);
-        setShopCategory(res[0].motsarem);
-    };
-    
-    const [motsaremMlae,setMotsaremMlae] = useState({});
-    const [kolMotsaremMlaeNebhro,setKolMotsaremMaleNebhro] = useState([]);
-    const fetchDataForCategoryShopSogMotsar = async(Remez) => {
-        let res = await useGetDataByConditionWithoutUseEffect('mlae', 'categoryMotsar', '==', Remez);
-        setKolMotsaremMaleNebhro([...kolMotsaremMlaeNebhro,res]);
-        setMotsaremMlae(res);
-    } 
-    console.log(categoryList);
-    console.log(motsaremMlae);
-    
-
-    const ConvertCategoryNames = (val) => {
-        if (val === 'פחים') {
-            return 'A';
-        }
-        else if (val === 'פרופילים') {
-            return 'B';
-        }
-        else if (val === 'צמגים') {
-            return 'C';
-        }
-        else if (val === 'צבעים') {
-            return 'D';
-        }
-        else if (val === 'חלקים קטנים') {
-            return 'E';
-        }
-        else if (val === 'חומרי עזר') {
-            return 'F';
-        }
-        else if (val === 'עגלות') {
-            return 'G';
-        }
-        else if (val === 'בסולט') {
-            return 'H';
-        }
-    }
-    const handleSubmit = async (e) => {
-        setLoading(true);
-        e.preventDefault();
-        const counterRef = doc(firestore, 'metadata', 'counterTnoahBkneot');
-        const counterSnap = await getDoc(counterRef);
-        for (let index = 0; index < entries.length; index++) {
-            let dataRef = doc(firestore, 'mlae', GetMsbarMotsar(entries[index].id).id);
-            let extractedData = await getDoc(dataRef);
-            let data = extractedData.data();
-            console.log(data)
-            await updateDoc(doc(firestore, 'mlae', extractedData.id), {
-                kmot: (parseFloat(data.kmot) + parseFloat(entries[index].amount)),
-                alot: ((parseFloat(entries[index].price) * parseFloat(entries[index].amount)) + parseFloat(data.alot)),
-                alotLeheda: parseInt(((parseFloat(entries[index].amount) * parseFloat(entries[index].price)) + parseFloat(data.alot)) / (parseFloat(entries[index].amount) + parseFloat(data.kmot))),
-            });
-        }
-        const tnoah = {
-            berot : convertStringEnteries(entries),
-            msbar : counterSnap.data().count,
-            skhom : GetTotalPriceShop(entries),
-            shaa : format(new Date,'HH:mm'),
-            tarekh : format(new Date,'yyyy-MM-dd'),
-            msbarSbak : sbakID
-        }
-        console.log(tnoah);
-        try{
-            await addDoc(collection(firestore,'tnoahBkneot'),tnoah);
-        }
-        catch(e){
-            console.log(e);
-        }
-
-        console.log(2);
-        await updateDoc(doc(firestore, 'metadata', 'counterTnoahBkneot'), { count: (counterSnap.data().count + 1) });
-        setEntries([{ category: '', id: '',sogMotsar : '', amount: '', price: '' }]);
-        setLoading(false);
-    };
-
-    function GetMsbarMotsar(val) {
-        for (let index = 0; index < kolMotsaremMlaeNebhro.length; index++) {
-            let motsrem = kolMotsaremMlaeNebhro[index];
-            for (let index2 = 0; index2 < motsrem.length; index2++) {
-                if(motsrem[index2].shem === val){
-                    return motsrem[index2];
-                }
-            }
-        }
-        return;
-    }
-
-    function convertStringEnteries (val){
-        let res = [];
-        for (let index = 0; index < val.length; index++) {
-            res.push({
-                amount : parseFloat(val[index].amount),
-                category : val[index].category,
-                id : val[index].id,
-                price : parseFloat(val[index].price),
-                sogMotsar : val[index].sogMotsar,
-                msbarMotsar : GetMsbarMotsar(val[index].id).msbar
-            });
-        }
-        return res;
-    }
-
-    function GetTotalPriceShop (val){
-        let res = 0;
-        for (let index = 0; index < val.length; index++) {
-            res += (parseFloat(val[index].amount) * parseFloat(entries[index].price));
-        }
-        return res;
-    }
-
     return (
         <div className='p-20'>
             {<ModalAddProductCategory category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
             {<ModalAddSobak show={showModalAddSbak} disable={() => setShowModalAddSbak(false)} />}
             {loading && <Spinner className='absolute top-0 left-0 bottom-0 right-0' />}
-            {<ModalShowBerotAska aska={aska} show={showBerotAska} disable={() => setShowBerotAska(false)}/>}
-            <div className='flex justify-between items-center'>
-                <div className='w-full max-w-[800px]'>
-                    <div className='bg-white h-[600px] overflow-auto rounded-2xl shadow-2xl'>
+            {<ModalShowBerotAska aska={aska} show={showBerotAska} disable={() => setShowBerotAska(false)} />}
+            <div className='flex justify-center flex-wrap items-center'>
+                <div className='w-full max-w-[900px] mr-10 ml-10 mt-20 mb-20'>
+                    <div className='bg-white rounded-2xl shadow-2xl'>
                         <div className='text-center m-4 text-2xl'>מלאי</div>
-                        <Divider className='mb-5' />
-                        <div className='p-2'>
+                    <Divider className='mb-5' />
+                        <div className='p-5 h-[600px] overflow-auto '>
                             {
                                 category.map((cat, index) => {
                                     return <>
                                         <div key={index} className='bg-white rounded-lg p-2'>
                                             <div className='flex justify-between items-center'>
                                                 <div className='flex items-center'>
-                                                    <Button onClick={() => fetchDataForCategory(index === visibleCategory ? null : index, cat)} className='mr-3'><MdOutlineKeyboardArrowDown className='text-4xl' /></Button>
                                                     <Button onClick={() => { setShowModalAddProductCategory(true); setCategoryData(cat) }} className='mr-3'><FaPlus className='text-xl' />מוצר חדש</Button>
                                                 </div>
                                                 <div>מוצרים {cat.dlbak}</div>
@@ -277,55 +183,59 @@ export default function Procurement() {
                                                     <Avatar size="lg" />
                                                 </div>
                                             </div>
-                                            {visibleCategory === index && (
-                                                <>
-                                                    {categoryList === null ? (
-                                                        <Spinner />
-                                                    ) : categoryList.length > 0 ? (
-                                                        <div className='mt-5 bg-gray-300'>
-                                                            <table className="w-full table-auto border-collapse">
-                                                                <thead>
-                                                                    <tr className="bg-gray-500 dark:bg-gray-800">
-                                                                        <th className="px-4 py-3 text-right font-medium text-white">זמן הספקה</th>
-                                                                        <th className="px-4 py-3 text-right font-medium text-white">עלות ממוצע</th>
-                                                                        <th className="px-4 py-3 text-right font-medium text-white">סה"כ עלות</th>
-                                                                        <th className="px-4 py-3 text-right font-medium text-white">כמות</th>
-                                                                        <th className="px-4 py-3 text-right font-medium text-white">שם מוצר</th>
-                                                                        <th className="px-4 py-3 text-right font-medium text-white">מספר מוצר</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {categoryList.map((item, index) => (
-                                                                        <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.zmanHsbaka}</td>
-                                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.alotLeheda}</td>
-                                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.alot}</td>
-                                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.kmot}</td>
-                                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.shem}</td>
-                                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.msbar}</td>
-                                                                        </tr>
-                                                                    ))}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    ) : (
-                                                        <div className='flex justify-center text-danger mt-5'>אין נתונים להצגה</div>
-                                                    )}
-                                                </>
-                                            )}
+                                            <div className='mt-5 bg-gray-300'>
+                                                <table className="w-full table-auto border-collapse">
+                                                    <thead>
+                                                        <tr className="bg-gray-500 dark:bg-gray-800">
+                                                            <th className="px-4 py-3 text-right font-medium text-white"></th>
+                                                            <th className="px-4 py-3 text-right font-medium text-white">זמן הספקה</th>
+                                                            <th className="px-4 py-3 text-right font-medium text-white">עלות ממוצע</th>
+                                                            <th className="px-4 py-3 text-right font-medium text-white">סה"כ עלות</th>
+                                                            <th className="px-4 py-3 text-right font-medium text-white">כמות</th>
+                                                            <th className="px-4 py-3 text-right font-medium text-white">שם מוצר</th>
+                                                            <th className="px-4 py-3 text-right font-medium text-white">מספר מוצר</th>
+                                                            <th className="px-4 py-3 text-right font-medium text-white"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {cat?.motsarem?.map((motsar, index1) => (
+                                                            mlae.map((item, index) => {
+                                                                return item.categoryMotsar === motsar.sog && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                                                                    <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200"><FaTrash className='hover:cursor-pointer text-danger'
+                                                                        onClick={async () => {
+                                                                            await deleteDoc(doc(firestore, 'mlae', item.id));
+                                                                        }} /></td>
+                                                                    <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.zmanHsbaka}</td>
+                                                                    <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.alotLeheda}</td>
+                                                                    <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.alot}</td>
+                                                                    <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.kmot}</td>
+                                                                    <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.shem}</td>
+                                                                    <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.msbar}</td>
+                                                                    <td>
+                                                                        <div className="group relative">
+                                                                            <Image src={GetTmonatHelek(item.categoryMotsar)} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            })
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                             <Divider className='mt-5' />
                                         </div>
                                     </>
                                 })
                             }
                         </div>
+                        <div className='p-2'></div>
                     </div>
                 </div>
-                <div className=" overflow-auto h-[600px] bg-white rounded-xl shadow-xl" ref={containerRef}>
+                <div className="  bg-white rounded-xl shadow-xl mr-10 ml-10 mt-20 mb-20" ref={containerRef}>
                     <div ref={topOfFormRef} />
                     <div className='text-center m-4 text-2xl'>קנייה</div>
                     <Divider className='mb-5' />
-                    <div className='flex justify-center w-full pb-10 pr-10 pl-10 max-w-[800px] min-w-[400px]'>
+                    <div className='overflow-auto h-[600px] flex justify-center w-full pb-10 pr-10 pl-10 max-w-[800px] min-w-[400px]'>
                         <form onSubmit={handleSubmit} className='w-full'>
                             <div dir='rtl' className=''>
                                 <div className='flex justify-center items-center'>
@@ -379,7 +289,7 @@ export default function Procurement() {
                                                 disallowEmptySelection
                                                 selectionMode="single"
                                                 selectedKeys={entry.category}
-                                                onSelectionChange={(val) => { handleInputChange(index, 'category', val.currentKey); handleInputChange(index, 'id', ''); fetchDataForCategoryShop(entry.category); }}
+                                                onSelectionChange={(val) => { handleInputChange(index, 'category', val.currentKey); handleInputChange(index, 'id', ''); handleInputChange(index, 'sogMotsar', ''); handleInputChange(index, 'remez', ''); }}
                                             >
                                                 <DropdownItem key="מתכות">מתכות</DropdownItem>
                                                 <DropdownItem key="צבעים">צבעים</DropdownItem>
@@ -409,12 +319,14 @@ export default function Procurement() {
                                                 closeOnSelect={true}
                                                 disallowEmptySelection
                                                 selectionMode="single"
-                                                selectedKeys={entry.id}
-                                                onSelectionChange={(val) => {handleInputChange(index, 'sogMotsar', val.currentKey);fetchDataForCategoryShopSogMotsar(GetMotsarRemez(entry.sogMotsar))}}
+                                                selectedKeys={entry.sogMotsar}
+                                                onSelectionChange={(val) => { handleInputChange(index, 'sogMotsar', val.currentKey); handleInputChange(index, 'id', ''); }}
                                             >
                                                 {
-                                                    shopCategory.length && shopCategory?.map((cat, index) => {
-                                                        return <DropdownItem key={cat?.shem}>{cat?.shem}</DropdownItem>
+                                                    category.map((cat, catIndex) => {
+                                                        return cat.shem === entry.category && cat?.motsarem?.map((motsar, motsarIndex) => {
+                                                            return <DropdownItem onClick={() => handleInputChange(index, 'remez', motsar?.sog)} key={motsar?.shem}>{motsar?.shem}</DropdownItem>
+                                                        })
                                                     })
                                                 }
                                             </DropdownMenu>
@@ -439,12 +351,15 @@ export default function Procurement() {
                                                 onSelectionChange={(val) => handleInputChange(index, 'id', val.currentKey)}
                                             >
                                                 {
-                                                    motsaremMlae.length && motsaremMlae?.map((motsar, index) => {
-                                                        return <DropdownItem key={motsar?.shem}>{motsar?.shem}</DropdownItem>
+                                                    mlae.map((motsar, index) => {
+                                                        return motsar.categoryMotsar === entry.remez && <DropdownItem key={motsar?.shem}>{motsar?.shem}</DropdownItem>
                                                     })
                                                 }
                                             </DropdownMenu>
                                         </Dropdown>
+                                        {
+                                            console.log(entries)
+                                        }
                                         <Input
                                             bordered
                                             fullWidth
@@ -489,26 +404,19 @@ export default function Procurement() {
                                     </Button>
                                 }
                             </div>
-                            <div ref={endOfFormRef} />
+                            <div ref={endOfFormRef}/>
                         </form>
                     </div>
-
+                    <div className='p-2'></div>
                 </div>
-            </div>
-            <div className='flex justify-between items-center mt-32'>
-                <div className="flex justify-center max-w-[800px]">
-
-                </div>
-
-
-                <div className='w-full max-w-[800px] bg-white h-[600px] overflow-auto rounded-2xl shadow-2xl'>
+                <div className='w-full max-w-[900px] bg-white rounded-2xl shadow-2xl mr-10 ml-10 mt-20 mb-20'>
                     <div className='text-center m-4 text-2xl'>היסטוריה קניות</div>
-                    <Divider className='mb-5' />
-                    <div className="flex flex-col w-full max-w-4xl mx-auto">
+                    <Divider className='mb-5'/>
+                    <div className="flex flex-col w-full max-w-4xl mx-auto h-[600px] overflow-auto">
                         <div className="overflow-x-auto">
                             <table className="w-full table-auto border-collapse text-center">
                                 <thead>
-                                    <tr className="bg-gray-100 dark:bg-gray-800">
+                                    <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-50">
                                         <th className="px-4 py-3 text-center font-medium text-gray-700 dark:text-gray-300">תאריך קנייה</th>
                                         <th className="px-4 py-3 text-center font-medium text-gray-700 dark:text-gray-300">שעה</th>
                                         <th className="px-4 py-3 text-center font-medium text-gray-700 dark:text-gray-300">פירוט קנייה</th>
@@ -521,7 +429,7 @@ export default function Procurement() {
                                             return <tr className="border-b border-gray-200 dark:border-gray-700">
                                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">{item.tarekh}</td>
                                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">{item.shaa}</td>
-                                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300"><Button onClick={() => {setShowBerotAska(true);setAska(item);}}>פירוט</Button></td>
+                                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300"><Button onClick={() => { setShowBerotAska(true); setAska(item); }}>פירוט</Button></td>
                                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">{item.skhom}</td>
                                             </tr>
                                         })
@@ -530,6 +438,7 @@ export default function Procurement() {
                             </table>
                         </div>
                     </div>
+                    <div className='p-2'></div>
                 </div>
             </div>
         </div>

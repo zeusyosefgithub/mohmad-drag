@@ -1,0 +1,50 @@
+/* Regular CSS */
+body, html {
+    font-family: 'Roboto', sans-serif; /* Set the default font family */
+}
+
+.bg-gradient-to-r-f5 {
+    background: linear-gradient(to right, #f3f4f6, #f0fdfa);
+    min-height: 100vh;
+}
+.text-f4 {
+    color: white;
+}
+.bg-f3{
+    background-color: #075985;
+}
+.bg-f2{
+    background-color: #14b8a6;
+}
+.border-f1{
+    border-color: #14b8a6;
+}
+.border-f6{
+    border-bottom: 1px solid #14b8a6;
+}
+
+/* Print-specific CSS */
+@media print {
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .bg-gradient-to-r-f5 {
+        background: linear-gradient(to right, #f3f4f6, #f0fdfa) !important;
+    }
+    .text-f4 {
+        color: white !important;
+    }
+    .bg-f3 {
+        background-color: #075985 !important;
+    }
+    .border-f6{
+        border-bottom: 1px solid #14b8a6 !important;
+    }
+    .bg-f2 {
+        background-color: #14b8a6 !important;
+    }
+    .border-f1 {
+        border-color: #14b8a6 !important;
+    }
+}

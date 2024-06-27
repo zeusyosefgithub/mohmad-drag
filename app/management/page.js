@@ -4,10 +4,19 @@ import { useMemo, useRef, useState } from "react";
 import { FaArrowDown, FaArrowUp, FaTrash } from "react-icons/fa";
 import { FiPlus } from "react-icons/fi";
 import { format } from 'date-fns';
+import GetDocs from "../FireBase/getDocs";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { firestore } from "../FireBase/firebase";
+import { Kbala } from "../Page Components/kbala";
+import { useReactToPrint } from "react-to-print";
 
 export default function Management() {
+    const [entries, setEntries] = useState([{ msbarShek: '', msbarBank: '', shemBank: '', msbarHeshvonBank: '', tarekhBeraon: '', skhom: '' }]);
+    const lkhot = GetDocs('customers');
+    const [lkoh, setLkoh] = useState('');
+    const sbkem = GetDocs('sbkem');
     const [sbak, setSbak] = useState('');
-    const [entries, setEntries] = useState([{ sogTshlom: '', tshlom: '' }]);
+
 
     const handleInputChange = (index, field, value) => {
         const newEntries = [...entries];
@@ -16,15 +25,36 @@ export default function Management() {
     };
 
     const handleAddFields = () => {
-        setEntries([...entries, { sogTshlom: '', tshlom: '' }]);
+        setEntries([...entries, { msbarShek: '', msbarBank: '', shemBank: '', msbarHeshvonBank: '', tarekhBeraon: '', skhom: '' }]);
         setTimeout(() => {
             endOfFormRef.current?.scrollIntoView({ behavior: "smooth" });
         }, 100);
     };
-
-    const handleSubmit = (e) => {
+    const counter = GetDocs('metadata').find((count) => count.id === 'counterTnoahBmzomnem');
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        setEntries([{ sogTshlom: '', tshlom: '' }]);
+        await updateDoc(doc(firestore,'customers',lkoh.id),{
+            yetera : lkoh.yetera - skhomKolel
+        });
+        await addDoc(collection(firestore, "tnoahBmzomnem"),{
+            skhomKlle : skhomKolel,
+            mezoman : kesefMezoman,
+            shekem : entries,
+            msbar : counter?.count,
+            lkoh : lkoh.idnum,
+            sogLkoh : selectedKeys1 === "עובדים" ? "C" : selectedKeys1 === "ספקים" ? "A" : "B",
+            tarekh : format(new Date(),'dd-MM-yyyy'),
+
+        });
+        await updateDoc(doc(firestore, 'metadata', counter?.id), { count: counter?.count + 1 });
+        handelPrintKbala();
+        setLkoh('');
+        setSbak('');
+        setMezoman(false);
+        setShekem(false);
+        setSkhomKolel(0);
+        setKesefMezoman(0);
+        setEntries([{ msbarShek: '', msbarBank: '', shemBank: '', msbarHeshvonBank: '', tarekhBeraon: '', skhom: '' }]);
     };
 
     const endOfFormRef = useRef(null);
@@ -36,53 +66,48 @@ export default function Management() {
     const scrollToBottomRef = () => {
         endOfFormRef.current.scrollIntoView({ behavior: "smooth" });
     };
-
+    const handleGetDigits = (number) => {
+        const integerPart = Math.floor(number); // Get the integer part of the number
+        const fractionalPart = (number % 1).toFixed(2).substring(2); // Get the first two digits after the decimal point
+        const formatted = `${integerPart}.${fractionalPart}`; // Concatenate integer and fractional parts
+        return formatted;
+    };
 
     function removeItem(index) {
         const newItems = entries.filter((item, idx) => idx !== index);
         setEntries(newItems);
     }
 
-    const animals = [
-        {
-            value: 'yosef',
-            label: 'yosef'
-        },
-        {
-            value: 'yosef 2',
-            label: 'yosef 2'
-        },
-        {
-            value: 'yosef 3',
-            label: 'yosef 3'
-        },
-        {
-            value: 'yosef 4',
-            label: 'yosef 4'
+    const GetSkhomShekem = () => {
+        let sum = 0;
+        for (let index = 0; index < entries.length; index++) {
+            sum += entries[index].skhom;
         }
-    ]
-
-    const [showModalAddSbak, setShowModalAddSbak] = useState(false);
-
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-        }
-    };
+        return sum;
+    }
 
     const [selectedKeys1, setSelectedKeys1] = useState("צד שני");
     const [selectedKeys, setSelectedKeys] = useState("סוג עסקה");
-    const [sogTshlomKeys, setSogTshlomKeys] = useState("סוג תשלום");
-
     const [mezoman, setMezoman] = useState(false);
     const [shekem, setShekem] = useState(false);
+
+    const [skhomKolel, setSkhomKolel] = useState(0);
+    const [kesefMezoman, setKesefMezoman] = useState(0);
+
+    const componentRefOne = useRef();
+    const handelPrintKbala = useReactToPrint({
+        pageStyle: `@page {
+            size: A4;
+            margin: 0;
+        }`,
+        content: () => componentRefOne.current,
+    });
 
     return (
         <div>
 
             <div className='flex justify-between items-center mt-20 mr-20 ml-20'>
-
-                <div>
+                {/* <div>
                     <div className="flex flex-col w-full max-w-5xl mx-auto">
                         <div className="text-center text-2xl">
                             לקחות
@@ -254,7 +279,7 @@ export default function Management() {
                             </table>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
 
                 <div>
@@ -359,26 +384,50 @@ export default function Management() {
                                     </Dropdown>
                                 </div>
                                 <div className='flex justify-center items-center'>
-                                    <Autocomplete
-                                        bordered
-                                        fullWidth
-                                        label="ספק"
-                                        className="max-w-xs m-5"
-                                        color="primary"
-                                        defaultItems={animals}
-                                        allowsCustomValue={true}
-                                        onSelectionChange={setSbak}
-                                        onInputChange={setSbak}
-                                    >
-                                        {
-                                            animals.map((animal) => (
-                                                <AutocompleteItem className='text-right' key={animal.value} value={animal.value}>
-                                                    {animal.label}
-                                                </AutocompleteItem>
-                                            ))
-                                        }
-                                    </Autocomplete>
-                                    <Input className="max-w-xs m-5" label='סכום כולל' />
+                                    {
+                                        selectedKeys1 == 'לקחות' &&
+                                        <Autocomplete
+                                            bordered
+                                            fullWidth
+                                            label="לקוח"
+                                            className="max-w-xs m-5"
+                                            color="primary"
+                                            defaultItems={lkhot}
+                                            allowsCustomValue={false}
+                                        >
+                                            {
+                                                lkhot.map((lkoh) => (
+                                                    <AutocompleteItem onClick={() => setLkoh(lkoh)} className='text-right' key={lkoh.id} value={lkoh.id}>
+                                                        {lkoh.name}
+                                                    </AutocompleteItem>
+                                                ))
+                                            }
+                                        </Autocomplete>
+                                    }
+                                    {
+                                        selectedKeys1 == 'ספקים' &&
+                                        <Autocomplete
+                                            bordered
+                                            fullWidth
+                                            label="ספק"
+                                            className="max-w-xs m-5"
+                                            color="primary"
+                                            defaultItems={sbkem}
+                                            allowsCustomValue={false}
+                                        >
+                                            {
+                                                sbkem.map((sbakkk) => (
+                                                    <AutocompleteItem onClick={() => setSbak(sbakkk)} className='text-right' key={sbakkk.id} value={sbakkk.id}>
+                                                        {sbakkk.shem}
+                                                    </AutocompleteItem>
+                                                ))
+                                            }
+                                        </Autocomplete>
+                                    }
+
+                                    <Input color="success" type="number" value={skhomKolel || ''} onValueChange={(val) => setSkhomKolel(Math.max(Math.min(val, lkoh?.yetera), 0))} className="max-w-xs m-5" label='סכום כולל' />
+                                    <Input readOnly value={lkoh?.yetera} color={((lkoh?.yetera - skhomKolel) === 0) ? 'success' : "danger"} className="max-w-xs m-5" label='יתרת חובה' />
+                                    <Input readOnly value={(lkoh?.yetera - skhomKolel) || ''} color={((lkoh?.yetera - skhomKolel) === 0) ? 'success' : "danger"} className="max-w-xs m-5" label='נשאר' />
                                     {
                                         entries?.length > 1 &&
                                         <Button onClick={scrollToBottomRef} auto flat className='ml-5'>
@@ -394,7 +443,10 @@ export default function Management() {
                                 </Switch>
                                 {
                                     mezoman &&
-                                    <Input size="" className="max-w-xs mr-5" label='סכום' />
+                                    <div className="flex items-center">
+                                        <Input value={kesefMezoman || ''} onValueChange={(val) => setKesefMezoman(Math.min(val, skhomKolel))} color="primary" size="sm" className="max-w-[150px] mr-5" label='סכום' />
+                                        <div className="mr-5">נשאר מהסכום - {skhomKolel - kesefMezoman - GetSkhomShekem()}</div>
+                                    </div>
                                 }
                             </div>
                             <Divider />
@@ -404,96 +456,94 @@ export default function Management() {
                                 </Switch>
 
                             </div>
-                            <div dir="rtl" className="mb-5">
-                                {
-                                    shekem &&
-                                    <>
-                                        {entries?.map((entry, index) => (
-                                            <div className="flex items-center mt-2">
-                                                <div>{index + 1}</div>
-                                                <Input
-                                                    bordered
-                                                    fullWidth
-                                                    type="number"
-                                                    color="primary"
-                                                    className="max-w-xs m-2"
-                                                    size=""
-                                                    placeholder="מספר שיק"
-                                                    value={entry.tshlom}
-                                                    onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
-                                                />
-                                                <Input
-                                                    bordered
-                                                    fullWidth
-                                                    type="number"
-                                                    color="primary"
-                                                    size=""
-                                                    className="max-w-xs m-2"
-                                                    placeholder="מספר בנק"
-                                                    value={entry.tshlom}
-                                                    onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
-                                                />
-                                                <Input
-                                                    bordered
-                                                    fullWidth
-                                                    type="number"
-                                                    color="primary"
-                                                    className="max-w-xs m-2"
-                                                    size=""
-                                                    placeholder="שם בנק"
-                                                    value={entry.tshlom}
-                                                    onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
-                                                />
-                                                <Input
-                                                    bordered
-                                                    fullWidth
-                                                    type="number"
-                                                    color="primary"
-                                                    className="max-w-xs m-2"
-                                                    size=""
-                                                    placeholder="מספר חשבון בנק"
-                                                    value={entry.tshlom}
-                                                    onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
-                                                />
-                                                <Input
-                                                    bordered
-                                                    fullWidth
-                                                    type="number"
-                                                    color="primary"
-                                                    className="max-w-xs m-2"
-                                                    size=""
-                                                    placeholder="תאריך פרעון"
-                                                    value={entry.tshlom}
-                                                    onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
-                                                />
-                                                <Input
-                                                    bordered
-                                                    fullWidth
-                                                    type="number"
-                                                    color="primary"
-                                                    size=""
-                                                    className="max-w-xs m-2"
-                                                    placeholder="סכום"
-                                                    value={entry.tshlom}
-                                                    onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
-                                                />
-                                                {
-                                                    (index === entries.length - 1)
-                                                        ?
-                                                        <Button auto size="sm" color="primary" flat onClick={handleAddFields} className='m-2'>
-                                                            <FiPlus className="text-xl" />
-                                                        </Button>
-                                                        :
-                                                        <Button auto size="sm" color="danger" flat onClick={() => removeItem(index)} className='m-2'>
-                                                            <FaTrash className="text-lg" />
-                                                        </Button>
-                                                }
+                            {
+                                shekem && (kesefMezoman != skhomKolel) &&
+                                <div dir="rtl" className="mb-5">
+                                    {entries?.map((entry, index) => (
+                                        <div className="flex items-center mt-2">
+                                            <div>{index + 1}</div>
+                                            <Input
+                                                bordered
+                                                fullWidth
+                                                type="number"
+                                                color="primary"
+                                                className="max-w-xs m-2"
+                                                size=""
+                                                placeholder="מספר שיק"
+                                                value={entry.msbarShek}
+                                                onChange={(e) => handleInputChange(index, 'msbarShek', e.target.value)}
+                                            />
+                                            <Input
+                                                bordered
+                                                fullWidth
+                                                type="number"
+                                                color="primary"
+                                                size=""
+                                                className="max-w-xs m-2"
+                                                placeholder="מספר בנק"
+                                                value={entry.msbarBank}
+                                                onChange={(e) => handleInputChange(index, 'msbarBank', e.target.value)}
+                                            />
+                                            <Input
+                                                bordered
+                                                fullWidth
+                                                type="text"
+                                                color="primary"
+                                                className="max-w-xs m-2"
+                                                size=""
+                                                placeholder="שם בנק"
+                                                value={entry.shemBank}
+                                                onChange={(e) => handleInputChange(index, 'shemBank', e.target.value)}
+                                            />
+                                            <Input
+                                                bordered
+                                                fullWidth
+                                                type="number"
+                                                color="primary"
+                                                className="max-w-xs m-2"
+                                                size=""
+                                                placeholder="מספר חשבון בנק"
+                                                value={entry.msbarHeshvonBank}
+                                                onChange={(e) => handleInputChange(index, 'msbarHeshvonBank', e.target.value)}
+                                            />
+                                            <Input
+                                                bordered
+                                                fullWidth
+                                                type="date"
+                                                color="primary"
+                                                className="max-w-xs m-2"
+                                                size=""
+                                                placeholder="תאריך פרעון"
+                                                value={entry.tarekhBeraon}
+                                                onChange={(e) => handleInputChange(index, 'tarekhBeraon', e.target.value)}
+                                            />
+                                            <Input
+                                                bordered
+                                                fullWidth
+                                                type="number"
+                                                color="warning"
+                                                size=""
+                                                className="max-w-xs m-2"
+                                                placeholder="סכום"
+                                                value={entry.skhom}
+                                                onChange={(e) => handleInputChange(index, 'skhom', Math.min(e.target.value, handleGetDigits(((skhomKolel - kesefMezoman) / entries.length))))}
+                                            />
+                                            {
+                                                (index === entries.length - 1)
+                                                    ?
+                                                    <Button auto size="sm" color="primary" flat onClick={handleAddFields} className='m-2'>
+                                                        <FiPlus className="text-xl" />
+                                                    </Button>
+                                                    :
+                                                    <Button auto size="sm" color="danger" flat onClick={() => removeItem(index)} className='m-2'>
+                                                        <FaTrash className="text-lg" />
+                                                    </Button>
+                                            }
 
-                                            </div>
-                                        ))}
-                                    </>
-                                }
-                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            }
                             <Divider />
 
                             <div className='flex justify-center'>
@@ -511,6 +561,9 @@ export default function Management() {
                         </form>
                     </div>
                 </div>
+            </div>
+            <div className="hidden border-2 border-black">
+                <Kbala kesefMezoman={kesefMezoman} shekem={entries} lkoh={lkoh} ref={componentRefOne}/>
             </div>
         </div>
     )

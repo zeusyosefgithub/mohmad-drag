@@ -64,7 +64,7 @@ export default function ModalBrokAgla({ disable, show,motsarem,Brofelem,Berok })
                 <>
                     <ModalHeader className="shadow-2xl flex justify-center">פירוק עגלה</ModalHeader>
                     <ModalBody className="shadow-2xl">
-                        <div>
+                        <div className="overflow-x-auto h-[600px]">
                             {
                                 Kolmotsarem?.map((motsar, index) => {
                                     return (motsar.shem != '') && (motsar.shem != 'בחר פריט') &&

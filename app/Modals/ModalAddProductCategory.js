@@ -12,33 +12,7 @@ export default function ModalAddProductCategory({ show, disable, category,Aeshor
     const [shem, setShem] = useState('');
     const [sog, setSog] = useState('');
     const [zmanAsbka, setZmanAsbka] = useState('');
-
-    const AddSbak = async () => {
-        let count = category?.dlbak + 1;
-        await addDoc(collection(firestore, "mlae"), {
-            category: category?.id,
-            categoryMotsar : GetCategory(shem)?.sog,
-            msbar: `${GetCategory(shem)?.sog}0${category?.dlbak}`,
-            shem: sog,
-            alot: sckhom || 0,
-            alotLeheda: sckhom || 0,
-            kmot: sckhom ? 1 : 0,
-            zmanHsbaka: zmanAsbka,
-            mededa: GetCategory(shem)?.mededa,
-            msbarTfaol : msbarTfaol || 0
-        });
-        await updateDoc(doc(firestore, 'category', category?.id), { dlbak: count });
-        setShem('');
-        setZmanAsbka('');
-        setSog('');
-        if(Aeshor){
-            Aeshor(true);
-        }
-        disable();
-    }
-
     const motsarem = category?.motsarem;
-
     function GetCategory (val){
         for (let index = 0; index < motsarem?.length; index++) {
             if(val === motsarem[index].shem){
@@ -47,6 +21,54 @@ export default function ModalAddProductCategory({ show, disable, category,Aeshor
         }
         return;
     }
+
+    function GetNewArrayMotsarem(val){
+        let newarray = [];
+        for (let index = 0; index < motsarem?.length; index++) {
+            if(motsarem[index].shem === shem){
+                newarray.push({
+                    dlbak : val + 1,
+                    mededa : motsarem[index].mededa,
+                    shem : motsarem[index].shem,
+                    sog : motsarem[index].sog
+                })
+            }
+            else{
+                newarray.push(motsarem[index]);
+            }
+        }
+        return newarray;
+    }
+
+    const AddSbak = async () => {
+        let count = category?.dlbak + 1;
+        let counter = GetCategory(shem)?.dlbak;
+        await addDoc(collection(firestore, "mlae"), {
+            category: category?.id,
+            categoryMotsar : GetCategory(shem)?.sog,
+            msbar: `${GetCategory(shem)?.sog}0${counter}`,
+            shem: sog,
+            alot: sckhom || 0,
+            alotLeheda: sckhom || 0,
+            kmot: sckhom ? 1 : 0,
+            zmanHsbaka: zmanAsbka,
+            mededa: GetCategory(shem)?.mededa,
+            msbarTfaol : msbarTfaol || 0
+        });
+        await updateDoc(doc(firestore, 'category', category?.id), { 
+            dlbak: count + 1,
+            motsarem : GetNewArrayMotsarem(counter)
+         });
+        setShem('');
+        setZmanAsbka('');
+        setSog('');
+        if(Aeshor){
+            Aeshor(true);
+        }
+        disable();
+    }
+    //       צמיג 1
+
 
     return (
         <Modal placement="center" className="test-fontt max-w-[900px]" backdrop={"blur"} size="5xl" isOpen={show} onClose={disable}>

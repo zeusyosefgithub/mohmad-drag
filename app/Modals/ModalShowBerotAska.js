@@ -27,11 +27,11 @@ export default function ModalShowBerotAska({ show, disable, aska }) {
                                     שירות - {sbak?.sherot}
                                 </div>
                             </div>
-                            <div className="mt-10">
+                            <div className="mt-10 h-[600px] overflow-auto">
                                 <div className='mt-5 bg-gray-300' dir="ltr">
                                     <table className="w-full table-auto border-collapse">
                                         <thead>
-                                            <tr className="bg-gray-500 dark:bg-gray-800">
+                                            <tr className="bg-gray-500 dark:bg-gray-800 sticky top-0">
                                                 <th className="px-4 py-3 text-center font-medium text-white">מחיר ליחידה</th>
                                                 <th className="px-4 py-3 text-center font-medium text-white">כמות</th>
                                                 <th className="px-4 py-3 text-center font-medium text-white">קטיגוריה</th>
@@ -51,7 +51,7 @@ export default function ModalShowBerotAska({ show, disable, aska }) {
                                                     <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.msbarMotsar}</td>
                                                 </tr>
                                             ))}
-                                            <tr className="bg-gray-500 dark:bg-gray-800">
+                                            <tr className="bg-gray-500 dark:bg-gray-800 sticky bottom-0">
                                                 <th className="px-4 py-3 text-center text-white font-medium text-xl">סכום : {aska?.skhom}</th>
                                                 <th className="px-4 py-3 text-center font-medium text-white"></th>
                                                 <th className="px-4 py-3 text-center font-medium text-white"></th>
