@@ -10,11 +10,9 @@ export default function ModalAddSobak({ disable, show }) {
 
 
     const [aer, setaer] = useState('');
-    const [msbar, setmsbar] = useState('');
     const [nead, setnead] = useState('');
     const [shem, setshem] = useState('');
     const [yeshov, setyeshov] = useState('');
-    const [ytratHeshvon, setytratHeshvon] = useState('');
 
     const counter = GetDocs('metadata');
 
@@ -27,7 +25,7 @@ export default function ModalAddSobak({ disable, show }) {
             shem: shem,
             sherot  : 'A',
             yeshov : yeshov,
-            ytratHeshvon : ytratHeshvon,
+            ytratHeshvon : 0,
         });
         await updateDoc(doc(firestore,'metadata',counter[0]?.id),{count : counter[0]?.count + 1});
     }
@@ -43,7 +41,6 @@ export default function ModalAddSobak({ disable, show }) {
                             <Input value={nead} onValueChange={(val) => setnead(val)} className="mt-2" label="נייד" />
                             <Input value={aer} onValueChange={(val) => setaer(val)} className="mt-2" label="עיר" />
                             <Input value={yeshov} onValueChange={(val) => setyeshov(val)} className="mt-2" label="ישוב" />
-                            <Input value={ytratHeshvon} onValueChange={(val) => setytratHeshvon(val)} className="mt-2" label="יתרת חשבון" />
                             <div className="flex items-center mt-4">
                                 <div className="ml-2">שירות :</div>
                                 <Button isDisabled>מכירת חומרים</Button>

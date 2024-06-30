@@ -183,7 +183,8 @@ export default function Activion() {
             name: customerLastName,
             phone: customerPhone,
             postal: customerPostal,
-            street: customerStreet
+            street: customerStreet,
+            yetera: 0,
         }
         const drag = {
             authorizedweight: authorizedweight,

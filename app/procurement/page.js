@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Input, Button, Divider, Autocomplete, AutocompleteItem, Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Spinner } from '@nextui-org/react';
 import { FiPlus } from "react-icons/fi";
 import { FaArrowUp } from 'react-icons/fa';
@@ -18,10 +18,12 @@ import { format } from 'date-fns';
 import ModalShowBerotAska from '../Modals/ModalShowBerotAska';
 import Image from 'next/image';
 import { GetTmonatHelek } from '../page';
+import ContactContext from '../auth/ContactContext';
 
 
 export default function Procurement() {
 
+    const { contactName, setContactName, customerSet, setCustomerSet } = useContext(ContactContext);
     const [sbak, setSbak] = useState('');
     const [sbakID, setSbakID] = useState(null);
     const [entries, setEntries] = useState([{ category: '', id: '', sogMotsar: '', remez: '', amount: '', price: '' }]);
@@ -157,6 +159,12 @@ export default function Procurement() {
         return () => unsubscribe();
     }, []);
 
+    useEffect(() => {
+        if(contactName){
+            setShowModalAddSbak(true);
+        }
+    },[contactName])
+
     return (
         <div className='p-20'>
             {<ModalAddProductCategory category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
@@ -166,7 +174,7 @@ export default function Procurement() {
             <div className='flex justify-center flex-wrap items-center'>
                 <div className='w-full max-w-[900px] mr-10 ml-10 mt-20 mb-20'>
                     <div className='bg-white rounded-2xl shadow-2xl'>
-                        <div className='text-center m-4 text-2xl'>מלאי</div>
+                        <div className='text-center text-2xl p-4'>מלאי</div>
                     <Divider className='mb-5' />
                         <div className='p-5 h-[600px] overflow-auto '>
                             {
@@ -238,7 +246,9 @@ export default function Procurement() {
                     <div className='overflow-auto h-[600px] flex justify-center w-full pb-10 pr-10 pl-10 max-w-[800px] min-w-[400px]'>
                         <form onSubmit={handleSubmit} className='w-full'>
                             <div dir='rtl' className=''>
+
                                 <div className='flex justify-center items-center'>
+                                    
                                     <Autocomplete
                                         bordered
                                         fullWidth
@@ -250,7 +260,6 @@ export default function Procurement() {
                                         onSelectionChange={setSbak}
                                         onInputChange={setSbak}
                                     >
-                                        <AutocompleteItem className='text-right' onClick={() => setShowModalAddSbak(true)}>הוספה</AutocompleteItem>
                                         {
                                             sbkemA.map((sbak) => (
                                                 <AutocompleteItem className='text-right' key={sbak.msbar} value={sbak.msbar} onClick={() => setSbakID(sbak.msbar)}>
@@ -259,6 +268,7 @@ export default function Procurement() {
                                             ))
                                         }
                                     </Autocomplete>
+                                    <Button onClick={() => setShowModalAddSbak(true)}>הוספה</Button>
                                     {
                                         entries?.length > 1 &&
                                         <Button onClick={scrollToBottomRef} auto flat className='ml-5'>

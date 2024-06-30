@@ -605,6 +605,11 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol }) {
                 return true;
             }
         }
+        else if (sogAskaAgla === 'תיקון') {
+            if (seomYetsor) {
+                return true;
+            }
+        }
         return false;
     }
     const BdekatMtsavC = () => {
@@ -1361,6 +1366,20 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol }) {
         return false;
     }
 
+    const formatNumberWithCommas = (num) => {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
+
+    function getDigitsAfterDot(number) {
+        const numberStr = number.toString();
+        const dotIndex = numberStr.indexOf('.');
+        if (dotIndex === -1) {
+          return '';
+        }
+        const digitsAfterDot = numberStr.substring(dotIndex + 1);
+        return digitsAfterDot;
+      }
+
     return (
         <Modal placement="center" className="test-fontt" backdrop={"blur"} size="full" isOpen={show} onClose={disable}>
             <ModalContent>
@@ -1400,56 +1419,56 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol }) {
                                                 <div className="flex justify-center mt-20 mb-3">
                                                     <div className="flex items-center" dir="rtl">
                                                         <div className="ml-5 w-[110px] text-green-500">הכנסות</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={hkhnsot} />
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas(mherKlale)}`} />
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-center"><Divider className="w-[200px]" /></div>
                                                 <div className="flex justify-center mt-3 mb-3">
                                                     <div className="flex items-center" dir="rtl">
                                                         <div className="ml-5 w-[110px] text-danger-500">הוצאות חו"ג</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={hkhnsotHomreGlem} />
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${hkhnsotHomreGlem}`} />
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-center"><Divider className="w-[200px]" /></div>
                                                 <div className="flex justify-center mt-3 mb-3">
                                                     <div className="flex items-center" dir="rtl">
                                                         <div className="ml-5 w-[110px] text-danger-500">הוצאות שכר</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={hotsotSkhar} />
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${hotsotSkhar}`} />
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-center"><Divider className="w-[200px]" /></div>
                                                 <div className="flex justify-center mt-3 mb-3">
                                                     <div className="flex items-center" dir="rtl">
                                                         <div className="ml-5 w-[110px] text-green-500">רווח ישיר</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={hkhnsot - hkhnsotHomreGlem - hotsotSkhar} />
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas(mherKlale - hkhnsotHomreGlem - hotsotSkhar)}`} />
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-center"><Divider className="w-[200px]" /></div>
                                                 <div className="flex justify-center mt-3 mb-3">
                                                     <div className="flex items-center" dir="rtl">
                                                         <div className="ml-5 w-[110px] text-danger-500">הוצאות עקיפות</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={'23'} />
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${'0'}`} />
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-center"><Divider className="w-[200px]" /></div>
                                                 <div className="flex justify-center mt-3 mb-3">
                                                     <div className="flex items-center" dir="rtl">
                                                         <div className="ml-5 w-[110px] text-danger-500">השפעת מע"ם</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={'23'} />
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${formatNumberWithCommas(parseInt(mherKlale * 0.17))}`} />
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-center"><Divider className="w-[200px]" /></div>
                                                 <div className="flex justify-center mt-3 mb-3">
                                                     <div className="flex items-center" dir="rtl">
                                                         <div className="ml-5 w-[110px] text-green-500">רווח נקי</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={'23'} />
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas((mherKlale - hkhnsotHomreGlem - hotsotSkhar) - parseInt(mherKlale * 0.17))}`} />
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-center"><Divider className="w-[200px]" /></div>
                                                 <div className="flex justify-center mt-5">
                                                     <div className="flex items-center" dir="rtl">
                                                         <div className="ml-5 w-[110px] text-green-500">אחוז רווח</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={'23'} />
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`%${getDigitsAfterDot(((mherKlale - hkhnsotHomreGlem - hotsotSkhar) - parseInt(mherKlale * 0.17)) / mherKlale)}`} />
                                                     </div>
                                                 </div>
                                             </div>
@@ -2208,36 +2227,86 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol }) {
                                 </div>
                             }
                             {
-                                (agla && sogAskaAgla === 'הרכבת וו' && sogBaola === 'D') && <div className="bg-black">
-                                    <div>
-                                        1221322222222222222222222222222222222222222222222222222222222222
+                                (agla && sogAskaAgla === 'הרכבת וו' && sogBaola === 'D') &&
+                                <div className="w-full h-full flex p-32 justify-center">
+                                    {<ModalMessage show={showModalMessage} disable={() => setShowModalMessage(false)} Aeshor={(val) => setAeshor(val)} message={'האם אתה בטוח למכור העגלה!?'} />}
+                                    {<ModalAddProductCategory msbarTfaol={agla?.msbar} Aeshor={(val) => {
+                                        if (val) {
+                                            HosfatAglaLmlae();
+                                        }
+                                    }} sckhom={mherKlale} category={GetCategoryAglot()} show={showModalCategoryAgla} disable={() => setShowModalCategoryAgla(false)} />}
+                                    {<ModalBrokAgla Berok={(val, motsaremmm, Brofelemmm) => {
+                                        if (val) {
+                                            berokAgla(motsaremmm, Brofelemmm);
+                                        }
+                                    }} motsarem={mafenemMotsarem} Brofelem={motsaremBrofelemSofe} show={showModalBerokAgla} disable={() => setShowModalBerokAgla(false)} />}
+                                    <div className="w-full max-w-[700px]">
+                                        <div className="flex justify-center bg-primary-200 p-2 rounded-2xl">
+                                            תמחיר
+                                        </div>
+                                        <Heshvonet ref={componentRefOne} motsar={agla} lkoh={lkohTfaol} />
                                     </div>
-                                    <div>
-                                        1221322222222222222222222222222222222222222222222222222222222222
+                                    <Divider className="w-[2px] h-full ml-5 mr-5" />
+                                    <div className="w-full max-w-[700px] flex flex-col">
+                                        <div className="flex justify-center bg-primary-200 p-2 rounded-2xl">
+                                            עסקת מכירה
+                                        </div>
+                                        <div dir="rtl" className="mt-10 flex flex-col flex-grow">
+                                            <div>
+                                                <Input color="primary" className="max-w-[200px] mb-5" isReadOnly label="לקןח" value={lkohTfaol?.name} />
+                                            </div>
+                                            <Divider />
+                                            <div className="mt-5 flex justify-around items-center">
+                                                <Avatar size="sm" />
+                                                <div>הרכבת וו</div>
+                                                <Input color="primary" className="max-w-[150px] mb-5" isReadOnly label="סכום" value={agla?.mherMkhera} />
+                                            </div>
+                                            <div className="mt-auto flex justify-end">
+
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        1221322222222222222222222222222222222222222222222222222222222222
+                                </div>
+                            }
+                            {
+                                (agla && sogAskaAgla === 'תיקון' && sogBaola === 'D') &&
+                                <div className="w-full h-full flex p-32 justify-center">
+                                    {<ModalMessage show={showModalMessage} disable={() => setShowModalMessage(false)} Aeshor={(val) => setAeshor(val)} message={'האם אתה בטוח למכור העגלה!?'} />}
+                                    {<ModalAddProductCategory msbarTfaol={agla?.msbar} Aeshor={(val) => {
+                                        if (val) {
+                                            HosfatAglaLmlae();
+                                        }
+                                    }} sckhom={mherKlale} category={GetCategoryAglot()} show={showModalCategoryAgla} disable={() => setShowModalCategoryAgla(false)} />}
+                                    {<ModalBrokAgla Berok={(val, motsaremmm, Brofelemmm) => {
+                                        if (val) {
+                                            berokAgla(motsaremmm, Brofelemmm);
+                                        }
+                                    }} motsarem={mafenemMotsarem} Brofelem={motsaremBrofelemSofe} show={showModalBerokAgla} disable={() => setShowModalBerokAgla(false)} />}
+                                    <div className="w-full max-w-[700px]">
+                                        <div className="flex justify-center bg-primary-200 p-2 rounded-2xl">
+                                            תמחיר
+                                        </div>
+                                        <Heshvonet ref={componentRefOne} motsar={agla} lkoh={lkohTfaol} />
                                     </div>
-                                    <div>
-                                        1221322222222222222222222222222222222222222222222222222222222222
-                                    </div>
-                                    <div>
-                                        1221322222222222222222222222222222222222222222222222222222222222
-                                    </div>
-                                    <div>
-                                        1221322222222222222222222222222222222222222222222222222222222222
-                                    </div>
-                                    <div>
-                                        1221322222222222222222222222222222222222222222222222222222222222
-                                    </div>
-                                    <div>
-                                        1221322222222222222222222222222222222222222222222222222222222222
-                                    </div>
-                                    <div>
-                                        1221322222222222222222222222222222222222222222222222222222222222
-                                    </div>
-                                    <div>
-                                        1221322222222222222222222222222222222222222222222222222222222222
+                                    <Divider className="w-[2px] h-full ml-5 mr-5" />
+                                    <div className="w-full max-w-[700px] flex flex-col">
+                                        <div className="flex justify-center bg-primary-200 p-2 rounded-2xl">
+                                            עסקת מכירה
+                                        </div>
+                                        <div dir="rtl" className="mt-10 flex flex-col flex-grow">
+                                            <div>
+                                                <Input color="primary" className="max-w-[200px] mb-5" isReadOnly label="לקןח" value={lkohTfaol?.name} />
+                                            </div>
+                                            <Divider />
+                                            <div className="mt-5 flex justify-around items-center">
+                                                <Avatar size="sm" />
+                                                <div>תיקון</div>
+                                                <Input color="primary" className="max-w-[150px] mb-5" isReadOnly label="סכום" value={agla?.mherMkhera} />
+                                            </div>
+                                            <div className="mt-auto flex justify-end">
+
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             }

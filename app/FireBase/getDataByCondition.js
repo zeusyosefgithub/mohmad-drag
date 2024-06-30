@@ -18,44 +18,41 @@ export const useGetDataByCondition = (myCollection, value1, value2, value3) => {
     return list;
 };
 
-export const useGetDataByConditionWithoutUseEffect = async(myCollection, value1, value2, value3) => {
-    const q = query(collection(firestore, myCollection), where(value1,value2,value3));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
-        id : doc.id,
-        ...doc.data()
-    }));
-};
 
-
-export const useGetDataByConditionWithoutUseEffectWithTwo = async(myCollection, value1, value2, value3,value4,value5,value6) => {
-    const q = query(collection(firestore, myCollection), where(value1,value2,value3),where(value4,value5,value6));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
-        id : doc.id,
-        ...doc.data()
-    }));
-};
-
-export const useGetDataByLimit = async (myCollection, limt) => {
-    const [data, setData] = useState([]);
-
-    const fetchData = async () => {
-        const q = query(collection(firestore, myCollection), orderBy("msbar",'asc'), limit(limt));
-        const querySnapshot = await getDocs(q);
-        const items = [];
+export const useGetDataByConditionWithoutUseEffect = (myCollection, field, operator, value, callback) => {
+    const q = query(collection(firestore, myCollection), where(field, operator, value));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const documents = [];
         querySnapshot.forEach((doc) => {
-            items.push({ id: doc.id, ...doc.data() });
+            documents.push({ id: doc.id, ...doc.data() });
         });
-        setData(items);
-    };
+        callback(documents);
+    });
+    return unsubscribe;
+};
 
-    useEffect(() => {
-        fetchData();
-    }, []);
 
-    return data;
-}
+export const useGetDataByConditionWithoutUseEffectWithTwo = async (myCollection, value1, value2, value3, value4, value5, value6) => {
+    const q = query(collection(firestore, myCollection), where(value1, value2, value3), where(value4, value5, value6));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+        id : doc.id,
+        ...doc.data()
+    }));
+};
+
+export const useGetDataByLimit = (myCollection, limt,callback) => {
+    //asc
+    const q = query(collection(firestore, myCollection), orderBy("msbar",'desc'), limit(limt));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const documents = [];
+        querySnapshot.forEach((doc) => {
+            documents.push({ id: doc.id, ...doc.data() });
+        });
+        callback(documents);
+    });
+    return unsubscribe;
+};
 
 
 
