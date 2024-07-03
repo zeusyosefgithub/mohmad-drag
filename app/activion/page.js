@@ -89,6 +89,17 @@ export default function Activion() {
     const [wight, setWight] = useState(''); // משקל
     const [dragnum, setDragnum] = useState(''); // מספר גרור
 
+    const [masTaodatABTebos,setMasTaodatABTebos] = useState('');
+    const [tableokefTaodatABTebos,setTokefTaodatABTebos] = useState('');
+    const [masVTokefResheonYatsran,setMasVTokefResheonYatsran] = useState('');
+    const [masAeshorYatsran,setMasAeshorYatsran] = useState('');
+    const [masGlglemSrnem,setMasGlglemSrnem] = useState('');
+    const [medatTsmgem,setMedatTsmgem] = useState('');
+
+    const [sheshAehad,setSheshAehad] = useState('');
+    const [sheshShtaeem,setSheshShtaeem] = useState('');
+    const [sheshShlosh,setSheshShlosh] = useState('');
+
 
     const Customers = GetDocs('customers');
     const Drags = GetDocs('drags');
@@ -167,7 +178,16 @@ export default function Activion() {
                 space: space,
                 totalselfweight: totalselfweight,
                 undercarriage: undercarriage,
-                wight: wight
+                wight: wight,
+                masTaodatABTebos: masTaodatABTebos,
+                tableokefTaodatABTebos: tableokefTaodatABTebos,
+                masVTokefResheonYatsran: masVTokefResheonYatsran,
+                masAeshorYatsran: masAeshorYatsran,
+                masGlglemSrnem: masGlglemSrnem,
+                medatTsmgem: medatTsmgem,
+                sheshAehad: sheshAehad,
+                sheshShtaeem: sheshShtaeem,
+                sheshShlosh: sheshShlosh,
             }
         }
         return { cus, drag };
@@ -225,7 +245,17 @@ export default function Activion() {
             space: space,
             totalselfweight: totalselfweight,
             undercarriage: undercarriage,
-            wight: wight
+            wight: wight,
+            masTaodatABTebos: masTaodatABTebos,
+            tableokefTaodatABTebos: tableokefTaodatABTebos,
+            masVTokefResheonYatsran: masVTokefResheonYatsran,
+            masAeshorYatsran: masAeshorYatsran,
+            masGlglemSrnem: masGlglemSrnem,
+            medatTsmgem: medatTsmgem,
+            sheshAehad: sheshAehad,
+            sheshShtaeem: sheshShtaeem,
+            sheshShlosh: sheshShlosh,
+
         }
         !lkohKeam && await addDoc(collection(firestore, "customers"), customer);
         !aglaKeamet && await addDoc(collection(firestore, "drags"), drag);
@@ -427,6 +457,7 @@ export default function Activion() {
                                             <Input value={chassisnum} className="mt-10" size="sm" onValueChange={(value) => { setChassisnum(value) }} type="number" label="מספר שלדה" />
                                             <Input value={prodction} className="mt-10" size="sm" onValueChange={(value) => { setProdction(value) }} type="text" label="תוצר" />
                                             <Input value={model} className="mt-10" size="sm" onValueChange={(value) => { setModel(value) }} type="text" label="קוד דגם" />
+                                            <Input value={masTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setMasTaodatABTebos(value) }} type="text" label="מס' תעודת אב טיפוס" />
                                         </div>
                                         <div className="m-10" />
                                         <div className="w-1/3">
@@ -434,6 +465,7 @@ export default function Activion() {
                                             <Input value={color} className="mt-10" size="sm" onValueChange={(value) => { setColor(value) }} type="text" label="צבע" />
                                             <Input value={kinddrag} className="mt-10" size="sm" onValueChange={(value) => { setKinddrag(value) }} type="text" label="סוג הרכב" />
                                             <Input value={producer} className="mt-10" size="sm" onValueChange={(value) => { setProducer(value) }} type="text" label="יצרן" />
+                                            <Input value={tableokefTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setTokefTaodatABTebos(value) }} type="text" label="תוקף תעודת אב טיפוס" />
                                         </div>
                                         <div className="m-10" />
                                         <div className="w-1/3">
@@ -441,6 +473,7 @@ export default function Activion() {
                                             <Input value={long} className="mt-10" size="sm" onValueChange={(value) => { setLong(value) }} type="text" label="אורך כללי" />
                                             <Input value={space} className="mt-10" size="sm" onValueChange={(value) => { setSpace(value) }} type="text" label="רוחב כללי" />
                                             <Input value={height} className="mt-10" size="sm" onValueChange={(value) => { setHeight(value) }} type="text" label="גובה כללי" />
+                                            <Input value={masVTokefResheonYatsran} className="mt-10" size="sm" onValueChange={(value) => { setMasVTokefResheonYatsran(value) }} type="text" label="מס' ותוקף רישיון יצרן" />
                                         </div>
                                     </div>
                                 </div>
@@ -464,6 +497,7 @@ export default function Activion() {
                                             <Input value={lengthhatch} className="mt-10" size="sm" onValueChange={(value) => { setLengthhatch(value) }} type="text" label="אורך יצול" />
                                             <Input value={heightloading} className="mt-10" size="sm" onValueChange={(value) => { setHeightloading(value) }} type="text" label="גובה משטח העמסה" />
                                             <Input value={sizeloading} className="mt-10" size="sm" onValueChange={(value) => { setSizeloading(value) }} type="text" label="גובה משטח העמסה (מר)" />
+                                            <Input value={masAeshorYatsran} className="mt-10" size="sm" onValueChange={(value) => { setMasAeshorYatsran(value) }} type="text" label="מס' אישור יצרן" />
                                         </div>
                                         <div className="m-10" />
                                         <div className="w-1/3">
@@ -471,6 +505,7 @@ export default function Activion() {
                                             <Input value={undercarriage} className="mt-10" size="sm" onValueChange={(value) => { setUndercarriage(value) }} type="text" label="מסד מרכב" />
                                             <Input value={selfweightaxles} className="mt-10" size="sm" onValueChange={(value) => { setSelfweightaxles(value) }} type="text" label="משקל עצמי על הסרנים" />
                                             <Input value={totalselfweight} className="mt-10" size="sm" onValueChange={(value) => { setTotalselfweight(value) }} type="text" label="משקל עצמי כולל" />
+                                            <Input value={masGlglemSrnem} className="mt-10" size="sm" onValueChange={(value) => { setMasGlglemSrnem(value) }} type="text" label="מס' גלגלים / סרנים" />
                                         </div>
                                         <div className="m-10" />
                                         <div className="w-1/3">
@@ -478,6 +513,7 @@ export default function Activion() {
                                             <Input value={distributionloads} className="mt-10" size="sm" onValueChange={(value) => { setDistributionloads(value) }} type="text" label="חלוקת העומסים" />
                                             <Input value={device} className="mt-10" size="sm" onValueChange={(value) => { setDevice(value) }} type="text" label="התקן" />
                                             <Input value={installer} className="mt-10" size="sm" onValueChange={(value) => { setInstaller(value) }} type="text" label="שם המתקין" />
+                                            <Input value={medatTsmgem} className="mt-10" size="sm" onValueChange={(value) => { setMedatTsmgem(value) }} type="text" label="מידת צמגים" />
                                         </div>
                                     </div>
                                 </div>
@@ -505,6 +541,10 @@ export default function Activion() {
                                         <div className="m-10" />
                                         <div className="w-1/3">
                                             <Input value={labid} size="sm" onValueChange={(value) => { setLabid(value) }} type="number" label="זהות מעבדה" />
+                                            <Input value={sheshAehad} size="sm" className="mt-10" onValueChange={(value) => { setSheshAehad(value) }} type="number" label="6.1" />
+                                            <Input value={sheshShtaeem} size="sm" className="mt-10" onValueChange={(value) => { setSheshShtaeem(value) }} type="number" label="6.2" />
+                                            <Input value={sheshShlosh} size="sm" className="mt-10" onValueChange={(value) => { setSheshShlosh(value) }} type="number" label="6.3" />
+
                                         </div>
                                     </div>
                                 </div>

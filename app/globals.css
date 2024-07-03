@@ -45,6 +45,11 @@ body {
   font-size: 8px !important;
 }
 
+.sizeForModals{
+  width: 100rem;
+}
+
+
 .hatema{
   position: absolute;
   margin-top: -30px;
@@ -147,7 +152,7 @@ body {
 }
 .absoulte_date_page_four7{
   position: absolute;
-  margin-right: 250px;
+  margin-right: 315px;
   margin-top: -2px;
 }
 .absoulte_date_page_four8{

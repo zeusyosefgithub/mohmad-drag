@@ -5,6 +5,7 @@ import ImageFour from "./imageFour";
 import ImageFive from "./imageFive";
 import ImageOne from "./imageOne";
 import ImageTwo from "./imageTwo";
+import { format } from "date-fns";
 
 export const AllPages = React.forwardRef((props, ref) => {
     return (
@@ -18,7 +19,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     <th colSpan={4} className="border-1 border-[#a1a1aa] p-3">מסכי חובה בתיק גרור חדש</th>
                                 </tr>
                                 <tr>
-                                    <th colSpan={3} className="border-1 border-[#a1a1aa] p-3">מספר גרור : {props?.data?.drag?.dragnum}</th>
+                                    <th colSpan={3} className="border-1 border-[#a1a1aa] p-3"><div className="flex justify-around items-center font-extrabold"><div>מספר גרור</div><div>{props?.data?.drag?.dragnum}</div></div></th>
                                     <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
                                 </tr>
                                 <tr>
@@ -116,161 +117,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                     </div>
                 </div>
             </div>
-            <div>
-                <div className="flex justify-end pt-4 pr-4">
-                    <div className="w-16">
-                        <ImageTwo />
-                    </div>
-                </div>
-                <div className="flex justify-center">
-                    <div className="font-black text-sm hebrow_font border-b-1 border-b-black">
-                        בקשה לרישום רכב
-                    </div>
-                </div>
-                <div className="flex justify-around text-xs mr-10 ml-10 mt-5">
-                    <div className="w-full">
-                        <div className="flex justify-center">מס' הרכב</div>
-                        <table className="w-9/12">
-                            <tbody>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa]">{props?.data?.drag?.dragnum}</th>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="w-full">
-                        <div className="flex justify-center">תעודת חידוש</div>
-                        <table className="w-9/12">
-                            <tbody>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="w-full">
-                        <div className="flex justify-center">תאריך רישום</div>
-                        <table className="w-9/12">
-                            <tbody>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="w-full">
-                        <div className="flex justify-center">מקוריות</div>
-                        <table className="w-9/12">
-                            <tbody>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="w-full">
-                        <div className="flex justify-center">מס' רכב קודם</div>
-                        <table className="w-9/12">
-                            <tbody>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div className="text-xs mr-10 mt-1" dir="rtl">
-                    אני/ו החתום/ים מטה מבקש בזה לרשום את כלי הרכב שפרטיו מפורטים להלן ומסכמכיו המוצורפים בוה
-                </div>
-                <div className="text-xs w-full pl-10 pr-10 mt-2 mb-4">
-                    <table className="w-full smalling_font_pages">
-                        <tbody>
-                            <tr>
-                                <th className="w-16 border-1 border-[#a1a1aa]">
-                                    מיקוד
-                                </th>
-                                <th className="w-16 border-1 border-[#a1a1aa]">
-                                    בית
-                                </th>
-                                <th className="w-16 border-1 border-[#a1a1aa]">
-                                    רחוב
-                                </th>
-                                <th className="w-16 border-1 border-[#a1a1aa]">
-                                    ישוב
-                                </th>
-                                <th className="w-16 border-1 border-[#a1a1aa]">
-                                    מס' ת.ז. / חברה
-                                </th>
-                                <th className="w-16 border-1 border-[#a1a1aa]">
-                                    שם פרטי
-                                </th>
-                                <th className="w-16 border-1 border-[#a1a1aa]">
-                                    שם משפחה / חברה
-                                </th>
-                                <th rowSpan={4} className="p-2 w-16 border-1 border-[#a1a1aa]">
-                                    ימולא על ידי המבקשים
-                                </th>
-                            </tr>
-                            <tr>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.postal}</th>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.houseid}</th>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.street}</th>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.city}</th>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.cusid}</th>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.name}</th>
-                                <th className="border-1 border-[#a1a1aa]">{props?.data?.cus?.lastname}</th>
-                             
-                            </tr>
-                            <tr>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                            </tr>
-                            <tr>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                            </tr>
-                            <tr>
-                                <th rowSpan={2} colSpan={4} className="border-1 border-[#a1a1aa]"><div className="flex justify-end mr-2">חותמת החברה</div></th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th rowSpan={4} className="p-2 border-1 border-[#a1a1aa]">
-                                    במקרח של רכב פרטי הזכאים לחתום
-                                </th>
-                            </tr>
-                            <tr>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                            </tr>
-                            <tr>
-                                <th rowSpan={2} colSpan={4} className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                            </tr>
-                            <tr>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div className="flex justify-center mt-4">
-                    <ImageOne />
-                </div>
-            </div>
+            
             <div className="p-10 mb-96">
                 <div className="text-3xl mt-24 font-black hebrow_font">
                     <div className="flex justify-center">
@@ -340,7 +187,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     </div>
                                     <div className="border-1 border-[#e4e4e7] mt-1 mb-1" />
                                     <div className="p-1 pb-2">
-                                        שם
+                                        {props?.data?.cus?.name}
                                     </div>
                                 </th>
                                 <th colSpan={2} className="w-1/2 border-1 border-[#a1a1aa]">
@@ -349,7 +196,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     </div>
                                     <div className="border-1 border-[#e4e4e7] mt-1 mb-1" />
                                     <div className="p-1 pb-2">
-                                        מספר
+                                        {props?.data?.drag?.licenseid}
                                     </div>
                                 </th>
                             </tr>
@@ -387,7 +234,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     </div>
                                     <div className="border-1 border-[#e4e4e7] mt-1 mb-1" />
                                     <div className="p-1 pb-2">
-                                        שם
+                                        {props?.data?.cus?.name}
                                     </div>
                                 </th>
                             </tr>
@@ -522,13 +369,13 @@ export const AllPages = React.forwardRef((props, ref) => {
                         2. פרוט ו/או התוספות ברכב (מעבר למפרט המקורי של יצרן הרכב)
                     </div>
                     <div>
-                        ________________________________________________________________________________________________________________
+                        _________________________________________________________________________________________
                     </div>
                     <div className="mt-2">
-                        ________________________________________________________________________________________________________________
+                        _________________________________________________________________________________________
                     </div>
                     <div className="mt-2">
-                        ________________________________________________________________________________________________________________
+                        _________________________________________________________________________________________
                     </div>
                 </div>
                 <div className="mt-7" dir="rtl">
@@ -585,18 +432,18 @@ export const AllPages = React.forwardRef((props, ref) => {
                             <div className="absoulte_date_page_four3">
                                 {props?.data?.cus?.name}
                             </div>
-                            <div>_________________________________</div>
+                            <div>_________________________</div>
                             <div className="flex justify-center">שם בעל הרכב/מנכ"ל החברה</div>
                         </div>
                         <div>
                             <div className="absoulte_date_page_four4">
                                 {props?.data?.cus?.cusid}
                             </div>
-                            <div>_________________________________</div>
+                            <div>_________________________</div>
                             <div className="flex justify-center">ת.ז.</div>
                         </div>
                         <div>
-                            <div>_________________________________</div>
+                            <div>_________________________</div>
                             <div className="flex justify-center">חתימה</div>
                         </div>
                     </div>
@@ -612,42 +459,42 @@ export const AllPages = React.forwardRef((props, ref) => {
                                 <table className="w-full mb-2">
                                     <tbody>
                                         <tr>
-                                            <th className="border-1 border-black w-56">&nbsp;</th>
+                                            <th className="border-1 border-black w-56">{format(new Date(),'dd-MM-yyyy')}</th>
                                             <th className="border-1 border-black w-56 text-right pr-2">תאריך יצור</th>
                                             <th className="border-1 border-black w-14">1.9</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">&nbsp;</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.masTaodatABTebos}</th>
                                             <th className="border-1 border-black text-right pr-2">מס' תעודת אב טיפוס</th>
                                             <th className="border-1 border-black w-14">1.10</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">&nbsp;</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.tableokefTaodatABTebos}</th>
                                             <th className="border-1 border-black text-right pr-2">תוקף תעודת אב טיפוס</th>
                                             <th className="border-1 border-black w-14">1.11</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">&nbsp;</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.labid}</th>
                                             <th className="border-1 border-black text-right pr-2">זהות מעבדה</th>
                                             <th className="border-1 border-black w-14">1.12</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">&nbsp;</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.masVTokefResheonYatsran}</th>
                                             <th className="border-1 border-black text-right pr-2">מס' ותוקף רישיון יצרן</th>
                                             <th className="border-1 border-black w-14">1.13</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">&nbsp;</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.masAeshorYatsran}</th>
                                             <th className="border-1 border-black text-right pr-2">מס' אישור יצרן</th>
                                             <th className="border-1 border-black w-14">1.14</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">&nbsp;</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.masGlglemSrnem}</th>
                                             <th className="border-1 border-black text-right pr-2">מס' גלגלים / סרנים</th>
                                             <th className="border-1 border-black w-14">1.15</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">&nbsp;</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.medatTsmgem}</th>
                                             <th className="border-1 border-black text-right pr-2">מידת צמגים</th>
                                             <th className="border-1 border-black w-14">1.16</th>
                                         </tr>
@@ -945,15 +792,15 @@ export const AllPages = React.forwardRef((props, ref) => {
                                 <table className="w-full">
                                     <tbody>
                                         <tr>
-                                            <th className="border-1 border-black">&nbsp;</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.sheshAehad}</th>
                                             <th className="border-1 border-black w-14">6.1</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">&nbsp;</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.sheshShtaeem}</th>
                                             <th className="border-1 border-black w-14">6.2</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">&nbsp;</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.sheshShlosh}</th>
                                             <th className="border-1 border-black w-14">6.3</th>
                                         </tr>
                                     </tbody>

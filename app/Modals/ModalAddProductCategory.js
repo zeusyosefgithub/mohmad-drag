@@ -11,6 +11,7 @@ export default function ModalAddProductCategory({ show, disable, category,Aeshor
     //const counter = useGetDataByCondition('category', 'msbar', '==', category?.msbar || 'default-msbar-value');
     const [shem, setShem] = useState('');
     const [sog, setSog] = useState('');
+    const [mherThlte,setMherThlte] = useState('');
     const [zmanAsbka, setZmanAsbka] = useState('');
     const motsarem = category?.motsarem;
     function GetCategory (val){
@@ -49,20 +50,23 @@ export default function ModalAddProductCategory({ show, disable, category,Aeshor
             msbar: `${GetCategory(shem)?.sog}0${counter}`,
             shem: sog,
             alot: sckhom || 0,
-            alotLeheda: sckhom || 0,
+            alotLeheda: sckhom || mherThlte,
             kmot: sckhom ? 1 : 0,
             zmanHsbaka: zmanAsbka,
             mededa: GetCategory(shem)?.mededa,
-            msbarTfaol : msbarTfaol || 0
+            msbarTfaol: msbarTfaol || 0,
+            adconAhron: '',
+            kmotNefl: 0,
+            sakhHkolKneot: 0
         });
-        await updateDoc(doc(firestore, 'category', category?.id), { 
-            dlbak: count + 1,
-            motsarem : GetNewArrayMotsarem(counter)
-         });
+        await updateDoc(doc(firestore, 'category', category?.id), {
+            dlbak: count,
+            motsarem: GetNewArrayMotsarem(counter)
+        });
         setShem('');
         setZmanAsbka('');
         setSog('');
-        if(Aeshor){
+        if (Aeshor) {
             Aeshor(true);
         }
         disable();
@@ -103,8 +107,9 @@ export default function ModalAddProductCategory({ show, disable, category,Aeshor
                                 </DropdownMenu>
                             </Dropdown>
 
-                            <Input value={sog} onValueChange={(val) => setSog(val)} className="mt-5" label="שם פריט"/>
-                            <Input value={zmanAsbka} onValueChange={(val) => setZmanAsbka(val)} className="mt-5" label="זמן הספקה" />
+                            <Input type="text" value={sog} onValueChange={(val) => setSog(val)} className="mt-5" label="שם פריט"/>
+                            <Input type="number" value={mherThlte} onValueChange={(val) => setMherThlte(val)} className="mt-5" label="מחיר תחלתי" />
+                            <Input type="number" value={zmanAsbka} onValueChange={(val) => setZmanAsbka(val)} className="mt-5 mb-5" label="זמן הספקה" />
                         </div>
                     </ModalBody>
                     <ModalFooter>
