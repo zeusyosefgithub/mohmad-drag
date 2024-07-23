@@ -3,6 +3,7 @@ import './Heshvonet.css';
 export const Heshvonet = React.forwardRef((props, ref) => {
 
     const motsarr = props?.motsar;
+    const msbar = props?.msbarHeshvonet;
     const lkoh = props?.lkoh;
 
     const GetSakhHkolBerot = (indx) => {
@@ -58,7 +59,7 @@ export const Heshvonet = React.forwardRef((props, ref) => {
                 </div>
             </div>
             <div className="text-center mt-10">{props?.isNew ? props?.new?.date : motsarr?.tarekh}</div>
-            <div className="text-center text-lg font-extrabold">חשבונית מס מספר {props?.isNew ? props?.new?.counter?.count : motsarr?.msbar}</div>
+            <div className="text-center text-lg font-extrabold">חשבונית מס מספר {msbar}</div>
             <div className="text-center">הער נאמן למקור</div>
             <div className="mt-10">
                 <div className="flex justify-end border-r-4 border-f1 mr-2 p-2">
@@ -86,10 +87,10 @@ export const Heshvonet = React.forwardRef((props, ref) => {
                 <div className="text-base font-extrabold">
                     שורת פירוט נושא המסמך
                 </div>
-                <div className="mt-5">
-                    <table className="w-full text-xs">
+                <div className="mt-5 overflow-auto h-[370px]">
+                    <table className="w-full text-xs ">
                         <thead>
-                            <tr className="bg-f2">
+                            <tr className="bg-f2 sticky top-0">
                                 <th className="text-right p-2">מק"ט</th>
                                 <th className="text-right p-2">תיאור הפריט</th>
                                 <th className="text-right p-2">כמות</th>
@@ -130,40 +131,40 @@ export const Heshvonet = React.forwardRef((props, ref) => {
                                         {
                                             props?.hn7a > 0 &&
                                             <>
-                                                <tr>
+                                                <tr className="sticky bottom-24">
                                                     <td className="text-right p-2"></td>
                                                     <td className="text-right p-2"></td>
                                                     <td className="text-right p-2"></td>
                                                     <td className="text-right p-2 bg-[#075985] text-f4">הנחה</td>
-                                                    <td className="text-right p-2 bg-[#075985] text-f4">{props?.hn7a} %</td>
+                                                    <td className="text-right p-2 bg-[#075985] text-f4">{(props?.hn7a || 0)}</td>
                                                 </tr>
-                                                <tr>
+                                                <tr className="sticky bottom-16">
                                                     <td className="text-right p-2"></td>
                                                     <td className="text-right p-2"></td>
                                                     <td className="text-right p-2"></td>
                                                     <td className="text-right p-2 bg-[#075985] text-f4">סה"כ אחרי הנחה</td>
-                                                    <td className="text-right p-2 bg-[#075985] text-f4">{GetSakhHkol() - (GetSakhHkol() * parseFloat(props?.hn7a / 100))}</td>
+                                                    <td className="text-right p-2 bg-[#075985] text-f4">{(GetSakhHkol() - (props?.hn7a || 0))}</td>
                                                 </tr>
                                             </>
 
                                         }
-                                        <tr>
+                                        <tr className="sticky bottom-8">
                                             <td className="text-right p-2"></td>
                                             <td className="text-right p-2"></td>
                                             <td className="text-right p-2"></td>
                                             <td className="text-right p-2 bg-[#075985] text-f4">מע"מ</td>
-                                            <td className="text-right p-2 bg-[#075985] text-f4">{handleGetDigits(GetSakhHkol() * 0.17)} ₪</td>
+                                            <td className="text-right p-2 bg-[#075985] text-f4">{handleGetDigits((GetSakhHkol() - (props?.hn7a || 0)) * 0.17)} ₪</td>
                                         </tr>
-                                        <tr>
+                                        <tr className="sticky bottom-0">
                                             <td className="text-right p-2"></td>
                                             <td className="text-right p-2"></td>
                                             <td className="text-right p-2 "></td>
                                             <td className="text-right p-2 bg-[#075985] text-f4 rounded-es-2xl font-extrabold">סה"כ לתשלום</td>
-                                            <td className="text-right p-2 bg-[#075985] text-f4 rounded-ee-2xl">{GetSakhHkol() + GetSakhHkol() * 0.17} ₪</td>
+                                            <td className="text-right p-2 bg-[#075985] text-f4 rounded-ee-2xl">{handleGetDigits((GetSakhHkol() - (props?.hn7a || 0)) + ((GetSakhHkol() - (props?.hn7a || 0)) * 0.17))} ₪</td>
                                         </tr>
                                     </>
                                     :
-                                    <tr>
+                                    <tr className="sticky bottom-0">
                                         <td className="text-right p-2"></td>
                                         <td className="text-right p-2"></td>
                                         <td className="text-right p-2 bg-[#075985] text-f4 rounded-es-2xl">סה"כ</td>
@@ -175,6 +176,7 @@ export const Heshvonet = React.forwardRef((props, ref) => {
                     </table>
                 </div>
             </div>
+            <div className="mt-40"></div>
         </div>
     )
 })

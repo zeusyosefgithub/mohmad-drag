@@ -8,6 +8,7 @@ import { MdAddChart } from "react-icons/md";
 import { FcManager } from "react-icons/fc";
 import { IoNewspaperSharp } from "react-icons/io5";
 import { FaBell } from "react-icons/fa";
+import { GrUserWorker } from "react-icons/gr";
 
 
 export default function NavBar() {
@@ -17,6 +18,7 @@ export default function NavBar() {
 
     const menuItems = [
         "משרד תחבורה ",
+        "עובדים",
         "ניהול",
         "יצור",
         "מכירות",
@@ -54,6 +56,11 @@ export default function NavBar() {
                 <NavbarItem>
                     <Link color="foreground" href="/management">
                         <Button variant="light" color="primary" className="text-lg">ניהול<FcManager className="text-[26px]"/></Button>
+                    </Link>
+                </NavbarItem>
+                <NavbarItem>
+                    <Link color="foreground" href="aobdem">
+                        <Button variant="light" color="primary" className="text-lg">עובדים<GrUserWorker className="text-2xl text-black"/></Button> 
                     </Link>
                 </NavbarItem>
                 <NavbarItem>

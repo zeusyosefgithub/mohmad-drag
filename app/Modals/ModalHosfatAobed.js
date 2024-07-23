@@ -12,7 +12,7 @@ export default function ModalHosfatAobed({ disable, show }) {
     const [shem,setShem] = useState('');
     const [taodatZhot,setTaodatZhot] = useState('');
     const [nead,setNead] = useState('');
-    const [tarefLeshaa,setTarefLeshaa] = useState('');
+    const [tarefLeshaa,setTarefLeshaa] = useState(0);
     const [yeshov,setYeshov] = useState('');
     const [aer,setAer] = useState('');
 
@@ -22,25 +22,21 @@ export default function ModalHosfatAobed({ disable, show }) {
             msbar: counter?.count,
             bensea: 0,
             betsoeem: 0,
-            betwahLome: 0,
-            hofeshMahla: 0,
-            hofsha : 0,
-            kerenHeshtlmot: 0,
-            masHakhnsa: 0,
             taodatZhot: taodatZhot,
             nead: nead,
             shem: shem,
             tarefLshaa: tarefLeshaa,
             tfked: tfked === "ייצור" ? 'A' : tfked === "הנהלה" ? 'B' : null,
             yeshov: yeshov,
-            aer: aer
+            aer: aer,
+            skharBroto: 0,
         });
         await updateDoc(doc(firestore, 'metadata', counter?.id), { count: counter?.count + 1 });
         setTfked('');
         setShem('');
         setTaodatZhot('');
         setNead('');
-        setTarefLeshaa('');
+        setTarefLeshaa(0);
         setYeshov('');
         setAer('');
         disable();
@@ -82,7 +78,7 @@ export default function ModalHosfatAobed({ disable, show }) {
                             className="w-full max-w-[250px] mt-5"
                             size="sm"
                             type="number"
-                            value={tarefLeshaa}
+                            value={tarefLeshaa || ""}
                             onValueChange={(val) => setTarefLeshaa(val)}
                             />
                             <Input 

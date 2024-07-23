@@ -6,10 +6,11 @@ import { doc, getDoc, runTransaction, setDoc, collection, addDoc, updateDoc } fr
 import GetDocs from "../FireBase/getDocs";
 
 
-export default function ModalMessage({ disable, show, message, Aeshor }) {
+export default function ModalMessage({ disable, show, message, Aeshor,motsar,yetsor,withoutBlur }) {
+    console.log(yetsor);
 
     return (
-        <Modal placement="center" className="" backdrop={"blur"} isOpen={show} onClose={disable}>
+        <Modal placement="center" className="" backdrop={withoutBlur ? '' : "blur"} isOpen={show} onClose={disable}>
             <ModalContent>
                 <>
                     <ModalBody className="shadow-2xl">
@@ -21,18 +22,34 @@ export default function ModalMessage({ disable, show, message, Aeshor }) {
                     </ModalBody>
                     <ModalFooter>
                         <div className="flex justify-between w-full">
-                            <Button size="lg" color="primary" onClick={() => {
-                                disable();
-                                Aeshor(false);
-                            }}>
-                                לא
-                            </Button>
-                            <Button size="lg" color="danger" onClick={() => {
-                                disable();
-                                Aeshor(true);
-                            }}>
-                                כן
-                            </Button>
+                            {
+                                motsar?.kmot > 0 ?
+                                <Button size="lg" color="primary" onClick={() => {
+                                    disable();
+                                    Aeshor(false);
+                                }}>
+                                    סגור
+                                </Button>
+                                :
+                                <Button size="lg" color="primary" onClick={() => {
+                                    disable();
+                                    Aeshor(false);
+                                }}>
+                                    {
+                                        yetsor ? 'לא' : "סגור"
+                                    }
+                                </Button>
+                            }
+                           
+                            {
+                                (motsar?.kmot == 0 || yetsor) &&
+                                <Button size="lg" color="danger" onClick={() => {
+                                    disable();
+                                    Aeshor(true);
+                                }}>
+                                    כן
+                                </Button>
+                            }
                         </div>
                     </ModalFooter>
                 </>

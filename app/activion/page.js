@@ -10,6 +10,7 @@ import GetDocs from "../FireBase/getDocs";
 import { AllPages } from "../Page Components/allPages";
 import { addDoc, collection, count, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../FireBase/firebase";
+import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 
 export default function Activion() {
 
@@ -100,12 +101,15 @@ export default function Activion() {
     const [sheshShtaeem,setSheshShtaeem] = useState('');
     const [sheshShlosh,setSheshShlosh] = useState('');
 
+    const metadata = GetDocs('metadata');
+    const counter = metadata.find((count) => count.id === 'counterLkhot');
+    const counter2 = metadata.find((count) => count.id === 'counterAglot');
 
-    const Customers = GetDocs('customers');
-    const Drags = GetDocs('drags');
+    const [errorMessageShem,setErrorMessageShem] = useState('');
+    const [errorMessageTaodatZehot,setErrorMessageTaodatZehot] = useState('');
+    const [errorMessageMsbarAgla,setErrorMessageMsbarAgla] = useState('');
 
-    const counter = GetDocs('metadata').find((count) => count.id === 'counterLkhot');
-    const counter2 = GetDocs('metadata').find((count) => count.id === 'counterAglot');
+   
 
     const GetIdWight = () => {
         let newDate = new Date();
@@ -117,9 +121,56 @@ export default function Activion() {
         return idwight;
     }
 
+    const checkAemLkohKeam = () => {
+        for (let index = 0; index < lkhot.length; index++) {
+            if(lkhot[index].name === customerName){
+                setErrorMessageShem('שם הלקוח כבר קיים !!');
+                return true;
+            }
+            if(lkhot[index].cusid === customerId){
+                setErrorMessageTaodatZehot('ת.ז הלקוח כבר קיימת !!');
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const hosfatLkoh = async () => {
+        setErrorMessageShem('');
+        setErrorMessageTaodatZehot('');
+        if (lkohKeam) {
+            setShowAddCus(false);
+            setShowDrag(true);
+            return;
+        }
+        if (checkAemLkohKeam()) {
+            return;
+        }
+        setLoading(true);
+        const customer = {
+            city: customerCity,
+            cusid: customerId,
+            houseid: customerHouseId,
+            idnum: counter?.count,
+            lastname: customerLastName,
+            name: customerName,
+            phone: customerPhone,
+            postal: customerPostal,
+            street: customerStreet,
+            yetera: 0,
+        }
+        console.log(123);
+        await addDoc(collection(firestore, "customers"), customer);
+        await updateDoc(doc(firestore, 'metadata', 'counterLkhot'), { count: counter?.count + 1 });
+        setLoading(false);
+        setShowAddCus(false); 
+        setShowDrag(true);
+
+    }
+
     const sendDataToPages = () => {
-        let cus,drag;
-        if(lkohKeam){
+        let cus, drag;
+        if (lkohKeam) {
             cus = lkoh;
         }
         else{
@@ -128,8 +179,8 @@ export default function Activion() {
                 cusid: customerId,
                 houseid: customerHouseId,
                 idnum: counter?.count,
-                lastname: customerName,
-                name: customerLastName,
+                lastname: customerLastName,
+                name: customerName,
                 phone: customerPhone,
                 postal: customerPostal,
                 street: customerStreet
@@ -193,19 +244,22 @@ export default function Activion() {
         return { cus, drag };
     }
 
-    const addNewDrag = async () => {
-        const customer = {
-            city: customerCity,
-            cusid: customerId,
-            houseid: customerHouseId,
-            idnum: counter?.count,
-            lastname: customerName,
-            name: customerLastName,
-            phone: customerPhone,
-            postal: customerPostal,
-            street: customerStreet,
-            yetera: 0,
+    const checkAemAglaKeamt = () => {
+        for (let index = 0; index < aglot.length; index++) {
+            if(aglot[index].dragnum === dragnum){
+                setErrorMessageMsbarAgla('מספר העגלה כבר קיים !!');
+                return true;
+            }
         }
+        return false;
+    }
+
+    const addNewDrag = async () => {
+        setErrorMessageMsbarAgla('');
+        if(checkAemAglaKeamt()){
+            return;
+        }
+        setLoading(true);
         const drag = {
             authorizedweight: authorizedweight,
             bodymodel: bodymodel,
@@ -257,10 +311,9 @@ export default function Activion() {
             sheshShlosh: sheshShlosh,
 
         }
-        !lkohKeam && await addDoc(collection(firestore, "customers"), customer);
         !aglaKeamet && await addDoc(collection(firestore, "drags"), drag);
-        !lkohKeam && await updateDoc(doc(firestore, 'metadata', counter?.id), { count: counter?.count + 1 });
-        !aglaKeamet && await updateDoc(doc(firestore, 'metadata', counter2?.id), { count: counter2?.count + 1 });
+        !aglaKeamet && await updateDoc(doc(firestore, 'metadata', 'counterAglot'), { count: counter2?.count + 1 });
+        setLoading(false);
         handlePrint();
         setShowAddCus(true); setShowDrag(false); setShowDragTwo(false); setShowDragThree(false); setShowDragFour(false);
         resetAllProps();
@@ -319,12 +372,14 @@ export default function Activion() {
     const [Agla,setAgla] = useState();
     const aglot = GetDocs('drags');
 
+    const [loading,setLoading] = useState(false);
+
     return (
         <div className="hebrow_font">
             <div className="flex justify-center">
-                <div className="w-9/12 mt-20">
+                <div className="w-9/12">
 
-                    <div className="mt-8 p-5">
+                    <div className="mt-8 p-5 bg-white rounded-3xl shadow-2xl">
                         {
                             showAddCus && <div>
                                 <div className="flex justify-center text-2xl">
@@ -344,14 +399,14 @@ export default function Activion() {
                                                     <table className="w-full table-auto border-collapse">
                                                         <thead>
                                                             <tr className="bg-gray-500 dark:bg-gray-800 sticky top-0">
-                                                                <th className="px-4 py-3 text-center font-medium text-white">עיר</th>
-                                                                <th className="px-4 py-3 text-center font-medium text-white">מיקוד</th>
-                                                                <th className="px-4 py-3 text-center font-medium text-white">כתובת</th>
-                                                                <th className="px-4 py-3 text-center font-medium text-white">רחוב</th>
-                                                                <th className="px-4 py-3 text-center font-medium text-white">מספר טלפון</th>
-                                                                <th className="px-4 py-3 text-center font-medium text-white">מס ת.ז</th>
-                                                                <th className="px-4 py-3 text-center font-medium text-white">שם משפחה</th>
-                                                                <th className="px-4 py-3 text-center font-medium text-white">שם פרטי</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-black bg-gradient-to-r from-white to-gray-50">עיר</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-black bg-gradient-to-r from-gray-50 to-gray-100">מיקוד</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-black bg-gradient-to-r from-gray-100 to-gray-200">כתובת</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-black bg-gradient-to-r from-gray-200 to-gray-300">רחוב</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-black bg-gradient-to-r from-gray-300 to-gray-400">מספר טלפון</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-black bg-gradient-to-r from-gray-400 to-gray-500">מס ת.ז</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-black bg-gradient-to-r from-gray-500 to-gray-600">שם משפחה</th>
+                                                                <th className="px-4 py-3 text-center font-medium text-black bg-gradient-to-r from-gray-600 to-gray-700">שם פרטי</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -380,23 +435,23 @@ export default function Activion() {
                                             <div dir="rtl" className="mt-5">
                                                 <div className="flex justify-around">
                                                     <div className="w-1/3">
-                                                        <Input value={customerName} size="sm" onValueChange={(value) => { setCustomerName(value) }} type="text" label="שם לקוח" />
-                                                        <Input value={customerLastName} className="mt-10" size="sm" onValueChange={(value) => { setCustomerLastName(value) }} type="text" label="שם משפחה" />
-                                                        <Input value={customerPhone} className="mt-10" size="sm" onValueChange={(value) => { setCustomerPhone(value) }} type="number" label="מס טלפון" />
-                                                        <Input value={customerStreet} className="mt-10" size="sm" onValueChange={(value) => { setCustomerStreet(value) }} type="text" label="רחוב" />
+                                                        <Input errorMessage={errorMessageShem} color="primary" value={customerName} size="sm" onValueChange={(value) => { setCustomerName(value) }} type="text" label="שם לקוח" />
+                                                        <Input color="primary" value={customerLastName} className="mt-10" size="sm" onValueChange={(value) => { setCustomerLastName(value) }} type="text" label="שם משפחה" />
+                                                        <Input color="primary" value={customerPhone} className="mt-10" size="sm" onValueChange={(value) => { setCustomerPhone(value) }} type="number" label="מס טלפון" />
+                                                        <Input color="primary" value={customerStreet} className="mt-10" size="sm" onValueChange={(value) => { setCustomerStreet(value) }} type="text" label="רחוב" />
                                                     </div>
                                                     <div className="w-1/3">
-                                                        <Input value={customerId} size="sm" onValueChange={(value) => { setCustomerId(value) }} type="number" label="מס תעודת זהות" />
-                                                        <Input value={customerPostal} className="mt-10" size="sm" onValueChange={(value) => { setCustomerPostal(value) }} type="number" label="מס מיקוד" />
-                                                        <Input value={customerHouseId} className="mt-10" size="sm" onValueChange={(value) => { setCustomerHouseId(value) }} type="number" label="מס בית" />
-                                                        <Input value={customerCity} className="mt-10" size="sm" onValueChange={(value) => { setCustomerCity(value) }} type="text" label="ישוב" />
+                                                        <Input errorMessage={errorMessageTaodatZehot} color="primary" value={customerId} size="sm" onValueChange={(value) => { setCustomerId(value) }} type="number" label="מס תעודת זהות" />
+                                                        <Input color="primary" value={customerPostal} className="mt-10" size="sm" onValueChange={(value) => { setCustomerPostal(value) }} type="number" label="מס מיקוד" />
+                                                        <Input color="primary" value={customerHouseId} className="mt-10" size="sm" onValueChange={(value) => { setCustomerHouseId(value) }} type="number" label="מס בית" />
+                                                        <Input color="primary" value={customerCity} className="mt-10" size="sm" onValueChange={(value) => { setCustomerCity(value) }} type="text" label="ישוב" />
                                                     </div>
                                                 </div>
                                             </div>
                                         </>
                                 }
                                 <div className="flex justify-center mt-28">
-                                    <Button disabled={lkohKeam && !lkoh} onClick={() => { setShowAddCus(false); setShowDrag(true) }} size="lg" color="primary">המשך <MdOutlineArrowForward className="text-xl" /></Button>
+                                    <Button isLoading={loading} isDisabled={lkohKeam ? (!lkoh) : (!customerName || !customerLastName || !customerPhone || !customerStreet || !customerId || !customerPostal || !customerHouseId || !customerCity)} onClick={hosfatLkoh} size="lg" color="primary">הוספה והמשך<MdOutlineArrowForward className="text-xl" /></Button>
                                 </div>
                             </div>
                         }
@@ -413,12 +468,12 @@ export default function Activion() {
                                     <div className='mt-5 bg-gray-300 h-[450px] overflow-auto'>
                                         <table className="w-full table-auto border-collapse">
                                             <thead>
-                                                <tr className="bg-gray-500 dark:bg-gray-800 sticky top-0">
-                                                    <th className="px-4 py-3 text-center font-medium text-white">רוחב</th>
-                                                    <th className="px-4 py-3 text-center font-medium text-white">אורך</th>
-                                                    <th className="px-4 py-3 text-center font-medium text-white">משקל</th>
-                                                    <th className="px-4 py-3 text-center font-medium text-white">מספר עגלה</th>
-                                                    <th className="px-4 py-3 text-center font-medium text-white">זהות העגלה</th>
+                                                <tr className="sticky top-0">
+                                                    <th className="px-4 py-3 text-center bg-gradient-to-r from-white to-gray-50 font-medium text-black">רוחב</th>
+                                                    <th className="px-4 py-3 text-center bg-gradient-to-r from-gray-50 to-gray-100 font-medium text-black">אורך</th>
+                                                    <th className="px-4 py-3 text-center bg-gradient-to-r from-gray-100 to-gray-200 font-medium text-black">משקל</th>
+                                                    <th className="px-4 py-3 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-medium text-black">מספר עגלה</th>
+                                                    <th className="px-4 py-3 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-medium text-black">זהות העגלה</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -437,8 +492,8 @@ export default function Activion() {
                                 </div>
                                 <div className="flex justify-center mt-28">
                                     <Button onClick={() => { setShowAddCus(true); setShowDrag(false); }} size="lg" color="primary">לחזור <MdOutlineArrowBack className="text-xl" /></Button>
-                                    <div className="m-20"></div>
-                                    <Button onClick={addNewDrag} size="lg" color="primary">הוספה <IoMdAdd className="text-xl" /></Button>
+                                    <div className="ml-10 mr-10"></div>
+                                    <Button isDisabled={!Agla} onClick={addNewDrag} size="lg" color="primary">הוספה <IoMdAdd className="text-xl" /></Button>
                                 </div>
                             </div>
                         }
@@ -450,36 +505,39 @@ export default function Activion() {
                                     <div onClick={() => setAglaKeamet(true)} className={`ml-1 mr-1 cursor-pointer ${aglaKeamet && 'text-primary'}`}>קיימת</div>
                                     <div className="ml-1 mr-1">עגלה</div>
                                 </div>
+                                <div dir="rtl" className="mt-5 text-xl">
+                                    פרטיים העגלה החדשה :
+                                </div>
                                 <div dir="rtl" className="mt-5">
                                     <div className="flex justify-around">
                                         <div className="w-1/3">
-                                            <Input value={licenseid} size="sm" onValueChange={(value) => { setLicenseid(value) }} type="number" label="מספר רישוי" />
-                                            <Input value={chassisnum} className="mt-10" size="sm" onValueChange={(value) => { setChassisnum(value) }} type="number" label="מספר שלדה" />
-                                            <Input value={prodction} className="mt-10" size="sm" onValueChange={(value) => { setProdction(value) }} type="text" label="תוצר" />
-                                            <Input value={model} className="mt-10" size="sm" onValueChange={(value) => { setModel(value) }} type="text" label="קוד דגם" />
-                                            <Input value={masTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setMasTaodatABTebos(value) }} type="text" label="מס' תעודת אב טיפוס" />
+                                            <Input color="primary" value={licenseid} size="sm" onValueChange={(value) => { setLicenseid(value) }} type="number" label="מספר רישוי" />
+                                            <Input color="primary" value={chassisnum} className="mt-10" size="sm" onValueChange={(value) => { setChassisnum(value) }} type="number" label="מספר שלדה" />
+                                            <Input color="primary" value={prodction} className="mt-10" size="sm" onValueChange={(value) => { setProdction(value) }} type="text" label="תוצר" />
+                                            <Input color="primary" value={model} className="mt-10" size="sm" onValueChange={(value) => { setModel(value) }} type="text" label="קוד דגם" />
+                                            <Input color="primary" value={masTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setMasTaodatABTebos(value) }} type="text" label="מס' תעודת אב טיפוס" />
                                         </div>
                                         <div className="m-10" />
                                         <div className="w-1/3">
-                                            <Input value={categore} size="sm" onValueChange={(value) => { setCategore(value) }} type="text" label="קטגוריה" />
-                                            <Input value={color} className="mt-10" size="sm" onValueChange={(value) => { setColor(value) }} type="text" label="צבע" />
-                                            <Input value={kinddrag} className="mt-10" size="sm" onValueChange={(value) => { setKinddrag(value) }} type="text" label="סוג הרכב" />
-                                            <Input value={producer} className="mt-10" size="sm" onValueChange={(value) => { setProducer(value) }} type="text" label="יצרן" />
-                                            <Input value={tableokefTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setTokefTaodatABTebos(value) }} type="text" label="תוקף תעודת אב טיפוס" />
+                                            <Input color="primary" value={categore} size="sm" onValueChange={(value) => { setCategore(value) }} type="text" label="קטגוריה" />
+                                            <Input color="primary" value={color} className="mt-10" size="sm" onValueChange={(value) => { setColor(value) }} type="text" label="צבע" />
+                                            <Input color="primary" value={kinddrag} className="mt-10" size="sm" onValueChange={(value) => { setKinddrag(value) }} type="text" label="סוג הרכב" />
+                                            <Input color="primary" value={producer} className="mt-10" size="sm" onValueChange={(value) => { setProducer(value) }} type="text" label="יצרן" />
+                                            <Input color="primary" value={tableokefTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setTokefTaodatABTebos(value) }} type="text" label="תוקף תעודת אב טיפוס" />
                                         </div>
                                         <div className="m-10" />
                                         <div className="w-1/3">
-                                            <Input value={bodytype} size="sm" onValueChange={(value) => { setBodytype(value) }} type="text" label="סוג מרכב" />
-                                            <Input value={long} className="mt-10" size="sm" onValueChange={(value) => { setLong(value) }} type="text" label="אורך כללי" />
-                                            <Input value={space} className="mt-10" size="sm" onValueChange={(value) => { setSpace(value) }} type="text" label="רוחב כללי" />
-                                            <Input value={height} className="mt-10" size="sm" onValueChange={(value) => { setHeight(value) }} type="text" label="גובה כללי" />
-                                            <Input value={masVTokefResheonYatsran} className="mt-10" size="sm" onValueChange={(value) => { setMasVTokefResheonYatsran(value) }} type="text" label="מס' ותוקף רישיון יצרן" />
+                                            <Input color="primary" value={bodytype} size="sm" onValueChange={(value) => { setBodytype(value) }} type="text" label="סוג מרכב" />
+                                            <Input color="primary" value={long} className="mt-10" size="sm" onValueChange={(value) => { setLong(value) }} type="text" label="אורך כללי" />
+                                            <Input color="primary" value={space} className="mt-10" size="sm" onValueChange={(value) => { setSpace(value) }} type="text" label="רוחב כללי" />
+                                            <Input color="primary" value={height} className="mt-10" size="sm" onValueChange={(value) => { setHeight(value) }} type="text" label="גובה כללי" />
+                                            <Input color="primary" value={masVTokefResheonYatsran} className="mt-10" size="sm" onValueChange={(value) => { setMasVTokefResheonYatsran(value) }} type="text" label="מס' ותוקף רישיון יצרן" />
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex justify-center mt-28">
                                     <Button onClick={() => { setShowAddCus(true); setShowDrag(false); }} size="lg" color="primary">לחזור <MdOutlineArrowBack className="text-xl" /></Button>
-                                    <div className="m-20"></div>
+                                    <div className="ml-10 mr-10"></div>
                                     <Button onClick={() => { setShowAddCus(false); setShowDrag(false); setShowDragTwo(true) }} size="lg" color="primary">המשך <MdOutlineArrowForward className="text-xl" /></Button>
                                 </div>
                             </div>
@@ -493,33 +551,33 @@ export default function Activion() {
                                 <div dir="rtl" className="mt-5">
                                     <div className="flex justify-around">
                                         <div className="w-1/3">
-                                            <Input value={rearextension} size="sm" onValueChange={(value) => { setRearextension(value) }} type="text" label="שלוחה אחורית" />
-                                            <Input value={lengthhatch} className="mt-10" size="sm" onValueChange={(value) => { setLengthhatch(value) }} type="text" label="אורך יצול" />
-                                            <Input value={heightloading} className="mt-10" size="sm" onValueChange={(value) => { setHeightloading(value) }} type="text" label="גובה משטח העמסה" />
-                                            <Input value={sizeloading} className="mt-10" size="sm" onValueChange={(value) => { setSizeloading(value) }} type="text" label="גובה משטח העמסה (מר)" />
-                                            <Input value={masAeshorYatsran} className="mt-10" size="sm" onValueChange={(value) => { setMasAeshorYatsran(value) }} type="text" label="מס' אישור יצרן" />
+                                            <Input color="primary" value={rearextension} size="sm" onValueChange={(value) => { setRearextension(value) }} type="text" label="שלוחה אחורית" />
+                                            <Input color="primary" value={lengthhatch} className="mt-10" size="sm" onValueChange={(value) => { setLengthhatch(value) }} type="text" label="אורך יצול" />
+                                            <Input color="primary" value={heightloading} className="mt-10" size="sm" onValueChange={(value) => { setHeightloading(value) }} type="text" label="גובה משטח העמסה" />
+                                            <Input color="primary" value={sizeloading} className="mt-10" size="sm" onValueChange={(value) => { setSizeloading(value) }} type="text" label="גובה משטח העמסה (מר)" />
+                                            <Input color="primary" value={masAeshorYatsran} className="mt-10" size="sm" onValueChange={(value) => { setMasAeshorYatsran(value) }} type="text" label="מס' אישור יצרן" />
                                         </div>
                                         <div className="m-10" />
                                         <div className="w-1/3">
-                                            <Input value={bodymodel} size="sm" onValueChange={(value) => { setBodymodel(value) }} type="text" label="דגם מרכב" />
-                                            <Input value={undercarriage} className="mt-10" size="sm" onValueChange={(value) => { setUndercarriage(value) }} type="text" label="מסד מרכב" />
-                                            <Input value={selfweightaxles} className="mt-10" size="sm" onValueChange={(value) => { setSelfweightaxles(value) }} type="text" label="משקל עצמי על הסרנים" />
-                                            <Input value={totalselfweight} className="mt-10" size="sm" onValueChange={(value) => { setTotalselfweight(value) }} type="text" label="משקל עצמי כולל" />
-                                            <Input value={masGlglemSrnem} className="mt-10" size="sm" onValueChange={(value) => { setMasGlglemSrnem(value) }} type="text" label="מס' גלגלים / סרנים" />
+                                            <Input color="primary" value={bodymodel} size="sm" onValueChange={(value) => { setBodymodel(value) }} type="text" label="דגם מרכב" />
+                                            <Input color="primary" value={undercarriage} className="mt-10" size="sm" onValueChange={(value) => { setUndercarriage(value) }} type="text" label="מסד מרכב" />
+                                            <Input color="primary" value={selfweightaxles} className="mt-10" size="sm" onValueChange={(value) => { setSelfweightaxles(value) }} type="text" label="משקל עצמי על הסרנים" />
+                                            <Input color="primary" value={totalselfweight} className="mt-10" size="sm" onValueChange={(value) => { setTotalselfweight(value) }} type="text" label="משקל עצמי כולל" />
+                                            <Input color="primary" value={masGlglemSrnem} className="mt-10" size="sm" onValueChange={(value) => { setMasGlglemSrnem(value) }} type="text" label="מס' גלגלים / סרנים" />
                                         </div>
                                         <div className="m-10" />
                                         <div className="w-1/3">
-                                            <Input value={authorizedweight} size="sm" onValueChange={(value) => { setAuthorizedweight(value) }} type="text" label="משקל מורשה" />
-                                            <Input value={distributionloads} className="mt-10" size="sm" onValueChange={(value) => { setDistributionloads(value) }} type="text" label="חלוקת העומסים" />
-                                            <Input value={device} className="mt-10" size="sm" onValueChange={(value) => { setDevice(value) }} type="text" label="התקן" />
-                                            <Input value={installer} className="mt-10" size="sm" onValueChange={(value) => { setInstaller(value) }} type="text" label="שם המתקין" />
-                                            <Input value={medatTsmgem} className="mt-10" size="sm" onValueChange={(value) => { setMedatTsmgem(value) }} type="text" label="מידת צמגים" />
+                                            <Input color="primary" value={authorizedweight} size="sm" onValueChange={(value) => { setAuthorizedweight(value) }} type="text" label="משקל מורשה" />
+                                            <Input color="primary" value={distributionloads} className="mt-10" size="sm" onValueChange={(value) => { setDistributionloads(value) }} type="text" label="חלוקת העומסים" />
+                                            <Input color="primary" value={device} className="mt-10" size="sm" onValueChange={(value) => { setDevice(value) }} type="text" label="התקן" />
+                                            <Input color="primary" value={installer} className="mt-10" size="sm" onValueChange={(value) => { setInstaller(value) }} type="text" label="שם המתקין" />
+                                            <Input color="primary" value={medatTsmgem} className="mt-10" size="sm" onValueChange={(value) => { setMedatTsmgem(value) }} type="text" label="מידת צמגים" />
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex justify-center mt-28">
                                     <Button onClick={() => { setShowAddCus(false); setShowDrag(true); setShowDragTwo(false); }} size="lg" color="primary">לחזור <MdOutlineArrowBack className="text-xl" /></Button>
-                                    <div className="m-20"></div>
+                                    <div className="ml-10 mr-10"></div>
                                     <Button onClick={() => { setShowAddCus(false); setShowDrag(false); setShowDragTwo(false); setShowDragThree(true); }} size="lg" color="primary">המשך <MdOutlineArrowForward className="text-xl" /></Button>
                                 </div>
                             </div>
@@ -533,24 +591,24 @@ export default function Activion() {
                                 <div dir="rtl" className="mt-5">
                                     <div className="flex justify-around">
                                         <div className="w-1/3">
-                                            <Input value={foundation} size="sm" onValueChange={(value) => { setFoundation(value) }} type="text" label="מסד" />
-                                            <Input value={safetyreview} className="mt-10" size="sm" onValueChange={(value) => { setSafetyreview(value) }} type="text" label="תסקיר בטיחות" />
-                                            <Input value={reviewerid} className="mt-10" size="sm" onValueChange={(value) => { setReviewerid(value) }} type="number" label="זהות סוקר" />
-                                            <Input value={labreport} className="mt-10" size="sm" onValueChange={(value) => { setLabreport(value) }} type="text" label="דוח מעבדה" />
+                                            <Input color="primary" value={foundation} size="sm" onValueChange={(value) => { setFoundation(value) }} type="text" label="מסד" />
+                                            <Input color="primary" value={safetyreview} className="mt-10" size="sm" onValueChange={(value) => { setSafetyreview(value) }} type="text" label="תסקיר בטיחות" />
+                                            <Input color="primary" value={reviewerid} className="mt-10" size="sm" onValueChange={(value) => { setReviewerid(value) }} type="number" label="זהות סוקר" />
+                                            <Input color="primary" value={labreport} className="mt-10" size="sm" onValueChange={(value) => { setLabreport(value) }} type="text" label="דוח מעבדה" />
                                         </div>
                                         <div className="m-10" />
                                         <div className="w-1/3">
-                                            <Input value={labid} size="sm" onValueChange={(value) => { setLabid(value) }} type="number" label="זהות מעבדה" />
-                                            <Input value={sheshAehad} size="sm" className="mt-10" onValueChange={(value) => { setSheshAehad(value) }} type="number" label="6.1" />
-                                            <Input value={sheshShtaeem} size="sm" className="mt-10" onValueChange={(value) => { setSheshShtaeem(value) }} type="number" label="6.2" />
-                                            <Input value={sheshShlosh} size="sm" className="mt-10" onValueChange={(value) => { setSheshShlosh(value) }} type="number" label="6.3" />
+                                            <Input color="primary" value={labid} size="sm" onValueChange={(value) => { setLabid(value) }} type="number" label="זהות מעבדה" />
+                                            <Input color="primary" value={sheshAehad} size="sm" className="mt-10" onValueChange={(value) => { setSheshAehad(value) }} type="number" label="6.1" />
+                                            <Input color="primary" value={sheshShtaeem} size="sm" className="mt-10" onValueChange={(value) => { setSheshShtaeem(value) }} type="number" label="6.2" />
+                                            <Input color="primary" value={sheshShlosh} size="sm" className="mt-10" onValueChange={(value) => { setSheshShlosh(value) }} type="number" label="6.3" />
 
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex justify-center mt-28">
                                     <Button onClick={() => { setShowAddCus(false); setShowDrag(false); setShowDragTwo(true); setShowDragThree(false); }} size="lg" color="primary">לחזור <MdOutlineArrowBack className="text-xl" /></Button>
-                                    <div className="m-20"></div>
+                                    <div className="ml-10 mr-10"></div>
                                     <Button onClick={() => { setShowAddCus(false); setShowDrag(false); setShowDragTwo(false); setShowDragThree(false); setShowDragFour(true); }} size="lg" color="primary">המשך <MdOutlineArrowForward className="text-xl" /></Button>
                                 </div>
                             </div>
@@ -564,22 +622,22 @@ export default function Activion() {
                                 <div dir="rtl" className="mt-5">
                                     <div className="flex justify-around">
                                         <div className="w-1/3">
-                                            <Input value={opendate} size="sm" onValueChange={(value) => { setOpendate(value) }} type="text" label="תאריך כניסה" />
-                                            <Input value={closedate} className="mt-10" size="sm" onValueChange={(value) => { setClosedate(value) }} type="text" label="תאריך יציאה" />
-                                            <Input value={opentime} className="mt-10" size="sm" onValueChange={(value) => { setOpentime(value) }} type="text" label="שעה כניסה" />
-                                            <Input value={closetime} className="mt-10" size="sm" onValueChange={(value) => { setClosetime(value) }} type="text" label="שעה יציאה" />
+                                            <Input color="primary" value={opendate} size="sm" onValueChange={(value) => { setOpendate(value) }} type="text" label="תאריך כניסה" />
+                                            <Input color="primary" value={closedate} className="mt-10" size="sm" onValueChange={(value) => { setClosedate(value) }} type="text" label="תאריך יציאה" />
+                                            <Input color="primary" value={opentime} className="mt-10" size="sm" onValueChange={(value) => { setOpentime(value) }} type="text" label="שעה כניסה" />
+                                            <Input color="primary" value={closetime} className="mt-10" size="sm" onValueChange={(value) => { setClosetime(value) }} type="text" label="שעה יציאה" />
                                         </div>
                                         <div className="m-10" />
                                         <div className="w-1/3">
-                                            <Input value={wight} size="sm" onValueChange={(value) => { setWight(value) }} type="text" label="משקל" />
-                                            <Input value={dragnum} className="mt-10" size="sm" onValueChange={(value) => { setDragnum(value) }} type="number" label="מספר גרור" />
+                                            <Input color="primary" value={wight} size="sm" onValueChange={(value) => { setWight(value) }} type="text" label="משקל" />
+                                            <Input errorMessage={errorMessageMsbarAgla} color="primary" value={dragnum} className="mt-10" size="sm" onValueChange={(value) => { setDragnum(value) }} type="number" label="מספר גרור" />
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex justify-center mt-28">
                                     <Button onClick={() => { setShowAddCus(false); setShowDrag(false); setShowDragTwo(false); setShowDragThree(true); setShowDragFour(false); }} size="lg" color="primary">לחזור <MdOutlineArrowBack className="text-xl" /></Button>
-                                    <div className="m-20"></div>
-                                    <Button onClick={addNewDrag} size="lg" color="primary">הוספה <IoMdAdd className="text-xl" /></Button>
+                                    <div className="ml-10 mr-10"></div>
+                                    <Button isLoading={loading} onClick={addNewDrag} size="lg" color="primary">הוספה <IoMdAdd className="text-xl" /></Button>
                                 </div>
                             </div>
                         }

@@ -5,7 +5,8 @@ body, html {
 
 .bg-gradient-to-r-f5 {
     background: linear-gradient(to right, #f3f4f6, #f0fdfa);
-    min-height: 100vh;
+    height: 100vh;
+    overflow: auto !important;
 }
 .text-f4 {
     color: white;
@@ -31,6 +32,7 @@ body, html {
     }
     .bg-gradient-to-r-f5 {
         background: linear-gradient(to right, #f3f4f6, #f0fdfa) !important;
+        overflow: auto !important;
     }
     .text-f4 {
         color: white !important;

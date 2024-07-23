@@ -4,19 +4,28 @@ import { Autocomplete, AutocompleteItem, Avatar, Button, Divider, Dropdown, Drop
 import { Heshvonet } from "../Page Components/Heshvonet";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
-import { collection, doc, getDocs, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import { firestore } from '../FireBase/firebase';
 import GetDocs from "../FireBase/getDocs";
 import { format } from "date-fns";
 import { FaArrowUp, FaTrash } from "react-icons/fa";
 import { FiPlus } from "react-icons/fi";
 
-export default function ModalMkhera({ show, disable }) {
+export default function ModalMkhera({ show, disable,mlae,category }) {
 
     const componentRefOne = useRef();
     const lkhot = GetDocs('customers');
-    const category = GetDocs('category');
-    const mlae = GetDocs('mlae');
+    const [lkoh, setLkoh] = useState();
+    const [msbarLkoh, setMsbarLkoh] = useState();
+    const metadata = GetDocs('metadata');
+    const counter = metadata.find((count) => count.id === 'counterMkherot');
+    const counterHkhnsotAhrot = metadata.find((count) => count.id === 'counterHkhnsotAhrot');
+    const counterHeshvoneot = metadata.find((count) => count.id === 'counterHeshvoneot');
+    const currentDate = format(new Date(), 'dd-MM-yyyy');
+    const [hn7a,setHn7a] = useState(0);
+    const [entries, setEntries] = useState([{ category: '',motsar : '', sogMotsar: '',errorKmot : '',errorMher : '',mherLeheda : 0, remez: '',kmot : 0, message: '' }]);
+    const [loading,setLoading] = useState(false);
+
     const handelPrintHeshvonit = useReactToPrint({
         pageStyle: `
         @page {
@@ -26,19 +35,6 @@ export default function ModalMkhera({ show, disable }) {
         `,
         content: () => componentRefOne.current,
     });
-    // @page {
-    //     size: 80mm 200mm;
-    //     margin: 0mm;
-    // 
-    // body {
-    //     margin: 0mm; 
-    // }
-    const counter = GetDocs('metadata').find((count) => count.id === 'counterMkherot');
-    const currentDate = format(new Date(), 'dd-MM-yyyy');
-
-
-    const [lkoh, setLkoh] = useState();
-    const [msbarLkoh, setMsbarLkoh] = useState();
     const fetchCustomerData = async (customerId) => {
         try {
             const customersRef = collection(firestore, 'customers');
@@ -55,13 +51,17 @@ export default function ModalMkhera({ show, disable }) {
             setLkoh(null);
         }
     };
-
+    const ResetAll = () => {
+        setLkoh(null);
+        setMsbarLkoh(null);
+        setEntries([{ category: '',motsar : '', sogMotsar: '',errorKmot : '',errorMher : '',mherLeheda : 0, remez: '',kmot : 0, message: '' }]);
+        disable();
+    }
     useEffect(() => {
         if (msbarLkoh) {
             fetchCustomerData(msbarLkoh);
         }
     }, [msbarLkoh]);
-
     useEffect(() => {
         if (lkoh && lkoh.id) {
             const unsub = onSnapshot(doc(firestore, 'customers', lkoh.id), (doc) => {
@@ -74,34 +74,6 @@ export default function ModalMkhera({ show, disable }) {
             return () => unsub();
         }
     }, [lkoh?.id]);
-
-    const containerRef = useRef(null);
-    const endOfFormRef = useRef(null);
-    const topOfFormRef = useRef(null);
-
-    const [entries, setEntries] = useState([{ category: '',motsar : '', sogMotsar: '',mherLeheda : 0, remez: '',kmot : 0, message: '' }]);
-    const scrollToBottomRef = () => {
-        const scrollableContainer = containerRef.current;
-        const targetElement = endOfFormRef.current;
-        if (scrollableContainer && targetElement) {
-            const topPos = targetElement.offsetTop;
-            scrollableContainer.scrollTo({
-                top: topPos,
-                behavior: "smooth"
-            });
-        }
-    };
-    const scrollToRef = () => {
-        const scrollableContainer = containerRef.current;
-        const topElement = topOfFormRef.current;
-
-        if (scrollableContainer && topElement) {
-            scrollableContainer.scrollTo({
-                top: topElement.offsetTop,
-                behavior: "smooth"
-            });
-        }
-    };
     const handleEntriesChange = (index, field, value) => {
         const newEntries = [...entries];
         newEntries[index][field] = (field === 'kmot') && (value < 0) ? 0 : value;
@@ -117,10 +89,7 @@ export default function ModalMkhera({ show, disable }) {
         return result;
     };
     const handleAddEntries = () => {
-        setEntries([...entries, { category: '',motsar : '', sogMotsar: '',mherLeheda : 0, remez: '',kmot : 0}]);
-        setTimeout(() => {
-            scrollToBottomRef();
-        }, 100);
+        setEntries([...entries, { category: '',motsar : '', sogMotsar: '',errorKmot : '',errorMher : '',mherLeheda : 0, remez: '',kmot : 0}]);
     };
     function removeItem(index) {
         const newItems = entries.filter((_, idx) => idx !== index);
@@ -133,25 +102,45 @@ export default function ModalMkhera({ show, disable }) {
         return { arrayResualt: motsarMlae, alot, kmot };
     }, [mlae]);
 
-    const [hn7a,setHn7a] = useState(0);
+    const bdekatAeshorMkhera = () => {
+        let countErrors = 0;
+        entries.forEach((_, index) => {
+            handleEntriesChange(index, 'errorKmot', '');
+            handleEntriesChange(index, 'errorMher', '');
+        });
+        entries.forEach((entry, index) => {
+            if (entry.kmot === 0 || entry.kmot === '') {
+                countErrors++;
+                handleEntriesChange(index, 'errorKmot', 'אין כמות !!');
+            }
+            if (entry.mherLeheda === 0 || entry.mherLeheda === '') {
+                countErrors++;
+                handleEntriesChange(index, 'errorMher', 'אין מחיר !!');
+            }
+        });
+        return countErrors !== 0;
+    }
+
 
     return (
-        <Modal placement="center" className="test-fontt" backdrop={"blur"} size="full" isOpen={show} onClose={disable}>
+        <Modal placement="center" className="test-fontt" backdrop={"blur"} size="full" isOpen={show} onClose={ResetAll}>
             <ModalContent>
                 <>
                     <ModalBody className="shadow-2xl">
-                        <div className="w-full h-full flex p-32 justify-center">
+                        <div className="w-full h-full flex mt-10 justify-center">
                             <div className="w-full max-w-[700px]">
                                 <div className="flex justify-center bg-primary-200 p-2 rounded-2xl">
                                     תמחיר
                                 </div>
-                                <Heshvonet isNew ref={componentRefOne} lkoh={lkoh} entries={entries || null} hn7a={hn7a} new={{
-                                    date: currentDate,
-                                    counter: counter
-                                }} />
+                                <div>
+                                    <Heshvonet msbarHeshvonet={counterHeshvoneot?.count} isNew ref={componentRefOne} lkoh={lkoh} entries={entries || null} hn7a={hn7a} new={{
+                                        date: currentDate,
+                                        counter: counter
+                                    }} />
+                                </div>
                             </div>
                             <Divider className="w-[2px] h-full ml-5 mr-5" />
-                            <div className="w-full max-w-[700px] flex flex-col">
+                            <div className="w-full max-w-[800px] flex flex-col">
                                 <div className="flex justify-center bg-primary-200 p-2 rounded-2xl">
                                     עסקת מכירה
                                 </div>
@@ -178,17 +167,17 @@ export default function ModalMkhera({ show, disable }) {
                                         <Input className="max-w-[200px] mb-4" value={hn7a || ''} onValueChange={(e) => setHn7a(Math.max(e,0))} type="number" label="הנחה"/>
                                     </div>
                                     <Divider />
-                                    <div dir="ltr" ref={containerRef} className="overflow-auto h-[600px]">
-                                        <div ref={topOfFormRef} />
+                                    <div dir="ltr" className="overflow-auto h-[60vh]">
+                                        <div />
                                         {entries?.map((entry, index) => (
                                             <>
-                                                <div dir='rtl' key={index} className="w-full flex items-center mt-3 mb-3 justify-around">
-                                                    <div className='mr-2'>{index + 1}</div>
+                                                <div dir='rtl' key={index} className="w-full flex items-start mt-3 mb-3 justify-around">
+                                                    <div className='mr-2 m-auto'>{index + 1}</div>
                                                     <Dropdown dir="rtl">
                                                         <DropdownTrigger>
                                                             <Button
-                                                                size="lg"
-                                                                className='m-2 max-w-[100px] w-full'
+                                                               
+                                                                className='m-2 max-w-[80px] w-full'
                                                             >
                                                                 {entry.category ? entry?.category : 'קטיגוריה'}
                                                             </Button>
@@ -217,8 +206,8 @@ export default function ModalMkhera({ show, disable }) {
                                                     <Dropdown dir="rtl">
                                                         <DropdownTrigger>
                                                             <Button
-                                                                size="lg"
-                                                                className='m-2 max-w-[100px] w-full'
+                                                                
+                                                                className='m-2 max-w-[80px] w-full'
                                                                 isDisabled={!entries[index]?.category}
                                                             >
                                                                 {entry.sogMotsar ? entry?.sogMotsar : 'בחר סוג'}
@@ -249,8 +238,8 @@ export default function ModalMkhera({ show, disable }) {
                                                     <Dropdown dir="rtl">
                                                         <DropdownTrigger>
                                                             <Button
-                                                                size="lg"
-                                                                className='m-2 max-w-[100px] w-full'
+                                                             
+                                                                className='m-2 max-w-[80px] w-full'
                                                                 isDisabled={!entry?.category || !entry?.sogMotsar}
                                                             >
                                                                 {entry.motsar ? entry?.motsar?.shem : 'בחר מוצר'}
@@ -276,9 +265,10 @@ export default function ModalMkhera({ show, disable }) {
                                                             }
                                                         </DropdownMenu>
                                                     </Dropdown>
-                                                    <Input isDisabled={!entry?.category || !entry?.sogMotsar || !entry?.motsar} type="number" onValueChange={(e) => handleEntriesChange(index,'kmot',Math.min(e,GetBrtemMotsarMlae(entry?.motsar?.categoryMotsar,entry?.motsar?.shem).kmot))} value={entry?.kmot} label="כמות" labelPlacement="outside-left"/>
-                                                    <Input isDisabled={!entry?.category || !entry?.sogMotsar || !entry?.motsar || !entry?.kmot} type="number" onValueChange={(e) => handleEntriesChange(index,'mherLeheda',e)} value={entry?.mherLeheda} label="מחיר ליחידה" labelPlacement="outside-left"/>
-                                                    <div onClick={() => { removeItem(index);}} className='ml-5 text-danger-500 hover:cursor-pointer w-full max-w-[50px]' >
+                                                    <Input color={entry?.errorKmot && 'danger'} errorMessage={entry?.errorKmot} size="sm" className="max-w-[100px] ml-2 mr-2" isDisabled={!entry?.category || !entry?.sogMotsar || !entry?.motsar} type="number" onValueChange={(e) => handleEntriesChange(index,'kmot',Math.min(e,GetBrtemMotsarMlae(entry?.motsar?.categoryMotsar,entry?.motsar?.shem).kmot))} value={entry?.kmot || ''} label="כמות"/>
+                                                    <Input color={entry?.errorMher && 'danger'} errorMessage={entry?.errorMher} size="sm" className="max-w-[150px] ml-2 mr-2" isDisabled={!entry?.category || !entry?.sogMotsar || !entry?.motsar || !entry?.kmot} type="number" onValueChange={(e) => handleEntriesChange(index,'mherLeheda',e)} value={entry?.mherLeheda || ''} label="מחיר מכירה ליחידה"/>
+                                                    <Input isReadOnly size="sm" className="max-w-[100px] ml-2 mr-2" isDisabled={!entry?.category || !entry?.sogMotsar || !entry?.motsar || !entry?.kmot} type="number" value={(GetBrtemMotsarMlae(entry?.motsar?.categoryMotsar,entry?.motsar?.shem).alot * entry?.kmot) || ''} label="מחיר קנייה"/>
+                                                    <div onClick={() => { removeItem(index);}} className='m-auto ml-5 text-danger-500 hover:cursor-pointer w-full max-w-[50px]' >
                                                         <div className="flex justify-center">
                                                             <FaTrash className='text-2xl' />
                                                         </div>
@@ -291,20 +281,8 @@ export default function ModalMkhera({ show, disable }) {
                                             <Button onClick={handleAddEntries} className='m-5'>
                                                 <FiPlus />
                                             </Button>
-                                            {
-                                                entries.length > 0 &&
-                                                <Button color="primary" onClick={handelPrintHeshvonit} className='m-5'>
-                                                    אישור
-                                                </Button>
-                                            }
-                                            {
-                                                entries?.length > 1 &&
-                                                <Button onClick={scrollToRef} className='m-5'>
-                                                    <FaArrowUp />
-                                                </Button>
-                                            }
                                         </div>
-                                        <div ref={endOfFormRef} />
+                                        <div className="mt-32"></div>
                                     </div>
                                 </div>
                             </div>
@@ -312,10 +290,28 @@ export default function ModalMkhera({ show, disable }) {
                     </ModalBody>
                     <ModalFooter className="absolute bottom-0 z-20 border-t-2 m-auto w-full items-center bg-white">
                         <div className="flex justify-center w-full">
-                            <Button className="ml-5 mr-5" size="lg" color="primary" onClick={disable}>
+                            <Button className="ml-5 mr-5" size="lg" color="primary" onClick={ResetAll}>
                                 סגור
                             </Button>
-                            <Button className="ml-5 mr-5" size="lg" color="primary" onClick={disable}>
+                            <Button isLoading={loading} isDisabled={!lkoh} className="ml-5 mr-5" size="lg" color="primary" onClick={async() => {
+                                if(bdekatAeshorMkhera()){
+                                    return;
+                                }
+                                setLoading(true);
+                                let sum = 0;
+                                for (let index = 0; index < entries.length; index++) {
+                                    sum += parseFloat((entries[index].kmot * entries[index].mherLeheda) - (entries[index].kmot * GetBrtemMotsarMlae(entries[index].remez,entries[index].motsar.shem).alot)); 
+                                }
+                                await updateDoc(doc(firestore, 'metadata', 'counterHkhnsotAhrot'), {
+                                    count: counterHkhnsotAhrot?.munth === format(new Date(), 'MM-yyyy') ? (counterHkhnsotAhrot?.count + (sum)) : 0,
+                                munth: format(new Date(), 'MM-yyyy'),
+                                countAll : (counterHkhnsotAhrot?.munth !== format(new Date(), 'MM-yyyy')) ? counterHkhnsotAhrot?.count + (sum) : counterHkhnsotAhrot?.countAll,
+                                countMunths : counterHkhnsotAhrot.munth !== format(new Date(), 'MM-yyyy') ? (counterHkhnsotAhrot.countMunths + 1) : (0)
+                                });
+                                handelPrintHeshvonit();
+                                ResetAll();
+                                setLoading(false);
+                            }}>
                                 אישור
                             </Button>
                         </div>

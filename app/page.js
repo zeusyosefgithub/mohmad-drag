@@ -1,12 +1,12 @@
 'use client';
-import React, { useEffect } from "react";
-import { Avatar, Button, Checkbox, CheckboxGroup, Input, Modal, Switch } from "@nextui-org/react";
+import React, { useEffect, useRef } from "react";
+import { Avatar, Button, Checkbox, CheckboxGroup, Divider, Input, Modal, Spinner, Switch } from "@nextui-org/react";
 import { useState } from "react";
 import ModalCreate from "./Modals/ModalCreate";
 import ModalTokhnetYetsor from "./Modals/ModalTokhnetYetsor";
-import { useGetDataByCondition } from "./FireBase/getDataByCondition";
+import { useGetDataByCondition, useGetDataByConditionWithoutUseEffect } from "./FireBase/getDataByCondition";
 import ModalYetsorMtsavem from "./Modals/ModalYetsorMtsavem";
-import { collection, doc, getDoc, getDocs, onSnapshot, query, where } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, where } from "firebase/firestore";
 import { firestore } from "./FireBase/firebase";
 import rep1 from './../images/rep1.png';
 import rep2 from '../images/rep2.jpg';
@@ -87,9 +87,19 @@ import rep76 from '../images/rep76.jpg';
 import rep77 from '../images/rep77.jpg';
 import rep78 from '../images/rep78.png';
 import rep79 from '../images/rep79.png';
+import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
+import { GiHook } from "react-icons/gi";
+import { FaRegCalendarCheck } from "react-icons/fa6";
+import { FaTrailer } from "react-icons/fa6";
 
 import Image from "next/image";
 import { CirclesWithBar, Comment, Hourglass, ThreeCircles, Watch } from "react-loader-spinner";
+import { TofsTokhnetYetsor } from "./Page Components/TofsTokhnetYetsor";
+import GetDocs from "./FireBase/getDocs";
+import { MdDelete } from "react-icons/md";
+import ModalCreateTest from "./Modals/ModalCreateTest";
+import { ReshionLetsor } from "./Page Components/ReshionLetsor";
+import { useReactToPrint } from "react-to-print";
 
 
 
@@ -256,26 +266,20 @@ export function GetTmonatHelek(remez) {
 
 
 export default function Home() {
-
-  const [long, setLong] = useState('');
-
-  const [ladder, setLadder] = useState(false);
-  const [ramba, setRamba] = useState(false);
-
-
+  const [mlae, setMlae] = useState([]);
+  const category = GetDocs('category');
+  const Tokhneot = GetDocs('TokhnetYetsorAgla');
   const [showModalCreate, setShowModalCreate] = useState(false);
   const [showModalCreateTokhnetYetsor, setShowModalCreateTokhnetYetsor] = useState(false);
-
-
   const aglotA = useGetDataByCondition('tfaol', 'sogBaola', '==', 'A');
   const aglotB = useGetDataByCondition('tfaol', 'sogBaola', '==', 'B');
   const aglotC = useGetDataByCondition('tfaol', 'sogBaola', '==', 'C');
-
   const [showModalYetsorMatsav, setShowModalYetsorMatsav] = useState(false);
   const [tfaolAgla, setTfaolAgla] = useState({});
   const [lkoh, setLkoh] = useState();
   const [msbarLkoh, setMsbarLkoh] = useState();
-
+  const [sogAska, setSogAska] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const fetchCustomerData = async (customerId) => {
     try {
@@ -326,203 +330,107 @@ export default function Home() {
     }
   }, [tfaolAgla?.id]);
 
+  const handleData = (documents) => {
+    setMlae(documents);
+  };
+
+  console.log(mlae)
+  useEffect(() => {
+    const unsubscribe = useGetDataByConditionWithoutUseEffect('mlae', 'active', '==', true, handleData);
+    return () => unsubscribe();
+  }, []);
+
   function GetTmonaLfeSog(val) {
     if (val === 'ייצור') {
-      return <Image src={rep6} className="h-[40px] w-[50px] bg-primary-100 rounded-full" />;
+      return <FaTrailer className="text-3xl text-primary" />;
     }
     else if (val === 'הרכבת וו') {
-      return <Image src={rep23} className="h-[40px] w-[50px] bg-primary-100 rounded-full" />;
+      return <GiHook className="text-3xl text-primary" />;
     }
     else if (val === 'תיקון') {
-      return <Image src={rep78} className="h-[40px] w-[50px] bg-primary-100 rounded-full" />;
+      return <HiOutlineWrenchScrewdriver className="text-3xl text-primary" />;
     }
   }
 
   return (
     <div>
-      {<ModalCreate show={showModalCreate} disable={() => setShowModalCreate(false)} />}
-      {/* {<ModalTokhnetYetsor show={showModalCreateTokhnetYetsor} disable={() => setShowModalCreateTokhnetYetsor(false)} />} */}
-      {<ModalCreate lkohTfaol={lkoh} agla={tfaolAgla} show={showModalYetsorMatsav} disable={() => setShowModalYetsorMatsav(false)} />}
-
+      <ModalCreateTest Tokhneot={Tokhneot} category={category} mlae={mlae} sogAskaa={sogAska} show={showModalCreate} lkohTfaol={lkoh} agla={tfaolAgla} disable={() => { setShowModalCreate(false); setSogAska(''); setLkoh(null); setTfaolAgla(null); }} />
+      {/* {<ModalCreate Tokhneot={Tokhneot} category={category} mlae={mlae} sogAskaa={sogAska} show={showModalCreate} disable={() => setShowModalCreate(false)} />}
       
-
-      
+      {<ModalCreate Tokhneot={Tokhneot} category={category} mlae={mlae} lkohTfaol={lkoh} agla={tfaolAgla} show={showModalYetsorMatsav} disable={() => setShowModalYetsorMatsav(false)} />} */}
+      <ModalTokhnetYetsor category={category} mlae={mlae} show={showModalCreateTokhnetYetsor} disable={() => setShowModalCreateTokhnetYetsor(false)} />
+      {loading && <Spinner className="absolute top-0 bottom-0 right-0 left-0" />}
 
       <div className="w-full flex">
+
         <div className="w-full">
-          <div className="flex justify-around h-[325px] border border-gray-300 mr-10 ml-10 bg-white shadow-lg p-5 rounded-3xl">
-            <table className="w-full table-auto border-collapse">
-              <thead>
-                <tr className="bg-gray-100 dark:bg-gray-800">
-                  <th className="px-4 py-2 text-center bg-gradient-to-r from-white to-gray-50 font-extrabold text-black">תוכניות</th>
-                  <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">ידני</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="text-center">1</td>
-                  <td className="text-center"><Button color="danger" onClick={() => setShowModalCreate(true)}>הוספה</Button></td>
-                </tr>
-                <tr>
-                  <td className="text-center">3</td>
-                  <td className="text-center"><Button color="primary" onClick={() => setShowModalCreateTokhnetYetsor(true)}>הוספת תוכנית יצור</Button></td>
-                </tr>
-                <tr>
-                  <td className="text-center">5</td>
-                  <td className="text-center">6</td>
-                </tr>
-                <tr>
-                  <td className="text-center">7</td>
-                  <td className="text-center">8</td>
-                </tr>
-              </tbody>
-            </table>
-            
-          </div>
-          <div className="w-full h-[650px] mt-5">
-            <div className="h-full flex flex-col w-full mr-10 ml-10 mx-auto max-w-[1200px] border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
-              <div className="bg-gradient-to-r from-white to-warning-500 tracking-widest text-black font-extrabold text-xl p-1 mb-3 text-center rounded-lg shadow-2xl transform transition-transform hover:scale-105">
-                התראות
+
+          <div className="flex h-[415px] border border-gray-300 mr-10 ml-10 bg-white shadow-lg p-5 rounded-3xl">
+
+            <div className="w-full">
+              <div className="w-full flex justify-center">
+                <Button color="primary" onClick={() => setShowModalCreateTokhnetYetsor(true)}>הוספת תוכנית יצור</Button>
               </div>
-              {
-                <div className="overflow-x-auto h-full">
-                  <table className="w-full table-auto border-collapse">
-                    <thead>
-                      <tr className="bg-gray-100 dark:bg-gray-800">
-                        <th className="px-4 py-2 text-center bg-gradient-to-r from-white to-gray-50 font-extrabold text-black">זמן עבר</th>
-                        <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">תחילת תהליך</th>
-                        <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">תאריך תחילה</th>
-                        <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">סוג עסקה</th>
-                        <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">מצב עסקה</th>
-                        <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">מספר מכירה</th>
-                        <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-500 to-gray-600 font-medium text-black"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      
-                    </tbody>
-                  </table>
+              <div className="w-full p-5 ">
+                <div className="w-full flex justify-between text-primary text-xl">
+                  <div className="w-full text-center">
+                    שם תוכנית
+                  </div>
+                  <div className="w-full text-center">
+                    סוג עגלה
+                  </div>
+                  <div className="w-[60px]"></div>
                 </div>
-              }
-            </div>
-          </div>
-        </div>
-        <div className="w-full ">
-          <div className="flex justify-end items-center w-full">
-            <div className="h-full flex flex-col w-full mx-auto mr-10 ml-10 mt-2 mb-2 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
-              <div className="flex items-center h-full">
-                {
-                  <div className="w-full overflow-x-auto h-[300px]">
-                    <table className="w-full table-auto border-collapse">
-                      <thead>
-                        <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-white to-gray-50 font-extrabold text-black text-xs">זמן עבר</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black text-xs">תחילת תהליך</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black text-xs">תאריך תחילה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black text-xs">סוג עסקה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black text-xs">מצב עסקה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black text-xs">מספר מכירה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-500 to-gray-600 font-medium text-black text-xs"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {
-                          aglotA.map((agla, index) => {
-                            return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button size="sm" onClick={() => { setShowModalYetsorMatsav(true); setTfaolAgla(agla); fetchCustomerData(agla.msbarLkoh); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">הצעה</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
-                            </tr>
-                          })
-                        }
-                      </tbody>
-                    </table>
-                  </div>
-                }
-                <div className="bg-gradient-to-r from-white to-primary-500 h-[300px] rounded-xl min-w-[90px]">
-                  <div className="h-full tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center rounded-lg shadow-2xl transform transition-transform hover:scale-105">
-                    הצעה
-                    <div className="mt-20">
-                      <Comment
-                        visible={true}
-                        height="80"
-                        width="80"
-                        ariaLabel="comment-loading"
-                        wrapperStyle={{}}
-                        wrapperClass="comment-wrapper"
-                        color="white"
-                        backgroundColor="black"
-                      />
-                    </div>
-                  </div>
+                <Divider className="mb-5" />
+                <div className="h-[250px] overflow-auto w-full">
+                  {
+                    Tokhneot.map((tokhnet, index) => {
+                      return <>
+                        <div className="w-full flex justify-between items-center border-b-1 mt-3">
+                          <div className="w-full text-center">
+                            {tokhnet.sogAgla}
+                          </div>
+                          <div className="w-full text-center">
+                            {tokhnet.shem}
+                          </div>
+                          <div className="w-[60px]">
+                            <MdDelete onClick={async () => {
+                              setLoading(true);
+                              await deleteDoc(doc(firestore, 'TokhnetYetsorAgla', tokhnet.id));
+                              setLoading(false);
+                            }} className="text-[23px] cursor-pointer text-danger" />
+                          </div>
+                        </div>
+                      </>
+                    })
+                  }
                 </div>
               </div>
             </div>
-          </div>
-          <div className="flex justify-end items-center">
-            <div className="flex flex-col w-full  mx-auto mr-10 ml-10 mt-2 mb-2 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
-              <div className="flex items-center h-full">
-                {
-                  <div className="overflow-x-auto h-[300px] w-full">
-                    <table className="w-full table-auto border-collapse">
-                      <thead>
-                        <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-white to-gray-50 font-extrabold text-black text-xs">זמן עבר</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black text-xs">תחילת תהליך</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black text-xs">תאריך תחילה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black text-xs">סוג עסקה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black text-xs">מצב עסקה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black text-xs">מספר מכירה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-500 to-gray-600 font-medium text-black text-xs"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {
-                          aglotB.map((agla, index) => {
-                            return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button size="sm" onClick={() => { setTfaolAgla(agla); setShowModalYetsorMatsav(true); fetchCustomerData(agla.msbarLkoh); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">המתנה</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
-                            </tr>
-                          })
-                        }
-                      </tbody>
-                    </table>
-                  </div>
-                }
-                <div className="bg-gradient-to-r from-white to-primary-500 h-[300px] rounded-xl min-w-[90px]">
-                  <div className="h-full tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center rounded-lg shadow-2xl transform transition-transform hover:scale-105">
-                    <div>המתנה</div>
-                    <div className="mt-20">
-                      <Hourglass
-                        visible={true}
-                        height="80"
-                        width="80"
-                        ariaLabel="hourglass-loading"
-                        wrapperStyle={{}}
-                        wrapperClass=""
-                        colors={['black']}
-                      />
-                    </div>
-                  </div>
-                </div>
+
+            <div className="w-full">
+              <div className="w-full flex justify-center mt-5">
+                <Button color="primary" variant="faded" onClick={() => { setShowModalCreate(true); setSogAska('ייצור'); }}><FaTrailer className="text-3xl text-primary" /><div className="w-[100px] text-xl font-bold tracking-wider">ייצור עגלה</div></Button>
+              </div>
+              <div className="w-full flex justify-center mt-5">
+                <Button color="primary" variant="faded" onClick={() => { setShowModalCreate(true); setSogAska('הרכבת וו'); }}><GiHook className="text-3xl text-primary" /><div className="w-[100px] text-xl font-bold tracking-wider">הרכבת וו</div></Button>
+              </div>
+              <div className="w-full flex justify-center mt-5">
+                <Button color="primary" variant="faded" onClick={() => { setShowModalCreate(true); setSogAska('תיקון'); }}><HiOutlineWrenchScrewdriver className="text-3xl text-primary" /><div className="w-[100px] text-xl font-bold tracking-wider">תיקון</div></Button>
+              </div>
+              <div className="w-full flex justify-center mt-5">
+                <Button color="primary" variant="faded" onClick={() => { setShowModalCreate(true); setSogAska('טסט'); }}><FaRegCalendarCheck className="text-3xl text-primary" /><div className="w-[100px] text-xl font-bold tracking-wider">טסט</div></Button>
               </div>
             </div>
+
+
           </div>
 
-          <div className="flex justify-end items-center">
+          <div className="flex justify-end items-center mt-2">
             <div className="flex flex-col w-full  mx-auto mr-10 ml-10 mt-2 mb-2 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
               <div className="flex items-center h-full">
                 {
-                  <div className="overflow-x-auto h-[300px] w-full">
+                  <div className="overflow-x-auto h-[400px] w-full">
                     <table className="w-full table-auto border-collapse">
                       <thead>
                         <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
@@ -542,8 +450,8 @@ export default function Home() {
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button size="sm" onClick={() => { setShowModalYetsorMatsav(true); setTfaolAgla(agla); fetchCustomerData(agla.msbarLkoh); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">ייצור</td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); fetchCustomerData(agla.msbarLkoh); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
                             </tr>
@@ -553,25 +461,151 @@ export default function Home() {
                     </table>
                   </div>
                 }
-                <div className="bg-gradient-to-r from-white to-primary-500 h-[300px] rounded-xl min-w-[90px]">
-                  <div className="h-full tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center rounded-lg shadow-2xl transform transition-transform hover:scale-105">
-                    ייצור
-                    <div className="mt-20">
-                      <ThreeCircles
-                        visible={true}
-                        height="100"
-                        width="100"
-                        color="black"
-                        ariaLabel="three-circles-loading"
-                        wrapperStyle={{}}
-                        wrapperClass=""
-                      />
+                <div className="h-[300px] rounded-xl min-w-[90px]">
+                  <div className="h-full w-full tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105 flex items-center">
+                    <div className="w-full">
+                      <div className="text-center w-full text-primary mb-3">ייצור</div>
+                      <div className="flex justify-center w-full">
+                        <ThreeCircles
+                          visible={true}
+                          height="50"
+                          width="50"
+                          color="#3b82f6"
+                          ariaLabel="three-circles-loading"
+                          wrapperStyle={{}}
+                          wrapperClass=""
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
+        </div>
+
+        <div className="w-full">
+
+          <div className="flex justify-end items-center w-full">
+            <div className="h-full flex flex-col w-full mx-auto mr-10 ml-10 mb-2 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
+              <div className="flex items-center h-full">
+                {
+                  <div className="w-full overflow-x-auto h-[400px]">
+                    <table className="w-full table-auto border-collapse">
+                      <thead>
+                        <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-white to-gray-50 font-extrabold text-black text-xs">זמן עבר</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black text-xs">תחילת תהליך</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black text-xs">תאריך תחילה</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black text-xs">סוג עסקה</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black text-xs">מצב עסקה</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black text-xs">מספר מכירה</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-500 to-gray-600 font-medium text-black text-xs"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {
+                          aglotA.map((agla, index) => {
+                            return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); fetchCustomerData(agla.msbarLkoh); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
+                            </tr>
+                          })
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+                <div className="h-[300px] rounded-xl min-w-[90px]">
+                  <div className="tracking-widest w-full text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105 flex items-center h-[300px]">
+                    <div className="w-full">
+                      <div className="text-center w-full text-primary mb-3">הצעה</div>
+                      <div className="flex justify-center w-full">
+                        <Comment
+                          visible={true}
+                          height="50"
+                          width="50"
+                          ariaLabel="comment-loading"
+                          wrapperStyle={{}}
+                          wrapperClass="comment-wrapper"
+                          color="white"
+                          backgroundColor="#3b82f6"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end items-center">
+            <div className="flex flex-col w-full  mx-auto mr-10 ml-10 mt-2 mb-2 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
+              <div className="flex items-center h-full">
+                {
+                  <div className="overflow-x-auto h-[400px] w-full">
+                    <table className="w-full table-auto border-collapse">
+                      <thead>
+                        <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-white to-gray-50 font-extrabold text-black text-xs">זמן עבר</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black text-xs">תחילת תהליך</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black text-xs">תאריך תחילה</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black text-xs">סוג עסקה</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black text-xs">מצב עסקה</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black text-xs">מספר מכירה</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-500 to-gray-600 font-medium text-black text-xs"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {
+                          aglotB.map((agla, index) => {
+                            return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setTfaolAgla(agla); setShowModalCreate(true); fetchCustomerData(agla.msbarLkoh); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
+                            </tr>
+                          })
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+                <div className="h-[300px] rounded-xl min-w-[90px]">
+                  <div className="h-full w-full flex items-center tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105">
+                    <div className="w-full">
+                      <div className="text-center w-full text-primary mb-3">המתנה</div>
+                      <div className="flex justify-center w-full">
+                        <Hourglass
+                          visible={true}
+                          height="50"
+                          width="50"
+                          ariaLabel="hourglass-loading"
+                          wrapperStyle={{}}
+                          wrapperClass=""
+                          color='#3b82f6'
+                          backgroundColor="#3b82f6"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          
+
         </div>
       </div>
     </div>
