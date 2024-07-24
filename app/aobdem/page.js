@@ -251,7 +251,7 @@ export default function Aobdem() {
             <ModalDafeShaot aobdem={aobdem} counter={counter} show={showModalDafeShaot} disable={() => setShowModalDafeShaot(false)}/>
             <div className='w-full flex justify-between items-center mt-5 '>
 
-                <div className="w-full flex items-center justify-around">
+                <div className="w-full flex items-center justify-around flex-wrap">
 
 
                     <div className="p-5 justify-center w-[900px] bg-white rounded-xl shadow-xl mb-20 h-[450px]">

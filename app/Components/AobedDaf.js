@@ -11,14 +11,17 @@ import { firestore } from "../FireBase/firebase";
 import { useAuth } from "../auth/authContext";
 
 export default function aobedDaf({ aobed }) {
-    const { signUp, signIn, signOutt ,currentUser } = useAuth();
+    const { signUp, signIn, signOutt, currentUser } = useAuth();
+    const [loadingFitching, setLoadingFitching] = useState(true);
+    const [loadingFitching1, setLoadingFitching1] = useState(true);
+    const [loadingFitching2, setLoadingFitching2] = useState(true);
     const GetHodatAobed = () => {
-        if(parseFloat(format(new Date(),'HH')) < 12){
+        if (parseFloat(format(new Date(), 'HH')) < 12) {
             return <div className="text-lg text-primary tracking-widest">
                 בוקר טוב
             </div>;
         }
-        else{
+        else {
             return <div>
                 צהריים טובים
             </div>
@@ -49,33 +52,15 @@ export default function aobedDaf({ aobed }) {
         }
     }
 
-    const [loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const currentDate = format(new Date(), 'dd-MM-yyyy');
-    const [aobedNkhhe,setAobedNokhhe] = useState();
+    const [aobedNkhhe, setAobedNokhhe] = useState();
     const [shaotHeomData, setShaotHeomData] = useState([]);
     const [knesotHeom, setKnesotHeom] = useState([]);
     const counter = GetDocs('metadata').find((count) => count.id === 'counterShaotAboda');
 
     useEffect(() => {
-        if(aobed?.name){
-            const unsubscribe = useGetDataByConditionWithoutUseEffect(
-                'aobdem',
-                'shem',
-                '==',
-                aobed?.name,
-                result => {
-                    setAobedNokhhe(result || []);
-                }
-            );
-            return () => {
-                if (unsubscribe) {
-                    unsubscribe();
-                }
-            };
-        }
-    },[aobed]);
-    useEffect(() => {
-        if(aobedNkhhe?.msbar){
+        if (aobedNkhhe && aobedNkhhe[0]?.msbar) {
             const unsubscribe = useGetDataByConditionWithoutUseEffectTwoQueres(
                 'shaotAboda',
                 'tarekh',
@@ -83,9 +68,10 @@ export default function aobedDaf({ aobed }) {
                 currentDate,
                 'aobed',
                 '==',
-                aobedNkhhe?.msbar,
+                aobedNkhhe[0]?.msbar,
                 result => {
                     setShaotHeomData(result || []);
+                    setLoadingFitching(false);
                 }
             );
             return () => {
@@ -94,7 +80,26 @@ export default function aobedDaf({ aobed }) {
                 }
             };
         }
-    }, [currentDate,aobedNkhhe]);
+    }, [aobedNkhhe]);
+    useEffect(() => {
+        if (aobed?.name) {
+            const unsubscribe = useGetDataByConditionWithoutUseEffect(
+                'aobdem',
+                'shem',
+                '==',
+                aobed?.name,
+                result => {
+                    setAobedNokhhe(result || []);
+                    setLoadingFitching1(false);
+                }
+            );
+            return () => {
+                if (unsubscribe) {
+                    unsubscribe();
+                }
+            };
+        }
+    }, [aobed]);
     useEffect(() => {
         if (Array.isArray(shaotHeomData) && shaotHeomData.length > 0 && Array.isArray(aobedNkhhe) && aobedNkhhe.length > 0) {
             const updatedKnesotHeom = aobedNkhhe?.map(knesa => {
@@ -138,19 +143,16 @@ export default function aobedDaf({ aobed }) {
             });
             setKnesotHeom(updatedKnesotHeom);
         }
+        setLoadingFitching2(false);
     }, [shaotHeomData, aobedNkhhe]);
 
-    console.log(knesotHeom);
-
-
     const knesaa = async () => {
-        setLoading(true);
         if (!knesotHeom[0].knesa && !knesotHeom[0].headrot && !knesotHeom[0].yetseah) {
             try {
                 await addDoc(collection(firestore, 'shaotAboda'), {
                     msbar: counter?.count + 1,
                     tarekh: format(new Date(), 'dd-MM-yyyy'),
-                    knesa: format(new Date(),'HH:mm'),
+                    knesa: format(new Date(), 'HH:mm'),
                     yetseah: '',
                     aobed: knesotHeom[0].msbar,
                     headrot: '',
@@ -163,9 +165,9 @@ export default function aobedDaf({ aobed }) {
         }
         else {
             try {
-                await updateDoc(doc(firestore,'shaotAboda',knesotHeom[0].id),{
-                    yetseah : format(new Date(),'HH:mm'),
-                    headrot : 'נוכח'
+                await updateDoc(doc(firestore, 'shaotAboda', knesotHeom[0].id), {
+                    yetseah: format(new Date(), 'HH:mm'),
+                    headrot: 'נוכח'
                 });
             }
             catch (e) {
@@ -173,10 +175,9 @@ export default function aobedDaf({ aobed }) {
             }
         }
         setLoading(false);
-
     }
 
-    return (
+    return !loadingFitching && !loadingFitching1 && !loadingFitching2 && (
         <div className="h-screen flex justify-center items-center">
             <Card dir="rtl" className="w-[450px]">
                 <CardHeader>
@@ -195,7 +196,7 @@ export default function aobedDaf({ aobed }) {
                         <div className="w-full text-xs">
                             <div className="flex items-center w-full ">
                                 <div className="w-[50px] text-right">שעה </div>
-                                <div className="">{format(new Date(),'HH:mm')}</div>
+                                <div className="">{format(new Date(), 'HH:mm')}</div>
                             </div>
                             <div className="flex items-center w-full mt-2">
                                 <div className="w-[50px] text-right">יום </div>
@@ -203,11 +204,11 @@ export default function aobedDaf({ aobed }) {
                             </div>
                             <div className="flex items-center w-full mt-2">
                                 <div className="w-[50px] text-right">תאריך </div>
-                                <div className="">{format(new Date(),'dd-MM-yyyy')}</div>
+                                <div className="">{format(new Date(), 'dd-MM-yyyy')}</div>
                             </div>
                         </div>
-                        <Divider className="mt-5"/>
-                        <div className="w-full justify-around flex items-center">
+                        <Divider className="mt-5" />
+                        <div className="w-full justify-around flex items-center mt-2">
                             <div>
                                 {GetHodatAobed()}
                             </div>
@@ -226,16 +227,16 @@ export default function aobedDaf({ aobed }) {
                 <Divider />
                 <CardFooter>
                     {
-                        knesotHeom &&
+                        (knesotHeom) &&
                         <div className="w-full ">
                             {
-                                (!knesotHeom[0]?.knesa && !knesotHeom[0]?.headrot && !knesotHeom[0]?.yetseah) ?
-                                    <Button isLoading={loading} className="w-full mt-2 mb-2" color='success' variant="flat" onClick={knesaa}>כניסה</Button>
-                                    : knesotHeom[0]?.knesa ?
-                                        <Button isLoading={loading} className="w-full mt-2 mb-2" color='danger' variant="flat" onClick={knesaa}>יצאה</Button>
+                                (knesotHeom[0]?.knesa && !knesotHeom[0]?.yetseah) ?
+                                    <Button isLoading={loading} className="w-full mt-2 mb-2" color='danger' variant="flat" onClick={knesaa}>יצאה</Button>
+                                    : (!knesotHeom[0]?.knesa && !knesotHeom[0]?.yetseah) ?
+                                        <Button isLoading={loading} className="w-full mt-2 mb-2" color='success' variant="flat" onClick={knesaa}>כניסה</Button>
                                         :
-                                        <div>
-                                            bbb
+                                        <div className="text-success text-center">
+                                            המשך יום נעים {aobed.name}
                                         </div>
                             }
                         </div>
