@@ -26,6 +26,11 @@ import { orderBy } from "lodash";
 import ModalShowBerotAska from "../Modals/ModalShowBerotAska";
 import ModalAddSobak from "../Modals/ModalAddSbak";
 import ModalNetonemThltem from "../Modals/ModalNetonemThltem";
+import { FaUsers } from "react-icons/fa";
+import { GiExpense } from "react-icons/gi";
+import { MdOutlineShoppingBag } from "react-icons/md";
+import { FaMoneyBillTrendUp } from "react-icons/fa6";
+
 
 export default function Management() {
 
@@ -449,15 +454,15 @@ export default function Management() {
 
 
 
-                <div className="w-full flex items-center justify-around">
+                <div className="w-full flex items-center justify-center flex-wrap">
 
 
-                    <div className="p-5 justify-center w-[900px] bg-white rounded-xl shadow-xl mb-20 h-[450px]">
+                    <div className="p-5 justify-center w-full max-w-[900px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[450px]">
                         <div className="w-full flex justify-around items-center">
-                            <Button variant='faded' className={htsgatbrtem === 'סבקים' && 'font-extrabold text-base'} color={htsgatbrtem === 'סבקים' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('סבקים')}>ספקים/שלטנות</Button>
-                            <Button variant='faded' className={htsgatbrtem === 'לקחות' && 'font-extrabold text-base'} color={htsgatbrtem === 'לקחות' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('לקחות')}>לקחות</Button>
-                            <Button variant='faded' className={htsgatbrtem === 'תנועה בהצאות' && 'font-extrabold text-base'} color={htsgatbrtem === 'תנועה בהצאות' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('תנועה בהצאות')}>תנועה בהצאות</Button>
-                            <Button variant='faded' className={htsgatbrtem === 'תנועה בכספים' && 'font-extrabold text-base'} color={htsgatbrtem === 'תנועה בכספים' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('תנועה בכספים')}>תנועה בכספים</Button>
+                            <Button variant='faded' className={htsgatbrtem === 'סבקים' && 'font-extrabold text-base'} color={htsgatbrtem === 'סבקים' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('סבקים')}><MdOutlineShoppingBag className="text-base"/>ספקים/שלטנות</Button>
+                            <Button variant='faded' className={htsgatbrtem === 'לקחות' && 'font-extrabold text-base'} color={htsgatbrtem === 'לקחות' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('לקחות')}><FaUsers className="text-base"/>לקחות</Button>
+                            <Button variant='faded' className={htsgatbrtem === 'תנועה בהצאות' && 'font-extrabold text-base'} color={htsgatbrtem === 'תנועה בהצאות' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('תנועה בהצאות')}><GiExpense className="text-base"/>תנועה בהצאות</Button>
+                            <Button variant='faded' className={htsgatbrtem === 'תנועה בכספים' && 'font-extrabold text-base'} color={htsgatbrtem === 'תנועה בכספים' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('תנועה בכספים')}><FaMoneyBillTrendUp className="text-base"/>תנועה בכספים</Button>
                         </div>
                         <Divider className="mt-5" />
                         <div className="overflow-auto h-fit w-full" dir="rtl">
@@ -607,9 +612,9 @@ export default function Management() {
                         </div>
                     </div>
 
-                    <div className="p-5 justify-center w-[900px] bg-white rounded-xl shadow-xl mb-20 h-[450px]">
+                    <div className="p-5 justify-center w-full max-w-[900px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[450px]">
                         <div className="w-full flex justify-around items-end">
-                            <Button variant='faded' color='primary' onClick={() => setShowModalHosfatHotsaaHadsha(true)}>הוספת הוצאה חדשה</Button>
+                            <Button variant='faded' color='primary' onClick={() => setShowModalHosfatHotsaaHadsha(true)}><div className="text-[18px] mr-1">+</div>הוספת הוצאה חדשה</Button>
                         </div>
                         <Divider className="mt-5 mb-5" />
                         <div className="overflow-x-auto h-[250px]">

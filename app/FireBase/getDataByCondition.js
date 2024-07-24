@@ -31,6 +31,18 @@ export const useGetDataByConditionWithoutUseEffect = (myCollection, field, opera
     return unsubscribe;
 };
 
+export const useGetDataByConditionWithoutUseEffectTwoQueres = (myCollection,value1, value2, value3, value4, value5, value6, callback) => {
+    const q = query(collection(firestore, myCollection), where(value1, value2, value3), where(value4, value5, value6));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const documents = [];
+        querySnapshot.forEach((doc) => {
+            documents.push({ id: doc.id, ...doc.data() });
+        });
+        callback(documents);
+    });
+    return unsubscribe;
+};
+
 
 export const useGetDataByConditionWithoutUseEffectWithTwo = async (myCollection, value1, value2, value3, value4, value5, value6) => {
     const q = query(collection(firestore, myCollection), where(value1, value2, value3), where(value4, value5, value6));

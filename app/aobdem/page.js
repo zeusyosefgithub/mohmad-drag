@@ -21,6 +21,9 @@ import { VscError } from "react-icons/vsc";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import ModalDafeShaot from "../Modals/ModalDafeShaot";
 import ModalNetonemThltem from "../Modals/ModalNetonemThltem";
+import { FaListCheck } from "react-icons/fa6";
+import { FaList } from "react-icons/fa6";
+import { FcOvertime } from "react-icons/fc";
 
 export default function Aobdem() {
 
@@ -189,7 +192,7 @@ export default function Aobdem() {
         else if (!shaotHeomData?.length) {
             const updatedKnesotHeom = aobdem.map(knesa => {
                 return {
-                    id: knesa.id,
+                    id: '',
                     msbar: knesa.msbar,
                     shem: knesa.shem,
                     tfked: knesa.tfked,
@@ -256,7 +259,7 @@ export default function Aobdem() {
                             <div dir="ltr">
                                 <div className="mt-5 mb-5 flex justify-around items-center">
                                     <Button size="sm" variant="faded" onClick={() => setShowHosfatAobed(true)}><div className="text-[18px] mr-1">+</div>הוספת עובד חדש</Button>
-                                    <Button onClick={() => setShowModalDafeShaot(true)}>דפי שעות</Button>
+                                    <Button onClick={() => setShowModalDafeShaot(true)}><FcOvertime className="text-2xl"/>דפי שעות</Button>
                                 </div>
                                 <div className="overflow-x-auto h-[250px]">
                                     <table className="w-full table-auto border-collapse">
@@ -300,8 +303,8 @@ export default function Aobdem() {
                     <div className="p-5 justify-center w-[900px] bg-white rounded-xl shadow-xl mb-20 h-[450px]">
                         <div>
                             <div className="flex justify-around items-center mb-5">
-                                <Button variant='faded' className={loh === 'לוח כללי' && 'font-extrabold text-base'} color={loh === 'לוח כללי' ? 'primary' : 'default'} onClick={() => setLoh('לוח כללי')}>לוח כללי</Button>
-                                <Button variant='faded' className={loh === 'לוח היום' && 'font-extrabold text-base'} color={loh === 'לוח היום' ? 'primary' : 'default'} onClick={() => setLoh('לוח היום')}>לוח היום</Button>
+                                <Button variant='faded' className={loh === 'לוח כללי' && 'font-extrabold text-base'} color={loh === 'לוח כללי' ? 'primary' : 'default'} onClick={() => setLoh('לוח כללי')}><FaList className="text-base"/>לוח כללי</Button>
+                                <Button variant='faded' className={loh === 'לוח היום' && 'font-extrabold text-base'} color={loh === 'לוח היום' ? 'primary' : 'default'} onClick={() => setLoh('לוח היום')}><FaListCheck className="text-base"/>לוח היום</Button>
                             </div>
                             <Divider />
                             <div className="mt-5 mb-5">

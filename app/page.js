@@ -361,11 +361,11 @@ export default function Home() {
       <ModalTokhnetYetsor category={category} mlae={mlae} show={showModalCreateTokhnetYetsor} disable={() => setShowModalCreateTokhnetYetsor(false)} />
       {loading && <Spinner className="absolute top-0 bottom-0 right-0 left-0" />}
 
-      <div className="w-full flex">
+      <div className="w-full flex flex-wrap mb-24">
 
-        <div className="w-full">
+        <div className="flex-wrap w-full flex justify-center">
 
-          <div className="flex h-[415px] border border-gray-300 mr-10 ml-10 bg-white shadow-lg p-5 rounded-3xl">
+          <div className="flex h-[415px] w-full max-w-[820px] border mx-auto border-gray-300 mr-10 ml-10 mb-5 bg-white shadow-lg p-5 rounded-3xl">
 
             <div className="w-full">
               <div className="w-full flex justify-center">
@@ -426,8 +426,8 @@ export default function Home() {
 
           </div>
 
-          <div className="flex justify-end items-center mt-2">
-            <div className="flex flex-col w-full  mx-auto mr-10 ml-10 mt-2 mb-2 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
+          <div className="flex justify-end items-center w-full max-w-[900px]">
+            <div className="flex flex-col w-full mx-auto mr-10 ml-10 mb-5 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
               <div className="flex items-center h-full">
                 {
                   <div className="overflow-x-auto h-[400px] w-full">
@@ -485,10 +485,10 @@ export default function Home() {
 
         </div>
 
-        <div className="w-full">
+        <div className="flex-wrap w-full flex justify-center">
 
-          <div className="flex justify-end items-center w-full">
-            <div className="h-full flex flex-col w-full mx-auto mr-10 ml-10 mb-2 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
+          <div className="flex justify-end items-center w-full max-w-[900px]">
+            <div className="flex flex-col w-full mx-auto mr-10 ml-10 mb-5 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
               <div className="flex items-center h-full">
                 {
                   <div className="w-full overflow-x-auto h-[400px]">
@@ -545,8 +545,8 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex justify-end items-center">
-            <div className="flex flex-col w-full  mx-auto mr-10 ml-10 mt-2 mb-2 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
+          <div className="flex justify-end items-center w-full max-w-[900px]">
+            <div className="flex flex-col w-full mx-auto mr-10 ml-10 mb-5 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
               <div className="flex items-center h-full">
                 {
                   <div className="overflow-x-auto h-[400px] w-full">

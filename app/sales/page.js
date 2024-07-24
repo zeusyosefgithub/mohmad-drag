@@ -154,8 +154,8 @@ export default function Sales() {
                     <Button className='' onClick={() => setShowModalMkhera(true)}>מכירה</Button>
                 </div>
             </div>
-            <div className='flex justify-center items-center mt-2 mr-10 ml-10 mb-10'>
-                <div className='w-full h-[700px] overflow-y-auto bg-white rounded-xl shadow-2xl'>
+            <div className='flex justify-center items-center mt-2 mr-10 ml-10 mb-10 pt-6 flex-wrap'>
+                <div className='w-full h-[700px] max-w-[755px] mr-10 ml-10 mb-5 overflow-y-auto bg-white rounded-xl shadow-2xl'>
                     <div className="flex justify-center items-center">
                         <div className="w-full">
                             <div className="flex justify-center mt-5 mb-2">
@@ -293,8 +293,8 @@ export default function Sales() {
                         </div>
                     </div>
                 </div>
-                <div className='w-full'>
-                    <div className="flex flex-col w-full mr-5 ml-5 max-w-4xl mx-auto mt-5 border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
+                <div className=''>
+                    <div className="flex flex-col w-full mb-5 mx-auto border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
                         <div className="flex items-center h-full w-full">
                             {
                                 <div className="overflow-x-auto h-[300px] w-full">
@@ -348,7 +348,7 @@ export default function Sales() {
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col w-full mr-5 ml-5 mt-5 max-w-4xl mx-auto border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
+                    <div className="flex flex-col w-full mb-5 mx-auto border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
                         <div className="flex items-center h-full">
                             {
                                 <div className="overflow-x-auto h-[300px] w-full">
