@@ -87,6 +87,8 @@ import rep76 from '../images/rep76.jpg';
 import rep77 from '../images/rep77.jpg';
 import rep78 from '../images/rep78.png';
 import rep79 from '../images/rep79.png';
+import rep82 from '../images/rep82.png';
+import rep83 from '../images/rep83.png';
 import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { GiHook } from "react-icons/gi";
 import { FaRegCalendarCheck } from "react-icons/fa6";
@@ -262,6 +264,10 @@ export function GetTmonatHelek(remez) {
     return rep23;
   }
 
+  else if(remez === 'K1'){
+    return rep83;
+  }
+
 }
 
 
@@ -274,48 +280,95 @@ export default function Home() {
   const aglotA = useGetDataByCondition('tfaol', 'sogBaola', '==', 'A');
   const aglotB = useGetDataByCondition('tfaol', 'sogBaola', '==', 'B');
   const aglotC = useGetDataByCondition('tfaol', 'sogBaola', '==', 'C');
-  const [showModalYetsorMatsav, setShowModalYetsorMatsav] = useState(false);
   const [tfaolAgla, setTfaolAgla] = useState({});
   const [lkoh, setLkoh] = useState();
   const [msbarLkoh, setMsbarLkoh] = useState();
+  const [drag, setDrag] = useState();
+  const [msbarDrag, setMsbarDrag] = useState();
   const [sogAska, setSogAska] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const fetchCustomerData = async (customerId) => {
+  const fetchCustomerData = (customerId) => {
     try {
       const customersRef = collection(firestore, 'customers');
       const q = query(customersRef, where("idnum", "==", customerId));
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        // Assuming customerId is unique, return the first document found
-        setLkoh({ ...querySnapshot.docs[0].data(), id: querySnapshot.docs[0].id });
-      } else {
-        setLkoh(null);
-      }
-    } catch (error) {
-      console.error('Error fetching customer data:', error);
-      setLkoh(null);
-    }
-  };
-
-  useEffect(() => {
-    if (msbarLkoh) {
-      fetchCustomerData(msbarLkoh);
-    }
-  }, [msbarLkoh]);
-
-  useEffect(() => {
-    if (lkoh && lkoh.id) {
-      const unsub = onSnapshot(doc(firestore, 'customers', lkoh.id), (doc) => {
-        if (doc.exists()) {
-          setLkoh({ ...doc.data(), id: doc.id });
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        if (!querySnapshot.empty) {
+          setLkoh({ ...querySnapshot.docs[0].data(), id: querySnapshot.docs[0].id });
         } else {
           setLkoh(null);
         }
+      }, (error) => {
+        console.error('Error fetching customer data:', error);
+        setLkoh(null);
       });
-      return () => unsub();
+      return unsubscribe;
+    } catch (error) {
+      console.error('Error setting up real-time listener for customer data:', error);
+      setLkoh(null);
     }
-  }, [lkoh?.id]);
+  };
+  
+  useEffect(() => {
+    let unsubscribe;
+    if (msbarLkoh) {
+      unsubscribe = fetchCustomerData(msbarLkoh);
+    }
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [msbarLkoh]);
+
+
+
+
+  const fetchDragData = (msbarDrag) => {
+    try {
+      const customersRef = collection(firestore, 'drags');
+      const q = query(customersRef, where("licenseid", "==", msbarDrag));
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        if (!querySnapshot.empty) {
+          setDrag({ ...querySnapshot.docs[0].data(), id: querySnapshot.docs[0].id });
+        } else {
+          setDrag(null);
+        }
+      }, (error) => {
+        console.error('Error fetching customer data:', error);
+        setDrag(null);
+      });
+      return unsubscribe;
+    } catch (error) {
+      console.error('Error setting up real-time listener for customer data:', error);
+      setDrag(null);
+    }
+  };
+  
+  useEffect(() => {
+    let unsubscribe;
+    if (msbarDrag) {
+      unsubscribe = fetchDragData(msbarDrag);
+    }
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [msbarDrag]);
+
+  // useEffect(() => {
+  //   if (lkoh && lkoh.id) {
+  //     const unsub = onSnapshot(doc(firestore, 'customers', lkoh.id), (doc) => {
+  //       if (doc.exists()) {
+  //         setLkoh({ ...doc.data(), id: doc.id });
+  //       } else {
+  //         setLkoh(null);
+  //       }
+  //     });
+  //     return () => unsub();
+  //   }
+  // }, [lkoh?.id]);
 
   useEffect(() => {
     if (tfaolAgla && tfaolAgla.id) {
@@ -354,7 +407,7 @@ export default function Home() {
 
   return (
     <div>
-      <ModalCreateTest Tokhneot={Tokhneot} category={category} mlae={mlae} sogAskaa={sogAska} show={showModalCreate} lkohTfaol={lkoh} agla={tfaolAgla} disable={() => { setShowModalCreate(false); setSogAska(''); setLkoh(null); setTfaolAgla(null); }} />
+      <ModalCreateTest Tokhneot={Tokhneot} category={category} drag={drag} mlae={mlae} sogAskaa={sogAska} show={showModalCreate} lkohTfaol={lkoh} agla={tfaolAgla} disable={() => { setShowModalCreate(false); setSogAska(''); setTfaolAgla(null); }} />
       {/* {<ModalCreate Tokhneot={Tokhneot} category={category} mlae={mlae} sogAskaa={sogAska} show={showModalCreate} disable={() => setShowModalCreate(false)} />}
       
       {<ModalCreate Tokhneot={Tokhneot} category={category} mlae={mlae} lkohTfaol={lkoh} agla={tfaolAgla} show={showModalYetsorMatsav} disable={() => setShowModalYetsorMatsav(false)} />} */}
@@ -451,7 +504,7 @@ export default function Home() {
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); fetchCustomerData(agla.msbarLkoh); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla);setMsbarDrag(agla.msbarAgla);setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
                             </tr>
@@ -512,7 +565,7 @@ export default function Home() {
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); fetchCustomerData(agla.msbarLkoh); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla);setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
                             </tr>
@@ -570,7 +623,7 @@ export default function Home() {
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setTfaolAgla(agla); setShowModalCreate(true); fetchCustomerData(agla.msbarLkoh); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setTfaolAgla(agla); setShowModalCreate(true);setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
                             </tr>

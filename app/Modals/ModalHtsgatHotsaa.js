@@ -203,7 +203,7 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
     }
 
     const handleSubmit = () => {
-         setLoading(true);
+        setLoading(true);
         if (hotsaa.sogHotsaa === 'קניות מוצרים') {
             handleSubmitKneatMotsarem();
         }
@@ -228,10 +228,14 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
         ResetAll();
     }
     const handleSubmitMsemMaamVNekoe = async() =>{
+        let res = hotsaa?.sogMas === 'ניקוי מע"מ' ? (parseFloat(sbakObject?.ytratHeshvon) + parseFloat(skhom)) : (parseFloat(sbakObject?.ytratHeshvon) - parseFloat(skhom))
         await updateDoc(doc(firestore,'sbkem',sbakObject.id),{
-            ytratHeshvon : parseFloat(sbakObject.ytratHeshvon + skhom) // fixxxx
+            ytratHeshvon : res
         });
     };
+
+
+
     const handleSubmitHotsaotAhrot = async() => {
         await updateDoc(doc(firestore,'metadata','counterHkhnsotAhrot'),{
             count : counterHkhnsotAhrot.munth === format(new Date(),'MM-yyyy') ? ((counterHkhnsotAhrot?.count + parseFloat(skhom))) : parseFloat(skhom),
@@ -239,20 +243,37 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
             countAll : counterHkhnsotAhrot?.countAll + parseFloat(skhom),
             countMunths : counterHkhnsotAhrot.munth !== format(new Date(), 'MM-yyyy') ? (counterHkhnsotAhrot.countMunths + 1) : (1)
         });
+        // await updateDoc(doc(firestore,'hotsaot',hotsaa?.id),{
+        //     count2 : hotsaa.munth === format(new Date(),'MM-yyyy') ? ((hotsaa?.count2 + parseFloat(skhom))) : parseFloat(skhom),
+        //     munth : format(new Date(),'MM-yyyy')
+        // });
         if(AemHeshbonet){
             await updateDoc(doc(firestore,'metadata','counterNekoeMaam'),{
                 count : counterNekoeMaam.munth === format(new Date(),'dd-MM-yyyy') ? counterNekoeMaam.count + (skhom * 0.17) : (skhom * 0.17),
                 munth : format(new Date(),'dd-MM-yyyy')
-            })
+            });
         }
+        await updateDoc(doc(firestore,'sbkem',sbakObject?.id),{
+            ytratHeshvon : parseFloat(sbakObject?.ytratHeshvon) - parseFloat(skhom)
+        });
     };
+
+
+
+
     const handleSubmitHotsaotSkhar = async() => {
+        let kolBenseaaMasek = 0;
+        let kolBetsoeem = 0;
+        let kolskharBroto = 0;
         for (let index = 0; index < hotsaotSkharAobdem.length; index++) {
             await updateDoc(doc(firestore,'aobdem',hotsaotSkharAobdem[index].id),{
                 bensea : -parseFloat((parseFloat(hotsaotSkharAobdem[index].bnseaa1) + parseFloat(hotsaotSkharAobdem[index].bensea2)).toFixed(2)),
-                betsoeem : -parseFloat((hotsaotSkharAobdem[index].betsoeem).toFixed(2)),
-                skharBroto : -parseFloat(((hotsaotSkharAobdem[index].skharBroto - hotsaotSkharAobdem[index].msHkhnsa - hotsaotSkharAobdem[index].betoahLaome - hotsaotSkharAobdem[index].betoahBreaot - hotsaotSkharAobdem[index].bnseaa1)).toFixed(2))
-            })
+                betsoeem: -parseFloat((hotsaotSkharAobdem[index].betsoeem).toFixed(2)),
+                skharBroto: -parseFloat(((hotsaotSkharAobdem[index].skharBroto - hotsaotSkharAobdem[index].msHkhnsa - hotsaotSkharAobdem[index].betoahLaome - hotsaotSkharAobdem[index].betoahBreaot - hotsaotSkharAobdem[index].bnseaa1)).toFixed(2))
+            });
+            kolBenseaaMasek += parseFloat(hotsaotSkharAobdem[index].bensea2)
+            kolBetsoeem += parseFloat(hotsaotSkharAobdem[index].betsoeem);
+            kolskharBroto += parseFloat(hotsaotSkharAobdem[index].skharBroto);
         }
         await updateDoc(doc(firestore, 'metadata', 'counterShaotAboda'), {
             hotsaotSkhar: parseFloat(GetSkhomSofe(hotsaotSkharAobdem).toFixed(2)),
@@ -272,7 +293,11 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
         }
         try {
             await updateDoc(doc(firestore,'metadata','counterTnoahBkneot'),{
-                count : counterKneot?.count + 1
+                count : counterKneot?.count + 1,
+                BenseaaMasek: kolBenseaaMasek,
+                Betsoeem : kolBetsoeem,
+                aeshorem : counterKneot.aeshorem + 1,
+                skharBroto : kolskharBroto,
             })
             await addDoc(collection(firestore, 'tnoahBkneot'), tnoah);
         }
@@ -328,6 +353,9 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
         else {
             aemTshlom(false, null, null, null, null);
         }
+        await updateDoc(doc(firestore,'sbkem',sbakObject?.id),{
+            ytratHeshvon : parseFloat(sbakObject?.ytratHeshvon) - parseFloat(GetTotalPriceShop(entries))
+        });
     };
     const handleSubmitShoteft = async() => {
         if (AemTshlom) {
@@ -364,7 +392,7 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
         }
         else{
             await updateDoc(doc(firestore,'hotsaot',hotsaa.id),{
-                munth : format(new Date(),'MM-yyyy'),
+                munth :format(new Date(),'MM-yyyy'),
                 hotsaaShoteft : hotsaa.munth === format(new Date(),'MM-yyyy') ? (((hotsaa?.hotsaaShoteft || 0) + parseFloat(skhom / hotsaa.aorkhTkofa))) : parseFloat(skhom / hotsaa.aorkhTkofa),
                 hotsaaShoteftClicks : (hotsaa?.hotsaaShoteftClicks || 0) + 1,
             });
@@ -375,6 +403,9 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
                 munth : format(new Date(),'dd-MM-yyyy')
             })
         }
+        await updateDoc(doc(firestore,'sbkem',sbakObject?.id),{
+            ytratHeshvon : parseFloat(sbakObject?.ytratHeshvon) - parseFloat(skhom)
+        });
     }
     const handleSubmitMsem = async() => {
         const tnoah = {
@@ -421,6 +452,9 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
         else {
             aemTshlom(false, null, null, null, null);
         };
+        await updateDoc(doc(firestore,'sbkem',sbakObject?.id),{
+            ytratHeshvon : parseFloat(sbakObject?.ytratHeshvon) - parseFloat(skhom)
+        });
     };
 
     function GetTotalPriceShop(val) {
@@ -676,6 +710,7 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
                                                                 <DropdownItem key="ווי גרירה">ווי גרירה</DropdownItem>
                                                                 <DropdownItem key="עגלות">עגלות</DropdownItem>
                                                                 <DropdownItem key="פסולת">פסולת</DropdownItem>
+                                                                <DropdownItem key="מוצרים אחרים">מוצרים אחרים</DropdownItem>
                                                             </DropdownMenu>
                                                         </Dropdown>
                                                         <Dropdown dir="rtl">
@@ -727,7 +762,7 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
                                                             >
                                                                 {
                                                                     mlae.map((motsar, index) => {
-                                                                        return motsar.categoryMotsar === entry.remez && <DropdownItem key={motsar?.shem}>{motsar?.shem}</DropdownItem>
+                                                                        return (motsar.categoryMotsar === entry.remez) && (motsar.active) && <DropdownItem key={motsar?.shem}>{motsar?.shem}</DropdownItem>
                                                                     })
                                                                 }
                                                             </DropdownMenu>
@@ -914,14 +949,14 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
                     <ModalFooter>
                         <div className="w-full flex items-center justify-between">
                             <div className="w-full flex items-center">
-                                <Switch dir="ltr" size="lg" className="mr-5" isSelected={AemTshlom} value={AemTshlom} onValueChange={(val) => setAemTshlom(val)}>
+                                {/* <Switch dir="ltr" size="lg" className="mr-5" isSelected={AemTshlom} value={AemTshlom} onValueChange={(val) => setAemTshlom(val)}>
                                     {
                                         hotsaa?.sogHotsaa === 'הוצאות שכר' ?
                                             <div className="text-primary">תשלום רק שכר</div>
                                             :
                                             <div className="text-primary">עם תשלום</div>
                                     }
-                                </Switch>
+                                </Switch> */}
                                 {
                                     hotsaa?.sogHotsaa === 'הוצאות שכר' ?
                                         null

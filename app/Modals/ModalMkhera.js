@@ -4,7 +4,7 @@ import { Autocomplete, AutocompleteItem, Avatar, Button, Divider, Dropdown, Drop
 import { Heshvonet } from "../Page Components/Heshvonet";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
-import { collection, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
+import { collection, count, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import { firestore } from '../FireBase/firebase';
 import GetDocs from "../FireBase/getDocs";
 import { format } from "date-fns";
@@ -201,6 +201,7 @@ export default function ModalMkhera({ show, disable,mlae,category }) {
                                                             <DropdownItem key="ווי גרירה">ווי גרירה</DropdownItem>
                                                             <DropdownItem key="עגלות">עגלות</DropdownItem>
                                                             <DropdownItem key="פסולת">פסולת</DropdownItem>
+                                                            <DropdownItem key="מוצרים אחרים">מוצרים אחרים</DropdownItem>
                                                         </DropdownMenu>
                                                     </Dropdown>
                                                     <Dropdown dir="rtl">
@@ -293,20 +294,23 @@ export default function ModalMkhera({ show, disable,mlae,category }) {
                             <Button className="ml-5 mr-5" size="lg" color="primary" onClick={ResetAll}>
                                 סגור
                             </Button>
-                            <Button isLoading={loading} isDisabled={!lkoh} className="ml-5 mr-5" size="lg" color="primary" onClick={async() => {
-                                if(bdekatAeshorMkhera()){
+                            <Button isLoading={loading} isDisabled={!lkoh} className="ml-5 mr-5" size="lg" color="primary" onClick={async () => {
+                                if (bdekatAeshorMkhera()) {
                                     return;
                                 }
                                 setLoading(true);
                                 let sum = 0;
                                 for (let index = 0; index < entries.length; index++) {
-                                    sum += parseFloat((entries[index].kmot * entries[index].mherLeheda) - (entries[index].kmot * GetBrtemMotsarMlae(entries[index].remez,entries[index].motsar.shem).alot)); 
+                                    sum += parseFloat((entries[index].kmot * entries[index].mherLeheda) - (entries[index].kmot * GetBrtemMotsarMlae(entries[index].remez, entries[index].motsar.shem).alot));
                                 }
                                 await updateDoc(doc(firestore, 'metadata', 'counterHkhnsotAhrot'), {
-                                    count: counterHkhnsotAhrot?.munth === format(new Date(), 'MM-yyyy') ? (counterHkhnsotAhrot?.count + (sum)) : 0,
-                                munth: format(new Date(), 'MM-yyyy'),
-                                countAll : (counterHkhnsotAhrot?.munth !== format(new Date(), 'MM-yyyy')) ? counterHkhnsotAhrot?.count + (sum) : counterHkhnsotAhrot?.countAll,
-                                countMunths : counterHkhnsotAhrot.munth !== format(new Date(), 'MM-yyyy') ? (counterHkhnsotAhrot.countMunths + 1) : (0)
+                                    count: counterHkhnsotAhrot?.munth === format(new Date(), 'MM-yyyy') ? (counterHkhnsotAhrot?.count + parseFloat(sum)) : parseFloat(sum),
+                                    munth: format(new Date(), 'MM-yyyy'),
+                                    countAll: counterHkhnsotAhrot?.countAll + parseFloat(sum),
+                                    countMunths: counterHkhnsotAhrot.munth !== format(new Date(), 'MM-yyyy') ? (counterHkhnsotAhrot.countMunths + 1) : (1)
+                                });
+                                await updateDoc(doc(firestore, 'metadata', 'counterHeshvoneot'), {
+                                    count: counterHeshvoneot.count + 1
                                 });
                                 handelPrintHeshvonit();
                                 ResetAll();

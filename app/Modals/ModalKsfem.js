@@ -14,14 +14,36 @@ import ModalHosfatAobed from "../Modals/ModalHosfatAobed";
 import { useRouter } from "next/navigation";
 import ContactContext from "../auth/ContactContext";
 import ModalBrtemNosfemAobed from '../Modals/ModalBrtemNosfemAobed';
-export default function ModalKsfem({ disable, show,brtemMhtgatHotsaa,lkhot,sbkem,aobdem }) {
+export default function ModalKsfem({ disable, show, brtemMhtgatHotsaa, lkhot, sbkem, aobdem }) {
 
 
     const { contactName, setContactName, customerSet, setCustomerSet } = useContext(ContactContext);
     const [entries, setEntries] = useState([{ msbarShek: '', msbarBank: '', shemBank: '', msbarHeshvonBank: '', tarekhBeraon: '', skhom: '' }]);
     const [lkoh, setLkoh] = useState('');
     const [sbak, setSbak] = useState('');
-    const [aobed,setAobed] = useState('');
+    const [aobed, setAobed] = useState('');
+    const [loading,setLoading] = useState(false);
+
+    const [sbakID,setSbakID] = useState(null);    
+    const [lkohID,setLkohID] = useState(null);
+    const [aobedID,setAobedID] = useState(null);
+    
+    const ResetAll = () => {
+        setSbakID(null);
+        setLkohID(null);
+        setAobedID(null);
+        disable();
+        setLkoh('');
+        setSbak('');
+        setAobed('');
+        setMezoman(false);
+        setShekem(false);
+        setSkhomKolel(0);
+        setSelectedKeys1("צד שני");
+        setSelectedKeys("סוג עסקה");
+        setKesefMezoman(0);
+        setEntries([{ msbarShek: '', msbarBank: '', shemBank: '', msbarHeshvonBank: '', tarekhBeraon: '', skhom: '' }]);
+    }
 
     const handleInputChange = (index, field, value) => {
         const newEntries = [...entries];
@@ -34,29 +56,79 @@ export default function ModalKsfem({ disable, show,brtemMhtgatHotsaa,lkhot,sbkem
     };
     const counter = GetDocs('metadata').find((count) => count.id === 'counterTnoahBmzomnem');
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        await updateDoc(doc(firestore, 'customers', lkoh.id), {
-            yetera: lkoh.yetera - skhomKolel
-        });
-        await addDoc(collection(firestore, "tnoahBmzomnem"), {
+        setLoading(true);
+        if (selectedKeys1 === 'עובדים') {
+            if (selectedKeys.currentKey === "תשלום שכר עבודה") {
+                let res = hehzer ? (aobed.skharBroto - skhomKolel) : (aobed.skharBroto + skhomKolel);
+                await updateDoc(doc(firestore, 'aobdem', aobed.id), {
+                    skharBroto: aobed.skharBroto + skhomKolel
+                });
+            }
+            else if (selectedKeys.currentKey === "הפרשת פנסיה") {
+                let res = hehzer ? (aobed.bensea - skhomKolel) : (aobed.bensea + skhomKolel);
+                await updateDoc(doc(firestore, 'aobdem', aobed.id), {
+                    bensea: aobed.bensea + skhomKolel
+                });
+            }
+            else if (selectedKeys.currentKey === "הפרשת פיצוים") {
+                let res = hehzer ? (aobed.betsoeem - skhomKolel) : (aobed.betsoeem + skhomKolel);
+                await updateDoc(doc(firestore, 'aobdem', aobed.id), {
+                    betsoeem: aobed.betsoeem + skhomKolel
+                });
+            }
+            await addDoc(collection(firestore, "tnoahBmzomnem"), {
             skhomKlle: skhomKolel,
             mezoman: kesefMezoman,
             shekem: entries,
+            sogAska: selectedKeys.currentKey,
+            msbar: counter?.count,
+            lkoh: aobed.msbar,
+            active : true,
+            sogLkoh: "C",
+            tarekh: format(new Date(), 'dd-MM-yyyy'),
+        });
+        }
+        else if (selectedKeys1 === 'ספקים') {
+            let res = hehzer ? (sbak.ytratHeshvon - skhomKolel) : (sbak.ytratHeshvon + skhomKolel);
+            console.log("res ------" + res);
+            console.log("hehzer ------" + hehzer);
+            await updateDoc(doc(firestore, 'sbkem', sbak.id), {
+                ytratHeshvon: res
+            });
+            await addDoc(collection(firestore, "tnoahBmzomnem"), {
+            skhomKlle: skhomKolel,
+            mezoman: kesefMezoman,
+            shekem: entries,
+            sogAska: selectedKeys.currentKey,
+            msbar: counter?.count,
+            lkoh: sbak.msbar,
+            active : true,
+            sogLkoh: "A",
+            tarekh: format(new Date(), 'dd-MM-yyyy'),
+        });
+        }
+        else if (selectedKeys1 === 'לקחות') {
+            let res = hehzer ? (lkoh.yetera + skhomKolel) : (lkoh.yetera - skhomKolel);
+            await updateDoc(doc(firestore, 'customers', lkoh.id), {
+                yetera: res
+            });
+            await addDoc(collection(firestore, "tnoahBmzomnem"), {
+            skhomKlle: skhomKolel,
+            mezoman: kesefMezoman,
+            shekem: entries,
+            sogAska: selectedKeys.currentKey,
             msbar: counter?.count,
             lkoh: lkoh.idnum,
-            sogLkoh: selectedKeys1 === "עובדים" ? "C" : selectedKeys1 === "ספקים" ? "A" : "B",
+            active : true,
+            sogLkoh: "B",
             tarekh: format(new Date(), 'dd-MM-yyyy'),
-
         });
+        }
+        
         await updateDoc(doc(firestore, 'metadata', counter?.id), { count: counter?.count + 1 });
         handelPrintKbala();
-        setLkoh('');
-        setSbak('');
-        setMezoman(false);
-        setShekem(false);
-        setSkhomKolel(0);
-        setKesefMezoman(0);
-        setEntries([{ msbarShek: '', msbarBank: '', shemBank: '', msbarHeshvonBank: '', tarekhBeraon: '', skhom: '' }]);
+        ResetAll();
+        setLoading(false);
     };
 
     const endOfFormRef = useRef(null);
@@ -81,6 +153,7 @@ export default function ModalKsfem({ disable, show,brtemMhtgatHotsaa,lkhot,sbkem
         return sum;
     }
 
+
     const [selectedKeys1, setSelectedKeys1] = useState("צד שני");
     const [selectedKeys, setSelectedKeys] = useState("סוג עסקה");
     const [mezoman, setMezoman] = useState(false);
@@ -99,35 +172,83 @@ export default function ModalKsfem({ disable, show,brtemMhtgatHotsaa,lkhot,sbkem
     });
 
     useEffect(() => {
-        if(brtemMhtgatHotsaa.skhom && brtemMhtgatHotsaa.sbak){
+        console.log(sbakID);
+        if (brtemMhtgatHotsaa.skhom && brtemMhtgatHotsaa.sbak) {
             setSkhomKolel(parseFloat(brtemMhtgatHotsaa.skhom));
-            if(brtemMhtgatHotsaa.sbakAoLkoh === 'sbak'){
+            if (brtemMhtgatHotsaa.sbakAoLkoh === 'sbak') {
                 setAobed(brtemMhtgatHotsaa.sbak);
-                setSelectedKeys1('עובדים'); 
+                setSelectedKeys1('עובדים');
             }
-            else{
+            else {
+                setSbakID(brtemMhtgatHotsaa.sbak.id);
                 setSbak(brtemMhtgatHotsaa.sbak);
-                setSelectedKeys1("ספקים"); 
+                setSelectedKeys1("ספקים");
             }
             setSelectedKeys(brtemMhtgatHotsaa.sogHotsaa);
         }
-    },[brtemMhtgatHotsaa]);
+    }, [brtemMhtgatHotsaa]);
 
-    console.log(sbak);
+    console.log(sbakID);
+
+    const bdekatTkenotAeshorNehol = () => {
+        if (!selectedKeys || !selectedKeys1 || !skhomKolel) {
+            return true;
+        }
+        if ((parseFloat(kesefMezoman) + parseFloat(GetSkhomShekem())) != skhomKolel) {
+            return true;
+        }
+    }
+
+    const [hehzer,setHehzer] = useState(false);
+
+    const GetSbakMtaem = (val1, val2) => {
+        if (val2 === 'החזר הוצאות שכר') {
+            return val1 === 'הוצאות שכר';
+        }
+        if (val2 === 'החזר קניות מוצרים') {
+            return val1 === 'קניות מוצרים';
+        }
+        if (val2 === 'החזר מסים') {
+            return val1 === 'מסים';
+        }
+        if (val2 === 'החזר הוצאות שוטפות') {
+            return val1 === 'הוצאות שוטפות';
+        }
+        if (val2 === 'החזר הוצאות אחרות') {
+            return val1 === 'הוצאות אחרות';
+        }
+        if (val1 === val2) {
+            return true;
+        }
+    }
+
+    useEffect(() => {
+        if(selectedKeys.currentKey === 'החזר הוצאות שכר'){
+            setHehzer(true);
+        }
+        else if(selectedKeys.currentKey === 'החזר קניות מוצרים'){
+            setHehzer(true);
+        }
+        else if(selectedKeys.currentKey === 'החזר מסים'){
+            setHehzer(true);
+        }
+        else if(selectedKeys.currentKey === 'החזר הוצאות שוטפות'){
+            setHehzer(true);
+        }
+        else if(selectedKeys.currentKey === 'החזר הוצאות אחרות'){
+            setHehzer(true);
+        }
+        else if(selectedKeys.currentKey === "החזרת כסף ללקוח"){
+            setHehzer(true);
+        }
+        else{
+            setHehzer(false);
+        }
+    },[selectedKeys])
+
 
     return (
-        <Modal placement="center" className="test-fontt sizeForModals" backdrop={"blur"} size="5xl" isOpen={show} onClose={() => {
-            disable();
-            setSelectedKeys("צד שני");
-            setSelectedKeys1("סוג עסקה");
-            setMezoman(false);
-            setShekem(false);
-            setSkhomKolel(0);
-            setKesefMezoman(0);
-            setSbak('');
-            setLkoh('');
-
-        }}>
+        <Modal placement="center" className="test-fontt sizeForModals" backdrop={"blur"} size="5xl" isOpen={show} onClose={ResetAll}>
             <ModalContent>
                 <>
                     <ModalHeader className="shadow-2xl flex justify-center">הנהלת חשבונות</ModalHeader>
@@ -183,14 +304,11 @@ export default function ModalKsfem({ disable, show,brtemMhtgatHotsaa,lkhot,sbkem
                                                         disallowEmptySelection
                                                         selectionMode="single"
                                                         selectedKeys={selectedKeys}
-                                                        onSelectionChange={setSelectedKeys}
+                                                        onSelectionChange={(val) => setSelectedKeys(val.currentKey)}
                                                     >
                                                         <DropdownItem key="תשלום שכר עבודה">תשלום שכר עבודה</DropdownItem>
-                                                        <DropdownItem key="תשלום ביטוח לאומי">תשלום ביטוח לאומי</DropdownItem>
-                                                        <DropdownItem key="תשולום ארנונה">תשולום מס הכנסה</DropdownItem>
                                                         <DropdownItem key="הפרשת פנסיה">הפרשת פנסיה</DropdownItem>
                                                         <DropdownItem key="הפרשת פיצוים">הפרשת פיצוים</DropdownItem>
-                                                        <DropdownItem key="הפרשת קרן השתלמות">הפרשת קרן השתלמות</DropdownItem>
                                                     </DropdownMenu>
                                                 }
                                                 {
@@ -202,7 +320,7 @@ export default function ModalKsfem({ disable, show,brtemMhtgatHotsaa,lkhot,sbkem
                                                         disallowEmptySelection
                                                         selectionMode="single"
                                                         selectedKeys={selectedKeys}
-                                                        onSelectionChange={setSelectedKeys}
+                                                        onSelectionChange={(val) => setSelectedKeys(val.currentKey)}
                                                     >
                                                         <DropdownItem key={'הוצאות שכר'}>{'הוצאות שכר '}</DropdownItem>
                                                         <DropdownItem key={'קניות מוצרים'}>{'קניות מוצרים'}</DropdownItem>
@@ -225,42 +343,25 @@ export default function ModalKsfem({ disable, show,brtemMhtgatHotsaa,lkhot,sbkem
                                                         disallowEmptySelection
                                                         selectionMode="single"
                                                         selectedKeys={selectedKeys}
-                                                        onSelectionChange={setSelectedKeys}
+                                                        onSelectionChange={(val) => setSelectedKeys(val.currentKey)}
                                                     >
                                                         <DropdownItem key="קבלת כסף מלקוח">קבלת כסף מלקוח</DropdownItem>
                                                         <DropdownItem key="החזרת כסף ללקוח">החזרת כסף ללקוח</DropdownItem>
                                                     </DropdownMenu>
                                                 }
                                             </Dropdown>
-                                            <Input size="sm" color="success" type="number" value={skhomKolel || ''} onValueChange={(val) => setSkhomKolel(Math.max(Math.min(val, lkoh?.yetera), 0))} className="max-w-[200px] m-5" label='סכום כולל' />
-                                            {
-                                                selectedKeys1 === 'לקחות'
-                                                ?
-                                                <>
-                                                <Input size="sm" readOnly value={lkoh?.yetera} color={((lkoh?.yetera - skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה קודמת' />
-                                                <Input size="sm" readOnly value={(lkoh?.yetera - skhomKolel) || ''} color={((lkoh?.yetera - skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה חדשה' />
-                                                </> 
-                                                : selectedKeys1 === 'ספקים' ?
-                                                <>
-                                                <Input size="sm" readOnly value={sbak?.ytratHeshvon} color={((sbak?.ytratHeshvon + skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה קודמת' />
-                                                <Input size="sm" readOnly value={(sbak?.ytratHeshvon + skhomKolel) || ''} color={((sbak?.ytratHeshvon + skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה חדשה' />
-                                                </>
-                                                :
-                                                <>
-                                                <Input size="sm" readOnly value={sbak?.ytratHeshvon} color={((sbak?.ytratHeshvon + skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה קודמת' />
-                                                <Input size="sm" readOnly value={(sbak?.ytratHeshvon + skhomKolel) || ''} color={((sbak?.ytratHeshvon + skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה חדשה' />
-                                                </>
-                                            }
-                                        </div>
-                                        <div className='flex justify-center items-center'>
+                                            <div className='flex justify-center items-center'>
                                             {
                                                 selectedKeys1 == 'לקחות' &&
                                                 <Autocomplete
+                                                    isDisabled={selectedKeys === "סוג עסקה"}
                                                     bordered
                                                     fullWidth
                                                     label="לקוח"
                                                     className="max-w-[200px] m-5"
                                                     color="primary"
+                                                    selectedKey={lkohID}
+                                                    onSelectionChange={setLkohID}
                                                     defaultItems={lkhot}
                                                     allowsCustomValue={false}
                                                 >
@@ -276,19 +377,21 @@ export default function ModalKsfem({ disable, show,brtemMhtgatHotsaa,lkhot,sbkem
                                             {
                                                 selectedKeys1 == 'ספקים' &&
                                                 <Autocomplete
+                                                    isDisabled={selectedKeys === "סוג עסקה"}
                                                     bordered
                                                     fullWidth
                                                     size="sm"
                                                     label="ספק"
                                                     className="max-w-[200px] m-5"
                                                     color="primary"
-                                                    selectedKey={sbak.id}
+                                                    selectedKey={sbakID}
+                                                    onSelectionChange={setSbakID}
                                                     defaultItems={sbkem}
                                                     allowsCustomValue={false}
                                                 >
                                                     {
                                                         sbkem.map((sbakkk) => (
-                                                            <AutocompleteItem onClick={() => setSbak(sbakkk)} className='text-right' key={sbakkk.id} value={sbakkk.id}>
+                                                            GetSbakMtaem(sbakkk?.sherot,selectedKeys) && <AutocompleteItem onClick={() => {setSbak(sbakkk);}} className='text-right' key={sbakkk.id} value={sbakkk.id}>
                                                                 {sbakkk.shem}
                                                             </AutocompleteItem>
                                                         ))
@@ -296,15 +399,20 @@ export default function ModalKsfem({ disable, show,brtemMhtgatHotsaa,lkhot,sbkem
                                                 </Autocomplete>
                                             }
                                             {
+                                                console.log(sbakID)
+                                            }
+                                            {
                                                 selectedKeys1 == 'עובדים' &&
                                                 <Autocomplete
+                                                    isDisabled={selectedKeys === "סוג עסקה"}
                                                     bordered
                                                     fullWidth
                                                     size="sm"
                                                     label="עובד"
                                                     className="max-w-[200px] m-5"
                                                     color="primary"
-                                                    selectedKey={aobed.id}
+                                                    selectedKey={aobedID}
+                                                    onSelectionChange={setAobedID}
                                                     defaultItems={aobdem}
                                                     allowsCustomValue={false}
                                                 >
@@ -318,8 +426,55 @@ export default function ModalKsfem({ disable, show,brtemMhtgatHotsaa,lkhot,sbkem
                                                 </Autocomplete>
                                             }
                                         </div>
+                                            
+                                        </div>
+                                        <div className='flex justify-center items-center'>
+                                        {
+                                                selectedKeys1 === 'לקחות'
+                                                    ?
+                                                    <>
+                                                        <Input dir="ltr" size="sm" color="primary" type="number" value={skhomKolel || ''} onValueChange={(val) => setSkhomKolel(parseFloat(val))} className="max-w-[200px] m-5" label='סכום כולל' />
+                                                        <Input dir="ltr" size="sm" readOnly value={lkoh?.yetera} color={((lkoh?.yetera - skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה קודמת' />
+                                                        <Input dir="ltr" size="sm" readOnly value={(lkoh?.yetera + (hehzer ? (+ skhomKolel) : (- skhomKolel))) || ''} color={((lkoh?.yetera + (hehzer ? (+ skhomKolel) : (- skhomKolel))) >= 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה חדשה' />
+                                                    </>
+                                                    : selectedKeys1 === 'ספקים' ?
+                                                        <>
+                                                            <Input dir="ltr" size="sm" color="primary" type="number" value={skhomKolel || ''} onValueChange={(val) => setSkhomKolel(parseFloat(val))} className="max-w-[200px] m-5" label='סכום כולל' />
+                                                            <Input dir="ltr" size="sm" readOnly value={sbak?.ytratHeshvon} color={((sbak?.ytratHeshvon + skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה קודמת' />
+                                                            <Input dir="ltr" size="sm" readOnly value={(sbak?.ytratHeshvon + (hehzer ? (- skhomKolel) : (+ skhomKolel))) || ''} color={((sbak?.ytratHeshvon + (hehzer ? (- skhomKolel) : (+ skhomKolel))) >= 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה חדשה' />
+                                                        </>
+                                                        : selectedKeys1 === 'עובדים' ?
+                                                            <>
+                                                                {
+                                                                    selectedKeys.currentKey === "תשלום שכר עבודה" ?
+                                                                        <>
+                                                                            <Input dir="ltr" size="sm" color="primary" type="number" value={skhomKolel || ''} onValueChange={(val) => setSkhomKolel(parseFloat(val))} className="max-w-[200px] m-5" label='סכום כולל' />
+                                                                            <Input dir="ltr" size="sm" readOnly value={aobed?.skharBroto} color={((aobed?.skharBroto + skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה קודמת' />
+                                                                            <Input dir="ltr" size="sm" readOnly value={parseFloat(aobed?.skharBroto + skhomKolel) || ''} color={((aobed?.skharBroto + skhomKolel) >= 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה חדשה' />
+                                                                        </>
+                                                                        : selectedKeys.currentKey === "הפרשת פנסיה" ?
+                                                                            <>
+                                                                                <Input dir="ltr" size="sm" color="primary" type="number" value={skhomKolel || ''} onValueChange={(val) => setSkhomKolel(parseFloat(val))} className="max-w-[200px] m-5" label='סכום כולל' />
+                                                                                <Input dir="ltr" size="sm" readOnly value={aobed?.bensea} color={((aobed?.bensea + skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה קודמת' />
+                                                                                <Input dir="ltr" size="sm" readOnly value={parseFloat(aobed?.bensea + skhomKolel) || ''} color={((aobed?.bensea + skhomKolel) >= 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה חדשה' />
+                                                                            </>
+                                                                            : selectedKeys.currentKey === "הפרשת פיצוים" ?
+                                                                                <>
+                                                                                    <Input dir="ltr" size="sm" color="primary" type="number" value={skhomKolel || ''} onValueChange={(val) => setSkhomKolel(parseFloat(val))} className="max-w-[200px] m-5" label='סכום כולל' />
+                                                                                    <Input dir="ltr" size="sm" readOnly value={aobed?.betsoeem} color={((aobed?.betsoeem + skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה קודמת' />
+                                                                                    <Input dir="ltr" size="sm" readOnly value={parseFloat(aobed?.betsoeem + skhomKolel) || ''} color={((aobed?.betsoeem + skhomKolel) >= 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה חדשה' />
+                                                                                </>
+                                                                                : null
+                                                                }
+
+                                                            </>
+                                                            :
+                                                            null
+                                            }
+                                        </div>
+                                       
                                     </div>
-                                    <Divider />
+                                    <Divider className="mt-10"/>
                                     <div className="h-[250px] overflow-y-scroll">
                                         <div dir="rtl" className="flex items-center m-5">
                                             <Switch size="sm" value={mezoman} onValueChange={(e) => setMezoman(e)}>
@@ -440,21 +595,10 @@ export default function ModalKsfem({ disable, show,brtemMhtgatHotsaa,lkhot,sbkem
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <Button size="lg" color="primary" onClick={() => {
-                            disable();
-                            setSelectedKeys("צד שני");
-                            setSelectedKeys1("סוג עסקה");
-                            setMezoman(false);
-                            setShekem(false);
-                            setSkhomKolel(0);
-                            setKesefMezoman(0);
-                            setSbak('');
-                            setLkoh('');
-
-                        }}>
+                        <Button size="lg" color="primary" onClick={ResetAll}>
                             סגור
                         </Button>
-                        <Button size="lg" color="primary" onClick={handleSubmit}>
+                        <Button isDisabled={bdekatTkenotAeshorNehol()} isLoading={loading} size="lg" color="primary" onClick={handleSubmit}>
                             אישור
                         </Button>
                     </ModalFooter>

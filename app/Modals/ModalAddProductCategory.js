@@ -6,7 +6,7 @@ import GetDocs from "../FireBase/getDocs";
 import { useState } from "react";
 import { useGetDataByCondition } from "../FireBase/getDataByCondition";
 
-export default function ModalAddProductCategory({ show, disable, category, Aeshor, sckhom, msbarTfaol,mlae }) {
+export default function ModalAddProductCategory({ show, disable, category, Aeshor, sckhom, msbarTfaol,mlae,motsarAher }) {
 
     //const counter = useGetDataByCondition('category', 'msbar', '==', category?.msbar || 'default-msbar-value');
     const [shem, setShem] = useState('');
@@ -68,7 +68,6 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
             return;
         }
         setLoading(true);
-        setIsClicked(true);
         let count = category?.dlbak + 1;
         let counter = GetCategory(shem)?.dlbak;
         await addDoc(collection(firestore, "mlae"), {
@@ -77,7 +76,7 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
             msbar: `${GetCategory(shem)?.sog}0${counter}`,
             shem: sog,
             alot: sckhom || 0,
-            alotLeheda: alotLeheda(sckhom) || parseFloat(mherThlte),
+            alotLeheda: parseFloat(sckhom) || parseFloat(mherThlte),
             kmot: sckhom ? 1 : 0,
             zmanHsbaka: zmanAsbka,
             mededa: GetCategory(shem)?.mededa,
@@ -96,9 +95,6 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
             Aeshor(true);
         }
         setLoading(false);
-        setTimeout(() => {
-            setIsClicked(false);
-        }, 5000); // Adjust the time as per your requirement
     }
     //       צמיג 1
 
@@ -113,6 +109,7 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                             <Dropdown dir="rtl">
                                 <DropdownTrigger>
                                     <Button
+                                        
                                         size="lg"
                                         className='m-2'
                                     >

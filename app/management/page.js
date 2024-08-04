@@ -4,7 +4,7 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "r
 import { FaArrowDown, FaArrowUp, FaSleigh, FaTrash } from "react-icons/fa";
 import { FiPlus } from "react-icons/fi";
 import { addMonths, differenceInDays, differenceInHours, differenceInMinutes, format, parseISO, setDate, subMonths } from 'date-fns';
-import GetDocs from "../FireBase/getDocs";
+import GetDocs, { GetDocsWithLimit } from "../FireBase/getDocs";
 import { addDoc, collection, doc, limit, onSnapshot, query, updateDoc } from "firebase/firestore";
 import { firestore } from "../FireBase/firebase";
 import { Kbala } from "../Page Components/kbala";
@@ -30,6 +30,7 @@ import { FaUsers } from "react-icons/fa";
 import { GiExpense } from "react-icons/gi";
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { FaMoneyBillTrendUp } from "react-icons/fa6";
+import ModalBerotAskatKsfem from "../Modals/ModalBerotAskatKsfem";
 
 
 export default function Management() {
@@ -40,6 +41,7 @@ export default function Management() {
     const hotsaot = GetDocs('hotsaot');
     const aobdem = GetDocs('aobdem');
     const mlae = GetDocs('mlae');
+    const tnoahBmzomnem = GetDocsWithLimit('tnoahBmzomnem',15);
     const router = useRouter();
     const [htsgatbrtem, sethtsagatBrtem] = useState('לקחות');
     const [loading, setLoading] = useState(false);
@@ -54,7 +56,8 @@ export default function Management() {
     const previousMonthDate = subMonths(new Date(), 1);
     const [GetData, setGetData] = useState(false);
     const [heshovShaotAboda, setHeshovShaotAboda] = useState([]);
-
+    const [askatKsfem,setAskatKsfem] = useState(null);
+    const [showModalBerotAskatKsfem,setShowModalBerotAskatKsfem] = useState(false);
 
     const hdbsatDafeShaot = async () => {
 
@@ -232,6 +235,9 @@ export default function Management() {
             console.error('Error fetching documents:', error);
         }
     };
+    const formatNumberWithCommas = (num) => {
+        return '₪' + num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
     const [showModalAddSbak, setShowModalAddSbak] = useState(false);
 
 
@@ -239,6 +245,7 @@ export default function Management() {
 
     return (
         <div>
+            <ModalBerotAskatKsfem Aska={askatKsfem} show={showModalBerotAskatKsfem} disable={() => setShowModalBerotAskatKsfem(false)}/>
             <ModalNetonemThltem show={showModalNetonemThltem} disable={() => setShowModalNetonemThltem(false)}/>
             {<ModalShowBerotAska afshrotArekha={afshrotArekha} mlae={mlae} aska={aska} show={showBerotAska} disable={() => { console.log(aska); setShowBerotAska(false) }} />}
             <ModalAddSobak show={showModalAddSbak} disable={() => setShowModalAddSbak(false)} />
@@ -457,7 +464,7 @@ export default function Management() {
                 <div className="w-full flex items-center justify-center flex-wrap">
 
 
-                    <div className="p-5 justify-center w-full max-w-[900px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[450px]">
+                    <div className="p-5 justify-center w-full max-w-[900px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[650px]">
                         <div className="w-full flex justify-around items-center">
                             <Button variant='faded' className={htsgatbrtem === 'סבקים' && 'font-extrabold text-base'} color={htsgatbrtem === 'סבקים' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('סבקים')}><MdOutlineShoppingBag className="text-base"/>ספקים/שלטנות</Button>
                             <Button variant='faded' className={htsgatbrtem === 'לקחות' && 'font-extrabold text-base'} color={htsgatbrtem === 'לקחות' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('לקחות')}><FaUsers className="text-base"/>לקחות</Button>
@@ -474,7 +481,7 @@ export default function Management() {
                                             router.push('/activion');
                                         }}><div className="text-[18px] mr-1">+</div>הוספת לקוח חדש</Button>
                                     </div>
-                                    <div className="overflow-x-auto h-[250px]">
+                                    <div className="overflow-x-auto h-[450px]">
                                         <table className="w-full table-auto border-collapse">
                                             <thead>
                                                 <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
@@ -513,7 +520,7 @@ export default function Management() {
                                     <div className="mt-5 mb-5 flex justify-around items-center">
                                         <Button size="sm" variant="faded" onClick={() => setShowModalAddSbak(true)}><div className="text-[18px] mr-1">+</div>הוספת ספק/שלטנות חדש</Button>
                                     </div>
-                                    <div className="overflow-x-auto h-[250px]">
+                                    <div className="overflow-x-auto h-[450px]">
                                         <table className="w-full table-auto border-collapse">
                                             <thead>
                                                 <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
@@ -549,7 +556,7 @@ export default function Management() {
                             }
                             {
                                 htsgatbrtem === 'תנועה בהצאות' &&
-                                <div dir="ltr" className="overflow-x-auto h-[350px]">
+                                <div dir="ltr" className="overflow-x-auto h-[520px]">
                                     <table className="w-full table-auto border-collapse">
                                         <thead>
                                             <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
@@ -570,7 +577,7 @@ export default function Management() {
                                                         <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{!mtsavArekha(item.tarekh) ? <div className='text-danger'>לא זמין</div> : mtsavArekha(item.tarekh) >= 0 ? <div className='text-danger'>לא זמין</div> : <div className='text-success'>זמין</div>}</td>
                                                         <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{flipDate(item.tarekh)}</td>
                                                         <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{item.shaa}</td>
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{item.skhom}</td>
+                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{formatNumberWithCommas(item.skhom)}</td>
                                                         <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{item.sog}</td>
                                                         <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{item.msbar}</td>
                                                     </tr>
@@ -582,27 +589,25 @@ export default function Management() {
                             }
                             {
                                 htsgatbrtem === 'תנועה בכספים' &&
-                                <div dir="ltr" className="overflow-x-auto h-[350px]">
+                                <div dir="ltr" className="overflow-x-auto h-[520px]">
                                     <table className="w-full table-auto border-collapse">
                                         <thead>
                                             <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">מצב עריכה</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">תאריך הוצאה</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">שעה</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-500 to-gray-600 font-extrabold text-black">פירוט הוצאה</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-600 to-gray-700 font-extrabold text-black">מחיר כולל</th>
+                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">תאריך עסקה</th>
+                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">פירוט עסקה</th>
+                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">מחיר כולל</th>
+                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">מספר</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {
-                                                hestoriaKneot.map((item, index) => {
-                                                    return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{!mtsavArekha(item.tarekh) ? <div className='text-danger'>לא זמין</div> : mtsavArekha(item.tarekh) >= 0 ? <div className='text-danger'>לא זמין</div> : <div className='text-success'>זמין</div>}</td>
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{flipDate(item.tarekh)}</td>
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{item.shaa}</td>
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setShowBerotAska(true); setAfshrotRekha(mtsavArekha(item.tarekh) >= 0 ? false : true); setAska(item); }}>פירוט</Button></td>
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{item.skhom}</td>
-                                                    </tr>
+                                                tnoahBmzomnem?.map((tnoah,index) => {
+                                                    return (tnoah.active) && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{tnoah.tarekh}</td>
+                                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => {setShowModalBerotAskatKsfem(true);setAskatKsfem(tnoah)}}>פירוט</Button></td>
+                                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{formatNumberWithCommas(tnoah.skhomKlle)}</td>
+                                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{tnoah.msbar}</td>
+                                                </tr>
                                                 })
                                             }
                                         </tbody>
@@ -612,12 +617,12 @@ export default function Management() {
                         </div>
                     </div>
 
-                    <div className="p-5 justify-center w-full max-w-[900px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[450px]">
+                    <div className="p-5 justify-center w-full max-w-[900px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[650px]">
                         <div className="w-full flex justify-around items-end">
                             <Button variant='faded' color='primary' onClick={() => setShowModalHosfatHotsaaHadsha(true)}><div className="text-[18px] mr-1">+</div>הוספת הוצאה חדשה</Button>
                         </div>
                         <Divider className="mt-5 mb-5" />
-                        <div className="overflow-x-auto h-[250px]">
+                        <div className="overflow-x-auto h-[500px]">
                             <table className="w-full table-auto border-collapse">
                                 <thead>
                                     <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">

@@ -79,7 +79,7 @@ export default function ModalHosfatHotsaaHdasha({ disable, show }) {
                     <ModalBody className="shadow-2xl">
                         <div dir="rtl" className="p-5">
                             <div className="flex items-center">
-                                <Input type="text" value={shemMotsar} onValueChange={(val) => setShemMotsar(val)} label="שם מוצר" className="max-w-[150px]" />
+                                <Input type="text" value={shemMotsar} onValueChange={(val) => setShemMotsar(val)} label="שם הוצאה" className="max-w-[150px]" />
                                 <Dropdown dir="rtl">
                                     <DropdownTrigger>
                                         <Button variant='flat' size="" className='mr-4'>

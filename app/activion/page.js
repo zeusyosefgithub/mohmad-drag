@@ -261,6 +261,7 @@ export default function Activion() {
         }
         setLoading(true);
         const drag = {
+            active: false,
             authorizedweight: authorizedweight,
             bodymodel: bodymodel,
             bodytype: bodytype,

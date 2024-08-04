@@ -107,7 +107,10 @@ export default function ModalZmanAbodaMotsar({ disable, show, category }) {
                                 }
                                 res = false;
                             };
-                            setNewCategory([]);
+                            // setNewCategory(category.map(cat => ({
+                            //     ...cat,
+                            //     motsarem: cat.motsarem.map(motsar => ({ ...motsar }))
+                            // })));
                             disable();
                             setLoading(false);
                         }

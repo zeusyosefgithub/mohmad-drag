@@ -16,7 +16,7 @@ import { MutatingDots, Puff, Radio, ThreeCircles } from 'react-loader-spinner';
 import { GiHook } from 'react-icons/gi';
 import { HiOutlineWrenchScrewdriver } from 'react-icons/hi2';
 import GetDocs from '../FireBase/getDocs';
-import { format } from 'date-fns';
+import { differenceInMonths, format, parseISO } from 'date-fns';
 import ModalCreateTest from '../Modals/ModalCreateTest';
 
 
@@ -32,47 +32,83 @@ export default function Sales() {
     const counterShaotAboda = metadata.find((count) => count.id === 'counterShaotAboda');
     const counterHkhnsotAhrot = metadata.find((count) => count.id === 'counterHkhnsotAhrot');
     const counterNekoeMaam = metadata.find((count) => count.id === 'counterNekoeMaam');
-    
+    const counterTnoahBkneot = metadata.find((count) => count.id === 'counterTnoahBkneot');
+
 
     const [showModalYetsorMatsav, setShowModalYetsorMatsav] = useState(false);
     const [tfaolAgla, setTfaolAgla] = useState({});
     const [lkoh, setLkoh] = useState();
+    const [drag, setDrag] = useState();
+    const [msbarDrag, setMsbarDrag] = useState();
     const [msbarLkoh, setMsbarLkoh] = useState();
-    const fetchCustomerData = async (customerId) => {
+    const fetchCustomerData = (customerId) => {
         try {
             const customersRef = collection(firestore, 'customers');
             const q = query(customersRef, where("idnum", "==", customerId));
-            const querySnapshot = await getDocs(q);
-            if (!querySnapshot.empty) {
-                // Assuming customerId is unique, return the first document found
-                setLkoh({ ...querySnapshot.docs[0].data(), id: querySnapshot.docs[0].id });
-            } else {
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    setLkoh({ ...querySnapshot.docs[0].data(), id: querySnapshot.docs[0].id });
+                } else {
+                    setLkoh(null);
+                }
+            }, (error) => {
+                console.error('Error fetching customer data:', error);
                 setLkoh(null);
-            }
+            });
+            return unsubscribe;
         } catch (error) {
-            console.error('Error fetching customer data:', error);
+            console.error('Error setting up real-time listener for customer data:', error);
             setLkoh(null);
         }
     };
 
     useEffect(() => {
+        let unsubscribe;
         if (msbarLkoh) {
-            fetchCustomerData(msbarLkoh);
+            unsubscribe = fetchCustomerData(msbarLkoh);
         }
+        return () => {
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        };
     }, [msbarLkoh]);
 
-    useEffect(() => {
-        if (lkoh && lkoh.id) {
-            const unsub = onSnapshot(doc(firestore, 'customers', lkoh.id), (doc) => {
-                if (doc.exists()) {
-                    setLkoh({ ...doc.data(), id: doc.id });
+
+
+
+    const fetchDragData = (msbarDrag) => {
+        try {
+            const customersRef = collection(firestore, 'drags');
+            const q = query(customersRef, where("licenseid", "==", msbarDrag));
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    setDrag({ ...querySnapshot.docs[0].data(), id: querySnapshot.docs[0].id });
                 } else {
-                    setLkoh(null);
+                    setDrag(null);
                 }
+            }, (error) => {
+                console.error('Error fetching customer data:', error);
+                setDrag(null);
             });
-            return () => unsub();
+            return unsubscribe;
+        } catch (error) {
+            console.error('Error setting up real-time listener for customer data:', error);
+            setDrag(null);
         }
-    }, [lkoh?.id]);
+    };
+
+    useEffect(() => {
+        let unsubscribe;
+        if (msbarDrag) {
+            unsubscribe = fetchDragData(msbarDrag);
+        }
+        return () => {
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        };
+    }, [msbarDrag]);
 
     const handleData = (documents) => {
         setMlae(documents);
@@ -117,26 +153,16 @@ export default function Sales() {
         let skhomHotsaot = 0;
         let skhomTkofte = 0;
         for (let index = 0; index < hotsaot.length; index++) {
-            if(hotsaot[index].sogHotsaa === val){
+            if (hotsaot[index].sogHotsaa === val && hotsaot[index].munth === format(new Date(), 'MM-yyyy')) {
                 skhomHotsaot += hotsaot[index].count2;
-                if(hotsaot[index].hotsaaShoteft && hotsaot[index].hotsaaShoteftClicks){
+                if (hotsaot[index].hotsaaShoteft && hotsaot[index].hotsaaShoteftClicks) {
                     skhomTkofte += (hotsaot[index].hotsaaShoteft / hotsaot[index].hotsaaShoteftClicks);
                 }
             }
         }
         return {
-            hadBame : ((skhomTkofte * (parseInt(format(new Date(),'dd')) / 30)) + skhomHotsaot).toFixed(0)
+            hadBame: ((skhomTkofte * (parseInt(format(new Date(), 'dd')) / 30)) + skhomHotsaot).toFixed(0)
         }
-    } 
-
-    const GetHotsaotLfeSog = (sog) => {
-        let newArray = [];
-        for (let index = 0; index < hotsaot.length; index++) {
-            if(sog === hotsaot[index].sogHotsaa){
-                newArray.push(hotsaot[index]);
-            }
-        }
-        return newArray;
     }
 
     const GetRvahNke = () => {
@@ -144,9 +170,85 @@ export default function Sales() {
     }
 
 
+    const GetMsbarHevdalSumAglotMounth = () => {
+        const currentDate = parseISO(format(new Date(), 'yyyy-MM-dd'));
+        const targetDate = parseISO(`${counter?.countESumAglotSumMunths}-01`);
+        return differenceInMonths(currentDate, targetDate);
+    }
+
+    const GetHotsaotShotefetMemotsaa = () => {
+        let sumHodeshZe = 0;
+        let sumHkol = 0;
+        let sumAorkhTkofa = 0;
+        for (let index = 0; index < hotsaot.length; index++) {
+            if (hotsaot[index].sogHotsaa === 'הוצאות שוטפות' && hotsaot[index].zmanTshlom === 'חד פעמי' && hotsaot[index].munth === format(new Date(), 'MM-yyyy')) {
+                sumHodeshZe += parseFloat(hotsaot[index].count2);
+            }
+            if (hotsaot[index].sogHotsaa === 'הוצאות שוטפות' && hotsaot[index].zmanTshlom === 'חד פעמי' && hotsaot[index].munth !== format(new Date(), 'MM-yyyy')) {
+                sumHkol += parseFloat(hotsaot[index].count2);
+            }
+            if (hotsaot[index].sogHotsaa === 'הוצאות שוטפות' && hotsaot[index].zmanTshlom !== 'חד פעמי' && hotsaot[index].munth !== format(new Date(), 'MM-yyyy')) {
+                sumAorkhTkofa += (parseFloat(hotsaot[index].hotsaaShoteft) / hotsaot[index]?.hotsaaShoteftClicks);
+            }
+        }
+        return parseFloat(((sumHkol / GetMsbarHevdalSumAglotMounth()) + (parseFloat(sumAorkhTkofa))).toFixed(2));
+    }
+
+    const GetHotsaotMesem = () => {
+        let sumHodeshZeHadBame = 0;
+        let sumHkolHadBame = 0;
+        let sumHodeshZeHadBameTkofte = 0;
+        // let sumHkolHadBameTkofte = 0;
+        for (let index = 0; index < hotsaot.length; index++) {
+            if (hotsaot[index].sogHotsaa === 'מסים' && hotsaot[index].zmanTshlom === 'חד פעמי' && hotsaot[index].munth === format(new Date(), 'MM-yyyy')) {
+                sumHodeshZeHadBame += parseFloat(hotsaot[index].count2);
+            }
+            if (hotsaot[index].sogHotsaa === 'מסים' && hotsaot[index].zmanTshlom === 'חד פעמי' && hotsaot[index].munth !== format(new Date(), 'MM-yyyy')) {
+                sumHkolHadBame += parseFloat(hotsaot[index].count2);
+            }
+            if (hotsaot[index].sogHotsaa === 'מסים' && hotsaot[index].zmanTshlom !== 'חד פעמי' && hotsaot[index].munth !== format(new Date(), 'MM-yyyy')) {
+                sumHodeshZeHadBameTkofte += (hotsaot[index].hotsaaShoteft / hotsaot[index].hotsaaShoteftClicks);
+            }
+            // if(hotsaot[index].sogHotsaa === 'מסים' && hotsaot[index].zmanTshlom !== 'חד פעמי' && hotsaot[index].munth !== format(new Date(),'MM-yyyy')){
+            //     sumHkolHadBameTkofte += parseFloat(hotsaot[index].count2);
+            // }
+        }
+        return {
+            sumHodeshZeHadBame,
+            sumHkolHadBame,
+            sumHodeshZeHadBameTkofte
+        }
+    }
+
+
+    const hnhotM = parseFloat(parseFloat((counter?.countEHnhotAglot - counter?.countESumHnhotAglotMunth) / GetMsbarHevdalSumAglotMounth()).toFixed(0));
+    const hnhotH = parseFloat(parseFloat(counter?.countESumHnhotAglotMunth).toFixed(0));
+
+    const MekheroM = parseFloat(parseFloat((counter?.countESumAglot - counter?.countESumAglotMunth) / GetMsbarHevdalSumAglotMounth()) - ((counter?.countEHnhotAglot - counter?.countESumHnhotAglotMunth) / GetMsbarHevdalSumAglotMounth()).toFixed(0));
+    const MekherotH = parseFloat(parseFloat(counter?.countESumAglotMunth - counter?.countESumHnhotAglotMunth).toFixed(0));
+    
+    const HGelemM = parseFloat(parseFloat((counter?.countESumHGAglot - counter?.countESumHGAglotMunth) / GetMsbarHevdalSumAglotMounth()).toFixed(0));
+    const HGelemH = parseFloat(parseFloat(counter?.countESumHGAglotMunth).toFixed(0));
+
+    const HShotefetM = parseFloat(parseFloat(GetHotsaotShotefetMemotsaa()).toFixed(0));
+    const HShotefetH = parseFloat(parseFloat(GetHotsaotShoteft('הוצאות שוטפות').hadBame).toFixed(0));
+
+    const HSkharM = parseFloat(parseFloat((counterTnoahBkneot?.BenseaaMasek + counterTnoahBkneot?.Betsoeem + counterTnoahBkneot?.skharBroto) / counterTnoahBkneot?.aeshorem).toFixed(0));
+    const HSkharH = parseFloat(parseFloat(counterShaotAboda?.countShaotAboda * (counterShaotAboda?.hotsaotSkhar / counterShaotAboda?.shaotKodmet)).toFixed(0));
+
+    const HAhrotM = parseFloat(parseFloat((counterHkhnsotAhrot?.countAll - counterHkhnsotAhrot?.count) / GetMsbarHevdalSumAglotMounth()).toFixed(0));
+    const HAhrotH = parseFloat(parseFloat(counterHkhnsotAhrot?.count).toFixed(0));
+
+    const HMasM = parseFloat(parseFloat(((GetHotsaotMesem().sumHodeshZeHadBame - GetHotsaotMesem().sumHkolHadBame) / GetMsbarHevdalSumAglotMounth()) + GetHotsaotMesem().sumHodeshZeHadBameTkofte).toFixed(0));
+    const HMasH = parseFloat(parseFloat(GetHotsaotShoteft('מסים').hadBame - counterNekoeMaam?.count + counterNekoeMaam?.countHotsaotMaam).toFixed(0));
+
+    const RevahNkeM = 1;
+    const RevahNkeH = parseFloat(parseFloat(GetRvahNke()).toFixed(0));
+
+
     return (
         <div>
-            {<ModalCreateTest mlae={mlae} category={category} lkohTfaol={lkoh} agla={tfaolAgla} show={showModalYetsorMatsav} disable={() => setShowModalYetsorMatsav(false)} />}
+            {<ModalCreateTest mlae={mlae} category={category} drag={drag} lkohTfaol={lkoh} agla={tfaolAgla} show={showModalYetsorMatsav} disable={() => {setShowModalYetsorMatsav(false); setTfaolAgla(null);}} />}
             {<ModalMkhera mlae={mlae} category={category} show={showModalMkhera} disable={() => setShowModalMkhera(false)} />}
 
             <div className="w-full pl-16 pr-16">
@@ -155,7 +257,106 @@ export default function Sales() {
                 </div>
             </div>
             <div className='flex justify-center items-center mt-2 mr-10 ml-10 mb-10 pt-6 flex-wrap'>
-                <div className='w-full h-[700px] max-w-[755px] mr-10 ml-10 mb-5 overflow-y-auto bg-white rounded-xl shadow-2xl'>
+                <div className='w-full max-w-[755px] mr-10 ml-10 mb-5 bg-white rounded-xl shadow-2xl p-5'>
+                    <table className='w-full h-[650px] overflow-y-auto'>
+                        <thead>
+                            <tr>
+                                <th colSpan={2} className="px-4 w-1/4 py-2 text-center bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black text-base">{`חודש ${format(new Date(), 'MM').startsWith('0') ? format(new Date(), 'MM').substring(1) : format(new Date(), 'MM')}`}</th>
+                                <th className="px-4 w-[60px] py-2 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black text-base"></th>
+                                <th colSpan={2} className="px-4 w-1/4 py-2 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black text-base">ממוצע חודשי</th>
+                                <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black text-base">פירוט</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((hnhotH / MekherotH) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (hnhotH)) || 0)}`}</div></th>
+                                <th></th>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((hnhotM / MekheroM) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (hnhotM)) || 0)}`}</div></th>
+                                <th className="px-4 py-3 text-gray-700 dark:text-gray-300 text-right">הנחות</th>
+                            </tr>
+                            <tr>
+                                <th colSpan={6}><Divider /></th>
+                            </tr>
+                            <tr>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(parseFloat((100).toFixed(1)) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${(MekherotH || 0)}`}</div></th>
+                                <th></th>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(parseFloat((100).toFixed(1)) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${(MekheroM || 0)}`}</div></th>
+                                <th className="px-4 py-3 text-gray-700 dark:text-gray-300 text-right">מכירות</th>
+                            </tr>
+                            <tr>
+                                <th colSpan={6}><Divider /></th>
+                            </tr>
+                            <tr>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((HGelemH / MekherotH) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (HGelemH)) || 0)}`}</div></th>
+                                <th></th>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((HGelemM / MekheroM) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (HGelemM)) || 0)}`}</div></th>
+                                <th className="px-4 py-3 text-gray-700 dark:text-gray-300 text-right">הוצאות חו"ג</th>
+                            </tr>
+                            <tr>
+                                <th colSpan={6}><Divider /></th>
+                            </tr>
+                            <tr>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((HShotefetH / MekherotH) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (HShotefetH)) || 0)}`}</div></th>
+                                <th></th>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((HShotefetM / MekheroM) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (HShotefetM)) || 0)}`}</div></th>
+                                <th className="px-4 py-3 text-gray-700 dark:text-gray-300 text-right">הוצאות שוטפות</th>
+                            </tr>
+                            <tr>
+                                <th colSpan={6}><Divider /></th>
+                            </tr>
+                            <tr>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((HSkharH / MekherotH) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (HSkharH)) || 0)}`}</div></th>
+                                <th></th>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((HSkharM / MekheroM) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (HSkharM)) || 0)}`}</div></th>
+                                <th className="px-4 py-3 text-gray-700 dark:text-gray-300 text-right">הוצאות שכר</th>
+                            </tr>
+                            <tr>
+                                <th colSpan={6}><Divider /></th>
+                            </tr>
+                            <tr>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((HAhrotH / MekherotH) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (HAhrotH)) || 0)}`}</div></th>
+                                <th></th>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((HAhrotM / MekheroM) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (HAhrotM)) || 0)}`}</div></th>
+                                <th className="px-4 py-3 text-gray-700 dark:text-gray-300 text-right">הכנסות/הוצאות אחרות</th>
+                            </tr>
+                            <tr>
+                                <th colSpan={6}><Divider /></th>
+                            </tr>
+                            <tr>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((HMasH / MekherotH) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (HMasH)) || 0)}`}</div></th>
+                                <th></th>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((HMasM / MekheroM) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (HMasM)) || 0)}`}</div></th>
+                                <th className="px-4 py-3 text-gray-700 dark:text-gray-300 text-right">הוצאות מס</th>
+                            </tr>
+                            <tr>
+                                <th colSpan={6}><Divider /></th>
+                            </tr>
+                            <tr>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((RevahNkeH / MekherotH) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((RevahNkeH) || 0)}`}</div></th>
+                                <th></th>
+                                <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((RevahNkeH / MekheroM) * 100).toFixed(0) || 0)}`}</div></th>
+                                <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((RevahNkeH) || 0)}`}</div></th>
+                                <th className="px-4 py-3 text-gray-700 dark:text-gray-300 text-right">רווח נקי</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {/* <div className='w-full h-[700px] max-w-[755px] mr-10 ml-10 mb-5 overflow-y-auto bg-white rounded-xl shadow-2xl'>
                     <div className="flex justify-center items-center">
                         <div className="w-full">
                             <div className="flex justify-center mt-5 mb-2">
@@ -163,34 +364,34 @@ export default function Sales() {
                                     <div className="ml-5 w-[150px] text-green-500"></div>
                                     <Input isReadOnly size="xs" className="w-[100px]" color="primary" value={`ממוצע`} />
                                     <Input isReadOnly size="xs" className="w-[100px] mr-4" color="primary" value={`אחוז`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="primary" value={`חודש 7`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="primary" value={`חודש ${format(new Date(),'MM').startsWith('0') ? format(new Date(),'MM').substring(1) :format(new Date(),'MM')}`} />
                                 </div>
                             </div>
                             <div className="flex justify-center"><Divider className="w-[500px]" /></div>
                             <div className="flex justify-center mt-2 mb-2">
                                 <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
                                     <div className="ml-5 w-[150px] text-danger-500">הנחות</div>
-                                    <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${(parseFloat((counter?.countEHnhotAglot / counter?.countEAglot).toFixed(1)) || "")}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`%${(parseFloat(((counter?.countEHnhotAglot / counter?.countESumAglot) * 100).toFixed(1)) || "")}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${(counter?.countESumHnhotAglotMunth || "")}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${(parseFloat(((counter?.countEHnhotAglot - counter?.countESumHnhotAglotMunth) / GetMsbarHevdalSumAglotMounth()).toFixed(1)) || 0)}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`% ${(parseFloat(((counter?.countEHnhotAglot / counter?.countESumAglot) * 100).toFixed(1)) || 0)}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${(counter?.countESumHnhotAglotMunth || 0)}`} />
                                 </div>
                             </div>
                             <div className="flex justify-center"><Divider className="w-[500px]" /></div>
                             <div className="flex justify-center mt-2 mb-2">
                                 <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
                                     <div className="ml-5 w-[150px] text-success-500">מכירות</div>
-                                    <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${(parseFloat(((counter?.countESumAglot - counter?.countESumAglotMunth) / counter?.countESumAglotSumMunths).toFixed(1)) || "")}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="success" value={`%${(parseFloat(((((counter?.countESumAglot / counter?.countEAglot) - (counter?.countEHnhotAglot / counter?.countEAglot)) / (counter?.countESumAglot / counter?.countEAglot)) * 100).toFixed(1)) || "")}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="success" value={`₪${((counter?.countESumAglotMunth - counter?.countESumHnhotAglotMunth) || "")}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${(parseFloat((((counter?.countESumAglot - counter?.countESumAglotMunth) / GetMsbarHevdalSumAglotMounth()) - ((counter?.countEHnhotAglot - counter?.countESumHnhotAglotMunth) / GetMsbarHevdalSumAglotMounth())).toFixed(1)) || 0)}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="success" value={`% ${(parseFloat(((((counter?.countESumAglot / counter?.countEAglot) - (counter?.countEHnhotAglot / counter?.countEAglot)) / (counter?.countESumAglot / counter?.countEAglot)) * 100).toFixed(1)) || 0)}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="success" value={`₪${((counter?.countESumAglotMunth - counter?.countESumHnhotAglotMunth) || 0)}`} />
                                 </div>
                             </div>
                             <div className="flex justify-center"><Divider className="w-[500px]" /></div>
                             <div className="flex justify-center mt-2 mb-2">
                                 <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
                                     <div className="ml-5 w-[150px] text-danger-500">הוצאות חו"ג</div>
-                                    <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${(parseFloat(((counter?.countESumHGAglot - counter?.countESumHGAglotMunth) / counter?.countESumAglotSumMunths).toFixed(1)) || "")}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`%${parseFloat((((counter?.countESumHGAglot / counter?.countEAglot) / (counter?.countESumAglot / counter?.countEAglot) * 100)).toFixed(1)) || ""}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${(counter?.countESumHGAglotMunth || "")}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${(parseFloat(((counter?.countESumHGAglot - counter?.countESumHGAglotMunth) / GetMsbarHevdalSumAglotMounth()).toFixed(1)) || 0)}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`% ${parseFloat((((counter?.countESumHGAglot / counter?.countEAglot) / (counter?.countESumAglot / counter?.countEAglot) * 100)).toFixed(1)) || 0}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${(counter?.countESumHGAglotMunth || 0)}`} />
                                 </div>
                             </div>
                             <div className="flex justify-center"><Divider className="w-[500px]" /></div>
@@ -204,7 +405,7 @@ export default function Sales() {
                                             {
                                                 GetHotsaotLfeSog('הוצאות שוטפות')?.map((hotsaaa,index) => {
                                                     return <div className='flex items-center mt-2 mb-2 justify-end'>
-                                                        <div>
+                                                        <div className='hover:text-primary cursor-pointer'>
                                                         {
                                                             hotsaaa.shem
                                                         }
@@ -219,27 +420,27 @@ export default function Sales() {
                                     }>
                                         <div className="ml-5 w-[150px] text-danger-500">הוצאות שוטפות</div>
                                     </Tooltip>
-                                    <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${'0'}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${("" || "")}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${(GetHotsaotShoteft('הוצאות שוטפות').hadBame || "")}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${((GetHotsaotShotefetMemotsaa()) || '')}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${("" || 0)}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${(GetHotsaotShoteft('הוצאות שוטפות').hadBame || 0)}`} />
                                 </div>
                             </div>
                             <div className="flex justify-center"><Divider className="w-[500px]" /></div>
                             <div className="flex justify-center mt-2 mb-2">
                                 <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
                                     <div className="ml-5 w-[150px] text-danger-500">הוצאות שכר</div>
-                                    <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${'0'}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${("" || "")}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${((counterShaotAboda?.countShaotAboda * (counterShaotAboda?.hotsaotSkhar / counterShaotAboda?.shaotKodmet)).toFixed(2) || "")}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${(((counterTnoahBkneot?.BenseaaMasek + counterTnoahBkneot?.Betsoeem + counterTnoahBkneot?.skharBroto) / counterTnoahBkneot?.aeshorem) || '')}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${("" || 0)}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${((counterShaotAboda?.countShaotAboda * (counterShaotAboda?.hotsaotSkhar / counterShaotAboda?.shaotKodmet)).toFixed(2) || 0)}`} />
                                 </div>
                             </div>
                             <div className="flex justify-center"><Divider className="w-[500px]" /></div>
                             <div className="flex justify-center mt-2 mb-2">
                                 <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
                                     <div className="ml-5 w-[150px] text-danger-500">הכנסות/הוצאות אחרות</div>
-                                    <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${((counterHkhnsotAhrot?.countAll - counterHkhnsotAhrot?.count) / counterHkhnsotAhrot?.countMunths)}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${("" || "")}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${(counterHkhnsotAhrot?.count || "")}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${((counterHkhnsotAhrot?.countAll - counterHkhnsotAhrot?.count) / GetMsbarHevdalSumAglotMounth())}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${("" || 0)}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${((parseFloat(counterHkhnsotAhrot?.count)).toFixed(0) || 0)}`} />
                                 </div>
                             </div>
                             <div className="flex justify-center"><Divider className="w-[500px]" /></div>
@@ -253,7 +454,7 @@ export default function Sales() {
                                             {
                                                 GetHotsaotLfeSog('מסים')?.map((hotsaaa, index) => {
                                                     return <div className='flex items-center mt-2 mb-2 justify-end'>
-                                                        <div>
+                                                        <div className='hover:text-primary cursor-pointer'>
                                                             {
                                                                 hotsaaa.shem
                                                             }
@@ -268,18 +469,18 @@ export default function Sales() {
                                     }>
                                         <div className="ml-5 w-[150px] text-danger-500">הוצאות מס</div>
                                     </Tooltip>
-                                    <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${("" || "")}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${("" || "")}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${((GetHotsaotShoteft('מסים').hadBame - counterNekoeMaam?.count + counterNekoeMaam?.countHotsaotMaam) || "")}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${((((GetHotsaotMesem().sumHodeshZeHadBame - GetHotsaotMesem().sumHkolHadBame) / GetMsbarHevdalSumAglotMounth()) + GetHotsaotMesem().sumHodeshZeHadBameTkofte) || 0)}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${("" || 0)}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="danger" value={`₪${((GetHotsaotShoteft('מסים').hadBame - counterNekoeMaam?.count + counterNekoeMaam?.countHotsaotMaam) || 0)}`} />
                                 </div>
                             </div>
                             <div className="flex justify-center"><Divider className="w-[500px]" /></div>
                             <div className="flex justify-center mt-2 mb-10">
                                 <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
                                     <div className="ml-5 w-[150px] text-green-500">רווח נקי</div>
-                                    <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${("" || "")}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="success" value={`₪${("" || "")}`} />
-                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="success" value={`₪${(GetRvahNke() || "")}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${("" || 0)}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="success" value={`₪${("" || 0)}`} />
+                                    <Input isReadOnly size="xs" className="w-[100px] mr-4" color="success" value={`₪${(GetRvahNke() || 0)}`} />
                                 </div>
                             </div>
                             <div className='flex justify-start m-5'>
@@ -292,7 +493,7 @@ export default function Sales() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <div className=''>
                     <div className="flex flex-col w-full mb-5 mx-auto border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
                         <div className="flex items-center h-full w-full">
@@ -318,7 +519,7 @@ export default function Sales() {
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
-                                                        <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsorMatsav(true); setTfaolAgla(agla); fetchCustomerData(agla.msbarLkoh); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                                                        <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsorMatsav(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
                                                     </tr>
@@ -372,7 +573,7 @@ export default function Sales() {
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
-                                                        <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsorMatsav(true); setTfaolAgla(agla); fetchCustomerData(agla.msbarLkoh); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                                                        <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsorMatsav(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
                                                     </tr>

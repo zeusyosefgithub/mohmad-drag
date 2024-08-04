@@ -254,14 +254,14 @@ export default function Aobdem() {
                 <div className="w-full flex items-center justify-around flex-wrap">
 
 
-                    <div className="p-5 justify-center w-[900px] bg-white rounded-xl shadow-xl mb-20 h-[450px]">
+                    <div className="p-5 justify-center w-[900px] bg-white rounded-xl shadow-xl mb-20 h-[650px]">
                         <div className="overflow-auto h-fit w-full" dir="rtl">
                             <div dir="ltr">
                                 <div className="mt-5 mb-5 flex justify-around items-center">
                                     <Button size="sm" variant="faded" onClick={() => setShowHosfatAobed(true)}><div className="text-[18px] mr-1">+</div>הוספת עובד חדש</Button>
                                     <Button onClick={() => setShowModalDafeShaot(true)}><FcOvertime className="text-2xl"/>דפי שעות</Button>
                                 </div>
-                                <div className="overflow-x-auto h-[250px]">
+                                <div className="overflow-x-auto h-[500px]">
                                     <table className="w-full table-auto border-collapse">
                                         <thead>
                                             <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
@@ -300,7 +300,7 @@ export default function Aobdem() {
 
 
 
-                    <div className="p-5 justify-center w-[900px] bg-white rounded-xl shadow-xl mb-20 h-[450px]">
+                    <div className="p-5 justify-center w-[900px] bg-white rounded-xl shadow-xl mb-20 h-[650px]">
                         <div>
                             <div className="flex justify-around items-center mb-5">
                                 <Button variant='faded' className={loh === 'לוח כללי' && 'font-extrabold text-base'} color={loh === 'לוח כללי' ? 'primary' : 'default'} onClick={() => setLoh('לוח כללי')}><FaList className="text-base"/>לוח כללי</Button>
@@ -311,7 +311,7 @@ export default function Aobdem() {
                                 {
                                     loh === 'לוח היום' &&
                                     <div>
-                                        <div className="overflow-x-auto h-[280px]">
+                                        <div className="overflow-x-auto h-[450px]">
                                             <table className="w-full table-auto border-collapse">
                                                 <thead>
                                                     <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-20">

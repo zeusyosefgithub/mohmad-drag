@@ -45,12 +45,11 @@ import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
 import { TofsTokhnetYetsor } from "../Page Components/TofsTokhnetYetsor";
 
 
-export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, mlae, category, Tokhneot }) {
+export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogAskaa, mlae, category, Tokhneot }) {
     const [loading, setLoading] = useState(false);
     const lkhot = GetDocs('customers');
     const [lkoh, setLkoh] = useState('');
     const [lkohMsbar, setLkohMsbar] = useState('');
-    const aglot2 = useGetDataByCondition('drags', 'idcustomer', '==', lkohTfaol?.idnum || 0);
     const [aglot, setAglot] = useState([]);
     const router = useRouter();
     const [sogAgla, setSogAgla] = useState('פתוחה');
@@ -118,6 +117,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
     const [showModalBerokAgla, setShowModalBerokAgla] = useState(false);
     const [entries, setEntries] = useState([{ category: '', sogMotsar: '', shemMotsar: '', remez: '', message: '' }]);
     const [hotsotSkhar, setHotsaotSkhar] = useState(0);
+    const [hotsotAkefot, setHotsaotAkefot] = useState(0);
     const MotsaremRefs = useRef(Array(51).fill(null).map(() => React.createRef()));
     const BrofelemRefs = useRef(Array(20).fill(null).map(() => React.createRef()));
     const componentRefOne = useRef();
@@ -125,6 +125,8 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
     const [shemTokhnet, setShemTokhnet] = useState('');
     const componentRefTwo = useRef();
     const refggg = useRef(null);
+    const [showModalAddMotsarAher,setShowModalAddMotsarAher] = useState(false);
+
     const [sogBaola, setSogBaola] = useState('');
     const [hshhyatYetsorZman, setHshhyatYetsorZman] = useState();
     const initializeItems = (count) => {
@@ -272,9 +274,11 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
         setHkhnsot(0);
         setHkhnsotHomreGlem(0);
         setHotsaotSkhar(0);
+        setHotsaotAkefot(0);
         setSogBaola('');
         setShemTokhnet('');
         setTokhnetNokhhet(null);
+        setHnha(0);
         setAeshor(false);
         setHshhyatYetsorZman();
         setMotsaremBroflem(initializeItems(14));
@@ -492,6 +496,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
             return;
         }
         const Props = {
+            yredatMlae: (BdekatMtsavem() === 'C' || BdekatMtsavem() === 'D') ? true : false,
             sogAgla: sogAgla,
             sogAska: sogAskaa,
             msbar: counter?.count,
@@ -515,7 +520,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                 hkhnsot: 0,
                 hotsaotHomreGlem: hkhnsotHomreGlem,
                 hotsaotSkhar: hotsotSkhar,
-                hotsotAkefot: 0,
+                hotsotAkefot: hotsotAkefot,
                 maam: formatNumberWithCommas(parseInt(mherKlale * 0.17) || 0),
                 revahYsher: formatNumberWithCommas((mherKlale - hkhnsotHomreGlem - hotsotSkhar) || 0),
                 revhNke: formatNumberWithCommas(((mherKlale - hkhnsotHomreGlem - hotsotSkhar) - parseInt(mherKlale * 0.17)) || 0),
@@ -591,7 +596,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                         hkhnsot: 0,
                         hotsaotHomreGlem: hkhnsotHomreGlem,
                         hotsaotSkhar: hotsotSkhar,
-                        hotsotAkefot: 0,
+                        hotsotAkefot: hotsotAkefot,
                         maam: formatNumberWithCommas(parseInt(mherKlale * 0.17) || 0),
                         revahYsher: formatNumberWithCommas((mherKlale - hkhnsotHomreGlem - hotsotSkhar) || 0),
                         revhNke: formatNumberWithCommas(((mherKlale - hkhnsotHomreGlem - hotsotSkhar) - parseInt(mherKlale * 0.17)) || 0),
@@ -643,45 +648,36 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                     motsaremBrofelem: motsaremBrofelem,
                     newMafeneMotsarem: mafenemMotsarem,
                     entries: entries,
-                    msbarHeshvonet : BdekatMtsavem() === 'E' ? counterHeshvoneot?.count : '',
+                    msbarHeshvonet: BdekatMtsavem() === 'E' ? counterHeshvoneot?.count : '',
                     aemSholam: false
                 });
 
-                if (agla) {
-                    if (BdekatMtsavem() === 'C') {
-                        if (sogBaola !== 'C') {
-                            await processItems(mafenemMotsarem, mlae);
-                            await processItems(motsaremBrofelemSofe, mlae);
-                        }
-                        await updateInventory(firestore, mlae, mafenemMotsarem, agla?.newMafeneMotsarem, false);
-                        await updateInventory(firestore, mlae, motsaremBrofelemSofe, agla?.motsaremBrofelemSofe, true);
+                if (BdekatMtsavem() === 'C' || BdekatMtsavem() === 'D' || BdekatMtsavem() === 'E' && !agla?.yredatMlae) {
+                    if (sogBaola !== 'C') {
+                        await processItems(mafenemMotsarem, mlae);
+                        await processItems(motsaremBrofelemSofe, mlae);
                     }
-                }
-                else {
-                    if (BdekatMtsavem() === 'C' || BdekatMtsavem() === 'D') {
-                        if (sogBaola !== 'C' || sogBaola !== 'D') {
-                            await processItems(mafenemMotsarem, mlae);
-                            await processItems(motsaremBrofelemSofe, mlae);
-                        }
-                        await updateInventory(firestore, mlae, mafenemMotsarem, agla?.newMafeneMotsarem, false);
-                        await updateInventory(firestore, mlae, motsaremBrofelemSofe, agla?.motsaremBrofelemSofe, true);
-                    }
+                    await updateInventory(firestore, mlae, mafenemMotsarem, agla?.newMafeneMotsarem, false);
+                    await updateInventory(firestore, mlae, motsaremBrofelemSofe, agla?.motsaremBrofelemSofe, true);
+                    await updateDoc(doc(firestore, 'tfaol', agla?.id), {
+                        yredatMlae: true
+                    });
                 }
                 if (BdekatMtsavem() === 'E') {
-                    await updateDoc(doc(firestore,'metadata','counterHeshvoneot'),{
-                        count : counterHeshvoneot?.count + 1
+                    await updateDoc(doc(firestore, 'metadata', 'counterHeshvoneot'), {
+                        count: counterHeshvoneot?.count + 1
                     });
                     await updateDoc(doc(firestore, 'customers', lkohTfaol?.id), {
-                        yetera: lkohTfaol?.yetera + mherKlale
+                        yetera: parseFloat(lkohTfaol?.yetera) + parseFloat(mherKlale)
                     });
                     await updateDoc(doc(firestore, 'metadata', 'counterTfaol'), {
-                        countESumAglotSumMunths: counter.countESumAglotForMunth !== format(new Date(), 'MM-yyyy') ? (counter.countESumAglotSumMunths + 1) : (1),
+                        //countESumAglotSumMunths: counter.countESumAglotForMunth !== format(new Date(), 'MM-yyyy') ? (parseFloat(counter.countESumAglotSumMunths) + 1) : (counter.countESumAglotSumMunths),
                         countE: counter.countE + 1,
                         countEAglot: counter.countEAglot + 1,
-                        countESumAglot: counter.countESumAglot + mherKlale,
+                        countESumAglot: parseFloat(counter.countESumAglot) + parseFloat(mherKlale),
                         countEHnhotAglot: counter.countEHnhotAglot + hnha,
                         countESumHGAglot: counter.countESumHGAglot + hkhnsotHomreGlem,
-                        countESumAglotMunth: counter.countESumAglotForMunth === format(new Date(), 'MM-yyyy') ? (counter.countESumAglotMunth + mherKlale) : (mherKlale),
+                        countESumAglotMunth: counter.countESumAglotForMunth === format(new Date(), 'MM-yyyy') ? (parseFloat(counter.countESumAglotMunth) + parseFloat(mherKlale)) : (parseFloat(mherKlale)),
                         countESumHnhotAglotMunth: counter.countESumAglotForMunth === format(new Date(), 'MM-yyyy') ? (counter.countESumHnhotAglotMunth + hnha) : (hnha),
                         countESumHGAglotMunth: counter.countESumAglotForMunth === format(new Date(), 'MM-yyyy') ? (counter.countESumHGAglotMunth + hkhnsotHomreGlem) : (hkhnsotHomreGlem),
                         countESumAglotForMunth: format(new Date(), 'MM-yyyy'),
@@ -691,6 +687,9 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                         countHotsaotMaam: counterNekoeMaam.munth === format(new Date(), 'dd-MM-yyyy') ? (counterNekoeMaam.countHotsaotMaam + (mherKlale * 0.17)) : (mherKlale * 0.17),
                         munth: format(new Date(), 'dd-MM-yyyy')
                     });
+                    await updateDoc(doc(firestore, 'drags', drag?.id), {
+                        active: true
+                    });
                 }
             }
             catch (e) {
@@ -699,20 +698,27 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
         }
         else {
             try {
-                if (BdekatMtsavem() === 'C') {
+                if (BdekatMtsavem() === 'C' || BdekatMtsavem() === 'D') {
                     await processItems(mafenemMotsarem, mlae);
                     await processItems(motsaremBrofelemSofe, mlae);
                 }
+                // if (BdekatMtsavem() === 'C' || BdekatMtsavem() === 'D') {
+                //     console.log('yoseffffffff234');
+                //     await processItems(mafenemMotsarem, mlae);
+                //     await processItems(motsaremBrofelemSofe, mlae);
+                //     await updateInventory(firestore, mlae, mafenemMotsarem, agla?.newMafeneMotsarem, false);
+                //     await updateInventory(firestore, mlae, motsaremBrofelemSofe, agla?.motsaremBrofelemSofe, true);
+                // }
                 await addDoc(collection(firestore, "tfaol"), Props);
             }
             catch (e) {
                 console.log(e);
             }
         }
-        !agla && await updateDoc(doc(firestore, 'metadata', counter?.id), { count: counter?.count + 1 });
+        (!agla?.msbar) && await updateDoc(doc(firestore, 'metadata', 'counterTfaol'), { count: counter?.count + 1 });
+        setLoading(false);
         ResetAll();
         disable();
-        setLoading(false);
         if (BdekatMtsavem() === 'D') {
             router.push('/sales');
         }
@@ -784,7 +790,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
             }
         }
     }
-    function GetIndexMotsar(remez1,wich) {
+    function GetIndexMotsar(remez1, wich) {
         for (let index = 0; index < mafenemMotsarem?.length; index++) {
             if (mafenemMotsarem[index]?.remez === remez1) {
                 return index;
@@ -942,12 +948,12 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
     };
     const BdekatTekonKmeotMotsarem = () => {
         for (let index = 0; index < mafenemMotsarem.length; index++) {
-            if(mafenemMotsarem[index].kmot > 0){
+            if (mafenemMotsarem[index].kmot > 0) {
                 return false;
             }
         }
         for (let index = 0; index < motsaremBrofelemSofe.length; index++) {
-            if((motsaremBrofelemSofe[index].kmot + motsaremBrofelemSofe[index].kmotYdnet) > 0){
+            if ((motsaremBrofelemSofe[index].kmot + motsaremBrofelemSofe[index].kmotYdnet) > 0) {
                 return false;
             }
         }
@@ -965,6 +971,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                     'כמות חורגת',
                     'message');
                 errors++;
+                console.log(mafenemMotsarem[index]);
             }
         }
         for (let index = 0; index < motsaremBrofelemSofe.length; index++) {
@@ -1077,7 +1084,6 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
     const bdekatShmeratTfaol = () => {
         if (sogAskaAgla) {
             if ((BdekatMtsavem() !== sogBaola) || BdekatHeshtnotKmotmotsarem()) {
-                console.log(123);
                 return false;
             }
             else {
@@ -1093,9 +1099,6 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
             }
         }
     }
-
-
-
 
 
 
@@ -1187,10 +1190,8 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
             </DropdownMenu>
         </Dropdown>
     );
-    const shehzorMotsarBrofel = (val,motsBrofs) => {
-        console.log('---------------------------');
+    const shehzorMotsarBrofel = (val, motsBrofs) => {
         for (let index = 0; index < motsBrofs.length; index++) {
-            console.log(motsBrofs[index]);
             if (motsBrofs[index].shem === val) {
                 updateMotsaremBrofelem(index,
                     {
@@ -1216,7 +1217,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
         <div className="w-full">
             <div className="mt-5 w-full">
                 <div className="w-full items-center flex justify-center">
-                    {isElse && <MdCancel className="ml-20 text-3xl text-danger cursor-pointer" onClick={() => shehzorMotsarBrofel(item?.shem,motsBrofs)} />}
+                    {isElse && <MdCancel className="ml-20 text-3xl text-danger cursor-pointer" onClick={() => shehzorMotsarBrofel(item?.shem, motsBrofs)} />}
                     <div className="w-[200px] rounded-xl flex items-center">
                         <div className="group relative z-20">
                             <Image width={70} alt="none" src={GetTmonatHelek(item?.remez)} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
@@ -1382,7 +1383,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
 
 
     useEffect(() => {
-        let remzemd = sogAgla === 'פתוחה' ? ['B7', 'B2', 'B9'] : [];
+        let remzemd = sogAgla === 'פתוחה' ? ['B7', 'B2', 'B9', 'B8'] : [];
         if (rohf && aorkh) {
             setMotsaremLhatseg((prevItems) => [...prevItems, ...remzemd]);
             let newArray = [];
@@ -1447,6 +1448,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
             setLkoh(agla?.msbarLkoh);
             setHkhnsotHomreGlem(agla?.tmher?.hotsaotHomreGlem);
             setHotsaotSkhar(agla?.tmher?.hotsaotSkhar);
+            setHotsaotAkefot(agla?.tmher?.hotsotAkefot);
             setSogBaola(agla?.sogBaola);
             setHshhyatYetsor(agla?.thlkhem?.hshheatTahlekhYetsor);
             setHskmatLkoh(agla?.thlkhem?.hskmatLkwah);
@@ -1512,8 +1514,6 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
     }, [show]);
     useEffect(() => {
         if (aemTseba) {
-            console.log(motsaremLhatseg);
-            console.log(MotsaremRefs);
             setMotsaremLhatseg((prevItems) => [...prevItems, 'D1']);
             scrollToElement(MotsaremRefs.current[GetIndexMotsar('D1')].current);
         }
@@ -1639,15 +1639,41 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
         }
     }, [sogAskaAgla, agla, lkoh]);
     useEffect(() => {
-        console.log('-------------------------');
-        console.log(entries);
-        console.log(motsaremLhatseg);
+        let arrayRmezemEnteris = [];
+        let resAeshor = false;
         for (let index = 0; index < entries?.length; index++) {
-            if (entries[index].remez != '' && !motsaremLhatseg.includes(entries[index].remez)) {
-                setMotsaremLhatseg((prevItems) => [...prevItems, entries[index].remez]);
+            if (entries[index].remez == '') {
+                resAeshor = true;
             }
         }
+        if (!resAeshor) {
+            if (sogAskaa === 'ייצור' || agla?.sogAska === 'ייצור') {
+                for (let index = 0; index < entries?.length; index++) {
+                    if (!motsaremLhatseg.includes(entries[index].remez)) {
+                        arrayRmezemEnteris.push(entries[index].remez);
+                    }
+                }
+                let newArrayRmezemEnteris = removeDuplicates(arrayRmezemEnteris);
+                setMotsaremLhatseg((prevItems) => {
+                    return [...prevItems, ...newArrayRmezemEnteris];
+                });
+            }
+            else {
+                for (let index = 0; index < entries?.length; index++) {
+                    arrayRmezemEnteris.push(entries[index].remez);
+                }
+                let newArrayRmezemEnteris = removeDuplicates(arrayRmezemEnteris);
+                setMotsaremLhatseg((prevItems) => {
+                    let filteredItems = prevItems.filter(item => newArrayRmezemEnteris.includes(item));
+                    return [...filteredItems, ...newArrayRmezemEnteris];
+                });
+            }
+        }
+
     }, [entries]);
+    console.log(motsaremLhatseg);
+    console.log(entries);
+    console.log(mafenemMotsarem);
     useEffect(() => {
         if (tokhnetNokhhet?.sogAgla) {
             if (tokhnetNokhhet?.motsarem?.length) {
@@ -1713,6 +1739,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
     }, [lkohMsbar, agla?.msbarLkoh]);
     useEffect(() => {
         let sum = 0;
+        let sumZmanAboda = 0;
         for (let index = 0; index < mafenemMotsarem?.length; index++) {
             if (mafenemMotsarem[index].kmot > 0) {
                 sum += GetZmanAbodaMotsar(mafenemMotsarem[index].remez) * mafenemMotsarem[index].kmot;
@@ -1723,38 +1750,45 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                 sum += GetZmanAbodaMotsar(motsaremBrofelemSofe[index].remez) * motsaremBrofelemSofe[index].kmot;
             }
         }
-        setHotsaotSkhar(parseFloat((sum * (counterShaotAboda?.hotsaotSkharYetsor / counterShaotAboda?.shaotKodmetYestsor)).toFixed(0)));
+        setHotsaotSkhar(parseFloat((sum * (parseFloat(counterShaotAboda?.hotsaotSkharYetsor) / parseFloat(counterShaotAboda?.shaotKodmetYestsor)) / 60).toFixed(2)));
+        setHotsaotAkefot(parseFloat((sum * (parseFloat(counterShaotAboda?.hotsaotSkhar - counterShaotAboda?.hotsaotSkharYetsor) / parseFloat(counterShaotAboda?.shaotKodmet - counterShaotAboda?.shaotKodmetYestsor)) / 60).toFixed(2)));
         const total1 = motsaremBrofelemSofe?.reduce((acc, motsar) => acc + motsar.mher, 0);
         const total2 = mafenemMotsarem?.reduce((acc, motsar) => acc + motsar.mher, 0);
         setHkhnsotHomreGlem(total1 + total2);
     }, [mafenemMotsarem, motsaremBrofelemSofe]);
-    
-    
-    
     useEffect(() => {
-            if (agla) {
-                setMotsaremBrofelemSofe(reduceArray(true));
+        if (agla) {
+            setMotsaremBrofelemSofe(reduceArray(true));
+        }
+        else {
+            setMotsaremBrofelemSofe(reduceArray());
+        }
+    }, [motsaremBrofelem]);
+
+
+
+    function removeDuplicates(array) {
+        return [...new Set(array)];
+    }
+
+    const GetCategoryMotsaremAhrem = () => {
+        for (let index = 0; index < category.length; index++) {
+            if(category[index].shem === 'מוצרים אחרים'){
+                return category[index];
             }
-            else {
-                setMotsaremBrofelemSofe(reduceArray());
-            }
-        }, [motsaremBrofelem]);
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        }
+    }
+    //motsarAher
+
+
+
+
+
 
 
 
     return (!sogBaola && !sogAskaa) ? null : (
-        <Modal placement="center" className="test-fontt" backdrop={"blur"} size={(sogBaola !== 'E') ? 'full' :"2xl"} isOpen={show} onClose={() => {
+        <Modal placement="center" className="test-fontt" backdrop={"blur"} size={(sogBaola !== 'E') ? 'full' : "2xl"} isOpen={show} onClose={() => {
             ResetAll();
             disable();
         }}>
@@ -1762,7 +1796,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                 <>
                     <ModalBody className="border-b-2">
 
-                        <div className={`w-full ${(sogBaola !== 'E') ? 'h-screen' :"2xl"}`}>
+                        <div className={`w-full ${(sogBaola !== 'E') ? 'h-screen' : "2xl"}`}>
                             {
                                 errorMessage &&
                                 <div className="flex justify-center">
@@ -1783,8 +1817,8 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                         </div>
                                     </div>
                                 </div>
-
                             }
+                            <ModalAddProductCategory category={GetCategoryMotsaremAhrem()} mlae={mlae} motsarAher show={showModalAddMotsarAher} disable={() => setShowModalAddMotsarAher(false)}/>
                             {
                                 motsaremBrofelem?.length > 0 && ((sogBaola === 'A' || sogBaola === 'B' || sogBaola === 'C') || (sogAskaa && sogAskaa !== '')) &&
                                 <div className="h-full w-full flex">
@@ -1841,20 +1875,13 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                                 <div className="flex justify-center mt-3 mb-3">
                                                     <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
                                                         <div className="ml-5 w-[110px] text-danger-500">הוצאות עקיפות</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${'0'}`} />
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${formatNumberWithCommas(hotsotAkefot) || ''}`} />
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-center"><Divider className="w-[200px]" /></div>
                                                 <div className="flex justify-center mt-3 mb-3">
                                                     <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                                        <div className="ml-5 w-[110px] text-success-500">רווח לפני מס</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${'0'}`} />
-                                                    </div>
-                                                </div>
-                                                <div className="flex justify-center"><Divider className="w-[200px]" /></div>
-                                                <div className="flex justify-center mt-3 mb-3">
-                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                                        <div className="ml-5 w-[110px] text-danger-500">השפעת מע"ם</div>
+                                                        <div className="ml-5 w-[110px] text-danger-500">הוצאות מסים</div>
                                                         <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${formatNumberWithCommas(parseInt(mherKlale * 0.17) || "")}`} />
                                                     </div>
                                                 </div>
@@ -2162,7 +2189,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                                                     {
                                                                         agla?.msbarAgla ?
                                                                             <>
-                                                                                <Input size="sm" color="primary" className="max-w-[200px]" isReadOnly label="מספר עגלה" value={agla?.msbarAgla} />
+                                                                                <Input size="sm" color="primary" className="max-w-[200px]" isReadOnly label="מספר עגלה" value={drag?.licenseid} />
                                                                             </>
 
                                                                             :
@@ -2178,9 +2205,9 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                                                                     onInputChange={(val) => { setMsbarAgla(val); setSeomReshion(false); }}
                                                                                 >
                                                                                     {
-                                                                                        aglot?.map((agla, index) => (
-                                                                                            <AutocompleteItem onClick={() => setSeomReshion(false)} className='text-right' key={agla?.licenseid} value={agla?.licenseid}>
-                                                                                                {agla?.licenseid}
+                                                                                        aglot?.map((aglaaaaa, index) => (
+                                                                                            (!aglaaaaa?.active) && <AutocompleteItem onClick={() => setSeomReshion(false)} className='text-right' key={aglaaaaa?.licenseid} value={aglaaaaa?.licenseid}>
+                                                                                                {aglaaaaa?.licenseid}
                                                                                             </AutocompleteItem>
                                                                                         ))
                                                                                     }
@@ -2285,129 +2312,50 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                                                         {
                                                                             sogAgla &&
                                                                             <>
-                                                                            <tr>
-                                                                                <th colSpan={4}><Divider /></th>
-                                                                            </tr>
-                                                                            <tr className="row-spacing">
-                                                                                <th>
-                                                                                    <div className="group relative z-30">
-                                                                                        <Image width={70} alt="none" src={rep77} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                    </div>
-                                                                                </th>
-                                                                                <th className="w-[150px]">שטח עגלה</th>
-                                                                                <th><Input value={aorkh || ""} onValueChange={(val) => {
-                                                                                    setAorkh(val); setTvahBrofel(''); setMsbarBrofelem('');
-                                                                                    if (rohf && aorkh) {
-                                                                                        for (let index = 0; index < motsaremBrofelem.length; index++) {
-                                                                                            updateMotsaremBrofelem(index,
-                                                                                                {
-                                                                                                    kmot: 0,
-                                                                                                    kmotYdnet: 0,
-                                                                                                    mher: 0,
-                                                                                                    shem: 'בחר פריט',
-                                                                                                    remez: '',
-                                                                                                    message: '',
-                                                                                                    sogShem: ''
-                                                                                                });
+                                                                                <tr>
+                                                                                    <th colSpan={4}><Divider /></th>
+                                                                                </tr>
+                                                                                <tr className="row-spacing">
+                                                                                    <th>
+                                                                                        <div className="group relative z-30">
+                                                                                            <Image width={70} alt="none" src={rep77} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th className="w-[150px]">שטח עגלה</th>
+                                                                                    <th><Input value={aorkh || ""} onValueChange={(val) => {
+                                                                                        setAorkh(val); setTvahBrofel(''); setMsbarBrofelem('');
+                                                                                        if (rohf && aorkh) {
+                                                                                            for (let index = 0; index < motsaremBrofelem.length; index++) {
+                                                                                                updateMotsaremBrofelem(index,
+                                                                                                    {
+                                                                                                        kmot: 0,
+                                                                                                        kmotYdnet: 0,
+                                                                                                        mher: 0,
+                                                                                                        shem: 'בחר פריט',
+                                                                                                        remez: '',
+                                                                                                        message: '',
+                                                                                                        sogShem: ''
+                                                                                                    });
+                                                                                            }
+                                                                                            setMsbarTsrem('');
+                                                                                            setAemBlamem(false);
+                                                                                            setSogGlgalem('');
+                                                                                            setTsmegSber(false);
                                                                                         }
-                                                                                        setMsbarTsrem('');
-                                                                                        setAemBlamem(false);
-                                                                                        setSogGlgalem('');
-                                                                                        setTsmegSber(false);
-                                                                                    }
-                                                                                }} color="primary" size="sm" className="w-[100px]" label="אורך" type="number" /></th>
-                                                                                <th><Input value={rohf || ""} onValueChange={(val) => { setRohf(val); setTvahBrofel(''); setMsbarBrofelem(''); }} color="primary" size="sm" className="w-[100px]" label="רוחב" type="number" /></th>
-                                                                            </tr>
-                                                                            {
-                                                                                (aorkh !== 0 && aorkh !== '' && rohf !== 0 && rohf !== '') &&
-                                                                                <>
-                                                                                    <tr className="row-spacing">
-                                                                                        <th>
-                                                                                        </th>
-                                                                                        <th className="w-[150px]">רצפה</th>
-                                                                                        <th><Dropdown dir="rtl">
-                                                                                            <DropdownTrigger>
-                                                                                                <Button size="xs" className='m-2'>
-                                                                                                    {motsaremBrofelem[11]?.shem}
-                                                                                                </Button>
-                                                                                            </DropdownTrigger>
-                                                                                            <DropdownMenu
-                                                                                                aria-label="Multiple selection example"
-                                                                                                variant="flat"
-                                                                                                closeOnSelect={true}
-                                                                                                disallowEmptySelection
-                                                                                                selectionMode="single"
-                                                                                                selectedKeys={motsaremBrofelem[11]?.shem}
-                                                                                                onSelectionChange={(val) => {
-                                                                                                    updateMotsaremBrofelem(11,
-                                                                                                        {
-                                                                                                            kmot: parseFloat((aorkh * rohf).toFixed(1)),
-                                                                                                            kmotYdnet: 0,
-                                                                                                            mher: parseFloat(((aorkh * rohf) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                            shem: val.currentKey,
-                                                                                                            remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                            message: '',
-                                                                                                            sogShem: 'פרופיל תפיסה'
-                                                                                                        });
-
-                                                                                                    //val.currentKey && scrollToElement(BrofelemRefs?.current[GetBrofelMtaemLscroll(val.currentKey)]?.current);
-                                                                                                }
-                                                                                                }
-                                                                                            >
-                                                                                                {GetBrtemMotsarMlae('B1').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                            </DropdownMenu>
-                                                                                        </Dropdown></th>
-                                                                                        <th></th>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <th colSpan={4}><Divider /></th>
-                                                                                    </tr>
-                                                                                    <tr className="row-spacing">
-                                                                                        <th>
-                                                                                            <div className="group relative z-30">
-                                                                                                <Image width={70} alt="none" src={rep68} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                            </div>
-                                                                                        </th>
-                                                                                        <th>מספר צירים</th>
-                                                                                        <th><RadioGroup value={`${msbarTsrem}`} onValueChange={(val) => {
-                                                                                            setMsbarTsrem(val);
-                                                                                            if (parseInt(val) === 2) {
-                                                                                                setAemBlamem(true);
-                                                                                                handleInputChange(false, GetIndexMotsar('F2'), 1, 'kmot');
-                                                                                            }
-                                                                                            updateMotsaremBrofelem(4,
-                                                                                                {
-                                                                                                    kmot: 0,
-                                                                                                    kmotYdnet: 0,
-                                                                                                    mher: 0,
-                                                                                                    shem: 'בחר פריט',
-                                                                                                    remez: '',
-                                                                                                    message: '',
-                                                                                                    sogShem: ''
-                                                                                                });
-                                                                                        }} className="flex"><div className="flex mr-5"><Radio value="1">1</Radio><Radio value="2">2</Radio></div></RadioGroup></th>
-                                                                                        <th><Switch isSelected={aemBlamem} defaultSelected={agla?.mafenem?.aemBlamem} value={aemBlamem} onValueChange={(val) => {
-                                                                                            let res = (val === false) && (parseInt(msbarTsrem) === 2) ? true : val;
-                                                                                            setAemBlamem(res);
-                                                                                            if (res) {
-                                                                                                handleInputChange(false, GetIndexMotsar('F2'), 1, 'kmot');
-                                                                                            }
-                                                                                            else {
-                                                                                                handleInputChange(false, GetIndexMotsar('F2'), 0, 'kmot');
-                                                                                            }
-                                                                                        }}><div className="mr-3">עם בולמים</div></Switch></th>
-                                                                                    </tr>
-                                                                                    {
-                                                                                        (parseInt(msbarTsrem) === 1 || parseInt(msbarTsrem) === 2) &&
+                                                                                    }} color="primary" size="sm" className="w-[100px]" label="אורך" type="number" /></th>
+                                                                                    <th><Input value={rohf || ""} onValueChange={(val) => { setRohf(val); setTvahBrofel(''); setMsbarBrofelem(''); }} color="primary" size="sm" className="w-[100px]" label="רוחב" type="number" /></th>
+                                                                                </tr>
+                                                                                {
+                                                                                    (aorkh !== 0 && aorkh !== '' && rohf !== 0 && rohf !== '') &&
+                                                                                    <>
                                                                                         <tr className="row-spacing">
-                                                                                            <th></th>
-                                                                                            <th>פרופיל תפיסה</th>
+                                                                                            <th>
+                                                                                            </th>
+                                                                                            <th className="w-[150px]">רצפה</th>
                                                                                             <th><Dropdown dir="rtl">
                                                                                                 <DropdownTrigger>
                                                                                                     <Button size="xs" className='m-2'>
-                                                                                                        {motsaremBrofelem[4]?.shem}
+                                                                                                        {motsaremBrofelem[11]?.shem}
                                                                                                     </Button>
                                                                                                 </DropdownTrigger>
                                                                                                 <DropdownMenu
@@ -2416,13 +2364,13 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                                                                                     closeOnSelect={true}
                                                                                                     disallowEmptySelection
                                                                                                     selectionMode="single"
-                                                                                                    selectedKeys={motsaremBrofelem[4]?.shem}
+                                                                                                    selectedKeys={motsaremBrofelem[11]?.shem}
                                                                                                     onSelectionChange={(val) => {
-                                                                                                        updateMotsaremBrofelem(4,
+                                                                                                        updateMotsaremBrofelem(11,
                                                                                                             {
-                                                                                                                kmot: parseInt(msbarTsrem) === 1 ? (0.6) : parseInt(msbarTsrem) === 2 ? (1.2) : 0,
+                                                                                                                kmot: parseFloat((aorkh * rohf).toFixed(1)),
                                                                                                                 kmotYdnet: 0,
-                                                                                                                mher: parseFloat((((parseInt(msbarTsrem) === 1 ? (0.6 * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot) : parseInt(msbarTsrem) === 2 ? (1.2 * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot) : 0))).toFixed(1)),
+                                                                                                                mher: parseFloat(((aorkh * rohf) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
                                                                                                                 shem: val.currentKey,
                                                                                                                 remez: GetShemMotsarCategoryBret(val.currentKey),
                                                                                                                 message: '',
@@ -2433,450 +2381,280 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                                                                                     }
                                                                                                     }
                                                                                                 >
-                                                                                                    {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
-                                                                                                        <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                    ))}
-                                                                                                    {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
-                                                                                                        <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                    ))}
-                                                                                                    {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
+                                                                                                    {GetBrtemMotsarMlae('B1').arrayResualt.map((option) => (
                                                                                                         <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
                                                                                                     ))}
                                                                                                 </DropdownMenu>
                                                                                             </Dropdown></th>
                                                                                             <th></th>
                                                                                         </tr>
-                                                                                    }
-                                                                                    <tr>
-                                                                                        <th colSpan={4}><Divider /></th>
-                                                                                    </tr>
-                                                                                    <tr className="row-spacing">
-                                                                                        <th>
-                                                                                            <div className="group relative z-30">
-                                                                                                <Image width={70} alt="none" src={rep20} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                            </div>
-                                                                                        </th>
-                                                                                        <th>צמיגים</th>
-                                                                                        <th><RadioGroup value={sogGlgalem} onValueChange={(val) => {
-                                                                                            setSogGlgalem(val);
-                                                                                            if (val === 'חצוניים') {
-                                                                                                updateMotsaremBrofelem(6,
-                                                                                                    {
-                                                                                                        kmot: 0,
-                                                                                                        kmotYdnet: 0,
-                                                                                                        mher: 0,
-                                                                                                        shem: 'בחר פריט',
-                                                                                                        remez: '',
-                                                                                                        message: '',
-                                                                                                        sogShem: ''
-                                                                                                    });
-                                                                                                updateMotsaremBrofelem(5,
-                                                                                                    {
-                                                                                                        kmot: 0,
-                                                                                                        kmotYdnet: 0,
-                                                                                                        mher: 0,
-                                                                                                        shem: 'בחר פריט',
-                                                                                                        remez: '',
-                                                                                                        message: '',
-                                                                                                        sogShem: ''
-                                                                                                    });
-                                                                                                setHlokaMsbarBrofelem(0);
-                                                                                                setHlokaTvah(0);
-                                                                                                setAorkhBrofel(0);
-                                                                                                setTvahBrofel(0);
-                                                                                                setMsbarBrofelem(0);
-                                                                                                setHelkBetBnmet(false);
-                                                                                                setAemRmbaAoRgel('');
-                                                                                                setSolam('');
-                                                                                                setGobahSolam(0);
-                                                                                                setTvahAofkeSolam(0);
-                                                                                                setMsbarBrofelemAofkeSolam(0);
-                                                                                                setTvahAnkheSolam(0);
-                                                                                                setMsbarBrofelemAnkhe(0);
-                                                                                                setMsbarBrofelmBretA(0);
-                                                                                            }
-                                                                                        }} className="flex"><div className="flex mr-5"><Radio value="פנמיים">פנימיים</Radio><Radio value="חצוניים">חצוניים</Radio></div></RadioGroup></th>
-                                                                                        <th><Switch isSelected={tsmegSber} defaultSelected={agla?.mafenem?.aemTsmegSber} value={tsmegSber} onValueChange={(val) => {
-                                                                                            setTsmegSber(val);
-                                                                                            if (val) {
-                                                                                                handleInputChange(false, GetIndexMotsar('A3'), mafenemMotsarem[GetIndexMotsar('A3')].kmot + 1, 'kmot');
-                                                                                                handleInputChange(false, GetIndexMotsar('C1'), mafenemMotsarem[GetIndexMotsar('C1')].kmot + 1, 'kmot');
-
-                                                                                            }
-                                                                                            else {
-                                                                                                handleInputChange(false, GetIndexMotsar('A3'), mafenemMotsarem[GetIndexMotsar('A3')].kmot - 1, 'kmot');
-                                                                                                handleInputChange(false, GetIndexMotsar('C1'), mafenemMotsarem[GetIndexMotsar('C1')].kmot - 1, 'kmot');
-                                                                                            }
-                                                                                        }}><div>צמיג ספר</div></Switch></th>
-                                                                                    </tr>
-                                                                                    {
-                                                                                        sogGlgalem === 'פנמיים' &&
-                                                                                        <>
-                                                                                            <tr className="row-spacing">
-                                                                                                <th></th>
-                                                                                                <th>מסגרת תחתונה</th>
-                                                                                                <th><Dropdown dir="rtl">
-                                                                                                    <DropdownTrigger>
-                                                                                                        <Button size="xs" className='m-2'>
-                                                                                                            {motsaremBrofelem[5]?.shem}
-                                                                                                        </Button>
-                                                                                                    </DropdownTrigger>
-                                                                                                    <DropdownMenu
-                                                                                                        aria-label="Multiple selection example"
-                                                                                                        variant="flat"
-                                                                                                        closeOnSelect={true}
-                                                                                                        disallowEmptySelection
-                                                                                                        selectionMode="single"
-                                                                                                        selectedKeys={motsaremBrofelem[5]?.shem}
-                                                                                                        onSelectionChange={(val) => {
-                                                                                                            updateMotsaremBrofelem(5,
-                                                                                                                {
-                                                                                                                    kmot: parseFloat((aorkh * 2) + (rohf * 2)),
-                                                                                                                    kmotYdnet: 0,
-                                                                                                                    mher: parseFloat((((aorkh * 2) + (rohf * 2)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                                    shem: val.currentKey,
-                                                                                                                    remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                                    message: '',
-                                                                                                                    sogShem: 'מסגרת תחתונה'
-                                                                                                                });
-                                                                                                        }
-                                                                                                        }
-                                                                                                    >
-                                                                                                        {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                        {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                        {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                    </DropdownMenu>
-                                                                                                </Dropdown></th>
-                                                                                                <th></th>
-                                                                                            </tr>
-                                                                                            <tr className="row-spacing">
-                                                                                                <th>חלוקה תחתונה</th>
-                                                                                                <th><Input type="number" value={hlokaTvah || ''} onValueChange={(val) => { setHlokaTvah(val); setHlokaMsbarBrofelem(parseInt(Math.floor((aorkh / (val / 100)) - 1))); }} color="primary" size="sm" className="w-[100px]" label="טווח" /></th>
-                                                                                                <th><Input type="number" value={hlokaMsbarBrofelem || ''} onValueChange={(val) => { setHlokaMsbarBrofelem(val); setHlokaTvah(formatNumber(((aorkh / (parseFloat(val) + 1)) * 100))); }} color="primary" size="sm" className="w-[100px]" label="מס פרופילים" /></th>
-                                                                                                <th><Dropdown dir="rtl">
-                                                                                                    <DropdownTrigger>
-                                                                                                        <Button size="xs" className='m-2'>
-                                                                                                            {motsaremBrofelem[6]?.shem}
-                                                                                                        </Button>
-                                                                                                    </DropdownTrigger>
-                                                                                                    <DropdownMenu
-                                                                                                        aria-label="Multiple selection example"
-                                                                                                        variant="flat"
-                                                                                                        closeOnSelect={true}
-                                                                                                        disallowEmptySelection
-                                                                                                        selectionMode="single"
-                                                                                                        selectedKeys={motsaremBrofelem[6]?.shem}
-                                                                                                        onSelectionChange={(val) => {
-                                                                                                            updateMotsaremBrofelem(6,
-                                                                                                                {
-                                                                                                                    kmot: parseFloat(hlokaMsbarBrofelem * rohf),
-                                                                                                                    kmotYdnet: 0,
-                                                                                                                    mher: parseFloat(((hlokaMsbarBrofelem * rohf) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                                    shem: val.currentKey,
-                                                                                                                    remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                                    message: '',
-                                                                                                                    sogShem: 'חלוקה תחתונה'
-                                                                                                                });
-                                                                                                        }
-                                                                                                        }
-                                                                                                    >
-                                                                                                        {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                        {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                        {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                    </DropdownMenu>
-                                                                                                </Dropdown></th>
-                                                                                            </tr>
-                                                                                        </>
-                                                                                    }
-                                                                                    <tr>
-                                                                                        <th colSpan={4}><Divider /></th>
-                                                                                    </tr>
-                                                                                    <tr className="row-spacing">
-                                                                                        <th>
-                                                                                            <div className="group relative z-30">
-                                                                                                <Image width={70} alt="none" src={rep15} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                            </div>
-                                                                                        </th>
-                                                                                        <th>יצול</th>
-                                                                                        <th><Input type="number" value={aorkhBrofel || ''} onValueChange={(val) => {
-                                                                                            setAorkhBrofel(parseFloat(val));
-                                                                                            updateMotsaremBrofelem(1,
-                                                                                                {
-                                                                                                    kmot: parseFloat((val || 0) * 2),
-                                                                                                    kmotYdnet: 0,
-                                                                                                    mher: parseFloat((((val || 0) * 2) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[1].shem), motsaremBrofelem[1].shem).alot).toFixed(1)),
-                                                                                                    shem: motsaremBrofelem[1].shem,
-                                                                                                    remez: GetShemMotsarCategoryBret(motsaremBrofelem[1].shem),
-                                                                                                    message: '',
-                                                                                                    sogShem: 'יצול'
-                                                                                                });
-
-                                                                                        }} color="primary" size="sm" className="w-[100px]" label="אורך פרופיל" /></th>
-                                                                                        <th><Dropdown dir="rtl">
-                                                                                            <DropdownTrigger>
-                                                                                                <Button isDisabled={!aorkhBrofel} size="xs" className='m-2'>
-                                                                                                    {motsaremBrofelem[1]?.shem}
-                                                                                                </Button>
-                                                                                            </DropdownTrigger>
-                                                                                            <DropdownMenu
-                                                                                                aria-label="Multiple selection example"
-                                                                                                variant="flat"
-                                                                                                closeOnSelect={true}
-                                                                                                disallowEmptySelection
-                                                                                                selectionMode="single"
-                                                                                                selectedKeys={motsaremBrofelem[1]?.shem}
-                                                                                                onSelectionChange={(val) => {
-                                                                                                    updateMotsaremBrofelem(1,
-                                                                                                        {
-                                                                                                            kmot: parseFloat((aorkhBrofel || 0) * 2),
-                                                                                                            kmotYdnet: 0,
-                                                                                                            mher: parseFloat((((aorkhBrofel || 0) * 2) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                            shem: val.currentKey,
-                                                                                                            remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                            message: '',
-                                                                                                            sogShem: 'יצול'
-                                                                                                        });
-                                                                                                }
-                                                                                                }
-                                                                                            >
-                                                                                                {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                                {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                                {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                            </DropdownMenu>
-                                                                                        </Dropdown></th>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <th colSpan={4}><Divider /></th>
-                                                                                    </tr>
-                                                                                    <tr className="row-spacing">
-                                                                                        <th>
-                                                                                            <div className="group relative z-30">
-                                                                                                <Image width={70} alt="none" src={rep9} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                            </div>
-                                                                                        </th>
-                                                                                        <th>שלדה חיצונית</th>
-                                                                                        <th><Dropdown dir="rtl">
-                                                                                            <DropdownTrigger>
-                                                                                                <Button size="xs" className='m-2'>
-                                                                                                    {motsaremBrofelem[0]?.shem}
-                                                                                                </Button>
-                                                                                            </DropdownTrigger>
-                                                                                            <DropdownMenu
-                                                                                                aria-label="Multiple selection example"
-                                                                                                variant="flat"
-                                                                                                closeOnSelect={true}
-                                                                                                disallowEmptySelection
-                                                                                                selectionMode="single"
-                                                                                                selectedKeys={motsaremBrofelem[0]?.shem}
-                                                                                                onSelectionChange={(val) => {
-                                                                                                    updateMotsaremBrofelem(0,
-                                                                                                        {
-                                                                                                            kmot: parseFloat((aorkh * 2) + (rohf * 2)),
-                                                                                                            kmotYdnet: 0,
-                                                                                                            mher: parseFloat((((aorkh * 2) + (rohf * 2)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                            shem: val.currentKey,
-                                                                                                            remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                            message: '',
-                                                                                                            sogShem: 'שלדה חיצונית'
-                                                                                                        });
-                                                                                                }
-                                                                                                }
-                                                                                            >
-                                                                                                {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                                {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                                {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                            </DropdownMenu>
-                                                                                        </Dropdown></th>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <th colSpan={4}><Divider /></th>
-                                                                                    </tr>
-                                                                                    <tr className="row-spacing">
-                                                                                        <th>
-                                                                                            <div className="group relative z-30">
-                                                                                                <Image width={70} alt="none" src={rep10} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                            </div>
-                                                                                        </th>
-                                                                                        <th>שלדה פנימית</th>
-                                                                                        <th><Input isReadOnly={!aorkh || !rohf} type="number" value={tvahBrofel || ''} onValueChange={(val) => {
-                                                                                            setTvahBrofel(val); setMsbarBrofelem(parseInt(Math.floor((aorkh / (val / 100)) - 1)));
-                                                                                            updateMotsaremBrofelem(2,
-                                                                                                {
-                                                                                                    kmot: parseInt(Math.floor((aorkh / (val / 100)) - 1)),
-                                                                                                    kmotYdnet: 0,
-                                                                                                    mher: parseFloat(((Math.floor((aorkh / (val / 100)) - 1)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[2].shem), motsaremBrofelem[2].shem).alot).toFixed(1)),
-                                                                                                    shem: motsaremBrofelem[2].shem,
-                                                                                                    remez: GetShemMotsarCategoryBret(motsaremBrofelem[2].shem),
-                                                                                                    message: '',
-                                                                                                    sogShem: 'שלדה פנימית חלק א'
-                                                                                                });
-                                                                                            if (helkBetBnmet) {
-                                                                                                updateMotsaremBrofelem(3,
-                                                                                                    {
-                                                                                                        kmot: ((parseInt(Math.floor((aorkh / (val / 100)) - 1))) - parseInt(motsaremBrofelem[2].kmot)),
-                                                                                                        kmotYdnet: 0,
-                                                                                                        mher: parseFloat((((Math.floor((aorkh / (val / 100)) - 1)) - parseInt(motsaremBrofelem[2].kmot)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[3].shem), motsaremBrofelem[3].shem).alot).toFixed(1)),
-                                                                                                        shem: motsaremBrofelem[3].shem,
-                                                                                                        remez: GetShemMotsarCategoryBret(motsaremBrofelem[3].shem),
-                                                                                                        message: '',
-                                                                                                        sogShem: 'שלדה פנימית חלק ב'
-                                                                                                    });
-                                                                                            }
-
-
-                                                                                        }} color="primary" size="sm" className="w-[100px]" label="טווח" /></th>
-                                                                                        <th><Input isReadOnly={!aorkh || !rohf} type="number" value={msbarBrofelem || ''} onValueChange={(val) => {
-                                                                                            setMsbarBrofelem(parseInt(val)); setTvahBrofel(formatNumber(((aorkh / (parseFloat(val) + 1)) * 100)));
-                                                                                            updateMotsaremBrofelem(2,
-                                                                                                {
-                                                                                                    kmot: (parseInt(val) - ((parseInt(val) - parseInt(motsaremBrofelem[2].kmot)))),
-                                                                                                    kmotYdnet: 0,
-                                                                                                    mher: parseFloat(((parseInt(val) - ((parseInt(val) - parseInt(motsaremBrofelem[2].kmot)))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[2].shem), motsaremBrofelem[2].shem).alot).toFixed(1)),
-                                                                                                    shem: motsaremBrofelem[2].shem,
-                                                                                                    remez: GetShemMotsarCategoryBret(motsaremBrofelem[2].shem),
-                                                                                                    message: '',
-                                                                                                    sogShem: 'שלדה פנימית חלק א'
-                                                                                                });
-                                                                                            if (helkBetBnmet) {
-                                                                                                updateMotsaremBrofelem(3,
-                                                                                                    {
-                                                                                                        kmot: ((parseInt(val) - parseInt(motsaremBrofelem[2].kmot))),
-                                                                                                        kmotYdnet: 0,
-                                                                                                        mher: parseFloat((((parseInt(val) - parseInt(motsaremBrofelem[2].kmot))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[2].shem), motsaremBrofelem[2].shem).alot).toFixed(1)),
-                                                                                                        shem: motsaremBrofelem[3].shem,
-                                                                                                        remez: GetShemMotsarCategoryBret(motsaremBrofelem[3].shem),
-                                                                                                        message: '',
-                                                                                                        sogShem: 'שלדה פנימית חלק ב'
-                                                                                                    });
-                                                                                            }
-
-                                                                                        }} color="primary" size="sm" className="w-[100px]" label="מס פרופילים" /></th>
-                                                                                    </tr>
-                                                                                    <tr className="row-spacing">
-                                                                                        <th>חלק א</th>
-                                                                                        <th><Dropdown dir="rtl">
-                                                                                            <DropdownTrigger>
-                                                                                                <Button isDisabled={!tvahBrofel || !msbarBrofelem} size="xs" className='m-2'>
-                                                                                                    {motsaremBrofelem[2]?.shem}
-                                                                                                </Button>
-                                                                                            </DropdownTrigger>
-                                                                                            <DropdownMenu
-                                                                                                aria-label="Multiple selection example"
-                                                                                                variant="flat"
-                                                                                                closeOnSelect={true}
-                                                                                                disallowEmptySelection
-                                                                                                selectionMode="single"
-                                                                                                selectedKeys={motsaremBrofelem[2]?.shem}
-                                                                                                onSelectionChange={(val) => {
-                                                                                                    updateMotsaremBrofelem(2,
-                                                                                                        {
-                                                                                                            kmot: helkBetBnmet ? msbarBrofelemBretA : (msbarBrofelem || 0),
-                                                                                                            kmotYdnet: 0,
-                                                                                                            mher: parseFloat(((helkBetBnmet ? msbarBrofelemBretA : (msbarBrofelem || 0)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                            shem: val.currentKey,
-                                                                                                            remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                            message: '',
-                                                                                                            sogShem: 'שלדה פנימית חלק א'
-                                                                                                        });
-                                                                                                }
-                                                                                                }
-                                                                                            >
-                                                                                                {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                                {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                                {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                            </DropdownMenu>
-                                                                                        </Dropdown></th>
-                                                                                        <th><Input type="number" isReadOnly={helkBetBnmet ? false : true} value={((helkBetBnmet ? (msbarBrofelemBretA || motsaremBrofelem[2].kmot) : (msbarBrofelem || 0)) || '')} onValueChange={(val) => {
-                                                                                            setMsbarBrofelmBretA(Math.min(val, msbarBrofelem));
-                                                                                            updateMotsaremBrofelem(2,
-                                                                                                {
-                                                                                                    kmot: parseFloat(val),
-                                                                                                    kmotYdnet: 0,
-                                                                                                    mher: parseFloat((parseFloat(val) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[2].shem), motsaremBrofelem[2].shem).alot).toFixed(1)),
-                                                                                                    shem: motsaremBrofelem[2].shem,
-                                                                                                    message: '',
-                                                                                                    remez: GetShemMotsarCategoryBret(motsaremBrofelem[2].shem),
-                                                                                                    sogShem: 'שלדה פנימית חלק א'
-                                                                                                });
-                                                                                            if (helkBetBnmet && motsaremBrofelem[3].shem !== 'בחר פריט') {
-                                                                                                updateMotsaremBrofelem(3,
-                                                                                                    {
-                                                                                                        kmot: msbarBrofelem - val,
-                                                                                                        kmotYdnet: 0,
-                                                                                                        mher: parseFloat(((msbarBrofelem - val) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[3].shem), motsaremBrofelem[3].shem).alot).toFixed(1)),
-                                                                                                        shem: motsaremBrofelem[3].shem,
-                                                                                                        message: '',
-                                                                                                        remez: GetShemMotsarCategoryBret(motsaremBrofelem[3].shem),
-                                                                                                        sogShem: 'שלדה פנימית חלק ב'
-                                                                                                    });
-                                                                                            }
-
-
-                                                                                        }} color="primary" size="sm" className="w-[100px]" label="מס פרופילים" /></th>
-                                                                                        <th><Switch isSelected={helkBetBnmet} defaultSelected={agla?.mafenem?.aemHelkBet} value={helkBetBnmet} onValueChange={(val) => {
-                                                                                            setHelkBetBnmet(val);
-                                                                                            if (!val) {
-                                                                                                updateMotsaremBrofelem(3,
-                                                                                                    {
-                                                                                                        kmot: 0,
-                                                                                                        kmotYdnet: 0,
-                                                                                                        mher: 0,
-                                                                                                        shem: 'בחר פריט',
-                                                                                                        remez: '',
-                                                                                                        message: '',
-                                                                                                        sogShem: ''
-                                                                                                    });
-                                                                                                updateMotsaremBrofelem(2,
-                                                                                                    {
-                                                                                                        kmot: msbarBrofelem,
-                                                                                                        kmotYdnet: 0,
-                                                                                                        mher: parseFloat((msbarBrofelem * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[2].shem), motsaremBrofelem[2].shem).alot).toFixed(1)),
-                                                                                                        shem: motsaremBrofelem[2].shem,
-                                                                                                        remez: GetShemMotsarCategoryBret(motsaremBrofelem[2].shem),
-                                                                                                        message: '',
-                                                                                                        sogShem: 'שלדה פנימית חלק א'
-                                                                                                    });
-                                                                                            }
-                                                                                        }}><div className="mr-2"><FaPlus /></div></Switch></th>
-                                                                                    </tr>
-                                                                                    {
-                                                                                        helkBetBnmet &&
+                                                                                        <tr>
+                                                                                            <th colSpan={4}><Divider /></th>
+                                                                                        </tr>
                                                                                         <tr className="row-spacing">
-                                                                                            <th>חלק ב</th>
+                                                                                            <th>
+                                                                                                <div className="group relative z-30">
+                                                                                                    <Image width={70} alt="none" src={rep68} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                                </div>
+                                                                                            </th>
+                                                                                            <th>מספר צירים</th>
+                                                                                            <th><RadioGroup value={`${msbarTsrem}`} onValueChange={(val) => {
+                                                                                                setMsbarTsrem(val);
+                                                                                                if (parseInt(val) === 2) {
+                                                                                                    setAemBlamem(true);
+                                                                                                    handleInputChange(false, GetIndexMotsar('F2'), 1, 'kmot');
+                                                                                                }
+                                                                                                updateMotsaremBrofelem(4,
+                                                                                                    {
+                                                                                                        kmot: 0,
+                                                                                                        kmotYdnet: 0,
+                                                                                                        mher: 0,
+                                                                                                        shem: 'בחר פריט',
+                                                                                                        remez: '',
+                                                                                                        message: '',
+                                                                                                        sogShem: ''
+                                                                                                    });
+                                                                                            }} className="flex"><div className="flex mr-5"><Radio value="1">1</Radio><Radio value="2">2</Radio></div></RadioGroup></th>
+                                                                                            <th><Switch isSelected={aemBlamem} defaultSelected={agla?.mafenem?.aemBlamem} value={aemBlamem} onValueChange={(val) => {
+                                                                                                let res = (val === false) && (parseInt(msbarTsrem) === 2) ? true : val;
+                                                                                                setAemBlamem(res);
+                                                                                                if (res) {
+                                                                                                    handleInputChange(false, GetIndexMotsar('F2'), 1, 'kmot');
+                                                                                                }
+                                                                                                else {
+                                                                                                    handleInputChange(false, GetIndexMotsar('F2'), 0, 'kmot');
+                                                                                                }
+                                                                                            }}><div className="mr-3">עם בולמים</div></Switch></th>
+                                                                                        </tr>
+                                                                                        {
+                                                                                            (parseInt(msbarTsrem) === 1 || parseInt(msbarTsrem) === 2) &&
+                                                                                            <tr className="row-spacing">
+                                                                                                <th></th>
+                                                                                                <th>פרופיל תפיסה</th>
+                                                                                                <th><Dropdown dir="rtl">
+                                                                                                    <DropdownTrigger>
+                                                                                                        <Button size="xs" className='m-2'>
+                                                                                                            {motsaremBrofelem[4]?.shem}
+                                                                                                        </Button>
+                                                                                                    </DropdownTrigger>
+                                                                                                    <DropdownMenu
+                                                                                                        aria-label="Multiple selection example"
+                                                                                                        variant="flat"
+                                                                                                        closeOnSelect={true}
+                                                                                                        disallowEmptySelection
+                                                                                                        selectionMode="single"
+                                                                                                        selectedKeys={motsaremBrofelem[4]?.shem}
+                                                                                                        onSelectionChange={(val) => {
+                                                                                                            updateMotsaremBrofelem(4,
+                                                                                                                {
+                                                                                                                    kmot: parseInt(msbarTsrem) === 1 ? (0.6) : parseInt(msbarTsrem) === 2 ? (1.2) : 0,
+                                                                                                                    kmotYdnet: 0,
+                                                                                                                    mher: parseFloat((((parseInt(msbarTsrem) === 1 ? (0.6 * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot) : parseInt(msbarTsrem) === 2 ? (1.2 * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot) : 0))).toFixed(1)),
+                                                                                                                    shem: val.currentKey,
+                                                                                                                    remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                    message: '',
+                                                                                                                    sogShem: 'פרופיל תפיסה'
+                                                                                                                });
+
+                                                                                                            //val.currentKey && scrollToElement(BrofelemRefs?.current[GetBrofelMtaemLscroll(val.currentKey)]?.current);
+                                                                                                        }
+                                                                                                        }
+                                                                                                    >
+                                                                                                        {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
+                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                        ))}
+                                                                                                        {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
+                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                        ))}
+                                                                                                        {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
+                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                        ))}
+                                                                                                    </DropdownMenu>
+                                                                                                </Dropdown></th>
+                                                                                                <th></th>
+                                                                                            </tr>
+                                                                                        }
+                                                                                        <tr>
+                                                                                            <th colSpan={4}><Divider /></th>
+                                                                                        </tr>
+                                                                                        <tr className="row-spacing">
+                                                                                            <th>
+                                                                                                <div className="group relative z-30">
+                                                                                                    <Image width={70} alt="none" src={rep20} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                                </div>
+                                                                                            </th>
+                                                                                            <th>צמיגים</th>
+                                                                                            <th><RadioGroup value={sogGlgalem} onValueChange={(val) => {
+                                                                                                setSogGlgalem(val);
+                                                                                                if (val === 'חצוניים') {
+                                                                                                    updateMotsaremBrofelem(6,
+                                                                                                        {
+                                                                                                            kmot: 0,
+                                                                                                            kmotYdnet: 0,
+                                                                                                            mher: 0,
+                                                                                                            shem: 'בחר פריט',
+                                                                                                            remez: '',
+                                                                                                            message: '',
+                                                                                                            sogShem: ''
+                                                                                                        });
+                                                                                                    updateMotsaremBrofelem(5,
+                                                                                                        {
+                                                                                                            kmot: 0,
+                                                                                                            kmotYdnet: 0,
+                                                                                                            mher: 0,
+                                                                                                            shem: 'בחר פריט',
+                                                                                                            remez: '',
+                                                                                                            message: '',
+                                                                                                            sogShem: ''
+                                                                                                        });
+                                                                                                    setHlokaMsbarBrofelem(0);
+                                                                                                    setHlokaTvah(0);
+                                                                                                    setAorkhBrofel(0);
+                                                                                                    setTvahBrofel(0);
+                                                                                                    setMsbarBrofelem(0);
+                                                                                                    setHelkBetBnmet(false);
+                                                                                                    setAemRmbaAoRgel('');
+                                                                                                    setSolam('');
+                                                                                                    setGobahSolam(0);
+                                                                                                    setTvahAofkeSolam(0);
+                                                                                                    setMsbarBrofelemAofkeSolam(0);
+                                                                                                    setTvahAnkheSolam(0);
+                                                                                                    setMsbarBrofelemAnkhe(0);
+                                                                                                    setMsbarBrofelmBretA(0);
+                                                                                                }
+                                                                                            }} className="flex"><div className="flex mr-5"><Radio value="פנמיים">פנימיים</Radio><Radio value="חצוניים">חצוניים</Radio></div></RadioGroup></th>
+                                                                                            <th><Switch isSelected={tsmegSber} defaultSelected={agla?.mafenem?.aemTsmegSber} value={tsmegSber} onValueChange={(val) => {
+                                                                                                setTsmegSber(val);
+                                                                                                if (val) {
+                                                                                                    handleInputChange(false, GetIndexMotsar('A3'), mafenemMotsarem[GetIndexMotsar('A3')].kmot + 1, 'kmot');
+                                                                                                    handleInputChange(false, GetIndexMotsar('C1'), mafenemMotsarem[GetIndexMotsar('C1')].kmot + 1, 'kmot');
+
+                                                                                                }
+                                                                                                else {
+                                                                                                    handleInputChange(false, GetIndexMotsar('A3'), mafenemMotsarem[GetIndexMotsar('A3')].kmot - 1, 'kmot');
+                                                                                                    handleInputChange(false, GetIndexMotsar('C1'), mafenemMotsarem[GetIndexMotsar('C1')].kmot - 1, 'kmot');
+                                                                                                }
+                                                                                            }}><div>צמיג ספר</div></Switch></th>
+                                                                                        </tr>
+                                                                                        {
+                                                                                            sogGlgalem === 'פנמיים' &&
+                                                                                            <>
+                                                                                                <tr className="row-spacing">
+                                                                                                    <th></th>
+                                                                                                    <th>מסגרת תחתונה</th>
+                                                                                                    <th><Dropdown dir="rtl">
+                                                                                                        <DropdownTrigger>
+                                                                                                            <Button size="xs" className='m-2'>
+                                                                                                                {motsaremBrofelem[5]?.shem}
+                                                                                                            </Button>
+                                                                                                        </DropdownTrigger>
+                                                                                                        <DropdownMenu
+                                                                                                            aria-label="Multiple selection example"
+                                                                                                            variant="flat"
+                                                                                                            closeOnSelect={true}
+                                                                                                            disallowEmptySelection
+                                                                                                            selectionMode="single"
+                                                                                                            selectedKeys={motsaremBrofelem[5]?.shem}
+                                                                                                            onSelectionChange={(val) => {
+                                                                                                                updateMotsaremBrofelem(5,
+                                                                                                                    {
+                                                                                                                        kmot: parseFloat((aorkh * 2) + (rohf * 2)),
+                                                                                                                        kmotYdnet: 0,
+                                                                                                                        mher: parseFloat((((aorkh * 2) + (rohf * 2)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                        shem: val.currentKey,
+                                                                                                                        remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                        message: '',
+                                                                                                                        sogShem: 'מסגרת תחתונה'
+                                                                                                                    });
+                                                                                                            }
+                                                                                                            }
+                                                                                                        >
+                                                                                                            {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
+                                                                                                                <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                            ))}
+                                                                                                            {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
+                                                                                                                <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                            ))}
+                                                                                                            {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
+                                                                                                                <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                            ))}
+                                                                                                        </DropdownMenu>
+                                                                                                    </Dropdown></th>
+                                                                                                    <th></th>
+                                                                                                </tr>
+                                                                                                <tr className="row-spacing">
+                                                                                                    <th>חלוקה תחתונה</th>
+                                                                                                    <th><Input type="number" value={hlokaTvah || ''} onValueChange={(val) => { setHlokaTvah(val); setHlokaMsbarBrofelem(parseInt(Math.floor((aorkh / (val / 100)) - 1))); }} color="primary" size="sm" className="w-[100px]" label="טווח" /></th>
+                                                                                                    <th><Input type="number" value={hlokaMsbarBrofelem || ''} onValueChange={(val) => { setHlokaMsbarBrofelem(val); setHlokaTvah(formatNumber(((aorkh / (parseFloat(val) + 1)) * 100))); }} color="primary" size="sm" className="w-[100px]" label="מס פרופילים" /></th>
+                                                                                                    <th><Dropdown dir="rtl">
+                                                                                                        <DropdownTrigger>
+                                                                                                            <Button size="xs" className='m-2'>
+                                                                                                                {motsaremBrofelem[6]?.shem}
+                                                                                                            </Button>
+                                                                                                        </DropdownTrigger>
+                                                                                                        <DropdownMenu
+                                                                                                            aria-label="Multiple selection example"
+                                                                                                            variant="flat"
+                                                                                                            closeOnSelect={true}
+                                                                                                            disallowEmptySelection
+                                                                                                            selectionMode="single"
+                                                                                                            selectedKeys={motsaremBrofelem[6]?.shem}
+                                                                                                            onSelectionChange={(val) => {
+                                                                                                                updateMotsaremBrofelem(6,
+                                                                                                                    {
+                                                                                                                        kmot: parseFloat(hlokaMsbarBrofelem * rohf),
+                                                                                                                        kmotYdnet: 0,
+                                                                                                                        mher: parseFloat(((hlokaMsbarBrofelem * rohf) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                        shem: val.currentKey,
+                                                                                                                        remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                        message: '',
+                                                                                                                        sogShem: 'חלוקה תחתונה'
+                                                                                                                    });
+                                                                                                            }
+                                                                                                            }
+                                                                                                        >
+                                                                                                            {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
+                                                                                                                <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                            ))}
+                                                                                                            {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
+                                                                                                                <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                            ))}
+                                                                                                            {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
+                                                                                                                <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                            ))}
+                                                                                                        </DropdownMenu>
+                                                                                                    </Dropdown></th>
+                                                                                                </tr>
+                                                                                            </>
+                                                                                        }
+                                                                                        <tr>
+                                                                                            <th colSpan={4}><Divider /></th>
+                                                                                        </tr>
+                                                                                        <tr className="row-spacing">
+                                                                                            <th>
+                                                                                                <div className="group relative z-30">
+                                                                                                    <Image width={70} alt="none" src={rep15} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                                </div>
+                                                                                            </th>
+                                                                                            <th>יצול</th>
+                                                                                            <th><Input type="number" value={aorkhBrofel || ''} onValueChange={(val) => {
+                                                                                                setAorkhBrofel(parseFloat(val));
+                                                                                                updateMotsaremBrofelem(1,
+                                                                                                    {
+                                                                                                        kmot: parseFloat((val || 0) * 2),
+                                                                                                        kmotYdnet: 0,
+                                                                                                        mher: parseFloat((((val || 0) * 2) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[1].shem), motsaremBrofelem[1].shem).alot).toFixed(1)),
+                                                                                                        shem: motsaremBrofelem[1].shem,
+                                                                                                        remez: GetShemMotsarCategoryBret(motsaremBrofelem[1].shem),
+                                                                                                        message: '',
+                                                                                                        sogShem: 'יצול'
+                                                                                                    });
+
+                                                                                            }} color="primary" size="sm" className="w-[100px]" label="אורך פרופיל" /></th>
                                                                                             <th><Dropdown dir="rtl">
                                                                                                 <DropdownTrigger>
-                                                                                                    <Button isDisabled={motsaremBrofelem[2].shem === 'בחר פריט'} size="xs" className='m-2'>
-                                                                                                        {motsaremBrofelem[3]?.shem}
+                                                                                                    <Button isDisabled={!aorkhBrofel} size="xs" className='m-2'>
+                                                                                                        {motsaremBrofelem[1]?.shem}
                                                                                                     </Button>
                                                                                                 </DropdownTrigger>
                                                                                                 <DropdownMenu
@@ -2885,17 +2663,17 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                                                                                     closeOnSelect={true}
                                                                                                     disallowEmptySelection
                                                                                                     selectionMode="single"
-                                                                                                    selectedKeys={motsaremBrofelem[3]?.shem}
+                                                                                                    selectedKeys={motsaremBrofelem[1]?.shem}
                                                                                                     onSelectionChange={(val) => {
-                                                                                                        updateMotsaremBrofelem(3,
+                                                                                                        updateMotsaremBrofelem(1,
                                                                                                             {
-                                                                                                                kmot: msbarBrofelemBretA ? msbarBrofelem - msbarBrofelemBretA : 0,
+                                                                                                                kmot: parseFloat((aorkhBrofel || 0) * 2),
                                                                                                                 kmotYdnet: 0,
-                                                                                                                mher: parseFloat(((msbarBrofelemBretA ? msbarBrofelem - msbarBrofelemBretA : 0) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                mher: parseFloat((((aorkhBrofel || 0) * 2) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
                                                                                                                 shem: val.currentKey,
                                                                                                                 remez: GetShemMotsarCategoryBret(val.currentKey),
                                                                                                                 message: '',
-                                                                                                                sogShem: 'שלדה פנימית חלק ב'
+                                                                                                                sogShem: 'יצול'
                                                                                                             });
                                                                                                     }
                                                                                                     }
@@ -2911,433 +2689,221 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                                                                                     ))}
                                                                                                 </DropdownMenu>
                                                                                             </Dropdown></th>
-                                                                                            <th><Input value={((msbarBrofelemBretA ? msbarBrofelem - msbarBrofelemBretA : 0) || '')} isReadOnly color="primary" size="sm" className="w-[100px]" label="מס פרופילים" /></th>
-                                                                                            <th></th>
                                                                                         </tr>
-                                                                                    }
-                                                                                    <tr>
-                                                                                        <th colSpan={4}><Divider /></th>
-                                                                                    </tr>
-
-                                                                                    {
-                                                                                        sogAgla === 'פתוחה' ?
-                                                                                        <>
+                                                                                        <tr>
+                                                                                            <th colSpan={4}><Divider /></th>
+                                                                                        </tr>
                                                                                         <tr className="row-spacing">
-                                                                                        <th>
-                                                                                            <div className="group relative z-30">
-                                                                                                <Image width={70} alt="none" src={rep11} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                            </div>
-                                                                                        </th>
-                                                                                        <th>דלת</th>
-                                                                                        <th><RadioGroup value={aemRmbaAoRgel} onValueChange={(val) => {
-                                                                                            setAemRmbaAoRgel(val);
-                                                                                            if (val === 'רגיל') {
-                                                                                                updateMotsaremBrofelem(7,
+                                                                                            <th>
+                                                                                                <div className="group relative z-30">
+                                                                                                    <Image width={70} alt="none" src={rep9} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                                </div>
+                                                                                            </th>
+                                                                                            <th>שלדה חיצונית</th>
+                                                                                            <th><Dropdown dir="rtl">
+                                                                                                <DropdownTrigger>
+                                                                                                    <Button size="xs" className='m-2'>
+                                                                                                        {motsaremBrofelem[0]?.shem}
+                                                                                                    </Button>
+                                                                                                </DropdownTrigger>
+                                                                                                <DropdownMenu
+                                                                                                    aria-label="Multiple selection example"
+                                                                                                    variant="flat"
+                                                                                                    closeOnSelect={true}
+                                                                                                    disallowEmptySelection
+                                                                                                    selectionMode="single"
+                                                                                                    selectedKeys={motsaremBrofelem[0]?.shem}
+                                                                                                    onSelectionChange={(val) => {
+                                                                                                        updateMotsaremBrofelem(0,
+                                                                                                            {
+                                                                                                                kmot: parseFloat((aorkh * 2) + (rohf * 2)),
+                                                                                                                kmotYdnet: 0,
+                                                                                                                mher: parseFloat((((aorkh * 2) + (rohf * 2)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                shem: val.currentKey,
+                                                                                                                remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                message: '',
+                                                                                                                sogShem: 'שלדה חיצונית'
+                                                                                                            });
+                                                                                                    }
+                                                                                                    }
+                                                                                                >
+                                                                                                    {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
+                                                                                                        <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                    ))}
+                                                                                                    {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
+                                                                                                        <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                    ))}
+                                                                                                    {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
+                                                                                                        <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                    ))}
+                                                                                                </DropdownMenu>
+                                                                                            </Dropdown></th>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th colSpan={4}><Divider /></th>
+                                                                                        </tr>
+                                                                                        <tr className="row-spacing">
+                                                                                            <th>
+                                                                                                <div className="group relative z-30">
+                                                                                                    <Image width={70} alt="none" src={rep10} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                                </div>
+                                                                                            </th>
+                                                                                            <th>שלדה פנימית</th>
+                                                                                            <th><Input isReadOnly={!aorkh || !rohf} type="number" value={tvahBrofel || ''} onValueChange={(val) => {
+                                                                                                setTvahBrofel(val); setMsbarBrofelem(parseInt(Math.floor((aorkh / (val / 100)) - 1)));
+                                                                                                updateMotsaremBrofelem(2,
                                                                                                     {
-                                                                                                        kmot: 0,
+                                                                                                        kmot: parseInt(Math.floor((aorkh / (val / 100)) - 1)),
                                                                                                         kmotYdnet: 0,
-                                                                                                        mher: 0,
-                                                                                                        shem: 'בחר פריט',
-                                                                                                        remez: '',
+                                                                                                        mher: parseFloat(((Math.floor((aorkh / (val / 100)) - 1)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[2].shem), motsaremBrofelem[2].shem).alot).toFixed(1)),
+                                                                                                        shem: motsaremBrofelem[2].shem,
+                                                                                                        remez: GetShemMotsarCategoryBret(motsaremBrofelem[2].shem),
                                                                                                         message: '',
-                                                                                                        sogShem: ''
+                                                                                                        sogShem: 'שלדה פנימית חלק א'
                                                                                                     });
-                                                                                                updateMotsaremBrofelem(8,
+                                                                                                if (helkBetBnmet) {
+                                                                                                    updateMotsaremBrofelem(3,
+                                                                                                        {
+                                                                                                            kmot: ((parseInt(Math.floor((aorkh / (val / 100)) - 1))) - parseInt(motsaremBrofelem[2].kmot)),
+                                                                                                            kmotYdnet: 0,
+                                                                                                            mher: parseFloat((((Math.floor((aorkh / (val / 100)) - 1)) - parseInt(motsaremBrofelem[2].kmot)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[3].shem), motsaremBrofelem[3].shem).alot).toFixed(1)),
+                                                                                                            shem: motsaremBrofelem[3].shem,
+                                                                                                            remez: GetShemMotsarCategoryBret(motsaremBrofelem[3].shem),
+                                                                                                            message: '',
+                                                                                                            sogShem: 'שלדה פנימית חלק ב'
+                                                                                                        });
+                                                                                                }
+
+
+                                                                                            }} color="primary" size="sm" className="w-[100px]" label="טווח" /></th>
+                                                                                            <th><Input isReadOnly={!aorkh || !rohf} type="number" value={msbarBrofelem || ''} onValueChange={(val) => {
+                                                                                                setMsbarBrofelem(parseInt(val)); setTvahBrofel(formatNumber(((aorkh / (parseFloat(val) + 1)) * 100)));
+                                                                                                updateMotsaremBrofelem(2,
                                                                                                     {
-                                                                                                        kmot: 0,
+                                                                                                        kmot: (parseInt(val) - ((parseInt(val) - parseInt(motsaremBrofelem[2].kmot)))),
                                                                                                         kmotYdnet: 0,
-                                                                                                        mher: 0,
-                                                                                                        shem: 'בחר פריט',
-                                                                                                        remez: '',
+                                                                                                        mher: parseFloat(((parseInt(val) - ((parseInt(val) - parseInt(motsaremBrofelem[2].kmot)))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[2].shem), motsaremBrofelem[2].shem).alot).toFixed(1)),
+                                                                                                        shem: motsaremBrofelem[2].shem,
+                                                                                                        remez: GetShemMotsarCategoryBret(motsaremBrofelem[2].shem),
                                                                                                         message: '',
-                                                                                                        sogShem: ''
+                                                                                                        sogShem: 'שלדה פנימית חלק א'
                                                                                                     });
-                                                                                                setTvahHlokatRmba(0);
-                                                                                                setMsbarBrofelemHlokatRmba(0);
-                                                                                                setAorkhRmbaMsgertRmba(0);
-                                                                                                setTosftVnel(false);
-                                                                                                //handleInputChange(true, GetIndexMotsar('B1'), (mafenemMotsarem[GetIndexMotsar('B1')].kmot - (aorkhRmbaMsgertRmba * rohf)), 'kmot');
-                                                                                                setMotsaremLhatseg((prevItems) => [...prevItems, 'B8']);
-                                                                                                scrollToElement(MotsaremRefs.current[GetIndexMotsar('B8')].current);
-                                                                                                handleInputChange(false, GetIndexMotsar('B8'), rohf, 'kmot');
-                                                                                            }
-                                                                                            else {
-                                                                                                setMotsaremLhatseg((prevItems) => prevItems.filter(item => item !== 'B8'));
+                                                                                                if (helkBetBnmet) {
+                                                                                                    updateMotsaremBrofelem(3,
+                                                                                                        {
+                                                                                                            kmot: ((parseInt(val) - parseInt(motsaremBrofelem[2].kmot))),
+                                                                                                            kmotYdnet: 0,
+                                                                                                            mher: parseFloat((((parseInt(val) - parseInt(motsaremBrofelem[2].kmot))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[2].shem), motsaremBrofelem[2].shem).alot).toFixed(1)),
+                                                                                                            shem: motsaremBrofelem[3].shem,
+                                                                                                            remez: GetShemMotsarCategoryBret(motsaremBrofelem[3].shem),
+                                                                                                            message: '',
+                                                                                                            sogShem: 'שלדה פנימית חלק ב'
+                                                                                                        });
+                                                                                                }
 
-                                                                                            }
-                                                                                        }} className="flex"><div className="flex mr-5"><Radio value="רגיל">רגיל</Radio><Radio value="רמפה">רמפה</Radio></div></RadioGroup></th>
-                                                                                        <th></th>
-                                                                                    </tr>
-                                                                                    {
-                                                                                        aemRmbaAoRgel === "רמפה" &&
-                                                                                        <>
-                                                                                            <tr className="row-spacing">
-                                                                                                <th>מסגרת רמפה</th>
-                                                                                                <th><Input type="number" value={aorkhRmbaMsgertRmba || ''} onValueChange={(val) => setAorkhRmbaMsgertRmba(parseFloat(val))} color="primary" size="sm" className="w-[100px]" label="אורך רמפה" /></th>
-                                                                                                <th></th>
-                                                                                                <th><Dropdown dir="rtl">
-                                                                                                    <DropdownTrigger>
-                                                                                                        <Button size="xs" className='m-2'>
-                                                                                                            {motsaremBrofelem[7]?.shem}
-                                                                                                        </Button>
-                                                                                                    </DropdownTrigger>
-                                                                                                    <DropdownMenu
-                                                                                                        aria-label="Multiple selection example"
-                                                                                                        variant="flat"
-                                                                                                        closeOnSelect={true}
-                                                                                                        disallowEmptySelection
-                                                                                                        selectionMode="single"
-                                                                                                        selectedKeys={motsaremBrofelem[7]?.shem}
-                                                                                                        onSelectionChange={(val) => {
+                                                                                            }} color="primary" size="sm" className="w-[100px]" label="מס פרופילים" /></th>
+                                                                                        </tr>
+                                                                                        <tr className="row-spacing">
+                                                                                            <th>חלק א</th>
+                                                                                            <th><Dropdown dir="rtl">
+                                                                                                <DropdownTrigger>
+                                                                                                    <Button isDisabled={!tvahBrofel || !msbarBrofelem} size="xs" className='m-2'>
+                                                                                                        {motsaremBrofelem[2]?.shem}
+                                                                                                    </Button>
+                                                                                                </DropdownTrigger>
+                                                                                                <DropdownMenu
+                                                                                                    aria-label="Multiple selection example"
+                                                                                                    variant="flat"
+                                                                                                    closeOnSelect={true}
+                                                                                                    disallowEmptySelection
+                                                                                                    selectionMode="single"
+                                                                                                    selectedKeys={motsaremBrofelem[2]?.shem}
+                                                                                                    onSelectionChange={(val) => {
+                                                                                                        updateMotsaremBrofelem(2,
+                                                                                                            {
+                                                                                                                kmot: helkBetBnmet ? msbarBrofelemBretA : (msbarBrofelem || 0),
+                                                                                                                kmotYdnet: 0,
+                                                                                                                mher: parseFloat(((helkBetBnmet ? msbarBrofelemBretA : (msbarBrofelem || 0)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                shem: val.currentKey,
+                                                                                                                remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                message: '',
+                                                                                                                sogShem: 'שלדה פנימית חלק א'
+                                                                                                            });
+                                                                                                    }
+                                                                                                    }
+                                                                                                >
+                                                                                                    {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
+                                                                                                        <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                    ))}
+                                                                                                    {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
+                                                                                                        <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                    ))}
+                                                                                                    {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
+                                                                                                        <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                    ))}
+                                                                                                </DropdownMenu>
+                                                                                            </Dropdown></th>
+                                                                                            <th><Input type="number" isReadOnly={helkBetBnmet ? false : true} value={((helkBetBnmet ? (msbarBrofelemBretA || motsaremBrofelem[2].kmot) : (msbarBrofelem || 0)) || '')} onValueChange={(val) => {
+                                                                                                setMsbarBrofelmBretA(Math.min(val, msbarBrofelem));
+                                                                                                updateMotsaremBrofelem(2,
+                                                                                                    {
+                                                                                                        kmot: parseFloat(val),
+                                                                                                        kmotYdnet: 0,
+                                                                                                        mher: parseFloat((parseFloat(val) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[2].shem), motsaremBrofelem[2].shem).alot).toFixed(1)),
+                                                                                                        shem: motsaremBrofelem[2].shem,
+                                                                                                        message: '',
+                                                                                                        remez: GetShemMotsarCategoryBret(motsaremBrofelem[2].shem),
+                                                                                                        sogShem: 'שלדה פנימית חלק א'
+                                                                                                    });
+                                                                                                if (helkBetBnmet && motsaremBrofelem[3].shem !== 'בחר פריט') {
+                                                                                                    updateMotsaremBrofelem(3,
+                                                                                                        {
+                                                                                                            kmot: msbarBrofelem - val,
+                                                                                                            kmotYdnet: 0,
+                                                                                                            mher: parseFloat(((msbarBrofelem - val) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[3].shem), motsaremBrofelem[3].shem).alot).toFixed(1)),
+                                                                                                            shem: motsaremBrofelem[3].shem,
+                                                                                                            message: '',
+                                                                                                            remez: GetShemMotsarCategoryBret(motsaremBrofelem[3].shem),
+                                                                                                            sogShem: 'שלדה פנימית חלק ב'
+                                                                                                        });
+                                                                                                }
 
-                                                                                                            updateMotsaremBrofelem(7,
-                                                                                                                {
-                                                                                                                    kmot: (aorkhRmbaMsgertRmba * 2 + rohf * 2),
-                                                                                                                    kmotYdnet: 0,
-                                                                                                                    mher: parseFloat((((aorkhRmbaMsgertRmba * 2 + rohf * 2)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                                    shem: val.currentKey,
-                                                                                                                    remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                                    message: '',
-                                                                                                                    sogShem: 'מסגרת רמפה'
-                                                                                                                });
-                                                                                                        }
-                                                                                                        }
-                                                                                                    >
-                                                                                                        {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                        {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                        {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                    </DropdownMenu>
-                                                                                                </Dropdown></th>
-                                                                                            </tr>
-                                                                                            <tr className="row-spacing">
-                                                                                                <th>חלוקת רמפה</th>
-                                                                                                <th><Input type="number" value={tvahHlokatRmba || ''} onValueChange={(val) => { setTvahHlokatRmba(val); setMsbarBrofelemHlokatRmba(parseInt(Math.floor((aorkhRmbaMsgertRmba / (val / 100)) - 1))); }} color="primary" size="sm" className="w-[100px]" label="טווח" /></th>
-                                                                                                <th><Input type="number" value={msbarBrofelemHlokatRmba || ''} onValueChange={(val) => { setMsbarBrofelemHlokatRmba(val); setTvahHlokatRmba(formatNumber(((aorkhRmbaMsgertRmba / (parseFloat(val) + 1)) * 100))); }} color="primary" size="sm" className="w-[100px]" label="מס פרופילים" /></th>
-                                                                                                <th><Dropdown dir="rtl">
-                                                                                                    <DropdownTrigger>
-                                                                                                        <Button size="xs" className='m-2'>
-                                                                                                            {motsaremBrofelem[8]?.shem}
-                                                                                                        </Button>
-                                                                                                    </DropdownTrigger>
-                                                                                                    <DropdownMenu
-                                                                                                        aria-label="Multiple selection example"
-                                                                                                        variant="flat"
-                                                                                                        closeOnSelect={true}
-                                                                                                        disallowEmptySelection
-                                                                                                        selectionMode="single"
-                                                                                                        selectedKeys={motsaremBrofelem[8]?.shem}
-                                                                                                        onSelectionChange={(val) => {
-                                                                                                            updateMotsaremBrofelem(8,
-                                                                                                                {
-                                                                                                                    kmot: parseFloat(msbarBrofelemHlokatRmba * rohf),
-                                                                                                                    kmotYdnet: 0,
-                                                                                                                    mher: parseFloat(((msbarBrofelemHlokatRmba * rohf) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                                    shem: val.currentKey,
-                                                                                                                    remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                                    message: '',
-                                                                                                                    sogShem: 'חלוקת רמפה'
-                                                                                                                });
-                                                                                                        }
-                                                                                                        }
-                                                                                                    >
-                                                                                                        {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                        {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                        {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                    </DropdownMenu>
-                                                                                                </Dropdown></th>
-                                                                                            </tr>
-                                                                                            <tr className="row-spacing">
-                                                                                                <th>תוספת וניל</th>
-                                                                                                <th><div className="flex justify-start">
-                                                                                                    <Switch isSelected={tosftVnel} value={tosftVnel} defaultSelected={agla?.mafenem?.tosftVnel} onValueChange={(val) => {
-                                                                                                        // if (val) {
-                                                                                                        //     handleInputChange(false, GetIndexMotsar('B1'), (mafenemMotsarem[GetIndexMotsar('B1')].kmot + (aorkhRmbaMsgertRmba * rohf)), 'kmot');
-                                                                                                        //     scrollToElement(MotsaremRefs.current[GetIndexMotsar('B1')].current);
-                                                                                                        // }
-                                                                                                        // else {
-                                                                                                        //     handleInputChange(false, GetIndexMotsar('B1'), (mafenemMotsarem[GetIndexMotsar('B1')].kmot - (aorkhRmbaMsgertRmba * rohf)), 'kmot');
-                                                                                                        // }
-                                                                                                        setTosftVnel(val);
-                                                                                                    }}></Switch></div></th>
-                                                                                                <th></th>
-                                                                                                <th>{tosftVnel &&
-                                                                                                    <Dropdown dir="rtl">
-                                                                                                        <DropdownTrigger>
-                                                                                                            <Button size="xs" className='m-2'>
-                                                                                                                {motsaremBrofelem[12]?.shem}
-                                                                                                            </Button>
-                                                                                                        </DropdownTrigger>
-                                                                                                        <DropdownMenu
-                                                                                                            aria-label="Multiple selection example"
-                                                                                                            variant="flat"
-                                                                                                            closeOnSelect={true}
-                                                                                                            disallowEmptySelection
-                                                                                                            selectionMode="single"
-                                                                                                            selectedKeys={motsaremBrofelem[12]?.shem}
-                                                                                                            onSelectionChange={(val) => {
-                                                                                                                updateMotsaremBrofelem(12,
-                                                                                                                    {
-                                                                                                                        kmot: parseFloat(aorkhRmbaMsgertRmba * rohf),
-                                                                                                                        kmotYdnet: 0,
-                                                                                                                        mher: parseFloat(((aorkhRmbaMsgertRmba * rohf) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                                        shem: val.currentKey,
-                                                                                                                        remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                                        message: '',
-                                                                                                                        sogShem: 'חלוקת רמפה'
-                                                                                                                    });
-                                                                                                            }
-                                                                                                            }
-                                                                                                        >
-                                                                                                            {GetBrtemMotsarMlae('B1').arrayResualt.map((option) => (
-                                                                                                                <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                            ))}
-                                                                                                        </DropdownMenu>
-                                                                                                    </Dropdown>}</th>
-                                                                                            </tr>
-                                                                                        </>
-                                                                                    }
-                                                                                    <tr>
-                                                                                        <th colSpan={4}><Divider /></th>
-                                                                                    </tr>
-                                                                                    <tr className="row-spacing">
-                                                                                        <th>
-                                                                                            <div className="group relative z-30">
-                                                                                                <Image width={70} alt="none" src={rep13} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                            </div>
-                                                                                        </th>
-                                                                                        <th>סולם <RadioGroup value={solam} onValueChange={(val) => {
-                                                                                            setSolam(val);
-                                                                                            updateMotsaremBrofelem(9,
-                                                                                                {
-                                                                                                    kmot: 0,
-                                                                                                    kmotYdnet: 0,
-                                                                                                    mher: 0,
-                                                                                                    shem: 'בחר פריט',
-                                                                                                    remez: '',
-                                                                                                    message: '',
-                                                                                                    sogShem: ''
-                                                                                                });
-                                                                                            updateMotsaremBrofelem(10,
-                                                                                                {
-                                                                                                    kmot: 0,
-                                                                                                    kmotYdnet: 0,
-                                                                                                    mher: 0,
-                                                                                                    shem: 'בחר פריט',
-                                                                                                    remez: '',
-                                                                                                    message: '',
-                                                                                                    sogShem: ''
-                                                                                                });
-                                                                                            setGobahSolam(0);
-                                                                                            setMsbarBrofelemAofkeSolam(0);
-                                                                                            setMsbarBrofelemAnkhe(0);
-                                                                                            setAemDelet(false);
-                                                                                            setTosefetReshet(false);
-                                                                                            setTvahAnkheSolam(0);
-                                                                                            setTvahAofkeSolam(0);
-                                                                                        }} className="flex"><div className="flex mr-5 w-[150px]"><Radio value="רק קדמי">רק קדמי</Radio><Radio value="הכל">הכל</Radio></div></RadioGroup></th>
+
+                                                                                            }} color="primary" size="sm" className="w-[100px]" label="מס פרופילים" /></th>
+                                                                                            <th><Switch isSelected={helkBetBnmet} defaultSelected={agla?.mafenem?.aemHelkBet} value={helkBetBnmet} onValueChange={(val) => {
+                                                                                                setHelkBetBnmet(val);
+                                                                                                if (!val) {
+                                                                                                    updateMotsaremBrofelem(3,
+                                                                                                        {
+                                                                                                            kmot: 0,
+                                                                                                            kmotYdnet: 0,
+                                                                                                            mher: 0,
+                                                                                                            shem: 'בחר פריט',
+                                                                                                            remez: '',
+                                                                                                            message: '',
+                                                                                                            sogShem: ''
+                                                                                                        });
+                                                                                                    updateMotsaremBrofelem(2,
+                                                                                                        {
+                                                                                                            kmot: msbarBrofelem,
+                                                                                                            kmotYdnet: 0,
+                                                                                                            mher: parseFloat((msbarBrofelem * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(motsaremBrofelem[2].shem), motsaremBrofelem[2].shem).alot).toFixed(1)),
+                                                                                                            shem: motsaremBrofelem[2].shem,
+                                                                                                            remez: GetShemMotsarCategoryBret(motsaremBrofelem[2].shem),
+                                                                                                            message: '',
+                                                                                                            sogShem: 'שלדה פנימית חלק א'
+                                                                                                        });
+                                                                                                }
+                                                                                            }}><div className="mr-2"><FaPlus /></div></Switch></th>
+                                                                                        </tr>
                                                                                         {
-                                                                                            solam === 'הכל' &&
-                                                                                            <>
-                                                                                                <th><Switch isSelected={aemDelet} isReadOnly={aemRmbaAoRgel === 'רמפה'} value={aemDelet} onValueChange={(val) => {
-                                                                                                    setAemDelet(val);
-                                                                                                }}><div className="mr-3">עם דלת עליון</div></Switch></th>
-                                                                                                <th><Switch isSelected={tosefetReshet} value={tosefetReshet} onValueChange={(val) => {
-                                                                                                    setTosefetReshet(val);
-                                                                                                    if (val) {
-                                                                                                        handleInputChange(false, GetIndexMotsar('B3'), parseFloat(gobahSolam) * ((2 * parseFloat(aorkh)) + parseFloat(rohf)), 'kmot');
-                                                                                                    }
-                                                                                                    else {
-                                                                                                        handleInputChange(false, GetIndexMotsar('B3'), mafenemMotsarem[GetIndexMotsar('B3')]?.kmot - (gobahSolam * ((2 * aorkh) + rohf)), 'kmot');
-                                                                                                    }
-                                                                                                }}><div className="mr-3">תוספת רשת</div></Switch></th>
-                                                                                            </>
-                                                                                        }
-                                                                                    </tr>
-                                                                                    <tr className="row-spacing">
-                                                                                        <th></th>
-                                                                                        <th>מסגרת סולם</th>
-                                                                                        <th><Input type="number" value={gobahSolam || ''} onValueChange={(val) => setGobahSolam(parseFloat(val))} color="primary" size="sm" className="w-[100px]" label="גובה סולם" /></th>
-                                                                                        <th><Dropdown dir="rtl">
-                                                                                            <DropdownTrigger>
-                                                                                                <Button size="xs" className='m-2'>
-                                                                                                    {motsaremBrofelem[9]?.shem}
-                                                                                                </Button>
-                                                                                            </DropdownTrigger>
-                                                                                            <DropdownMenu
-                                                                                                aria-label="Multiple selection example"
-                                                                                                variant="flat"
-                                                                                                closeOnSelect={true}
-                                                                                                disallowEmptySelection
-                                                                                                selectionMode="single"
-                                                                                                selectedKeys={motsaremBrofelem[9]?.shem}
-                                                                                                onSelectionChange={(val) => {
-                                                                                                    if (solam === 'רק קדמי') {
-                                                                                                        updateMotsaremBrofelem(9,
-                                                                                                            {
-                                                                                                                kmot: parseFloat((gobahSolam * 2) + (rohf * 2)),
-                                                                                                                kmotYdnet: 0,
-                                                                                                                mher: parseFloat(((((gobahSolam * 2) + (rohf * 2))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                                shem: val.currentKey,
-                                                                                                                remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                                message: '',
-                                                                                                                sogShem: 'מסגרת סולם'
-                                                                                                            });
-                                                                                                    } else if (solam === 'הכל' && !aemDelet) {
-                                                                                                        updateMotsaremBrofelem(9,
-                                                                                                            {
-                                                                                                                kmot: parseFloat(((gobahSolam * 4) + (rohf * 2)) + (aorkh * 4)),
-                                                                                                                kmotYdnet: 0,
-                                                                                                                mher: parseFloat((((((gobahSolam * 4) + (rohf * 2)) + (aorkh * 4))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                                shem: val.currentKey,
-                                                                                                                remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                                message: '',
-                                                                                                                sogShem: 'מסגרת סולם'
-                                                                                                            });
-                                                                                                    }
-                                                                                                    else if (solam === 'הכל' && aemDelet) {
-                                                                                                        updateMotsaremBrofelem(9,
-                                                                                                            {
-                                                                                                                kmot: parseFloat(((((gobahSolam * 6) - 0.8) + (rohf * 4)) + (aorkh * 4)).toFixed(1)),
-                                                                                                                kmotYdnet: 0,
-                                                                                                                mher: parseFloat(((((((gobahSolam * 6) - 0.8) + (rohf * 4)) + (aorkh * 4))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                                shem: val.currentKey,
-                                                                                                                remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                                message: '',
-                                                                                                                sogShem: 'מסגרת סולם'
-                                                                                                            });
-                                                                                                    }
-
-
-                                                                                                }
-                                                                                                }
-                                                                                            >
-                                                                                                {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                                {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                                {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                            </DropdownMenu>
-                                                                                        </Dropdown></th>
-                                                                                    </tr>
-                                                                                    <tr className="row-spacing">
-                                                                                        <th>חלוקת סולם</th>
-                                                                                        <th><Input type="number" value={tvahAofkeSolam || ''} color="primary" onValueChange={(val) => {
-                                                                                            setTvahAofkeSolam(val);
-                                                                                            const reverseCalculatedValue = parseInt(Math.floor(((parseFloat(gobahSolam) - 0.4) / parseFloat(val)) - 1));
-                                                                                            setMsbarBrofelemAofkeSolam(reverseCalculatedValue);
-                                                                                        }} size="sm" className="w-[100px]" label="טווח אופקי" /></th>
-                                                                                        <th><Input type="number" value={msbarBrofelemAofkeSolam || ''} color="primary" onValueChange={(val) => {
-                                                                                            setMsbarBrofelemAofkeSolam(val);
-                                                                                            const calculatedValue = parseFloat(((parseFloat(gobahSolam) - 0.4) / (parseFloat(val) + 1)).toFixed(2));
-                                                                                            setTvahAofkeSolam(calculatedValue);
-                                                                                        }
-                                                                                        } size="sm" className="w-[100px]" label="מס פרופילים" /></th>
-                                                                                        <th><Dropdown dir="rtl">
-                                                                                            <DropdownTrigger>
-                                                                                                <Button size="xs" className='m-2'>
-                                                                                                    {motsaremBrofelem[10]?.shem}
-                                                                                                </Button>
-                                                                                            </DropdownTrigger>
-                                                                                            <DropdownMenu
-                                                                                                aria-label="Multiple selection example"
-                                                                                                variant="flat"
-                                                                                                closeOnSelect={true}
-                                                                                                disallowEmptySelection
-                                                                                                selectionMode="single"
-                                                                                                selectedKeys={motsaremBrofelem[10]?.shem}
-                                                                                                onSelectionChange={(val) => {
-                                                                                                    if (solam === 'רק קדמי') {
-                                                                                                        updateMotsaremBrofelem(10,
-                                                                                                            {
-                                                                                                                kmot: parseFloat((msbarBrofelemAofkeSolam * rohf) + (msbarBrofelemAnkhe * (gobahSolam - 0.4)).toFixed(1)),
-                                                                                                                kmotYdnet: 0,
-                                                                                                                mher: parseFloat(((((msbarBrofelemAofkeSolam * rohf) + (msbarBrofelemAnkhe * (gobahSolam - 0.4)))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                                shem: val.currentKey,
-                                                                                                                remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                                message: '',
-                                                                                                                sogShem: 'חלוקת סולם'
-                                                                                                            });
-                                                                                                    }
-                                                                                                    else if (solam === 'הכל') {
-                                                                                                        updateMotsaremBrofelem(10,
-                                                                                                            {
-                                                                                                                kmot: parseFloat((msbarBrofelemAofkeSolam * (parseFloat(rohf * (aemDelet ? 2 : 0)) + (aorkh * 2))) + (msbarBrofelemAnkhe * (gobahSolam - 0.4)).toFixed(1)),
-                                                                                                                kmotYdnet: 0,
-                                                                                                                mher: parseFloat(((((msbarBrofelemAofkeSolam * (parseFloat(rohf * (aemDelet ? 2 : 0)) + (aorkh * 2))) + (msbarBrofelemAnkhe * (gobahSolam - 0.4)))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                                shem: val.currentKey,
-                                                                                                                remez: GetShemMotsarCategoryBret(val.currentKey),
-                                                                                                                message: '',
-                                                                                                                sogShem: 'חלוקת סולם'
-                                                                                                            });
-                                                                                                    }
-
-                                                                                                }
-                                                                                                }
-                                                                                            >
-                                                                                                {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                                {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                                {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
-                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                ))}
-                                                                                            </DropdownMenu>
-                                                                                        </Dropdown></th>
-                                                                                    </tr>
-                                                                                    <tr className="row-spacing">
-                                                                                        <th></th>
-                                                                                        <th><Input type="number" value={tvahAnkheSolam || ''} color="primary" onValueChange={(val) => {
-                                                                                            setTvahAnkheSolam(val);
-                                                                                            if (solam === 'רק קדמי') {
-                                                                                                setMsbarBrofelemAnkhe(parseInt(Math.floor(((parseFloat(rohf)) / (parseFloat(val) / 100)) - 3)));
-                                                                                            }
-                                                                                            else if (solam === 'הכל' && aemDelet) {
-                                                                                                setMsbarBrofelemAnkhe(parseInt((Math.floor((parseFloat(rohf) / (parseFloat(val) / 100)) - 1) * 2) + (Math.floor((((parseFloat(aorkh) / (parseFloat(val) / 100)) - 1))) * 2)));
-                                                                                            }
-                                                                                            else {
-                                                                                                setMsbarBrofelemAnkhe(parseInt(Math.floor((parseFloat(rohf) / (parseFloat(val) / 100)) - 1) + (Math.floor((((parseFloat(aorkh) / (parseFloat(val) / 100)) - 1))) * 2)));
-                                                                                            }
-                                                                                        }} size="sm" className="w-[100px]" label="טווח אנכי" /></th>
-                                                                                        <th><Input type="number" value={msbarBrofelemAnkhe || ''} color="primary" onValueChange={(val) => { setMsbarBrofelemAnkhe(val); setTvahAnkheSolam(0); }} size="sm" className="w-[100px]" label="מס פרופילים" /></th>
-                                                                                        <th></th>
-                                                                                    </tr>
-                                                                                        </>
-                                                                                        :
-                                                                                        <>
-                                                                                                                                                                                    <tr className="row-spacing">
-                                                                                                <th>
-                                                                                                    <div className="group relative z-30">
-                                                                                                        <Image width={70} alt="none" src={rep81} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                                    </div>
-                                                                                                </th>
-                                                                                                <th>וניל</th>
-                                                                                            </tr>
+                                                                                            helkBetBnmet &&
                                                                                             <tr className="row-spacing">
-                                                                                                <th>סוג וניל</th>
-                                                                                                <th></th>
-                                                                                                <th></th>
+                                                                                                <th>חלק ב</th>
                                                                                                 <th><Dropdown dir="rtl">
                                                                                                     <DropdownTrigger>
-                                                                                                        <Button size="xs" className='m-2'>
-                                                                                                            {motsaremBrofelem[10]?.shem}
+                                                                                                        <Button isDisabled={motsaremBrofelem[2].shem === 'בחר פריט'} size="xs" className='m-2'>
+                                                                                                            {motsaremBrofelem[3]?.shem}
                                                                                                         </Button>
                                                                                                     </DropdownTrigger>
                                                                                                     <DropdownMenu
@@ -3346,183 +2912,744 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                                                                                         closeOnSelect={true}
                                                                                                         disallowEmptySelection
                                                                                                         selectionMode="single"
-                                                                                                        selectedKeys={motsaremBrofelem[10]?.shem}
+                                                                                                        selectedKeys={motsaremBrofelem[3]?.shem}
                                                                                                         onSelectionChange={(val) => {
-                                                                                                            updateMotsaremBrofelem(10,
+                                                                                                            updateMotsaremBrofelem(3,
                                                                                                                 {
-                                                                                                                    kmot: parseFloat((gobahSolam * ((3 * aorkh) + (2 * rohf)) * 2)),
+                                                                                                                    kmot: msbarBrofelemBretA ? msbarBrofelem - msbarBrofelemBretA : 0,
                                                                                                                     kmotYdnet: 0,
-                                                                                                                    mher: parseFloat((((gobahSolam * ((3 * aorkh) + (2 * rohf)) * 2)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                    mher: parseFloat(((msbarBrofelemBretA ? msbarBrofelem - msbarBrofelemBretA : 0) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
                                                                                                                     shem: val.currentKey,
                                                                                                                     remez: GetShemMotsarCategoryBret(val.currentKey),
                                                                                                                     message: '',
-                                                                                                                    sogShem: 'מסגרת סולם'
+                                                                                                                    sogShem: 'שלדה פנימית חלק ב'
                                                                                                                 });
-
-
                                                                                                         }
                                                                                                         }
                                                                                                     >
-                                                                                                        {GetBrtemMotsarMlae('B1').arrayResualt.map((option) => (
+                                                                                                        {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
+                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                        ))}
+                                                                                                        {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
+                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                        ))}
+                                                                                                        {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
                                                                                                             <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
                                                                                                         ))}
                                                                                                     </DropdownMenu>
                                                                                                 </Dropdown></th>
-                                                                                            </tr>
-                                                                                            <tr className="row-spacing">
-                                                                                                <th>מסגרת וניל</th>
-                                                                                                <th><Input type="number" value={gobahSolam || ''} onValueChange={(val) => setGobahSolam(parseFloat(val))} color="primary" size="sm" className="w-[100px]" label="גובה וניל" /></th>
+                                                                                                <th><Input value={((msbarBrofelemBretA ? msbarBrofelem - msbarBrofelemBretA : 0) || '')} isReadOnly color="primary" size="sm" className="w-[100px]" label="מס פרופילים" /></th>
                                                                                                 <th></th>
-                                                                                                <th><Dropdown dir="rtl">
-                                                                                                    <DropdownTrigger>
-                                                                                                        <Button size="xs" className='m-2'>
-                                                                                                            {motsaremBrofelem[9]?.shem}
-                                                                                                        </Button>
-                                                                                                    </DropdownTrigger>
-                                                                                                    <DropdownMenu
-                                                                                                        aria-label="Multiple selection example"
-                                                                                                        variant="flat"
-                                                                                                        closeOnSelect={true}
-                                                                                                        disallowEmptySelection
-                                                                                                        selectionMode="single"
-                                                                                                        selectedKeys={motsaremBrofelem[9]?.shem}
-                                                                                                        onSelectionChange={(val) => {
+                                                                                            </tr>
+                                                                                        }
+                                                                                        <tr>
+                                                                                            <th colSpan={4}><Divider /></th>
+                                                                                        </tr>
+
+                                                                                        {
+                                                                                            sogAgla === 'פתוחה' ?
+                                                                                                <>
+                                                                                                    <tr className="row-spacing">
+                                                                                                        <th>
+                                                                                                            <div className="group relative z-30">
+                                                                                                                <Image width={70} alt="none" src={rep11} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                                            </div>
+                                                                                                        </th>
+                                                                                                        <th>דלת</th>
+                                                                                                        <th><RadioGroup value={aemRmbaAoRgel} onValueChange={(val) => {
+                                                                                                            setAemRmbaAoRgel(val);
+                                                                                                            if (val === 'רגיל') {
+                                                                                                                updateMotsaremBrofelem(7,
+                                                                                                                    {
+                                                                                                                        kmot: 0,
+                                                                                                                        kmotYdnet: 0,
+                                                                                                                        mher: 0,
+                                                                                                                        shem: 'בחר פריט',
+                                                                                                                        remez: '',
+                                                                                                                        message: '',
+                                                                                                                        sogShem: ''
+                                                                                                                    });
+                                                                                                                updateMotsaremBrofelem(8,
+                                                                                                                    {
+                                                                                                                        kmot: 0,
+                                                                                                                        kmotYdnet: 0,
+                                                                                                                        mher: 0,
+                                                                                                                        shem: 'בחר פריט',
+                                                                                                                        remez: '',
+                                                                                                                        message: '',
+                                                                                                                        sogShem: ''
+                                                                                                                    });
+                                                                                                                setTvahHlokatRmba(0);
+                                                                                                                setMsbarBrofelemHlokatRmba(0);
+                                                                                                                setAorkhRmbaMsgertRmba(0);
+                                                                                                                setTosftVnel(false);
+                                                                                                                //handleInputChange(true, GetIndexMotsar('B1'), (mafenemMotsarem[GetIndexMotsar('B1')].kmot - (aorkhRmbaMsgertRmba * rohf)), 'kmot');
+                                                                                                                setMotsaremLhatseg((prevItems) => [...prevItems, 'B8']);
+                                                                                                                scrollToElement(MotsaremRefs.current[GetIndexMotsar('B8')].current);
+                                                                                                                handleInputChange(false, GetIndexMotsar('B8'), rohf, 'kmot');
+                                                                                                            }
+                                                                                                            else {
+                                                                                                                setMotsaremLhatseg((prevItems) => prevItems.filter(item => item !== 'B8'));
+
+                                                                                                            }
+                                                                                                        }} className="flex"><div className="flex mr-5"><Radio value="רגיל">רגיל</Radio><Radio value="רמפה">רמפה</Radio></div></RadioGroup></th>
+                                                                                                        <th></th>
+                                                                                                    </tr>
+                                                                                                    {
+                                                                                                        aemRmbaAoRgel === "רמפה" &&
+                                                                                                        <>
+                                                                                                            <tr className="row-spacing">
+                                                                                                                <th>מסגרת רמפה</th>
+                                                                                                                <th><Input type="number" value={aorkhRmbaMsgertRmba || ''} onValueChange={(val) => setAorkhRmbaMsgertRmba(parseFloat(val))} color="primary" size="sm" className="w-[100px]" label="אורך רמפה" /></th>
+                                                                                                                <th></th>
+                                                                                                                <th><Dropdown dir="rtl">
+                                                                                                                    <DropdownTrigger>
+                                                                                                                        <Button size="xs" className='m-2'>
+                                                                                                                            {motsaremBrofelem[7]?.shem}
+                                                                                                                        </Button>
+                                                                                                                    </DropdownTrigger>
+                                                                                                                    <DropdownMenu
+                                                                                                                        aria-label="Multiple selection example"
+                                                                                                                        variant="flat"
+                                                                                                                        closeOnSelect={true}
+                                                                                                                        disallowEmptySelection
+                                                                                                                        selectionMode="single"
+                                                                                                                        selectedKeys={motsaremBrofelem[7]?.shem}
+                                                                                                                        onSelectionChange={(val) => {
+
+                                                                                                                            updateMotsaremBrofelem(7,
+                                                                                                                                {
+                                                                                                                                    kmot: (aorkhRmbaMsgertRmba * 2 + rohf * 2),
+                                                                                                                                    kmotYdnet: 0,
+                                                                                                                                    mher: parseFloat((((aorkhRmbaMsgertRmba * 2 + rohf * 2)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                                    shem: val.currentKey,
+                                                                                                                                    remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                                    message: '',
+                                                                                                                                    sogShem: 'מסגרת רמפה'
+                                                                                                                                });
+                                                                                                                        }
+                                                                                                                        }
+                                                                                                                    >
+                                                                                                                        {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
+                                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                        ))}
+                                                                                                                        {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
+                                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                        ))}
+                                                                                                                        {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
+                                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                        ))}
+                                                                                                                    </DropdownMenu>
+                                                                                                                </Dropdown></th>
+                                                                                                            </tr>
+                                                                                                            <tr className="row-spacing">
+                                                                                                                <th>חלוקת רמפה</th>
+                                                                                                                <th><Input type="number" value={tvahHlokatRmba || ''} onValueChange={(val) => { setTvahHlokatRmba(val); setMsbarBrofelemHlokatRmba(parseInt(Math.floor((aorkhRmbaMsgertRmba / (val / 100)) - 1))); }} color="primary" size="sm" className="w-[100px]" label="טווח" /></th>
+                                                                                                                <th><Input type="number" value={msbarBrofelemHlokatRmba || ''} onValueChange={(val) => { setMsbarBrofelemHlokatRmba(val); setTvahHlokatRmba(formatNumber(((aorkhRmbaMsgertRmba / (parseFloat(val) + 1)) * 100))); }} color="primary" size="sm" className="w-[100px]" label="מס פרופילים" /></th>
+                                                                                                                <th><Dropdown dir="rtl">
+                                                                                                                    <DropdownTrigger>
+                                                                                                                        <Button size="xs" className='m-2'>
+                                                                                                                            {motsaremBrofelem[8]?.shem}
+                                                                                                                        </Button>
+                                                                                                                    </DropdownTrigger>
+                                                                                                                    <DropdownMenu
+                                                                                                                        aria-label="Multiple selection example"
+                                                                                                                        variant="flat"
+                                                                                                                        closeOnSelect={true}
+                                                                                                                        disallowEmptySelection
+                                                                                                                        selectionMode="single"
+                                                                                                                        selectedKeys={motsaremBrofelem[8]?.shem}
+                                                                                                                        onSelectionChange={(val) => {
+                                                                                                                            updateMotsaremBrofelem(8,
+                                                                                                                                {
+                                                                                                                                    kmot: parseFloat(msbarBrofelemHlokatRmba * rohf),
+                                                                                                                                    kmotYdnet: 0,
+                                                                                                                                    mher: parseFloat(((msbarBrofelemHlokatRmba * rohf) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                                    shem: val.currentKey,
+                                                                                                                                    remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                                    message: '',
+                                                                                                                                    sogShem: 'חלוקת רמפה'
+                                                                                                                                });
+                                                                                                                        }
+                                                                                                                        }
+                                                                                                                    >
+                                                                                                                        {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
+                                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                        ))}
+                                                                                                                        {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
+                                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                        ))}
+                                                                                                                        {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
+                                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                        ))}
+                                                                                                                    </DropdownMenu>
+                                                                                                                </Dropdown></th>
+                                                                                                            </tr>
+                                                                                                            <tr className="row-spacing">
+                                                                                                                <th>תוספת וניל</th>
+                                                                                                                <th><div className="flex justify-start">
+                                                                                                                    <Switch isSelected={tosftVnel} value={tosftVnel} defaultSelected={agla?.mafenem?.tosftVnel} onValueChange={(val) => {
+                                                                                                                        // if (val) {
+                                                                                                                        //     handleInputChange(false, GetIndexMotsar('B1'), (mafenemMotsarem[GetIndexMotsar('B1')].kmot + (aorkhRmbaMsgertRmba * rohf)), 'kmot');
+                                                                                                                        //     scrollToElement(MotsaremRefs.current[GetIndexMotsar('B1')].current);
+                                                                                                                        // }
+                                                                                                                        // else {
+                                                                                                                        //     handleInputChange(false, GetIndexMotsar('B1'), (mafenemMotsarem[GetIndexMotsar('B1')].kmot - (aorkhRmbaMsgertRmba * rohf)), 'kmot');
+                                                                                                                        // }
+                                                                                                                        setTosftVnel(val);
+                                                                                                                    }}></Switch></div></th>
+                                                                                                                <th></th>
+                                                                                                                <th>{tosftVnel &&
+                                                                                                                    <Dropdown dir="rtl">
+                                                                                                                        <DropdownTrigger>
+                                                                                                                            <Button size="xs" className='m-2'>
+                                                                                                                                {motsaremBrofelem[12]?.shem}
+                                                                                                                            </Button>
+                                                                                                                        </DropdownTrigger>
+                                                                                                                        <DropdownMenu
+                                                                                                                            aria-label="Multiple selection example"
+                                                                                                                            variant="flat"
+                                                                                                                            closeOnSelect={true}
+                                                                                                                            disallowEmptySelection
+                                                                                                                            selectionMode="single"
+                                                                                                                            selectedKeys={motsaremBrofelem[12]?.shem}
+                                                                                                                            onSelectionChange={(val) => {
+                                                                                                                                updateMotsaremBrofelem(12,
+                                                                                                                                    {
+                                                                                                                                        kmot: parseFloat(aorkhRmbaMsgertRmba * rohf),
+                                                                                                                                        kmotYdnet: 0,
+                                                                                                                                        mher: parseFloat(((aorkhRmbaMsgertRmba * rohf) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                                        shem: val.currentKey,
+                                                                                                                                        remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                                        message: '',
+                                                                                                                                        sogShem: 'חלוקת רמפה'
+                                                                                                                                    });
+                                                                                                                            }
+                                                                                                                            }
+                                                                                                                        >
+                                                                                                                            {GetBrtemMotsarMlae('B1').arrayResualt.map((option) => (
+                                                                                                                                <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                            ))}
+                                                                                                                        </DropdownMenu>
+                                                                                                                    </Dropdown>}</th>
+                                                                                                            </tr>
+                                                                                                        </>
+                                                                                                    }
+                                                                                                    <tr>
+                                                                                                        <th colSpan={4}><Divider /></th>
+                                                                                                    </tr>
+                                                                                                    <tr className="row-spacing">
+                                                                                                        <th>
+                                                                                                            <div className="group relative z-30">
+                                                                                                                <Image width={70} alt="none" src={rep13} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                                            </div>
+                                                                                                        </th>
+                                                                                                        <th>סולם <RadioGroup value={solam} onValueChange={(val) => {
+                                                                                                            setSolam(val);
                                                                                                             updateMotsaremBrofelem(9,
                                                                                                                 {
-                                                                                                                    kmot: parseFloat((((2 * aorkh) + (4 * rohf) + (6 * gobahSolam)) + (msbarBrofelemAofkeSolam * 2 * (parseFloat(aorkh) + parseFloat(rohf))) + (msbarBrofelemAnkhe * gobahSolam)).toFixed(1)),
+                                                                                                                    kmot: 0,
                                                                                                                     kmotYdnet: 0,
-                                                                                                                    mher: parseFloat(((((2 * aorkh) + (4 * rohf) + (6 * gobahSolam)) + (msbarBrofelemAofkeSolam * 2 * (parseFloat(aorkh) + parseFloat(rohf))) + (msbarBrofelemAnkhe * gobahSolam)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
-                                                                                                                    shem: val.currentKey,
-                                                                                                                    remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                    mher: 0,
+                                                                                                                    shem: 'בחר פריט',
+                                                                                                                    remez: '',
                                                                                                                     message: '',
-                                                                                                                    sogShem: 'מסגרת סולם'
+                                                                                                                    sogShem: ''
                                                                                                                 });
+                                                                                                            updateMotsaremBrofelem(10,
+                                                                                                                {
+                                                                                                                    kmot: 0,
+                                                                                                                    kmotYdnet: 0,
+                                                                                                                    mher: 0,
+                                                                                                                    shem: 'בחר פריט',
+                                                                                                                    remez: '',
+                                                                                                                    message: '',
+                                                                                                                    sogShem: ''
+                                                                                                                });
+                                                                                                            setGobahSolam(0);
+                                                                                                            setMsbarBrofelemAofkeSolam(0);
+                                                                                                            setMsbarBrofelemAnkhe(0);
+                                                                                                            setAemDelet(false);
+                                                                                                            setTosefetReshet(false);
+                                                                                                            setTvahAnkheSolam(0);
+                                                                                                            setTvahAofkeSolam(0);
+                                                                                                        }} className="flex"><div className="flex mr-5 w-[150px]"><Radio value="רק קדמי">רק קדמי</Radio><Radio value="הכל">הכל</Radio></div></RadioGroup></th>
+                                                                                                        {
+                                                                                                            solam === 'הכל' &&
+                                                                                                            <>
+                                                                                                                <th><Switch isSelected={aemDelet} isReadOnly={aemRmbaAoRgel === 'רמפה'} value={aemDelet} onValueChange={(val) => {
+                                                                                                                    setAemDelet(val);
+                                                                                                                }}><div className="mr-3">עם דלת עליון</div></Switch></th>
+                                                                                                                <th><Switch isSelected={tosefetReshet} value={tosefetReshet} onValueChange={(val) => {
+                                                                                                                    setTosefetReshet(val);
+                                                                                                                    if (val) {
+                                                                                                                        handleInputChange(false, GetIndexMotsar('B3'), parseFloat(gobahSolam) * ((2 * parseFloat(aorkh)) + parseFloat(rohf)), 'kmot');
+                                                                                                                    }
+                                                                                                                    else {
+                                                                                                                        handleInputChange(false, GetIndexMotsar('B3'), mafenemMotsarem[GetIndexMotsar('B3')]?.kmot - (gobahSolam * ((2 * aorkh) + rohf)), 'kmot');
+                                                                                                                    }
+                                                                                                                }}><div className="mr-3">תוספת רשת</div></Switch></th>
+                                                                                                            </>
+                                                                                                        }
+                                                                                                    </tr>
+                                                                                                    <tr className="row-spacing">
+                                                                                                        <th></th>
+                                                                                                        <th>מסגרת סולם</th>
+                                                                                                        <th><Input type="number" value={gobahSolam || ''} onValueChange={(val) => setGobahSolam(parseFloat(val))} color="primary" size="sm" className="w-[100px]" label="גובה סולם" /></th>
+                                                                                                        <th><Dropdown dir="rtl">
+                                                                                                            <DropdownTrigger>
+                                                                                                                <Button size="xs" className='m-2'>
+                                                                                                                    {motsaremBrofelem[9]?.shem}
+                                                                                                                </Button>
+                                                                                                            </DropdownTrigger>
+                                                                                                            <DropdownMenu
+                                                                                                                aria-label="Multiple selection example"
+                                                                                                                variant="flat"
+                                                                                                                closeOnSelect={true}
+                                                                                                                disallowEmptySelection
+                                                                                                                selectionMode="single"
+                                                                                                                selectedKeys={motsaremBrofelem[9]?.shem}
+                                                                                                                onSelectionChange={(val) => {
+                                                                                                                    if (solam === 'רק קדמי') {
+                                                                                                                        updateMotsaremBrofelem(9,
+                                                                                                                            {
+                                                                                                                                kmot: parseFloat((gobahSolam * 2) + (rohf * 2)),
+                                                                                                                                kmotYdnet: 0,
+                                                                                                                                mher: parseFloat(((((gobahSolam * 2) + (rohf * 2))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                                shem: val.currentKey,
+                                                                                                                                remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                                message: '',
+                                                                                                                                sogShem: 'מסגרת סולם'
+                                                                                                                            });
+                                                                                                                    } else if (solam === 'הכל' && !aemDelet) {
+                                                                                                                        updateMotsaremBrofelem(9,
+                                                                                                                            {
+                                                                                                                                kmot: parseFloat(((gobahSolam * 4) + (rohf * 2)) + (aorkh * 4)),
+                                                                                                                                kmotYdnet: 0,
+                                                                                                                                mher: parseFloat((((((gobahSolam * 4) + (rohf * 2)) + (aorkh * 4))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                                shem: val.currentKey,
+                                                                                                                                remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                                message: '',
+                                                                                                                                sogShem: 'מסגרת סולם'
+                                                                                                                            });
+                                                                                                                    }
+                                                                                                                    else if (solam === 'הכל' && aemDelet) {
+                                                                                                                        updateMotsaremBrofelem(9,
+                                                                                                                            {
+                                                                                                                                kmot: parseFloat(((((gobahSolam * 6) - 0.8) + (rohf * 4)) + (aorkh * 4)).toFixed(1)),
+                                                                                                                                kmotYdnet: 0,
+                                                                                                                                mher: parseFloat(((((((gobahSolam * 6) - 0.8) + (rohf * 4)) + (aorkh * 4))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                                shem: val.currentKey,
+                                                                                                                                remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                                message: '',
+                                                                                                                                sogShem: 'מסגרת סולם'
+                                                                                                                            });
+                                                                                                                    }
 
 
+                                                                                                                }
+                                                                                                                }
+                                                                                                            >
+                                                                                                                {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
+                                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                ))}
+                                                                                                                {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
+                                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                ))}
+                                                                                                                {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
+                                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                ))}
+                                                                                                            </DropdownMenu>
+                                                                                                        </Dropdown></th>
+                                                                                                    </tr>
+                                                                                                    <tr className="row-spacing">
+                                                                                                        <th>חלוקת סולם</th>
+                                                                                                        <th><Input type="number" value={tvahAofkeSolam || ''} color="primary" onValueChange={(val) => {
+                                                                                                            setTvahAofkeSolam(val);
+                                                                                                            const reverseCalculatedValue = parseInt(Math.floor(((parseFloat(gobahSolam) - 0.4) / parseFloat(val)) - 1));
+                                                                                                            setMsbarBrofelemAofkeSolam(reverseCalculatedValue);
+                                                                                                        }} size="sm" className="w-[100px]" label="טווח אופקי" /></th>
+                                                                                                        <th><Input type="number" value={msbarBrofelemAofkeSolam || ''} color="primary" onValueChange={(val) => {
+                                                                                                            setMsbarBrofelemAofkeSolam(val);
+                                                                                                            const calculatedValue = parseFloat(((parseFloat(gobahSolam) - 0.4) / (parseFloat(val) + 1)).toFixed(2));
+                                                                                                            setTvahAofkeSolam(calculatedValue);
                                                                                                         }
+                                                                                                        } size="sm" className="w-[100px]" label="מס פרופילים" /></th>
+                                                                                                        <th><Dropdown dir="rtl">
+                                                                                                            <DropdownTrigger>
+                                                                                                                <Button size="xs" className='m-2'>
+                                                                                                                    {motsaremBrofelem[10]?.shem}
+                                                                                                                </Button>
+                                                                                                            </DropdownTrigger>
+                                                                                                            <DropdownMenu
+                                                                                                                aria-label="Multiple selection example"
+                                                                                                                variant="flat"
+                                                                                                                closeOnSelect={true}
+                                                                                                                disallowEmptySelection
+                                                                                                                selectionMode="single"
+                                                                                                                selectedKeys={motsaremBrofelem[10]?.shem}
+                                                                                                                onSelectionChange={(val) => {
+                                                                                                                    if (solam === 'רק קדמי') {
+                                                                                                                        updateMotsaremBrofelem(10,
+                                                                                                                            {
+                                                                                                                                kmot: parseFloat((msbarBrofelemAofkeSolam * rohf) + (msbarBrofelemAnkhe * (gobahSolam - 0.4)).toFixed(1)),
+                                                                                                                                kmotYdnet: 0,
+                                                                                                                                mher: parseFloat(((((msbarBrofelemAofkeSolam * rohf) + (msbarBrofelemAnkhe * (gobahSolam - 0.4)))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                                shem: val.currentKey,
+                                                                                                                                remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                                message: '',
+                                                                                                                                sogShem: 'חלוקת סולם'
+                                                                                                                            });
+                                                                                                                    }
+                                                                                                                    else if (solam === 'הכל') {
+                                                                                                                        updateMotsaremBrofelem(10,
+                                                                                                                            {
+                                                                                                                                kmot: parseFloat((msbarBrofelemAofkeSolam * (parseFloat(rohf * (aemDelet ? 2 : 0)) + (aorkh * 2))) + (msbarBrofelemAnkhe * (gobahSolam - 0.4)).toFixed(1)),
+                                                                                                                                kmotYdnet: 0,
+                                                                                                                                mher: parseFloat(((((msbarBrofelemAofkeSolam * (parseFloat(rohf * (aemDelet ? 2 : 0)) + (aorkh * 2))) + (msbarBrofelemAnkhe * (gobahSolam - 0.4)))) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                                shem: val.currentKey,
+                                                                                                                                remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                                message: '',
+                                                                                                                                sogShem: 'חלוקת סולם'
+                                                                                                                            });
+                                                                                                                    }
+
+                                                                                                                }
+                                                                                                                }
+                                                                                                            >
+                                                                                                                {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
+                                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                ))}
+                                                                                                                {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
+                                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                ))}
+                                                                                                                {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
+                                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                ))}
+                                                                                                            </DropdownMenu>
+                                                                                                        </Dropdown></th>
+                                                                                                    </tr>
+                                                                                                    <tr className="row-spacing">
+                                                                                                        <th></th>
+                                                                                                        <th><Input type="number" value={tvahAnkheSolam || ''} color="primary" onValueChange={(val) => {
+                                                                                                            setTvahAnkheSolam(val);
+                                                                                                            if (solam === 'רק קדמי') {
+                                                                                                                setMsbarBrofelemAnkhe(parseInt(Math.floor(((parseFloat(rohf)) / (parseFloat(val) / 100)) - 3)));
+                                                                                                            }
+                                                                                                            else if (solam === 'הכל' && aemDelet) {
+                                                                                                                setMsbarBrofelemAnkhe(parseInt((Math.floor((parseFloat(rohf) / (parseFloat(val) / 100)) - 1) * 2) + (Math.floor((((parseFloat(aorkh) / (parseFloat(val) / 100)) - 1))) * 2)));
+                                                                                                            }
+                                                                                                            else {
+                                                                                                                setMsbarBrofelemAnkhe(parseInt(Math.floor((parseFloat(rohf) / (parseFloat(val) / 100)) - 1) + (Math.floor((((parseFloat(aorkh) / (parseFloat(val) / 100)) - 1))) * 2)));
+                                                                                                            }
+                                                                                                        }} size="sm" className="w-[100px]" label="טווח אנכי" /></th>
+                                                                                                        <th><Input type="number" value={msbarBrofelemAnkhe || ''} color="primary" onValueChange={(val) => { setMsbarBrofelemAnkhe(val); setTvahAnkheSolam(0); }} size="sm" className="w-[100px]" label="מס פרופילים" /></th>
+                                                                                                        <th></th>
+                                                                                                    </tr>
+                                                                                                </>
+                                                                                                :
+                                                                                                <>
+                                                                                                    <tr className="row-spacing">
+                                                                                                        <th>
+                                                                                                            <div className="group relative z-30">
+                                                                                                                <Image width={70} alt="none" src={rep81} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                                            </div>
+                                                                                                        </th>
+                                                                                                        <th>וניל</th>
+                                                                                                    </tr>
+                                                                                                    <tr className="row-spacing">
+                                                                                                        <th>סוג וניל</th>
+                                                                                                        <th></th>
+                                                                                                        <th></th>
+                                                                                                        <th><Dropdown dir="rtl">
+                                                                                                            <DropdownTrigger>
+                                                                                                                <Button size="xs" className='m-2'>
+                                                                                                                    {motsaremBrofelem[10]?.shem}
+                                                                                                                </Button>
+                                                                                                            </DropdownTrigger>
+                                                                                                            <DropdownMenu
+                                                                                                                aria-label="Multiple selection example"
+                                                                                                                variant="flat"
+                                                                                                                closeOnSelect={true}
+                                                                                                                disallowEmptySelection
+                                                                                                                selectionMode="single"
+                                                                                                                selectedKeys={motsaremBrofelem[10]?.shem}
+                                                                                                                onSelectionChange={(val) => {
+                                                                                                                    updateMotsaremBrofelem(10,
+                                                                                                                        {
+                                                                                                                            kmot: parseFloat((gobahSolam * ((3 * aorkh) + (2 * rohf)) * 2)),
+                                                                                                                            kmotYdnet: 0,
+                                                                                                                            mher: parseFloat((((gobahSolam * ((3 * aorkh) + (2 * rohf)) * 2)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                            shem: val.currentKey,
+                                                                                                                            remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                            message: '',
+                                                                                                                            sogShem: 'מסגרת סולם'
+                                                                                                                        });
+
+
+                                                                                                                }
+                                                                                                                }
+                                                                                                            >
+                                                                                                                {GetBrtemMotsarMlae('B1').arrayResualt.map((option) => (
+                                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                ))}
+                                                                                                            </DropdownMenu>
+                                                                                                        </Dropdown></th>
+                                                                                                    </tr>
+                                                                                                    <tr className="row-spacing">
+                                                                                                        <th>מסגרת וניל</th>
+                                                                                                        <th><Input type="number" value={gobahSolam || ''} onValueChange={(val) => setGobahSolam(parseFloat(val))} color="primary" size="sm" className="w-[100px]" label="גובה וניל" /></th>
+                                                                                                        <th></th>
+                                                                                                        <th><Dropdown dir="rtl">
+                                                                                                            <DropdownTrigger>
+                                                                                                                <Button size="xs" className='m-2'>
+                                                                                                                    {motsaremBrofelem[9]?.shem}
+                                                                                                                </Button>
+                                                                                                            </DropdownTrigger>
+                                                                                                            <DropdownMenu
+                                                                                                                aria-label="Multiple selection example"
+                                                                                                                variant="flat"
+                                                                                                                closeOnSelect={true}
+                                                                                                                disallowEmptySelection
+                                                                                                                selectionMode="single"
+                                                                                                                selectedKeys={motsaremBrofelem[9]?.shem}
+                                                                                                                onSelectionChange={(val) => {
+                                                                                                                    updateMotsaremBrofelem(9,
+                                                                                                                        {
+                                                                                                                            kmot: parseFloat((((2 * aorkh) + (4 * rohf) + (6 * gobahSolam)) + (msbarBrofelemAofkeSolam * 2 * (parseFloat(aorkh) + parseFloat(rohf))) + (msbarBrofelemAnkhe * gobahSolam)).toFixed(1)),
+                                                                                                                            kmotYdnet: 0,
+                                                                                                                            mher: parseFloat(((((2 * aorkh) + (4 * rohf) + (6 * gobahSolam)) + (msbarBrofelemAofkeSolam * 2 * (parseFloat(aorkh) + parseFloat(rohf))) + (msbarBrofelemAnkhe * gobahSolam)) * GetBrtemMotsarMlae(GetShemMotsarCategoryBret(val.currentKey), val.currentKey).alot).toFixed(1)),
+                                                                                                                            shem: val.currentKey,
+                                                                                                                            remez: GetShemMotsarCategoryBret(val.currentKey),
+                                                                                                                            message: '',
+                                                                                                                            sogShem: 'מסגרת סולם'
+                                                                                                                        });
+
+
+                                                                                                                }
+                                                                                                                }
+                                                                                                            >
+                                                                                                                {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
+                                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                ))}
+                                                                                                                {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
+                                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                ))}
+                                                                                                                {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
+                                                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                                                ))}
+                                                                                                            </DropdownMenu>
+                                                                                                        </Dropdown></th>
+                                                                                                    </tr>
+                                                                                                    <tr className="row-spacing">
+                                                                                                        <th>חלוקת וניל</th>
+                                                                                                        <th><Input type="number" value={tvahAofkeSolam || ''} color="primary" onValueChange={(val) => {
+                                                                                                            setTvahAofkeSolam(val);
+                                                                                                            const reverseCalculatedValue = parseInt(Math.floor(((parseFloat(gobahSolam)) / parseFloat(val)) - 1));
+                                                                                                            setMsbarBrofelemAofkeSolam(reverseCalculatedValue);
+                                                                                                        }} size="sm" className="w-[100px]" label="טווח אופקי" /></th>
+                                                                                                        <th><Input type="number" value={msbarBrofelemAofkeSolam || ''} color="primary" onValueChange={(val) => {
+                                                                                                            setMsbarBrofelemAofkeSolam(val);
+                                                                                                            const calculatedValue = parseFloat(((parseFloat(gobahSolam)) / (parseFloat(val) + 1)).toFixed(2));
+                                                                                                            setTvahAofkeSolam(calculatedValue);
                                                                                                         }
+                                                                                                        } size="sm" className="w-[100px]" label="מס פרופילים" /></th>
+                                                                                                        <th></th>
+                                                                                                    </tr>
+                                                                                                    <tr className="row-spacing">
+                                                                                                        <th></th>
+                                                                                                        <th><Input type="number" value={tvahAnkheSolam || ''} color="primary" onValueChange={(val) => {
+                                                                                                            setTvahAnkheSolam(val);
+                                                                                                            setMsbarBrofelemAnkhe(parseInt((Math.floor((parseFloat(rohf) / (parseFloat(val) / 100)) - 1) * 2) + (Math.floor((((parseFloat(aorkh) / (parseFloat(val) / 100)) - 1))) * 2)));
+                                                                                                        }} size="sm" className="w-[100px]" label="טווח אנכי" /></th>
+                                                                                                        <th><Input type="number" value={msbarBrofelemAnkhe || ''} color="primary" onValueChange={(val) => { setMsbarBrofelemAnkhe(val); setTvahAnkheSolam(0); }} size="sm" className="w-[100px]" label="מס פרופילים" /></th>
+                                                                                                        <th></th>
+                                                                                                    </tr>
+                                                                                                </>
+                                                                                        }
+                                                                                    </>
+                                                                                }
+                                                                                <tr>
+                                                                                    <th colSpan={4}><Divider /></th>
+                                                                                </tr>
+                                                                                <tr className="row-spacing">
+                                                                                    <th>
+                                                                                        <div className="group relative z-30">
+                                                                                            <Image width={70} alt="none" src={rep58} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th>צבע</th>
+                                                                                    <th><Switch isSelected={aemTseba} defaultSelected={agla?.mafenem?.aemTseba} value={aemTseba} onValueChange={(val) => {
+                                                                                        setAemTseba(val);
+                                                                                    }}><div className=""></div></Switch></th>
+                                                                                    <th></th>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th colSpan={4}><Divider /></th>
+                                                                                </tr>
+                                                                                <tr className="row-spacing">
+                                                                                    <th>
+                                                                                        <div className="group relative z-30">
+                                                                                            <Image width={70} alt="none" src={rep48} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th>פשפשול</th>
+                                                                                    <th><Switch isSelected={aemBashbashol} defaultSelected={agla?.mafenem?.aemBashbashol} isReadOnly={aemKafRetom} value={aemBashbashol} onValueChange={(val) => { setAemBashbashol(val) }}></Switch></th>
+                                                                                    <th></th>
+                                                                                </tr>
+                                                                                <tr className="row-spacing">
+                                                                                    <th>
+                                                                                        <div className="group relative z-30">
+                                                                                            <Image width={70} alt="none" src={rep37} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th>כף ריתום</th>
+                                                                                    <th><Switch isSelected={aemKafRetom} defaultSelected={agla?.mafenem?.aemKafRetom} isReadOnly={aemBashbashol} value={aemKafRetom} onValueChange={(val) => { setAemKafRetom(val) }}></Switch></th>
+                                                                                    <th></th>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th colSpan={4}><Divider /></th>
+                                                                                </tr>
+                                                                                <tr className="row-spacing">
+                                                                                    <th>
+                                                                                        <div className="group relative z-30">
+                                                                                            <Image width={70} alt="none" src={rep45} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th>מיכל מים</th>
+                                                                                    <th><Switch isSelected={aemMekhalMaym} defaultSelected={agla?.mafenem?.aemMekhalMaym} value={aemMekhalMaym} onValueChange={(val) => setAemMekhalMaym(val)}></Switch></th>
+                                                                                    <th></th>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th colSpan={4}><Divider /></th>
+                                                                                </tr>
+                                                                                <tr className="row-spacing">
+                                                                                    <th>
+                                                                                        <div className="group relative z-30">
+                                                                                            <Image width={70} alt="none" src={rep17} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th>ארגז כלים</th>
+                                                                                    <th><Switch isSelected={aemArgazKlem} defaultSelected={agla?.mafenem?.aemArgazKlem} value={aemArgazKlem} onValueChange={(val) => setAemArgazKlem(val)}></Switch></th>
+                                                                                    <th></th>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th colSpan={4}><Divider /></th>
+                                                                                </tr>
+                                                                                <tr className="row-spacing">
+                                                                                    <th>
+                                                                                        <div className="group relative z-30">
+                                                                                            <Image width={70} alt="none" src={rep73} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th>רגל חנייה</th>
+                                                                                    <th><Switch isSelected={aemReglHnea} defaultSelected={agla?.mafenem?.aemReglHnea} value={aemReglHnea} onValueChange={(val) => setAemReglHnea(val)}></Switch></th>
+                                                                                    <th></th>
+                                                                                </tr>
+
+                                                                                <tr>
+                                                                                    <th colSpan={4}><Divider /></th>
+                                                                                </tr>
+
+                                                                                <tr className="row-spacing">
+                                                                                    <th colSpan={3}>תוספת ידנית</th>
+                                                                                    <th><Button onClick={() => setShowModalAddMotsarAher(true)} size="sm" color="primary" className="rounded-full"><FiPlus className="text-xl"/></Button></th>
+                                                                                </tr>
+
+                                                                                {
+                                                                                    entries?.map((entry, index) => (
+                                                                                        <>
+                                                                                            {
+                                                                                                (index !== 0) && <tr>
+                                                                                                    <th colSpan={4}><Divider /></th>
+                                                                                                </tr>
+                                                                                            }
+                                                                                            <tr className="row-spacing">
+                                                                                                <th>{index + 1}</th>
+                                                                                                <th><Dropdown dir="rtl">
+                                                                                                    <DropdownTrigger>
+                                                                                                        <Button
+                                                                                                            size="lg"
+                                                                                                            className='m-2 max-w-[150px] w-full'
+                                                                                                        >
+                                                                                                            {entry.category ? entry?.category : 'קטיגוריה'}
+                                                                                                        </Button>
+                                                                                                    </DropdownTrigger>
+                                                                                                    <DropdownMenu
+                                                                                                        aria-label="Multiple selection example"
+                                                                                                        variant="flat"
+                                                                                                        closeOnSelect={true}
+                                                                                                        disallowEmptySelection
+                                                                                                        selectionMode="single"
+                                                                                                        selectedKeys={entry.category}
+                                                                                                        onSelectionChange={(val) => { handleEntriesChange(index, 'category', val.currentKey); }}
                                                                                                     >
-                                                                                                        {GetBrtemMotsarMlae('B4').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                        {GetBrtemMotsarMlae('B5').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
-                                                                                                        {GetBrtemMotsarMlae('B6').arrayResualt.map((option) => (
-                                                                                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                                                                                        ))}
+                                                                                                        <DropdownItem key="מוצרים אחרים">מוצרים אחרים</DropdownItem>
                                                                                                     </DropdownMenu>
                                                                                                 </Dropdown></th>
-                                                                                            </tr>
-                                                                                            <tr className="row-spacing">
-                                                                                                <th>חלוקת וניל</th>
-                                                                                                <th><Input type="number" value={tvahAofkeSolam || ''} color="primary" onValueChange={(val) => {
-                                                                                                    setTvahAofkeSolam(val);
-                                                                                                    const reverseCalculatedValue = parseInt(Math.floor(((parseFloat(gobahSolam)) / parseFloat(val)) - 1));
-                                                                                                    setMsbarBrofelemAofkeSolam(reverseCalculatedValue);
-                                                                                                }} size="sm" className="w-[100px]" label="טווח אופקי" /></th>
-                                                                                                <th><Input type="number" value={msbarBrofelemAofkeSolam || ''} color="primary" onValueChange={(val) => {
-                                                                                                    setMsbarBrofelemAofkeSolam(val);
-                                                                                                    const calculatedValue = parseFloat(((parseFloat(gobahSolam)) / (parseFloat(val) + 1)).toFixed(2));
-                                                                                                    setTvahAofkeSolam(calculatedValue);
-                                                                                                }
-                                                                                                } size="sm" className="w-[100px]" label="מס פרופילים" /></th>
-                                                                                                <th></th>
-                                                                                            </tr>
-                                                                                            <tr className="row-spacing">
-                                                                                                <th></th>
-                                                                                                <th><Input type="number" value={tvahAnkheSolam || ''} color="primary" onValueChange={(val) => {
-                                                                                                    setTvahAnkheSolam(val);
-                                                                                                    setMsbarBrofelemAnkhe(parseInt((Math.floor((parseFloat(rohf) / (parseFloat(val) / 100)) - 1) * 2) + (Math.floor((((parseFloat(aorkh) / (parseFloat(val) / 100)) - 1))) * 2)));
-                                                                                                }} size="sm" className="w-[100px]" label="טווח אנכי" /></th>
-                                                                                                <th><Input type="number" value={msbarBrofelemAnkhe || ''} color="primary" onValueChange={(val) => { setMsbarBrofelemAnkhe(val); setTvahAnkheSolam(0); }} size="sm" className="w-[100px]" label="מס פרופילים" /></th>
-                                                                                                <th></th>
+                                                                                                <th><Dropdown dir="rtl">
+                                                                                                    <DropdownTrigger>
+                                                                                                        <Button
+                                                                                                            size="lg"
+                                                                                                            className='m-2 max-w-[150px] w-full'
+                                                                                                            isDisabled={!entries[index]?.category}
+                                                                                                        >
+                                                                                                            {entry.sogMotsar || 'בחר מוצר'}
+                                                                                                        </Button>
+                                                                                                    </DropdownTrigger>
+                                                                                                    <DropdownMenu
+                                                                                                        aria-label="Multiple selection example"
+                                                                                                        variant="flat"
+                                                                                                        closeOnSelect={true}
+                                                                                                        disallowEmptySelection
+                                                                                                        selectionMode="single"
+                                                                                                        selectedKeys={entry.id}
+                                                                                                        onSelectionChange={(val) => { handleEntriesChange(index, 'sogMotsar', val.currentKey); }}
+                                                                                                    >
+                                                                                                        {
+                                                                                                            GetCategoryRemez(entry?.category)?.length && GetCategoryRemez(entry?.category)?.map((cat) => {
+                                                                                                                return <DropdownItem onClick={() => {
+                                                                                                                    // setMotsaremLhatseg((prevItems) => prevItems.filter(item => item !== entry.remez));
+                                                                                                                    // let res = ((entry.remez === 'B4') || (entry.remez === 'B5') || (entry.remez === 'B6') || (entry.remez === 'B1')) ? true : false;
+                                                                                                                    // handleInputChange(res, GetIndexMotsar(entry.remez), 0, 'kmot');
+                                                                                                                    // handleInputChange(res, GetIndexMotsar(entry.remez), 0, 'mher');
+                                                                                                                    // handleInputChange(res, GetIndexMotsar(entry.remez), '', 'shem');
+                                                                                                                    // handleInputChange(res, GetIndexMotsar(entry.remez), '', 'remez');
+                                                                                                                    // handleInputChange(res, GetIndexMotsar(entry.remez), '', 'message');
+                                                                                                                    handleEntriesChange(index, 'remez', cat.sog);
+                                                                                                                }} key={cat?.shem}>{cat?.shem}</DropdownItem>
+                                                                                                            })
+                                                                                                        }
+                                                                                                    </DropdownMenu>
+                                                                                                </Dropdown></th>
+                                                                                                <th><div onClick={() => {
+                                                                                                    removeItem(index); setMotsaremLhatseg((prevItems) => prevItems.filter(item => item !== entry.remez));
+                                                                                                    let res = ((entry.remez === 'B4') || (entry.remez === 'B5') || (entry.remez === 'B6') || (entry.remez === 'B1')) ? true : false;
+                                                                                                    handleInputChange(res, GetIndexMotsar(entry.remez), 0, 'kmot');
+                                                                                                    handleInputChange(res, GetIndexMotsar(entry.remez), 0, 'mher');
+                                                                                                    handleInputChange(res, GetIndexMotsar(entry.remez), '', 'shem');
+                                                                                                    handleInputChange(res, GetIndexMotsar(entry.remez), '', 'message');
+                                                                                                }} className='ml-5 text-danger-500 hover:cursor-pointer w-full max-w-[150px]' >
+                                                                                                    <div className="flex justify-center">
+                                                                                                        <FaTrash className='text-2xl' />
+                                                                                                    </div>
+                                                                                                </div></th>
+
                                                                                             </tr>
                                                                                         </>
-                                                                                    }
-                                                                                </>
-                                                                            }
-                                                                            <tr>
-                                                                                <th colSpan={4}><Divider /></th>
-                                                                            </tr>
-                                                                            <tr className="row-spacing">
-                                                                                <th>
-                                                                                    <div className="group relative z-30">
-                                                                                        <Image width={70} alt="none" src={rep58} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                    </div>
-                                                                                </th>
-                                                                                <th>צבע</th>
-                                                                                <th><Switch isSelected={aemTseba} defaultSelected={agla?.mafenem?.aemTseba} value={aemTseba} onValueChange={(val) => {
-                                                                                    setAemTseba(val);
-                                                                                }}><div className=""></div></Switch></th>
-                                                                                <th></th>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th colSpan={4}><Divider /></th>
-                                                                            </tr>
-                                                                            <tr className="row-spacing">
-                                                                                <th>
-                                                                                    <div className="group relative z-30">
-                                                                                        <Image width={70} alt="none" src={rep48} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                    </div>
-                                                                                </th>
-                                                                                <th>פשפשול</th>
-                                                                                <th><Switch isSelected={aemBashbashol} defaultSelected={agla?.mafenem?.aemBashbashol} isReadOnly={aemKafRetom} value={aemBashbashol} onValueChange={(val) => { setAemBashbashol(val) }}></Switch></th>
-                                                                                <th></th>
-                                                                            </tr>
-                                                                            <tr className="row-spacing">
-                                                                                <th>
-                                                                                    <div className="group relative z-30">
-                                                                                        <Image width={70} alt="none" src={rep37} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                    </div>
-                                                                                </th>
-                                                                                <th>כף ריתום</th>
-                                                                                <th><Switch isSelected={aemKafRetom} defaultSelected={agla?.mafenem?.aemKafRetom} isReadOnly={aemBashbashol} value={aemKafRetom} onValueChange={(val) => { setAemKafRetom(val) }}></Switch></th>
-                                                                                <th></th>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th colSpan={4}><Divider /></th>
-                                                                            </tr>
-                                                                            <tr className="row-spacing">
-                                                                                <th>
-                                                                                    <div className="group relative z-30">
-                                                                                        <Image width={70} alt="none" src={rep45} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                    </div>
-                                                                                </th>
-                                                                                <th>מיכל מים</th>
-                                                                                <th><Switch isSelected={aemMekhalMaym} defaultSelected={agla?.mafenem?.aemMekhalMaym} value={aemMekhalMaym} onValueChange={(val) => setAemMekhalMaym(val)}></Switch></th>
-                                                                                <th></th>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th colSpan={4}><Divider /></th>
-                                                                            </tr>
-                                                                            <tr className="row-spacing">
-                                                                                <th>
-                                                                                    <div className="group relative z-30">
-                                                                                        <Image width={70} alt="none" src={rep17} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                    </div>
-                                                                                </th>
-                                                                                <th>ארגז כלים</th>
-                                                                                <th><Switch isSelected={aemArgazKlem} defaultSelected={agla?.mafenem?.aemArgazKlem} value={aemArgazKlem} onValueChange={(val) => setAemArgazKlem(val)}></Switch></th>
-                                                                                <th></th>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th colSpan={4}><Divider /></th>
-                                                                            </tr>
-                                                                            <tr className="row-spacing">
-                                                                                <th>
-                                                                                    <div className="group relative z-30">
-                                                                                        <Image width={70} alt="none" src={rep73} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
-                                                                                    </div>
-                                                                                </th>
-                                                                                <th>רגל חנייה</th>
-                                                                                <th><Switch isSelected={aemReglHnea} defaultSelected={agla?.mafenem?.aemReglHnea} value={aemReglHnea} onValueChange={(val) => setAemReglHnea(val)}></Switch></th>
-                                                                                <th></th>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th colSpan={4}><Divider className="mt-[500px]" /></th>
-                                                                            </tr>
-                                                                        </>
+                                                                                    ))
+                                                                                }
+
+                                                                                <tr>
+                                                                                    <th colSpan={4}><Button onClick={handleAddEntries} className='m-5'>
+                                                                                        <FiPlus />
+                                                                                    </Button></th>
+                                                                                </tr>
+
+                                                                                <tr>
+                                                                                    <th colSpan={4}><Divider className="mt-[500px]" /></th>
+                                                                                </tr>
+                                                                            </>
                                                                         }
                                                                     </thead>
                                                                 </table>
@@ -3576,6 +3703,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                                                                         <DropdownItem key="ווי גרירה">ווי גרירה</DropdownItem>
                                                                                         <DropdownItem key="עגלות">עגלות</DropdownItem>
                                                                                         <DropdownItem key="פסולת">פסולת</DropdownItem>
+                                                                                        <DropdownItem key="מוצרים אחרים">מוצרים אחרים</DropdownItem>
                                                                                     </DropdownMenu>
                                                                                 </Dropdown>
                                                                                 <Dropdown dir="rtl">
@@ -3600,13 +3728,13 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                                                                         {
                                                                                             GetCategoryRemez(entry?.category)?.length && GetCategoryRemez(entry?.category)?.map((cat) => {
                                                                                                 return <DropdownItem onClick={() => {
-                                                                                                    setMotsaremLhatseg((prevItems) => prevItems.filter(item => item !== entry.remez));
-                                                                                                    let res = ((entry.remez === 'B4') || (entry.remez === 'B5') || (entry.remez === 'B6') || (entry.remez === 'B1')) ? true : false;
-                                                                                                    handleInputChange(res, GetIndexMotsar(entry.remez), 0, 'kmot');
-                                                                                                    handleInputChange(res, GetIndexMotsar(entry.remez), 0, 'mher');
-                                                                                                    handleInputChange(res, GetIndexMotsar(entry.remez), '', 'shem');
-                                                                                                    handleInputChange(res, GetIndexMotsar(entry.remez), '', 'remez');
-                                                                                                    handleInputChange(res, GetIndexMotsar(entry.remez), '', 'message');
+                                                                                                    // setMotsaremLhatseg((prevItems) => prevItems.filter(item => item !== entry.remez));
+                                                                                                    // let res = ((entry.remez === 'B4') || (entry.remez === 'B5') || (entry.remez === 'B6') || (entry.remez === 'B1')) ? true : false;
+                                                                                                    // handleInputChange(res, GetIndexMotsar(entry.remez), 0, 'kmot');
+                                                                                                    // handleInputChange(res, GetIndexMotsar(entry.remez), 0, 'mher');
+                                                                                                    // handleInputChange(res, GetIndexMotsar(entry.remez), '', 'shem');
+                                                                                                    // handleInputChange(res, GetIndexMotsar(entry.remez), '', 'remez');
+                                                                                                    // handleInputChange(res, GetIndexMotsar(entry.remez), '', 'message');
                                                                                                     handleEntriesChange(index, 'remez', cat.sog);
                                                                                                 }} key={cat?.shem}>{cat?.shem}</DropdownItem>
                                                                                             })
@@ -3619,9 +3747,8 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                                                                     handleInputChange(res, GetIndexMotsar(entry.remez), 0, 'kmot');
                                                                                     handleInputChange(res, GetIndexMotsar(entry.remez), 0, 'mher');
                                                                                     handleInputChange(res, GetIndexMotsar(entry.remez), '', 'shem');
-                                                                                    handleInputChange(res, GetIndexMotsar(entry.remez), '', 'remez');
                                                                                     handleInputChange(res, GetIndexMotsar(entry.remez), '', 'message');
-                                                                                 }} className='ml-5 text-danger-500 hover:cursor-pointer w-full max-w-[150px]' >
+                                                                                }} className='ml-5 text-danger-500 hover:cursor-pointer w-full max-w-[150px]' >
                                                                                     <div className="flex justify-center">
                                                                                         <FaTrash className='text-2xl' />
                                                                                     </div>
@@ -3853,27 +3980,27 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">שם לקוח</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={lkohTfaol?.name + lkohTfaol?.lastname}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={lkohTfaol?.name + lkohTfaol?.lastname} />
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">מספר עגלה</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={agla?.msbarAgla}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={agla?.msbarAgla} />
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">מחיר מכירה</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={formatNumberWithCommas(agla?.mherMkhera)}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={formatNumberWithCommas(agla?.mherMkhera)} />
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">תאריך מכירה</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={agla?.tarekh}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={agla?.tarekh} />
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">סוג עגלה</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={agla?.sogAgla}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={agla?.sogAgla} />
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">רווח נקי</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={123}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={123} />
                                     </div>
                                 </div>
                             }
@@ -3886,19 +4013,19 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">שם לקוח</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={lkohTfaol?.name + lkohTfaol?.lastname}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={lkohTfaol?.name + lkohTfaol?.lastname} />
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">מחיר מכירה</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={formatNumberWithCommas(agla?.mherMkhera)}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={formatNumberWithCommas(agla?.mherMkhera)} />
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">תאריך מכירה</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={agla?.tarekh}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={agla?.tarekh} />
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">רווח נקי</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={123}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={123} />
                                     </div>
                                 </div>
                             }
@@ -3911,19 +4038,19 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">שם לקוח</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={lkohTfaol?.name + lkohTfaol?.lastname}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={lkohTfaol?.name + lkohTfaol?.lastname} />
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">מחיר מכירה</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={formatNumberWithCommas(agla?.mherMkhera)}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={formatNumberWithCommas(agla?.mherMkhera)} />
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">תאריך מכירה</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={agla?.tarekh}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={agla?.tarekh} />
                                     </div>
                                     <div className="flex items-center mr-3 mb-3">
                                         <div className="w-[200px] text-primary">רווח נקי</div>
-                                        <Input color="primary" variant='underlined' isReadOnly value={123}/>
+                                        <Input color="primary" variant='underlined' isReadOnly value={123} />
                                     </div>
                                 </div>
                             }
@@ -3951,10 +4078,10 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
                                             אישור
                                         </Button>
                                         :
-                                        sogBaola && sogBaola === 'E' ? null :
-                                        <Button isDisabled={bdekatShmeratTfaol()} isLoading={loading} size="lg" className='mr-5 ml-5' color="primary" onClick={() => { addValues(); handelPrintHeshvonit(); }}>
-                                            שמירה
-                                        </Button>
+                                        ((sogBaola) && (sogBaola === 'E')) ? null :
+                                            <Button isDisabled={bdekatShmeratTfaol()} isLoading={loading} size="lg" className='mr-5 ml-5' color="primary" onClick={() => { addValues(); handelPrintHeshvonit(); }}>
+                                                שמירה
+                                            </Button>
                                 }
                             </div>
                         </div>

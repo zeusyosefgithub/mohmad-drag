@@ -1,17 +1,13 @@
+import { Divider } from "@nextui-org/react";
+import { differenceInMinutes, format, parseISO } from "date-fns";
 import React from "react";
-import { GetTmonatHelek } from "../page";
-import { differenceInDays, format } from "date-fns";
-import { Divider, Input } from "@nextui-org/react";
-import Image from "next/image";
-import { FaRegSquare } from "react-icons/fa6";
-import GetDocs from "../FireBase/getDocs";
-import { FaPhoneFlip } from "react-icons/fa6";
 import { FaWaze } from "react-icons/fa";
-import { FaLocationDot } from "react-icons/fa6";
+import { FaLocationDot, FaPhoneFlip } from "react-icons/fa6";
 
-export const SferatMlae = React.forwardRef((mlae, ref) => {
-    const mlae1 = mlae?.mlae;
-    const category = GetDocs('category');
+export const ShaotAobedHdbsa = React.forwardRef((props, ref) => {
+
+    const shaot = props?.shaot;
+    const aobed = props?.aobed;
 
     function flipDate(dateStr) {
         const [day, month, year] = dateStr.split('-');
@@ -19,20 +15,49 @@ export const SferatMlae = React.forwardRef((mlae, ref) => {
         return flippedDateStr;
     }
 
-    function BdekatTarekhAdcon(val) {
-        return differenceInDays(format(new Date, 'yyyy-MM-dd'), flipDate(val));
-    }
-
-    function GetShemMotsar(remez) {
-        for (let index = 0; index < category.length; index++) {
-            let motsareeem = category[index].motsarem;
-            for (let index1 = 0; index1 < motsareeem.length; index1++) {
-                if (motsareeem[index1].sog === remez) {
-                    return motsareeem[index1].shem;
-                }
-            }
+    function GetTarekhShem(val) {
+        if (val === 'Sunday') {
+            return 'ראשון';
+        }
+        else if (val === 'Monday') {
+            return 'שני';
+        }
+        else if (val === 'Tuesday') {
+            return 'שלשי';
+        }
+        else if (val === 'Wednesday') {
+            return 'רבעי';
+        }
+        else if (val === 'Thursday') {
+            return 'חמשי';
+        }
+        else if (val === 'Friday') {
+            return 'שישי';
+        }
+        else if (val === 'Saturday') {
+            return 'שבת';
         }
     }
+
+    const calculateTimeDifference = (startTime, endTime) => {
+        // Assuming startTime and endTime are strings in "HH:mm" format
+        const [startHour, startMinute] = startTime.split(':').map(Number);
+        const [endHour, endMinute] = endTime.split(':').map(Number);
+
+        // Create date objects for comparison
+        const startDate = new Date(0, 0, 0, startHour, startMinute);
+        const endDate = new Date(0, 0, 0, endHour, endMinute);
+
+        // Calculate the difference in minutes
+        const diffMinutes = differenceInMinutes(endDate, startDate);
+
+        // Convert minutes to hours and minutes
+        const hours = Math.floor(diffMinutes / 60);
+        const minutes = diffMinutes % 60;
+
+        // Format the result as "HH:mm"
+        return format(new Date(0, 0, 0, hours, minutes), 'HH:mm');
+    };
 
     return (
         <div ref={ref} className="bg-white p-10">
@@ -41,15 +66,15 @@ export const SferatMlae = React.forwardRef((mlae, ref) => {
                     <div className="text-sm">
                         <div className="flex items-center">
                             <div className="w-[100px] text-right">050-909-9989</div>
-                            <div className="flex items-center"><FaPhoneFlip className="ml-2 text-base w-[30px]"/></div>
+                            <div className="flex items-center"><FaPhoneFlip className="ml-2 text-base w-[30px]" /></div>
                         </div>
                         <div className="flex items-center mt-2">
                             <div className="w-[100px] text-right">ערערה גביש 65</div>
-                            <div className="flex items-center"><FaLocationDot className="ml-2 text-xl w-[30px]"/></div>
+                            <div className="flex items-center"><FaLocationDot className="ml-2 text-xl w-[30px]" /></div>
                         </div>
                         <div className="flex items-center mt-2">
                             <div className="w-[100px] text-right">נגררי עירון 2020</div>
-                            <div className="flex items-center"><FaWaze className="ml-2 text-xl w-[30px]"/></div>
+                            <div className="flex items-center"><FaWaze className="ml-2 text-xl w-[30px]" /></div>
                         </div>
                     </div>
                     <div className="ml-5">
@@ -71,53 +96,75 @@ export const SferatMlae = React.forwardRef((mlae, ref) => {
                     </div>
                 </div>
                 <div className="text-base font-bold text-center max-w-[150px] w-full">
-                    תופס ספירת מלאי
+                    דף שעות עבודה
                 </div>
             </div>
             <Divider className="mt-3 mb-3 h-[3px] bg-gray-500"/>
-            <div>
+            <div className="flex items-center justify-between" dir="rtl">
                 <div>
-                    <div className="text-right text-xs">
-                        תאריך : {format(new Date, 'yyyy-MM-dd')}
+                    <div className="flex items-center">
+                        <div className="w-[100px]">שם עובד</div>
+                        <div className="w-[100px]">{aobed?.shem}</div>
                     </div>
-                    <div className="text-right text-xs">
-                        שעה : {format(new Date, 'HH:MM')}
-                        </div>
+                    <div className="flex items-center">
+                        <div className="w-[100px]">ת.ז</div>
+                        <div className="w-[100px]">{aobed?.taodatZhot}</div>
                     </div>
+
+                </div>
+                <Divider className="w-[1px] h-[50px]" />
+                <div>
+                    <div className="flex items-center">
+                        <div className="w-[100px]">נייד</div>
+                        <div className="w-[100px]">{aobed?.nead}</div>
+                    </div>
+                    <div className="flex items-center">
+                        <div className="w-[100px]">ישוב</div>
+                        <div className="w-[100px]">{aobed?.yeshov}</div>
+                    </div>
+                </div>
+                <Divider className="w-[1px] h-[50px]" />
+                <div>
+                    <div className="flex items-center">
+                        <div className="w-[100px]">תאריך</div>
+                        <div className="w-[100px]">{format(new Date(), 'dd-MM-yyyy')}</div>
+                    </div>
+                    <div className="flex items-center">
+                        <div className="w-[100px]">תפקיד</div>
+                        <div className="w-[100px]">{aobed?.tfked}</div>
+                    </div>
+                </div>
             </div>
-            <Divider className="mt-3 mb-3" />
-            <table className="w-full table-auto border-collapse">
-                <thead>
-                    <tr className="bg-gray-600">
-                        <th className="px-4 py-2 text-center font-medium text-white text-xs">כמות בפועל</th>
-                        <th className="px-4 py-2 text-center font-medium text-white  text-xs">כמות במערכת</th>
-                        <th className="px-6 py-2 text-center font-medium text-white  text-xs">עדכון אחרון</th>
-                        <th className="px-4 py-2 text-right font-medium text-white  text-xs">שם פריט</th>
-                        <th className="px-4 py-2 text-right font-medium text-white  text-xs">שם מוצר</th>
-                        <th className="px-4 py-2 text-right font-medium text-white  text-xs">מק"ט</th>
-                        <th className="px-4 py-2 text-right font-medium text-white  text-xs"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        mlae1?.map((item, index) => {
-                            return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                <td className="px-4 py-2 text-right text-gray-700 dark:text-gray-200 text-[10px] border-1"></td>
-                                <td className="px-4 py-2 text-center text-gray-700 dark:text-gray-200 text-[10px] border-1">{item.kmot}</td>
-                                <td className="px-4 py-2 text-center text-gray-700 dark:text-gray-200 text-[10px] border-1"><div className={`rounded-lg text-white ${!item.adconAhron ? '' : BdekatTarekhAdcon(item.adconAhron) < 7 ? 'bg-success' : BdekatTarekhAdcon(item.adconAhron) >= 7 && BdekatTarekhAdcon(item.adconAhron) < 30 ? 'bg-warning' : 'bg-danger'}`}>{item.adconAhron}</div></td>
-                                <td className="px-4 py-2 text-right text-gray-700 dark:text-gray-200 text-[10px] border-1">{item.shem}</td>
-                                <td className="px-4 py-2 text-right text-gray-700 dark:text-gray-200 text-[10px] border-1">{GetShemMotsar(item.categoryMotsar)}</td>
-                                <td className="px-4 py-2 text-right text-gray-700 dark:text-gray-200 text-[10px] border-1">{item.msbar}</td>
-                                <td className="border-1">
-                                    <div className="group relative">
-                                        <Image src={GetTmonatHelek(item.categoryMotsar)} className="h-[30px] w-[30px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
-                                    </div>
-                                </td>
-                            </tr>
-                        })
-                    }
-                </tbody>
-            </table>
+            <div className="mt-14">
+                <table className="w-full">
+                    <thead>
+                        <tr>
+                            <th className="border-b-1">סכום שעות</th>
+                            <th className="border-b-1">יצאה</th>
+                            <th className="border-b-1">כניסה</th>
+                            <th className="border-b-1">היעדרות</th>
+                            <th className="border-b-1">תאריך</th>
+                            <th className="border-b-1">יום</th>
+                            <th className="border-b-1">מס'</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            shaot?.map((shaa, index) => {
+                                return <tr className="border-b-1">
+                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{calculateTimeDifference(shaa?.knesa, shaa?.yetseah)}</td>
+                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{shaa?.yetseah}</td>
+                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{shaa?.knesa}</td>
+                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{shaa?.headrot}</td>
+                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{shaa?.tarekh}</td>
+                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{GetTarekhShem(format(flipDate(shaa?.tarekh), 'EEEE'))}</td>
+                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{index + 1}</td>
+                                </tr>
+                            })
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     )
-}) 
+})

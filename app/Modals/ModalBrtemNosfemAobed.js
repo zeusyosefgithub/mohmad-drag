@@ -6,40 +6,49 @@ import { doc, getDoc, runTransaction, setDoc, collection, addDoc, updateDoc } fr
 import GetDocs from "../FireBase/getDocs";
 
 
-export default function ModalBrtemNosfemAobed({ disable, show,aobed }) {
+export default function ModalBrtemNosfemAobed({ disable, show, aobed }) {
 
     return (
-        <Modal placement="center" className="test-fontt sizeForModals" backdrop={"blur"} size="5xl" isOpen={show} onClose={disable}>
+        <Modal placement="center" className="test-fontt sizeForModals" backdrop={"blur"} size="2xl" isOpen={show} onClose={disable}>
             <ModalContent>
                 <>
                     <ModalHeader className="shadow-2xl flex justify-center">פרטיים נוספיים של {aobed?.shem
-                        }</ModalHeader>
+                    }</ModalHeader>
                     <ModalBody className="shadow-2xl">
                         <div dir="rtl">
                             <div className="w-full flex justify-around mt-5 mb-5">
-                                <div className="w-[110px]">
+                                <div className="w-[110px] text-center font-extrabold text-xl text-primary">
+                                    פירוט
+                                </div>
+                                <div className="font-extrabold text-xl text-primary w-[110px] text-center">
+                                    סכום
+                                </div>
+                            </div>
+                            <Divider />
+                            <div className="w-full flex justify-around mt-5 mb-5">
+                                <div className="w-[110px] text-center">
+                                    שכר
+                                </div>
+                                <div dir="ltr" className={`w-[110px] text-center ${aobed?.skharBroto < 0 && 'text-danger'}`}>
+                                    {aobed?.skharBroto}
+                                </div>
+                            </div>
+                            <Divider />
+                            <div className="w-full flex justify-around mt-5 mb-5">
+                                <div className="w-[110px] text-center">
                                     בנסיה
                                 </div>
-                                <div>
+                                <div dir="ltr" className={`w-[110px] text-center ${aobed?.bensea < 0 && 'text-danger'}`}>
                                     {aobed?.bensea}
                                 </div>
                             </div>
-                            <Divider/>
+                            <Divider />
                             <div className="w-full flex justify-around mt-5 mb-5">
-                                <div className="w-[110px]">
+                                <div className="w-[110px] text-center">
                                     פיצויים
                                 </div>
-                                <div>
+                                <div dir="ltr" className={`w-[110px] text-center ${aobed?.betsoeem < 0 && 'text-danger'}`}>
                                     {aobed?.betsoeem}
-                                </div>
-                            </div>
-                            <Divider/>
-                            <div className="w-full flex justify-around mt-5 mb-5">
-                                <div className="w-[110px]">
-                                    שכר
-                                </div>
-                                <div>
-                                    {aobed?.skharBroto}
                                 </div>
                             </div>
                         </div>
@@ -47,9 +56,6 @@ export default function ModalBrtemNosfemAobed({ disable, show,aobed }) {
                     <ModalFooter>
                         <Button size="lg" color="primary" onClick={disable}>
                             סגור
-                        </Button>
-                        <Button size="lg" color="primary" onClick={disable}>
-                            אישור
                         </Button>
                     </ModalFooter>
                 </>
