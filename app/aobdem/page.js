@@ -257,7 +257,7 @@ export default function Aobdem() {
                 <div className="w-full flex items-center justify-around flex-wrap">
 
 
-                    <div className="p-5 justify-center w-[900px] bg-white rounded-xl shadow-xl mb-20 h-[650px]">
+                    <div className="p-5 justify-center w-[800px] bg-white rounded-xl shadow-xl mb-20 h-[650px]">
                         <div className="overflow-auto h-fit w-full" dir="rtl">
                             <div dir="ltr">
                                 <div className="mt-5 mb-5 flex justify-around items-center">
@@ -303,7 +303,7 @@ export default function Aobdem() {
 
 
 
-                    <div className="p-5 justify-center w-[900px] bg-white rounded-xl shadow-xl mb-20 h-[650px]">
+                    <div className="p-5 justify-center w-[800px] bg-white rounded-xl shadow-xl mb-20 h-[650px]">
                         <div>
                             <div className="flex justify-around items-center mb-5">
                                 <Button variant='faded' className={loh === 'לוח כללי' && 'font-extrabold text-base'} color={loh === 'לוח כללי' ? 'primary' : 'default'} onClick={() => setLoh('לוח כללי')}><FaList className="text-base"/>לוח כללי</Button>
