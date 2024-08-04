@@ -94,7 +94,7 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
                         <div className='hidden'>
                             <SferatMlae mlae={activeMlae} ref={componentRefOne} />
                         </div>
-                        <div className="h-[800px] overflow-auto">
+                        <div className="h-[500px] overflow-auto">
                             <div className='rounded-lg p-2'>
                                 <div className='mt-5 bg-gray-300'>
                                     <table className="w-full table-auto border-collapse">
@@ -148,7 +148,6 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
                         <div className="flex w-full items-center justify-between">
                             <div>
                                 <Button size="lg" color="primary" onClick={handelPrintHeshvonit}>הדפסת טופס</Button>
-+
 
                                 <Button className="mr-2 ml-2" size="lg" color="primary" onClick={() => {
                                     //setAedconemHadshem([...mlae]);
