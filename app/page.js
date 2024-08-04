@@ -93,6 +93,7 @@ import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { GiHook } from "react-icons/gi";
 import { FaRegCalendarCheck } from "react-icons/fa6";
 import { FaTrailer } from "react-icons/fa6";
+import { AiOutlineAppstoreAdd } from "react-icons/ai";
 
 import Image from "next/image";
 import { CirclesWithBar, Comment, Hourglass, ThreeCircles, Watch } from "react-loader-spinner";
@@ -422,7 +423,7 @@ export default function Home() {
 
             <div className="w-full">
               <div className="w-full flex justify-center">
-                <Button color="primary" onClick={() => setShowModalCreateTokhnetYetsor(true)}>הוספת תוכנית יצור</Button>
+                <Button color="primary" variant="faded" onClick={() => setShowModalCreateTokhnetYetsor(true)}><AiOutlineAppstoreAdd className="text-3xl text-primary"/><div className="text-xl font-bold tracking-wider">הוספת תוכנית יצור</div></Button>
               </div>
               <div className="w-full p-5 ">
                 <div className="w-full flex justify-between text-primary text-xl">
@@ -472,74 +473,12 @@ export default function Home() {
                 <Button color="primary" variant="faded" onClick={() => { setShowModalCreate(true); setSogAska('תיקון'); }}><HiOutlineWrenchScrewdriver className="text-3xl text-primary" /><div className="w-[100px] text-xl font-bold tracking-wider">תיקון</div></Button>
               </div>
               <div className="w-full flex justify-center mt-5">
-                <Button color="primary" variant="faded" onClick={() => { setShowModalCreate(true); setSogAska('טסט'); }}><FaRegCalendarCheck className="text-3xl text-primary" /><div className="w-[100px] text-xl font-bold tracking-wider">טסט</div></Button>
+                <Button isDisabled color="primary" variant="faded" onClick={() => { setShowModalCreate(true); setSogAska('טסט'); }}><FaRegCalendarCheck className="text-3xl text-primary" /><div className="w-[100px] text-xl font-bold tracking-wider">טסט</div></Button>
               </div>
             </div>
 
 
           </div>
-
-          <div className="flex justify-end items-center w-full max-w-[900px]">
-            <div className="flex flex-col w-full mx-auto mr-10 ml-10 mb-5 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
-              <div className="flex items-center h-full">
-                {
-                  <div className="overflow-x-auto h-[400px] w-full">
-                    <table className="w-full table-auto border-collapse">
-                      <thead>
-                        <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-white to-gray-50 font-extrabold text-black text-xs">זמן עבר</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black text-xs">תחילת תהליך</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black text-xs">תאריך תחילה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black text-xs">סוג עסקה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black text-xs">מצב עסקה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black text-xs">מספר מכירה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-500 to-gray-600 font-medium text-black text-xs"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {
-                          aglotC.map((agla, index) => {
-                            return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla);setMsbarDrag(agla.msbarAgla);setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
-                            </tr>
-                          })
-                        }
-                      </tbody>
-                    </table>
-                  </div>
-                }
-                <div className="h-[300px] rounded-xl min-w-[90px]">
-                  <div className="h-full w-full tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105 flex items-center">
-                    <div className="w-full">
-                      <div className="text-center w-full text-primary mb-3">ייצור</div>
-                      <div className="flex justify-center w-full">
-                        <ThreeCircles
-                          visible={true}
-                          height="50"
-                          width="50"
-                          color="#3b82f6"
-                          ariaLabel="three-circles-loading"
-                          wrapperStyle={{}}
-                          wrapperClass=""
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <div className="flex-wrap w-full flex justify-center">
-
           <div className="flex justify-end items-center w-full max-w-[900px]">
             <div className="flex flex-col w-full mx-auto mr-10 ml-10 mb-5 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
               <div className="flex items-center h-full">
@@ -597,7 +536,69 @@ export default function Home() {
               </div>
             </div>
           </div>
+         
 
+        </div>
+
+        <div className="flex-wrap w-full flex justify-center">
+
+          
+        <div className="flex justify-end items-center w-full max-w-[900px]">
+            <div className="flex flex-col w-full mx-auto mr-10 ml-10 mb-5 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
+              <div className="flex items-center h-full">
+                {
+                  <div className="overflow-x-auto h-[400px] w-full">
+                    <table className="w-full table-auto border-collapse">
+                      <thead>
+                        <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-white to-gray-50 font-extrabold text-black text-xs">זמן עבר</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black text-xs">תחילת תהליך</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black text-xs">תאריך תחילה</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black text-xs">סוג עסקה</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black text-xs">מצב עסקה</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black text-xs">מספר מכירה</th>
+                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-500 to-gray-600 font-medium text-black text-xs"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {
+                          aglotC.map((agla, index) => {
+                            return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla);setMsbarDrag(agla.msbarAgla);setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
+                            </tr>
+                          })
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+                <div className="h-[300px] rounded-xl min-w-[90px]">
+                  <div className="h-full w-full tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105 flex items-center">
+                    <div className="w-full">
+                      <div className="text-center w-full text-primary mb-3">ייצור</div>
+                      <div className="flex justify-center w-full">
+                        <ThreeCircles
+                          visible={true}
+                          height="50"
+                          width="50"
+                          color="#3b82f6"
+                          ariaLabel="three-circles-loading"
+                          wrapperStyle={{}}
+                          wrapperClass=""
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="flex justify-end items-center w-full max-w-[900px]">
             <div className="flex flex-col w-full mx-auto mr-10 ml-10 mb-5 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
               <div className="flex items-center h-full">
