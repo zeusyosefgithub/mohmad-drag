@@ -172,17 +172,17 @@ export default function Procurement() {
             console.log(reduced[index]);
             newArray2.push(<>
                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200"><Switch 
+                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200 text-xs"><Switch 
                         isSelected={GetBrtemMotsarMlae(reduced[index].remez,reduced[index].shem).hozman} onValueChange={async(val) => {
                             await updateDoc(doc(firestore,'mlae',GetBrtemMotsarMlae(reduced[index].remez,reduced[index].shem).id),{
                                 hozman : val
                             })
                         }} defaultValue={GetBrtemMotsarMlae(reduced[index].remez,reduced[index].shem).hozman} value={GetBrtemMotsarMlae(reduced[index].remez,reduced[index].shem).hozman}>
                         </Switch></td>
-                    <td className="px-4 py-3 text-center text-danger-500 dark:text-gray-200">{GetKmotMtaema(GetMotsarMededa(reduced[index].remez),reduced[index].kmot - GetBrtemMotsarMlae(reduced[index].remez,reduced[index].shem).kmot)}</td>
-                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{reduced[index].shem}</td>
-                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200"><div className="group relative">
-                        <Image src={GetTmonatHelek(reduced[index].remez)} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
+                    <td className="px-4 py-3 text-center text-danger-500 dark:text-gray-200 text-xs">{GetKmotMtaema(GetMotsarMededa(reduced[index].remez),reduced[index].kmot - GetBrtemMotsarMlae(reduced[index].remez,reduced[index].shem).kmot)}</td>
+                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200 text-xs">{reduced[index].shem}</td>
+                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200 text-xs"><div className="group relative">
+                        <Image src={GetTmonatHelek(reduced[index].remez)} className="h-[50px] w-[50px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
                     </div></td>
                 </tr>
             </>);
@@ -247,10 +247,10 @@ export default function Procurement() {
             {<ModalAddProductCategory mlae={mlae} category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
             {loading && <Spinner className='absolute top-0 left-0 bottom-0 right-0' />}
             <div className='flex items-center justify-around flex-wrap'>
-                <div className="w-full max-w-[600px] mr-10 ml-10 mb-5">
+                <div className="w-full max-w-[500px] mr-10 ml-10 mb-5">
                     <div className="flex justify-around">
                         <div className="w-full mr-10 ml-10 mx-auto border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
-                            <div className="bg-gradient-to-r from-white to-warning-500 tracking-widest text-black font-extrabold text-xl p-1 mb-3 text-center rounded-lg shadow-2xl transform transition-transform hover:scale-105">
+                            <div className="bg-gradient-to-r from-white to-warning-500 tracking-widest text-black font-extrabold text-base p-1 mb-3 text-center rounded-lg shadow-2xl transform transition-transform hover:scale-105">
                                 מוצרים חסרים
                             </div>
                             {
@@ -258,10 +258,10 @@ export default function Procurement() {
                                     <table className="w-full table-auto border-collapse">
                                         <thead>
                                             <tr className="bg-gray-100 dark:bg-gray-800">
-                                                <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">הוזמן/לא הוזמן</th>
-                                                <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">כמות חסרה</th>
-                                                <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">שם פריט</th>
-                                                <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-500 to-gray-600 font-medium text-black"></th>
+                                                <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black text-xs">הוזמן/לא הוזמן</th>
+                                                <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black text-xs">כמות חסרה</th>
+                                                <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black text-xs">שם פריט</th>
+                                                <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-500 to-gray-600 font-medium text-black text-xs"></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -275,7 +275,7 @@ export default function Procurement() {
                         </div>
                     </div>
                 </div>
-                <div className='w-full mr-10 ml-10 max-w-[900px] mb-5'>
+                <div className='w-full mr-10 ml-10 max-w-[1020px] mb-5'>
                     <div className='flex w-full'>
                         <div className='bg-white rounded-l-2xl shadow-2xl w-full'>
                             <div className='text-center text-2xl p-4 flex justify-around'>
