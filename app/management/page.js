@@ -5,7 +5,7 @@ import { FaArrowDown, FaArrowUp, FaSleigh, FaTrash } from "react-icons/fa";
 import { FiPlus } from "react-icons/fi";
 import { addMonths, differenceInDays, differenceInHours, differenceInMinutes, format, parseISO, setDate, subMonths } from 'date-fns';
 import GetDocs, { GetDocsWithLimit } from "../FireBase/getDocs";
-import { addDoc, collection, doc, limit, onSnapshot, query, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, limit, onSnapshot, query, updateDoc } from "firebase/firestore";
 import { firestore } from "../FireBase/firebase";
 import { Kbala } from "../Page Components/kbala";
 import { useReactToPrint } from "react-to-print";
@@ -243,6 +243,7 @@ export default function Management() {
 
     const [showModalNetonemThltem,setShowModalNetonemThltem] = useState(false);
 
+    const tnoahBmz12omnem = GetDocs('tnoahBmzomnem');
     return (
         <div>
             <ModalBerotAskatKsfem Aska={askatKsfem} show={showModalBerotAskatKsfem} disable={() => setShowModalBerotAskatKsfem(false)}/>
@@ -281,6 +282,14 @@ export default function Management() {
                     <Button onClick={() => setShowModalNetonemThltem(true)}>נתונים תחלתיים</Button>
                     <Button onClick={() => { }}>תפסים</Button>
                     <Button onClick={() => setShowModalKsfem(true)}>הנהלת חשבונות</Button>
+                    {/* <Button onClick={async() => {
+                        for (let index = 0; index < tnoahBmzomnem.length; index++) {
+                            await deleteDoc(doc(firestore,'tnoahBmzomnem',tnoahBmzomnem[index].id));
+                            
+                        }
+                    }}>
+                        delete
+                    </Button> */}
                 </div>
             </div>
             <div className='w-full flex justify-between items-center mt-5 '>

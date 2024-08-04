@@ -257,7 +257,7 @@ export default function Activion() {
     const addNewDrag = async () => {
         setErrorMessageMsbarAgla('');
         if(checkAemAglaKeamt()){
-            return;
+            return handlePrint();
         }
         setLoading(true);
         const drag = {
