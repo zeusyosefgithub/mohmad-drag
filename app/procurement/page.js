@@ -291,11 +291,18 @@ export default function Procurement() {
                                         return <>
                                             <div key={index} ref={categoryRefs.current[index]} className='bg-white rounded-lg p-2'>
                                                 <div className='flex justify-between items-center'>
-                                                    <div className='flex items-center'>
+                                                    <div className='flex items-center w-[200px]'>
                                                         <Button onClick={() => { setShowModalAddProductCategory(true); setCategoryData(cat) }} className='mr-3'><FaPlus className='text-xl' />מוצר חדש</Button>
                                                     </div>
-                                                    <div>מוצרים {cat.dlbak}</div>
-                                                    <div className='flex items-center'>
+                                                    <div>
+                                                    {
+                                                        cat.dlbak > 0 ? 
+                                                        <div>מוצרים {cat.dlbak}</div>
+                                                        :
+                                                        <div className='text-danger'>אין מוצרים כרגע</div>
+                                                    }
+                                                    </div>
+                                                    <div className='flex justify-end items-center w-[200px]'>
                                                         <div className='mr-3'>{cat.shem}</div>
                                                         <div className="group relative">
                                                             <Image src={GetTmonatHelekCategory(cat?.shem)} className="rounded-full h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-slate-400 group-hover:translate-x-[-220%]" />
