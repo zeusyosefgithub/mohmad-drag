@@ -292,9 +292,9 @@ export default function Procurement() {
                                             <div key={index} ref={categoryRefs.current[index]} className='bg-white rounded-lg p-2'>
                                                 <div className='flex justify-between items-center'>
                                                     <div className='flex items-center w-[200px]'>
-                                                        <Button onClick={() => { setShowModalAddProductCategory(true); setCategoryData(cat) }} className='mr-3'><FaPlus className='text-xl' />מוצר חדש</Button>
+                                                        <Button size='sm' onClick={() => { setShowModalAddProductCategory(true); setCategoryData(cat) }} className='mr-3'><FaPlus className='text-xl' />מוצר חדש</Button>
                                                     </div>
-                                                    <div>
+                                                    <div className='text-base'>
                                                     {
                                                         cat.dlbak > 0 ? 
                                                         <div>מוצרים {cat.dlbak}</div>
@@ -303,7 +303,7 @@ export default function Procurement() {
                                                     }
                                                     </div>
                                                     <div className='flex justify-end items-center w-[200px]'>
-                                                        <div className='mr-3'>{cat.shem}</div>
+                                                        <div className='mr-3 text-base'>{cat.shem}</div>
                                                         <div className="group relative">
                                                             <Image src={GetTmonatHelekCategory(cat?.shem)} className="rounded-full h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-slate-400 group-hover:translate-x-[-220%]" />
                                                         </div>
@@ -313,30 +313,30 @@ export default function Procurement() {
                                                     <table className="w-full table-auto border-collapse">
                                                         <thead>
                                                             <tr className="bg-gray-500 dark:bg-gray-800">
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-white to-gray-50"></th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-50 to-gray-100">זמן הספקה</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-100 to-gray-200">עלות ממוצע</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-200 to-gray-300">סה"כ עלות</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-300 to-gray-400">כמות</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-400 to-gray-500">שם פריט</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-500 to-gray-600">מק"ט</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-600 to-gray-700"></th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-white to-gray-50 text-sm"></th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-50 to-gray-100 text-sm">זמן הספקה</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-100 to-gray-200 text-sm">עלות ממוצע</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-200 to-gray-300 text-sm">סה"כ עלות</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-300 to-gray-400 text-sm">כמות</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-400 to-gray-500 text-sm">שם פריט</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-500 to-gray-600 text-sm">מק"ט</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-600 to-gray-700 text-sm"></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             {cat?.motsarem?.map((motsar, index1) => (
                                                                 mlae.map((item, index) => {
                                                                     return (item.categoryMotsar === motsar.sog) && (item.active) && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200"><Button onClick={() => { setHodatMhekatMotsar(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} size='sm' color='danger' variant='shadow'><FaTrash className='text-white' /></Button></td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.zmanHsbaka}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">₪{formatNumberWithCommas(item.alotLeheda)}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">₪{formatNumberWithCommas(item.alot)}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{GetKmotMtaema(item.mededa,item.kmot)}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.shem}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item.msbar}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><Button onClick={() => { setHodatMhekatMotsar(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='w-[0px] h-[20px]' color='danger' variant='shadow'><FaTrash className='text-white' /></Button></td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.zmanHsbaka}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{formatNumberWithCommas(item.alotLeheda)}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{formatNumberWithCommas(item.alot)}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{GetKmotMtaema(item.mededa,item.kmot)}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.shem}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbar}</td>
                                                                         <td>
                                                                             <div className="group relative">
-                                                                                <Image src={GetTmonatHelek(item.categoryMotsar)} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
+                                                                                <Image src={GetTmonatHelek(item.categoryMotsar)} className="h-[50px] w-[50px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
                                                                             </div>
                                                                         </td>
                                                                     </tr>
