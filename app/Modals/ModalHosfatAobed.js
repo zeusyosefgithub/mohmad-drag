@@ -16,8 +16,12 @@ export default function ModalHosfatAobed({ disable, show }) {
     const [yeshov,setYeshov] = useState('');
     const [aer,setAer] = useState('');
 
+    const [loading,setLoading] = useState(false);
+    
+
     const counter = GetDocs('metadata').find((count) => count.id === 'counterAobdem');
     const hosfatAobed = async() => {
+        setLoading(true);
         await addDoc(collection(firestore,'aobdem'),{
             msbar: counter?.count,
             bensea: 0,
@@ -32,6 +36,11 @@ export default function ModalHosfatAobed({ disable, show }) {
             skharBroto: 0,
         });
         await updateDoc(doc(firestore, 'metadata', counter?.id), { count: counter?.count + 1 });
+        setLoading(false);
+        ResetAll();
+    }
+
+    const ResetAll = () => {
         setTfked('');
         setShem('');
         setTaodatZhot('');
@@ -43,7 +52,7 @@ export default function ModalHosfatAobed({ disable, show }) {
     }
 
     return (
-        <Modal placement="center" className="test-fontt sizeForModals" backdrop={"blur"} size="5xl" isOpen={show} onClose={disable}>
+        <Modal placement="center" className="test-fontt sizeForModals" backdrop={"blur"} size="5xl" isOpen={show} onClose={ResetAll}>
             <ModalContent>
                 <>
                     <ModalHeader className="shadow-2xl flex justify-center">הוספת עובד</ModalHeader>
@@ -100,6 +109,7 @@ export default function ModalHosfatAobed({ disable, show }) {
                             <Dropdown dir="rtl">
                                     <DropdownTrigger>
                                         <Button
+                                            color="primary"
                                             variant="bordered"
                                             className="mb-5"
                                             size="lg"
@@ -123,19 +133,10 @@ export default function ModalHosfatAobed({ disable, show }) {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <Button size="lg" color="primary" onClick={() => {
-                            setTfked('');
-                            setShem('');
-                            setTaodatZhot('');
-                            setNead('');
-                            setTarefLeshaa('');
-                            setYeshov('');
-                            setAer('');
-                            disable();
-                        }}>
+                        <Button size="lg" color="primary" onClick={ResetAll}>
                             סגור
                         </Button>
-                        <Button size="lg" color="primary" onClick={hosfatAobed}>
+                        <Button isLoading={loading} isDisabled={!shem || !tarefLeshaa || !tfked} size="lg" color="primary" onClick={hosfatAobed}>
                             אישור
                         </Button>
                     </ModalFooter>

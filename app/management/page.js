@@ -280,7 +280,7 @@ export default function Management() {
             <div className="w-full pl-16 pr-16">
                 <div className="bg-white shadow-2xl rounded-2xl p-5 flex justify-around">
                     <Button onClick={() => setShowModalNetonemThltem(true)}>נתונים תחלתיים</Button>
-                    <Button onClick={() => { }}>תפסים</Button>
+                    <Button isDisabled onClick={() => { }}>תפסים</Button>
                     <Button onClick={() => setShowModalKsfem(true)}>הנהלת חשבונות</Button>
                     {/* <Button onClick={async() => {
                         for (let index = 0; index < tnoahBmzomnem.length; index++) {

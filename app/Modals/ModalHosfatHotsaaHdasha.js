@@ -21,9 +21,11 @@ export default function ModalHosfatHotsaaHdasha({ disable, show }) {
     const [sogMas,setSgoMas] = useState('');
     const [hovKrov, setHovKrov] = useState(format(new Date(), 'yyyy-MM-dd'));
     const counter = GetDocs('metadata').find((count) => count.id === 'counterHotsaot');
+    const [loading,setLoading] = useState(false);
     
 
     const hosfatHotsaa = async () => {
+        setLoading(true);
         await addDoc(collection(firestore, 'hotsaot'), {
             shem: shemMotsar,
             sogHotsaa: sogHotsaa,
@@ -43,6 +45,7 @@ export default function ModalHosfatHotsaaHdasha({ disable, show }) {
         await updateDoc(doc(firestore, 'metadata', 'counterHotsaot'), {
             count: counter.count + 1
         });
+        setLoading(false);
         RestAll();
     }
 
@@ -57,7 +60,6 @@ export default function ModalHosfatHotsaaHdasha({ disable, show }) {
         disable();
     }
 
-
     const handleAorkhTkofaChange = (val) => {
         const newAorkhTkofa = Math.min(val, 30);
         setMoaedHov(newAorkhTkofa);
@@ -70,6 +72,19 @@ export default function ModalHosfatHotsaaHdasha({ disable, show }) {
         const updatedDate = format(setDate(new Date(val), moaedHov), 'yyyy-MM-dd');
         setHovKrov(updatedDate);
     };
+
+    const checkAeshorShmera = () => {
+        if(!shemMotsar || !sogHotsaa || !zmanTshlom){
+            return true;
+        }
+        if(sogHotsaa === 'מסים' && !sogMas){
+            return true;
+        }
+        if(zmanTshlom === 'תקופתי' && (!aorkhTkofa || !moaedHov || !hovKrov)){
+            return true;
+        }
+        return false;
+    }
 
     return (
         <Modal placement="center" className="test-fontt sizeForModals" backdrop={"blur"} size="5xl" isOpen={show} onClose={RestAll}>
@@ -92,7 +107,7 @@ export default function ModalHosfatHotsaaHdasha({ disable, show }) {
                                         closeOnSelect={true}
                                         disallowEmptySelection
                                         selectionMode="single"
-                                        onSelectionChange={(val) => setSogHotsaa(val.currentKey)}
+                                        onSelectionChange={(val) => {setSogHotsaa(val.currentKey);setSgoMas('');setZmanTshlom('');setAorkhTkofa('');handleAorkhTkofaChange('');}}
                                     >
                                         <DropdownItem key={'הוצאות שכר'}>{'הוצאות שכר'}</DropdownItem>
                                         <DropdownItem key={'קניות מוצרים'}>{'קניות מוצרים'}</DropdownItem>
@@ -115,7 +130,7 @@ export default function ModalHosfatHotsaaHdasha({ disable, show }) {
                                             closeOnSelect={true}
                                             disallowEmptySelection
                                             selectionMode="single"
-                                            onSelectionChange={(val) => setSgoMas(val.currentKey)}
+                                            onSelectionChange={(val) => {setSgoMas(val.currentKey);setZmanTshlom('');setAorkhTkofa('');handleAorkhTkofaChange('');}}
                                         >
                                             <DropdownItem key={'מע"מ'}>{'מע"מ'}</DropdownItem>
                                             <DropdownItem key={'ניקוי מע"מ'}>{'ניקוי מע"מ'}</DropdownItem>
@@ -135,7 +150,7 @@ export default function ModalHosfatHotsaaHdasha({ disable, show }) {
                                         closeOnSelect={true}
                                         disallowEmptySelection
                                         selectionMode="single"
-                                        onSelectionChange={(val) => setZmanTshlom(val.currentKey)}
+                                        onSelectionChange={(val) => {setZmanTshlom(val.currentKey);setAorkhTkofa('');handleAorkhTkofaChange('');}}
                                     >
                                         {
                                             (sogHotsaa !== 'הוצאות שכר' && sogMas !== 'מע"מ') &&
@@ -165,7 +180,7 @@ export default function ModalHosfatHotsaaHdasha({ disable, show }) {
                         <Button size="lg" color="primary" onClick={RestAll}>
                             סגור
                         </Button>
-                        <Button onClick={hosfatHotsaa} size="lg" color="primary">
+                        <Button isLoading={loading} isDisabled={checkAeshorShmera()} onClick={hosfatHotsaa} size="lg" color="primary">
                             אישור
                         </Button>
                     </ModalFooter>
