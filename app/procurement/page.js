@@ -43,17 +43,25 @@ export default function Procurement() {
 
     const { contactName, setContactName, customerSet, setCustomerSet } = useContext(ContactContext);
     const category = GetDocs('category');
-    const mlae = GetDocs('mlae');
+    const mlae = GetDocs('mlae').sort((a, b) => {
+        const msbarA = a.msbar.toUpperCase();
+        const msbarB = b.msbar.toUpperCase();
+
+        if (msbarA < msbarB) return -1;
+        if (msbarA > msbarB) return 1;
+        return 0;
+    });
     const [showModalAddProductCategory, setShowModalAddProductCategory] = useState(false);
     const [categoryData, setCategoryData] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [hodatMhekatMotsar,setHodatMhekatMotsar] = useState(false);
+    const [hodatMhekatMotsar, setHodatMhekatMotsar] = useState(false);
     const [motsarMhekaItem, setMotsarMhekaItem] = useState(null);
     const [motsarMhekaCat, setMotsarMhekaCat] = useState(null);
-    const [showModalZmanAbodaMotsar,setShowModalZmanAbodaMotsar] = useState(false);
+    const [showModalZmanAbodaMotsar, setShowModalZmanAbodaMotsar] = useState(false);
     const categoryRefs = useRef(Array(10).fill(null).map(() => React.createRef()));
     const [showModalMtsavMlae, setShowModalMtsavMlae] = useState(false);
-    
+
+    console.log(mlae);
 
 
     const GetMotsaremBalem = () => {
