@@ -24,6 +24,8 @@ import ModalNetonemThltem from "../Modals/ModalNetonemThltem";
 import { FaListCheck } from "react-icons/fa6";
 import { FaList } from "react-icons/fa6";
 import { FcOvertime } from "react-icons/fc";
+import { LuPencilLine } from "react-icons/lu";
+import ModalHosfatKnesaYdnet from "../Modals/ModalHosfatKnesaYdnet";
 
 export default function Aobdem() {
 
@@ -39,6 +41,7 @@ export default function Aobdem() {
     const [showModalDafeShaot, setShowModalDafeShaot] = useState(false);
     const [showHosfatAobed, setShowHosfatAobed] = useState(false);
     const [showModalBrtemNosfemAobed, setShowModalBrtemNosfemAobed] = useState(false);
+    const [showModalHosfatKnesaYdnet,setShowModalHosfatKnesaYdnet] = useState(false);
 
     const handleTimeDiffrence = (yetseah, knesa) => {
         if (yetseah && knesa) {
@@ -245,7 +248,7 @@ export default function Aobdem() {
 
     return (
         <div>
-            
+            <ModalHosfatKnesaYdnet aobdem={aobdem} show={showModalHosfatKnesaYdnet} disable={() => setShowModalHosfatKnesaYdnet(false)}/>
             <ModalBrtemNosfemAobed aobed={aobed} show={showModalBrtemNosfemAobed} disable={() => setShowModalBrtemNosfemAobed(false)} />
             <ModalHosfatAobed show={showHosfatAobed} disable={() => setShowHosfatAobed(false)} />
             <ModalDafeShaot aobdem={aobdem} counter={counter} show={showModalDafeShaot} disable={() => setShowModalDafeShaot(false)}/>
@@ -305,6 +308,7 @@ export default function Aobdem() {
                             <div className="flex justify-around items-center mb-5">
                                 <Button variant='faded' className={loh === 'לוח כללי' && 'font-extrabold text-base'} color={loh === 'לוח כללי' ? 'primary' : 'default'} onClick={() => setLoh('לוח כללי')}><FaList className="text-base"/>לוח כללי</Button>
                                 <Button variant='faded' className={loh === 'לוח היום' && 'font-extrabold text-base'} color={loh === 'לוח היום' ? 'primary' : 'default'} onClick={() => setLoh('לוח היום')}><FaListCheck className="text-base"/>לוח היום</Button>
+                                <Button variant='faded' onClick={() => setShowModalHosfatKnesaYdnet(true)}><LuPencilLine className="text-base"/>הוספה ידנית</Button>
                             </div>
                             <Divider />
                             <div className="mt-5 mb-5">

@@ -220,6 +220,16 @@ export default function Sales() {
         }
     }
 
+    const GetHotsaotLfeSog = (sog) => {
+        let newArray = [];
+        for (let index = 0; index < hotsaot.length; index++) {
+            if(sog === hotsaot[index].sogHotsaa){
+                newArray.push(hotsaot[index]);
+            }
+        }
+        return newArray;
+    }
+
 
     const hnhotM = parseFloat(parseFloat((counter?.countEHnhotAglot - counter?.countESumHnhotAglotMunth) / GetMsbarHevdalSumAglotMounth()).toFixed(0));
     const hnhotH = parseFloat(parseFloat(counter?.countESumHnhotAglotMunth).toFixed(0));
@@ -307,7 +317,31 @@ export default function Sales() {
                                 <th></th>
                                 <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((HShotefetM / MekheroM) * 100).toFixed(0) || 0)}`}</div></th>
                                 <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (HShotefetM)) || 0)}`}</div></th>
-                                <th className="px-4 py-3 text-gray-700 dark:text-gray-300 text-right">הוצאות שוטפות</th>
+                                <th className="px-4 py-3 text-gray-700 dark:text-gray-300 text-right">
+                                <Tooltip closeDelay={100} content={
+                                        <div className="px-1 py-2 w-[200px]">
+                                            <div className='text-primary text-center mb-2'>הוצאות שוטפות
+                                            </div>
+                                            <Divider/>
+                                            {
+                                                GetHotsaotLfeSog('הוצאות שוטפות')?.map((hotsaaa,index) => {
+                                                    return <div className='flex items-center mt-2 mb-2 justify-end'>
+                                                        <div className='hover:text-primary cursor-pointer'>
+                                                        {
+                                                            hotsaaa.shem
+                                                        }
+                                                        </div>
+                                                        <div className='ml-3'>
+                                                            .{index + 1}
+                                                        </div>
+                                                    </div>
+                                                })
+                                            }
+                                        </div>
+                                    }>
+                                        <div className="">הוצאות שוטפות</div>
+                                    </Tooltip>
+                                </th>
                             </tr>
                             <tr>
                                 <th colSpan={6}><Divider /></th>
@@ -340,7 +374,31 @@ export default function Sales() {
                                 <th></th>
                                 <th className="text-sm"><div className=' p-1 rounded-l-full  bg-gray-300'>{`% ${(((HMasM / MekheroM) * 100).toFixed(0) || 0)}`}</div></th>
                                 <th className="text-sm"><div className=' p-1 rounded-e-full  bg-primary-50'>{`₪ ${((-1 * (HMasM)) || 0)}`}</div></th>
-                                <th className="px-4 py-3 text-gray-700 dark:text-gray-300 text-right">הוצאות מס</th>
+                                <th className="px-4 py-3 text-gray-700 dark:text-gray-300 text-right">
+                                    <Tooltip closeDelay={100} content={
+                                        <div className="px-1 py-2 w-[200px]">
+                                            <div className='text-primary text-center mb-2'>הוצאות מס
+                                            </div>
+                                            <Divider />
+                                            {
+                                                GetHotsaotLfeSog('מסים')?.map((hotsaaa, index) => {
+                                                    return <div className='flex items-center mt-2 mb-2 justify-end'>
+                                                        <div className='hover:text-primary cursor-pointer'>
+                                                            {
+                                                                hotsaaa.shem
+                                                            }
+                                                        </div>
+                                                        <div className='ml-3'>
+                                                            .{index + 1}
+                                                        </div>
+                                                    </div>
+                                                })
+                                            }
+                                        </div>
+                                    }>
+                                        <div className="">הוצאות מס</div>
+                                    </Tooltip>
+                                </th>
                             </tr>
                             <tr>
                                 <th colSpan={6}><Divider /></th>
