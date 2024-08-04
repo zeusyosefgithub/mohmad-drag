@@ -376,7 +376,7 @@ export default function Activion() {
     const [loading,setLoading] = useState(false);
 
     return (
-        <div className="hebrow_font">
+        <div className="hebrow_font mb-20">
             <div className="flex justify-center">
                 <div className="w-9/12">
 
@@ -396,7 +396,7 @@ export default function Activion() {
                                                 פרטיים הלקוח הקיים :
                                             </div>
                                             <div dir="ltr" className="mt-5">
-                                                <div className='mt-5 bg-gray-300 h-[450px] overflow-auto'>
+                                                <div className='mt-5 bg-gray-300 h-[400px] overflow-auto'>
                                                     <table className="w-full table-auto border-collapse">
                                                         <thead>
                                                             <tr className="bg-gray-500 dark:bg-gray-800 sticky top-0">
@@ -451,7 +451,7 @@ export default function Activion() {
                                             </div>
                                         </>
                                 }
-                                <div className="flex justify-center mt-28">
+                                <div className="flex justify-center mt-10">
                                     <Button isLoading={loading} isDisabled={lkohKeam ? (!lkoh) : (!customerName || !customerLastName || !customerPhone || !customerStreet || !customerId || !customerPostal || !customerHouseId || !customerCity)} onClick={hosfatLkoh} size="lg" color="primary">הוספה והמשך<MdOutlineArrowForward className="text-xl" /></Button>
                                 </div>
                             </div>
@@ -491,7 +491,7 @@ export default function Activion() {
                                         </table>
                                     </div>
                                 </div>
-                                <div className="flex justify-center mt-28">
+                                <div className="flex justify-center mt-10">
                                     <Button onClick={() => { setShowAddCus(true); setShowDrag(false); }} size="lg" color="primary">לחזור <MdOutlineArrowBack className="text-xl" /></Button>
                                     <div className="ml-10 mr-10"></div>
                                     <Button isDisabled={!Agla} onClick={addNewDrag} size="lg" color="primary">הוספה <IoMdAdd className="text-xl" /></Button>
@@ -536,7 +536,7 @@ export default function Activion() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex justify-center mt-28">
+                                <div className="flex justify-center mt-10">
                                     <Button onClick={() => { setShowAddCus(true); setShowDrag(false); }} size="lg" color="primary">לחזור <MdOutlineArrowBack className="text-xl" /></Button>
                                     <div className="ml-10 mr-10"></div>
                                     <Button onClick={() => { setShowAddCus(false); setShowDrag(false); setShowDragTwo(true) }} size="lg" color="primary">המשך <MdOutlineArrowForward className="text-xl" /></Button>
@@ -576,7 +576,7 @@ export default function Activion() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex justify-center mt-28">
+                                <div className="flex justify-center mt-10">
                                     <Button onClick={() => { setShowAddCus(false); setShowDrag(true); setShowDragTwo(false); }} size="lg" color="primary">לחזור <MdOutlineArrowBack className="text-xl" /></Button>
                                     <div className="ml-10 mr-10"></div>
                                     <Button onClick={() => { setShowAddCus(false); setShowDrag(false); setShowDragTwo(false); setShowDragThree(true); }} size="lg" color="primary">המשך <MdOutlineArrowForward className="text-xl" /></Button>
@@ -607,7 +607,7 @@ export default function Activion() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex justify-center mt-28">
+                                <div className="flex justify-center mt-10">
                                     <Button onClick={() => { setShowAddCus(false); setShowDrag(false); setShowDragTwo(true); setShowDragThree(false); }} size="lg" color="primary">לחזור <MdOutlineArrowBack className="text-xl" /></Button>
                                     <div className="ml-10 mr-10"></div>
                                     <Button onClick={() => { setShowAddCus(false); setShowDrag(false); setShowDragTwo(false); setShowDragThree(false); setShowDragFour(true); }} size="lg" color="primary">המשך <MdOutlineArrowForward className="text-xl" /></Button>
@@ -635,7 +635,7 @@ export default function Activion() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex justify-center mt-28">
+                                <div className="flex justify-center mt-10">
                                     <Button onClick={() => { setShowAddCus(false); setShowDrag(false); setShowDragTwo(false); setShowDragThree(true); setShowDragFour(false); }} size="lg" color="primary">לחזור <MdOutlineArrowBack className="text-xl" /></Button>
                                     <div className="ml-10 mr-10"></div>
                                     <Button isLoading={loading} onClick={addNewDrag} size="lg" color="primary">הוספה <IoMdAdd className="text-xl" /></Button>
