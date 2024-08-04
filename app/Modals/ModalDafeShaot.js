@@ -186,7 +186,7 @@ export default function ModalDafeShaot({ disable, show,counter,aobdem }) {
                             </div>
                             <div className="m-5 flex items-center">
                                 <div>הדפסת דפי שעות</div>
-                                <Button  onClick={hdbsatDafeShaot} color="primary" variant="light" className="mr-3">חודש {format(previousMonthDate, 'MM')}</Button>
+                                <Button isDisabled  onClick={hdbsatDafeShaot} color="primary" variant="light" className="mr-3">חודש {format(previousMonthDate, 'MM')}</Button>
                             </div>
                             <Divider />
                             <div className="m-5 flex items-center">
