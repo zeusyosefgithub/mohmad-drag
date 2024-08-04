@@ -247,7 +247,7 @@ export default function Procurement() {
             {<ModalAddProductCategory mlae={mlae} category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
             {loading && <Spinner className='absolute top-0 left-0 bottom-0 right-0' />}
             <div className='flex items-center justify-around flex-wrap'>
-                <div className="w-full max-w-[700px] mr-10 ml-10 mb-5">
+                <div className="w-full max-w-[600px] mr-10 ml-10 mb-5">
                     <div className="flex justify-around">
                         <div className="w-full mr-10 ml-10 mx-auto border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
                             <div className="bg-gradient-to-r from-white to-warning-500 tracking-widest text-black font-extrabold text-xl p-1 mb-3 text-center rounded-lg shadow-2xl transform transition-transform hover:scale-105">
@@ -275,7 +275,7 @@ export default function Procurement() {
                         </div>
                     </div>
                 </div>
-                <div className='w-full mr-10 ml-10 max-w-[1100px] mb-5'>
+                <div className='w-full mr-10 ml-10 max-w-[900px] mb-5'>
                     <div className='flex w-full'>
                         <div className='bg-white rounded-l-2xl shadow-2xl w-full'>
                             <div className='text-center text-2xl p-4 flex justify-around'>

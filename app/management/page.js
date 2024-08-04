@@ -473,7 +473,7 @@ export default function Management() {
                 <div className="w-full flex items-center justify-center flex-wrap">
 
 
-                    <div className="p-5 justify-center w-full max-w-[900px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[650px]">
+                    <div className="p-5 justify-center w-full max-w-[700px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[650px]">
                         <div className="w-full flex justify-around items-center">
                             <Button variant='faded' className={htsgatbrtem === 'סבקים' && 'font-extrabold text-base'} color={htsgatbrtem === 'סבקים' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('סבקים')}><MdOutlineShoppingBag className="text-base"/>ספקים/שלטנות</Button>
                             <Button variant='faded' className={htsgatbrtem === 'לקחות' && 'font-extrabold text-base'} color={htsgatbrtem === 'לקחות' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('לקחות')}><FaUsers className="text-base"/>לקחות</Button>
@@ -626,7 +626,7 @@ export default function Management() {
                         </div>
                     </div>
 
-                    <div className="p-5 justify-center w-full max-w-[900px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[650px]">
+                    <div className="p-5 justify-center w-full max-w-[700px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[650px]">
                         <div className="w-full flex justify-around items-end">
                             <Button variant='faded' color='primary' onClick={() => setShowModalHosfatHotsaaHadsha(true)}><div className="text-[18px] mr-1">+</div>הוספת הוצאה חדשה</Button>
                         </div>
