@@ -43,7 +43,24 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
         pageStyle: `@page {
             size: A4;
             margin: 0;
-        }`,
+        }
+        @media print {
+        .print-title {
+            display: block;
+            position: running(header);
+            width: 100%;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        @page {
+        @top-center {
+            content: element(header);
+          }
+        }
+      }
+        `,
         content: () => componentRefOne.current,
     });
 

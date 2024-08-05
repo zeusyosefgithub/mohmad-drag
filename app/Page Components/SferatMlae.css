@@ -1,0 +1,30 @@
+@media print {
+    .print-container {
+        margin-top: 80px; /* Adjust based on the height of your print-title */
+    }
+
+    .print-title {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: white; /* Background to ensure it doesn't overlap content */
+        padding: 10px;
+        box-sizing: border-box;
+        z-index: 1000; /* Make sure it's on top */
+        page-break-after: avoid; /* Prevent page break after the title */
+    }
+
+    .print-content {
+        margin-top: 10px; /* Space between the title and content, adjust as needed */
+    }
+
+    @page {
+        margin-top: 40px; /* Adjust page margins if necessary */
+    }
+
+    /* Optional: page break for content */
+    .page-break {
+        page-break-before: always;
+    }
+}

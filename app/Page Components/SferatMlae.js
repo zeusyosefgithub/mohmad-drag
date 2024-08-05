@@ -8,6 +8,7 @@ import GetDocs from "../FireBase/getDocs";
 import { FaPhoneFlip } from "react-icons/fa6";
 import { FaWaze } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
+import './SferatMlae.css';
 
 export const SferatMlae = React.forwardRef((mlae, ref) => {
     const mlae1 = mlae?.mlae;
@@ -35,7 +36,7 @@ export const SferatMlae = React.forwardRef((mlae, ref) => {
     }
 
     return (
-        <div ref={ref} className="bg-white p-10">
+        <div ref={ref} className="bg-white p-10" >
             <div className="flex justify-around items-center w-full">
                 <div className="border-r-2 pl-5 pr-5 w-full flex justify-around items-center">
                     <div className="text-sm">

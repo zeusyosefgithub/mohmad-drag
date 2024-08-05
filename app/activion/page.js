@@ -452,7 +452,7 @@ export default function Activion() {
                                         </>
                                 }
                                 <div className="flex justify-center mt-10">
-                                    <Button isLoading={loading} isDisabled={lkohKeam ? (!lkoh) : (!customerName || !customerLastName || !customerPhone || !customerStreet || !customerId || !customerPostal || !customerHouseId || !customerCity)} onClick={hosfatLkoh} size="lg" color="primary">הוספה והמשך<MdOutlineArrowForward className="text-xl" /></Button>
+                                    <Button isLoading={loading} isDisabled={lkohKeam ? (!lkoh) : (!customerName || !customerLastName || !customerStreet || !customerId || !customerPostal || !customerHouseId || !customerCity)} onClick={hosfatLkoh} size="lg" color="primary">הוספה והמשך<MdOutlineArrowForward className="text-xl" /></Button>
                                 </div>
                             </div>
                         }
