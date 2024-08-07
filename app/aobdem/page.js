@@ -333,30 +333,28 @@ export default function Aobdem() {
     const [tarekhKlaleNbhar, setTarekhKlaleNbhar] = useState('');
 
 
-    const GetReshmatAobdemYememHodesh = (Yom,knesot,aobdemmm,btehot) => {
-        console.log(knesot);
-        console.log(btehot);
+    const GetReshmatAobdemYememHodesh = (Yom,knesot) => {
         let newArray = [];
-        if(knesot.length > 0){
-            if (bdekatYomInKnestKlale(Yom?.tarekh) && btehot.includes(Yom?.tarekh)) {
-                for (let index = 0; index < knesot.length; index++) {
-                    if (knesot[index]?.tarekh === Yom?.tarekh) {
+        if(knesotKlale.length > 0){
+            if (bdekatYomInKnestKlale(Yom?.tarekh) && btehotYom.includes(Yom?.tarekh)) {
+                for (let index = 0; index < knesotKlale.length; index++) {
+                    if (knesotKlale[index]?.tarekh === Yom?.tarekh) {
                         newArray.push(<tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesot[index]?.yetseah}</td>
-                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesot[index]?.knesa}</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesotKlale[index]?.yetseah}</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesotKlale[index]?.knesa}</td>
                             <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{ }</td>
                             <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{ }</td>
-                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesot[index]?.headrot}</td>
-                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{GetTarekhShem(format(flipDate(knesot[index]?.tarekh), 'EEEE'))}</td>
-                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesot[index]?.tarekh}</td>
-                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{GetAobedBratem(knesot[index]?.aobed)?.shem}</td>
-                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesot[index]?.headrot && knesot[index]?.yetseah && knesot[index]?.knesa ? <IoMdCheckmarkCircleOutline className="text-success text-[15px]" /> : <VscError className="text-danger text-[15px]" />}</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesotKlale[index]?.headrot}</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{GetTarekhShem(format(flipDate(knesotKlale[index]?.tarekh), 'EEEE'))}</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesotKlale[index]?.tarekh}</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{GetAobedBratem(knesotKlale[index]?.aobed)?.shem}</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesotKlale[index]?.headrot && knesotKlale[index]?.yetseah && knesotKlale[index]?.knesa ? <IoMdCheckmarkCircleOutline className="text-success text-[15px]" /> : <VscError className="text-danger text-[15px]" />}</td>
                         </tr>);
                     }
                 }
             }
-            else if (btehot.includes(Yom?.tarekh)) {
-                for (let index = aobdemmm.length - 1; index >= 0; index--) {
+            else if (btehotYom.includes(Yom?.tarekh)) {
+                for (let index = aobdem.length - 1; index >= 0; index--) {
                     newArray.push(<tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
@@ -365,7 +363,7 @@ export default function Aobdem() {
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{aobdemmm[index].shem}</td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{aobdem[index].shem}</td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                     </tr>);
                 }

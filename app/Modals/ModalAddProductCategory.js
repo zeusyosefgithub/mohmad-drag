@@ -79,7 +79,7 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
         await addDoc(collection(firestore, "mlae"), {
             category: category?.id,
             categoryMotsar: GetCategory(shem)?.sog,
-            msbar: `${GetCategory(shem)?.sog}0${counter}`,
+            msbar: `${GetCategory(shem)?.sog}${counter < 10 ? `0${counter}` : counter}`,
             shem: sog,
             alot: sckhom || 0,
             alotLeheda: parseFloat(sckhom) || parseFloat(mherThlte),

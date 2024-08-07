@@ -240,13 +240,13 @@ export default function Procurement() {
     const [showModalAdconBret,setShowModalAdconBret] = useState(false);
     return (
         <div className=''>
-            {/* <Button onClick={async () => {
+            <Button onClick={async () => {
                 let count = 0;
                 for (let index = 0; index < mlae.length; index++) {
-                    if (mlae[index].shem === 'ברג לצמיגים' && count === 0) {
+                    if (mlae[index].shem === 'בורג איסכורית אורך 20 ס"מ' && count === 0) {
                         //console.log(mlae[index]);
                         await updateDoc(doc(firestore, 'mlae', mlae[index].id),{
-                            msbar: 'C308'
+                            msbar:'C309'
                         });
                         //count++;
                         //return alert(1);
@@ -255,7 +255,7 @@ export default function Procurement() {
                 }
             }}>
                 asd
-            </Button> */}
+            </Button>
             {<ModalMessage Aeshor={async (val) => {
                 if (val) {
                     setLoading(true);
