@@ -67,6 +67,7 @@ import rep96 from '../images/rep96.jpg';
 import rep97 from '../images/rep97.jpg';
 import rep98 from '../images/rep98.jpg';
 import rep99 from '../images/rep99.jpg';
+import rep100 from '../images/rep100.jpg';
 import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { GiHook } from "react-icons/gi";
 import { FaRegCalendarCheck } from "react-icons/fa6";
@@ -95,6 +96,9 @@ export function GetTmonatHelek(remez,msbar) {
     return rep16;
   }
   else if (remez === 'C3') {
+    if(msbar === 'C308'){
+      return rep100;
+    }
     if(msbar === 'C306' || msbar === 'C307'){
       return rep98;
     }
