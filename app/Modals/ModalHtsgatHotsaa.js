@@ -620,7 +620,7 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
 
 
     return (
-        <Modal placement="center" className="test-fontt " backdrop={"blur"} size="5xl" isOpen={show} onClose={ResetAll}>
+        <Modal placement="center" className="test-fontt max-w-[1200px]" backdrop={"blur"} isOpen={show} onClose={ResetAll}>
             <ModalContent>
                 <>
                     <ModalHeader className="shadow-2xl flex justify-center">{hotsaa?.shem} הוצאת</ModalHeader>

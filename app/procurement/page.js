@@ -35,6 +35,8 @@ import rep87 from '../../images/rep87.jpg';
 import rep88 from '../../images/rep88.png';
 import rep89 from '../../images/rep89.jpg';
 import rep90 from '../../images/rep90.jpg';
+import { FaEdit } from "react-icons/fa";
+import ModalAdconBret from '../Modals/ModalAdconBret';
 
 
 export default function Procurement() {
@@ -235,6 +237,7 @@ export default function Procurement() {
         }
     }
 
+    const [showModalAdconBret,setShowModalAdconBret] = useState(false);
     return (
         <div className=''>
             {<ModalMessage Aeshor={async (val) => {
@@ -250,19 +253,23 @@ export default function Procurement() {
                     setLoading(false);
                 }
             }} message={motsarMhekaItem?.kmot > 0 ? `אסור למחוק המוצר ${motsarMhekaItem?.shem} ויש כמות במלאי!!` : `האם אתה בטוח למחוק המוצר ${motsarMhekaItem?.shem} מהמלאי!!`} motsar={motsarMhekaItem} show={hodatMhekatMotsar} disable={() => setHodatMhekatMotsar(false)} />}
+            <ModalAdconBret motsarem={mlae} motsar={motsarMhekaItem} categoryMotsar={motsarMhekaCat} show={showModalAdconBret} disable={() => setShowModalAdconBret(false)}/>
             {<ModalZmanAbodaMotsar category={category} show={showModalZmanAbodaMotsar} disable={() => setShowModalZmanAbodaMotsar(false)} />}
             {<ModalMtsavMlae activeMlae={activeMlae} category={category} mlae={mlae} show={showModalMtsavMlae} disable={() => setShowModalMtsavMlae(false)} />}
             {<ModalAddProductCategory mlae={mlae} category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
             {loading && <Spinner className='absolute top-0 left-0 bottom-0 right-0' />}
+
+
+
             <div className='flex items-center justify-around flex-wrap'>
-                <div className="w-full max-w-[500px] mr-10 ml-10 mb-5">
+                <div className="w-full max-w-[400px] mr-5 ml-5 mb-5">
                     <div className="flex justify-around">
-                        <div className="w-full mr-10 ml-10 mx-auto border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
+                        <div className="w-full mx-auto border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
                             <div className="bg-gradient-to-r from-white to-warning-500 tracking-widest text-black font-extrabold text-base p-1 mb-3 text-center rounded-lg shadow-2xl transform transition-transform hover:scale-105">
                                 מוצרים חסרים
                             </div>
                             {
-                                <div className="overflow-x-auto h-[750px]">
+                                <div className="overflow-x-auto h-[630px]">
                                     <table className="w-full table-auto border-collapse">
                                         <thead>
                                             <tr className="bg-gray-100 dark:bg-gray-800">
@@ -283,7 +290,7 @@ export default function Procurement() {
                         </div>
                     </div>
                 </div>
-                <div className='w-full mr-10 ml-10 max-w-[1020px] mb-5'>
+                <div className='w-full mr-5 ml-5 max-w-[1190px] mb-5'>
                     <div className='flex w-full'>
                         <div className='bg-white rounded-l-2xl shadow-2xl w-full'>
                             <div className='text-center text-2xl p-4 flex justify-around'>
@@ -293,7 +300,7 @@ export default function Procurement() {
                                 <div className='text-primary font-extrabold'>מלאי</div>
                             </div>
                             <Divider className='mb-5' />
-                            <div className='p-5 h-[700px] overflow-auto'>
+                            <div className='p-5 h-[600px] overflow-auto'>
                                 {
                                     category.map((cat, index) => {
                                         return <>
@@ -321,25 +328,29 @@ export default function Procurement() {
                                                     <table className="w-full table-auto border-collapse">
                                                         <thead>
                                                             <tr className="bg-gray-500 dark:bg-gray-800">
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-white to-gray-50 text-sm"></th>
+                                                            <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-white to-gray-50 text-sm"></th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-50 to-gray-50 text-sm"></th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-50 to-gray-100 text-sm">זמן הספקה</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-100 to-gray-200 text-sm">עלות ממוצע</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-200 to-gray-300 text-sm">סה"כ עלות</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-300 to-gray-400 text-sm">כמות</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-400 to-gray-500 text-sm">שם פריט</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-500 to-gray-600 text-sm">מק"ט</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-600 to-gray-700 text-sm"></th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-400 to-gray-500 text-sm">מדף</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-500 to-gray-600 text-sm">שם פריט</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-600 to-gray-700 text-sm">מק"ט</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-700 to-gray-800 text-sm"></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             {cat?.motsarem?.map((motsar, index1) => (
                                                                 mlae.map((item, index) => {
                                                                     return (item.categoryMotsar === motsar.sog) && (item.active) && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><Button onClick={() => { setHodatMhekatMotsar(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='w-[0px] h-[20px]' color='danger' variant='shadow'><FaTrash className='text-white' /></Button></td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaTrash onClick={() => { setHodatMhekatMotsar(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-danger text-lg cursor-pointer' /></td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaEdit onClick={() => { setShowModalAdconBret(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-primary text-lg cursor-pointer' /></td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.zmanHsbaka}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{formatNumberWithCommas(item.alotLeheda)}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{formatNumberWithCommas(item.alot)}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{GetKmotMtaema(item.mededa,item.kmot)}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbarMdaf}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.shem}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbar}</td>
                                                                         <td>
@@ -361,13 +372,13 @@ export default function Procurement() {
                             </div>
                             <div className='p-2'></div>
                         </div>
-                        <div className='min-w-[180px] rounded-r-2xl p-1 m-auto bg-white pt-[17px] pb-[17px]'>
+                        <div className='min-w-[180px] rounded-r-2xl p-1 m-auto bg-white pt-[12px] pb-[12px]'>
                             {
                                 category.map((cat, index) => {
                                     return <div className='text-center text-[15px]'>
                                         <Button onClick={() => categoryRefs.current[index]?.current?.scrollIntoView({ behavior: 'smooth' })} color='primary' variant='faded' className='w-[100px]'>{cat?.shem}</Button>
                                         {
-                                            index !== (category.length - 1) && <Divider className='mt-[17px] mb-[17px]' />
+                                            index !== (category.length - 1) && <Divider className='mt-[12px] mb-[12px]' />
                                         }
                                     </div>
                                 })

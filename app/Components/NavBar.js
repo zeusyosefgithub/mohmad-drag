@@ -59,12 +59,12 @@ export default function NavBar() {
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Link color="foreground" href="aobdem">
+                    <Link color="foreground" href="/aobdem">
                         <Button variant="light" color="primary" className="text-lg">עובדים<GrUserWorker className="text-2xl text-black"/></Button> 
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Link color="foreground" href="activion">
+                    <Link color="foreground" href="/activion">
                         <Button variant="light" color="primary" className="text-lg">משרד תחבורה<IoNewspaperSharp className="text-2xl text-gray-600"/></Button> 
                     </Link>
                 </NavbarItem>

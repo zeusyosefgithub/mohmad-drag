@@ -473,7 +473,7 @@ export default function Management() {
                 <div className="w-full flex items-center justify-center flex-wrap">
 
 
-                    <div className="p-5 justify-center w-full max-w-[700px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[650px]">
+                    <div className="p-5 justify-center w-full max-w-[750px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[650px]">
                         <div className="w-full flex justify-around items-center">
                             <Button variant='faded' className={htsgatbrtem === 'סבקים' && 'font-extrabold text-base'} color={htsgatbrtem === 'סבקים' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('סבקים')}><MdOutlineShoppingBag className="text-base"/>ספקים/שלטנות</Button>
                             <Button variant='faded' className={htsgatbrtem === 'לקחות' && 'font-extrabold text-base'} color={htsgatbrtem === 'לקחות' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('לקחות')}><FaUsers className="text-base"/>לקחות</Button>
@@ -494,28 +494,28 @@ export default function Management() {
                                         <table className="w-full table-auto border-collapse">
                                             <thead>
                                                 <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-white to-gray-50 font-extrabold text-black">פרטיים נוספיים</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">יתרת חישבון</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">ישוב</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">נייד</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">עיר</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">תז</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-500 to-gray-600 font-extrabold text-black">שם לקוח</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-600 to-gray-700 font-extrabold text-black">מספר לקוח</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-white to-gray-50 font-extrabold text-black">פרטיים נוספיים</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">יתרת חישבון</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">ישוב</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">נייד</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">עיר</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">תז</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-500 to-gray-600 font-extrabold text-black">שם לקוח</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-600 to-gray-700 font-extrabold text-black">מספר לקוח</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {
                                                     lkhot.map((lkooh, index) => {
                                                         return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><Button size="sm">פתח</Button></td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.yetera}</td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.street}</td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.phone}</td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.city}</td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.cusid}</td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.name}</td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.idnum}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm">פתח</Button></td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.yetera}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.street}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.phone}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.city}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.cusid}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.name}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.idnum}</td>
                                                         </tr>
                                                     })
                                                 }
@@ -533,28 +533,28 @@ export default function Management() {
                                         <table className="w-full table-auto border-collapse">
                                             <thead>
                                                 <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-white to-gray-50 font-extrabold text-black">פרטיים נוספיים</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">יתרת חישבון</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">ישוב</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">נייד</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">עיר</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">תפקיד</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-500 to-gray-600 font-extrabold text-black">שם לקוח</th>
-                                                    <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-600 to-gray-700 font-extrabold text-black">מספר לקוח</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-white to-gray-50 font-extrabold text-black">פרטיים נוספיים</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">יתרת חישבון</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">ישוב</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">נייד</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">עיר</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">תפקיד</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-500 to-gray-600 font-extrabold text-black">שם לקוח</th>
+                                                    <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-600 to-gray-700 font-extrabold text-black">מספר לקוח</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {
                                                     sbkem.map((lkooh, index) => {
                                                         return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><Button size="sm">פתח</Button></td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.ytratHeshvon}</td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.yeshov}</td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.nead}</td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.aer}</td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.sherot}</td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.shem}</td>
-                                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{lkooh?.msbar}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm">פתח</Button></td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.ytratHeshvon}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.yeshov}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.nead}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.aer}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.sherot}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.shem}</td>
+                                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{lkooh?.msbar}</td>
                                                         </tr>
                                                     })
                                                 }
@@ -569,26 +569,26 @@ export default function Management() {
                                     <table className="w-full table-auto border-collapse">
                                         <thead>
                                             <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">פירוט הוצאה</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">מצב עריכה</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">תאריך הוצאה</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">שעה</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">מחיר כולל</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-500 to-gray-600 font-extrabold text-black">שם הוצאה</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-600 to-gray-700 font-extrabold text-black">מספר</th>
+                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">פירוט הוצאה</th>
+                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">מצב עריכה</th>
+                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">תאריך הוצאה</th>
+                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">שעה</th>
+                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">מחיר כולל</th>
+                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-500 to-gray-600 font-extrabold text-black">שם הוצאה</th>
+                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-600 to-gray-700 font-extrabold text-black">מספר</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {
                                                 hestoriaKneot.map((item, index) => {
                                                     return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setShowBerotAska(true); setAfshrotRekha(mtsavArekha(item.tarekh) >= 0 ? false : true); setAska(item); }}>פירוט</Button></td>
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{!mtsavArekha(item.tarekh) ? <div className='text-danger'>לא זמין</div> : mtsavArekha(item.tarekh) >= 0 ? <div className='text-danger'>לא זמין</div> : <div className='text-success'>זמין</div>}</td>
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{flipDate(item.tarekh)}</td>
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{item.shaa}</td>
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{formatNumberWithCommas(item.skhom)}</td>
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{item.sog}</td>
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{item.msbar}</td>
+                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setShowBerotAska(true); setAfshrotRekha(mtsavArekha(item.tarekh) >= 0 ? false : true); setAska(item); }}>פירוט</Button></td>
+                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{!mtsavArekha(item.tarekh) ? <div className='text-danger'>לא זמין</div> : mtsavArekha(item.tarekh) >= 0 ? <div className='text-danger'>לא זמין</div> : <div className='text-success'>זמין</div>}</td>
+                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{flipDate(item.tarekh)}</td>
+                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{item.shaa}</td>
+                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{formatNumberWithCommas(item.skhom)}</td>
+                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{item.sog}</td>
+                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{item.msbar}</td>
                                                     </tr>
                                                 })
                                             }
@@ -602,20 +602,20 @@ export default function Management() {
                                     <table className="w-full table-auto border-collapse">
                                         <thead>
                                             <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">תאריך עסקה</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">פירוט עסקה</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">מחיר כולל</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">מספר</th>
+                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">תאריך עסקה</th>
+                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">פירוט עסקה</th>
+                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">מחיר כולל</th>
+                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">מספר</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {
                                                 tnoahBmzomnem?.map((tnoah,index) => {
                                                     return (tnoah.active) && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{tnoah.tarekh}</td>
-                                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => {setShowModalBerotAskatKsfem(true);setAskatKsfem(tnoah)}}>פירוט</Button></td>
-                                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{formatNumberWithCommas(tnoah.skhomKlle)}</td>
-                                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{tnoah.msbar}</td>
+                                                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{tnoah.tarekh}</td>
+                                                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => {setShowModalBerotAskatKsfem(true);setAskatKsfem(tnoah)}}>פירוט</Button></td>
+                                                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{formatNumberWithCommas(tnoah.skhomKlle)}</td>
+                                                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{tnoah.msbar}</td>
                                                 </tr>
                                                 })
                                             }
@@ -626,7 +626,7 @@ export default function Management() {
                         </div>
                     </div>
 
-                    <div className="p-5 justify-center w-full max-w-[700px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[650px]">
+                    <div className="p-5 justify-center w-full max-w-[750px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[650px]">
                         <div className="w-full flex justify-around items-end">
                             <Button variant='faded' color='primary' onClick={() => setShowModalHosfatHotsaaHadsha(true)}><div className="text-[18px] mr-1">+</div>הוספת הוצאה חדשה</Button>
                         </div>
@@ -635,18 +635,18 @@ export default function Management() {
                             <table className="w-full table-auto border-collapse">
                                 <thead>
                                     <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
-                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-white to-gray-50 font-extrabold text-black"></th>
-                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">מועד חוב</th>
-                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">שם הוצאה</th>
+                                        <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-white to-gray-50 font-extrabold text-black"></th>
+                                        <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">מועד חוב</th>
+                                        <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">שם הוצאה</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {
                                         hotsaot.map((hotsaa, index) => {
                                             return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa(hotsaa); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
-                                                <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td>
-                                                <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{hotsaa?.shem}</td>
+                                                <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa(hotsaa); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
+                                                <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td>
+                                                <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.shem}</td>
                                             </tr>
                                         })
                                     }

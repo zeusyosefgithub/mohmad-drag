@@ -3,7 +3,7 @@ import { Autocomplete, AutocompleteItem, Button, Divider, Dropdown, DropdownItem
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { FaArrowDown, FaArrowUp, FaSleigh, FaTrash } from "react-icons/fa";
 import { FiPlus } from "react-icons/fi";
-import { differenceInHours, differenceInMinutes, format, parseISO } from 'date-fns';
+import { differenceInHours, differenceInMinutes, format, getDaysInMonth, parseISO } from 'date-fns';
 import GetDocs from "../FireBase/getDocs";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../FireBase/firebase";
@@ -26,6 +26,9 @@ import { FaList } from "react-icons/fa6";
 import { FcOvertime } from "react-icons/fc";
 import { LuPencilLine } from "react-icons/lu";
 import ModalHosfatKnesaYdnet from "../Modals/ModalHosfatKnesaYdnet";
+import { he } from 'date-fns/locale';
+import { FaArrowRightFromBracket } from "react-icons/fa6";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 export default function Aobdem() {
 
@@ -41,7 +44,8 @@ export default function Aobdem() {
     const [showModalDafeShaot, setShowModalDafeShaot] = useState(false);
     const [showHosfatAobed, setShowHosfatAobed] = useState(false);
     const [showModalBrtemNosfemAobed, setShowModalBrtemNosfemAobed] = useState(false);
-    const [showModalHosfatKnesaYdnet,setShowModalHosfatKnesaYdnet] = useState(false);
+    const [showModalHosfatKnesaYdnet, setShowModalHosfatKnesaYdnet] = useState(false);
+    const [loading,setLoading] = useState(false);
 
     const handleTimeDiffrence = (yetseah, knesa) => {
         if (yetseah && knesa) {
@@ -94,10 +98,10 @@ export default function Aobdem() {
         }
         await updateDoc(doc(firestore, 'metadata', 'counterShaotAboda'), {
             count: counter?.count + count1,
-            countShaotAbodaKodemet : counter.countShaotAbodaMunth !== format(new Date(), 'MM-yyyy') ? counter?.countShaotAboda : counter?.countShaotAbodaKodemet,
+            countShaotAbodaKodemet: counter.countShaotAbodaMunth !== format(new Date(), 'MM-yyyy') ? counter?.countShaotAboda : counter?.countShaotAbodaKodemet,
             countShaotAboda: counter.countShaotAbodaMunth === format(new Date(), 'MM-yyyy') ? (counter.countShaotAboda + count2) : count2,
             countShaotAbodaMunth: format(new Date(), 'MM-yyyy'),
-            countShaotAbodaYetsor:  counter.countShaotAbodaMunth === format(new Date(), 'MM-yyyy') ? (counter.countShaotAbodaYetsor + count3) : count3,
+            countShaotAbodaYetsor: counter.countShaotAbodaMunth === format(new Date(), 'MM-yyyy') ? (counter.countShaotAbodaYetsor + count3) : count3,
             countShaotAbodaYetsorKodem: counter.countShaotAbodaMunth !== format(new Date(), 'MM-yyyy') ? counter?.countShaotAbodaYetsor : counter?.countShaotAbodaYetsorKodem,
         });
         setAobed(null);
@@ -209,12 +213,52 @@ export default function Aobdem() {
             setKnesotHeomBdeka(updatedKnesotHeom);
         }
     }, [shaotHeomData, aobdem]);
+    
+
+    const [btehotYom, setBtehotYom] = useState([]);
+
+    const handleRemoveYom = (val) => {
+        const newArray = btehotYom.filter(item => item !== val);
+        setBtehotYom(newArray);
+    };
+
+    const toggleYom = (val) => {
+        if (btehotYom.includes(val)) {
+            handleRemoveYom(val);
+        } else {
+            setBtehotYom([...btehotYom, val]);
+        }
+    };
+
+
+    const bdekatYomAemNbhar = (val) => {
+        return !(knesotKlale && knesotKlale.some(item => item.tarekh === val));
+    };
+
+    
     useEffect(() => {
-        const unsubscribe = useGetDataByLimit('shaotAboda', 20, (result) => {
-            const sortedResult = result.sort((a, b) => b.msbar - a.msbar);
-            setKnesotKlale(sortedResult);
-        });
-    }, []);
+        setLoading(true);
+        let newArray = [];
+        if(knesotKlale?.length){
+            for (let index = 0; index < knesotKlale.length; index++) {
+                newArray.push(knesotKlale[index]);
+            }
+        }
+        for (let index = 0; index < btehotYom.length; index++) {
+            if (bdekatYomAemNbhar(btehotYom[index])) {
+                const unsubscribe = useGetDataByConditionWithoutUseEffect('shaotAboda', 'tarekh', '==', btehotYom[index], (result) => {
+                    const sortedResult = result.sort((a, b) => b.msbar - a.msbar);
+                    for (let index1 = 0; index1 < sortedResult.length; index1++) {
+                        newArray.push(sortedResult[index1]); 
+                    }
+                });
+            }
+        }
+        setKnesotKlale(newArray);
+        setLoading(false);
+    }, [btehotYom]);
+
+    console.log(knesotKlale);
     const handleChange = (index, field, value) => {
         setKnesotHeom(prevKnesotHeom => {
             const updatedKnesotHeom = [...prevKnesotHeom];
@@ -244,25 +288,112 @@ export default function Aobdem() {
         return false;
     }
 
+
+    const GetHodshem = () => {
+        let newArray = [];
+        let AadHkhshav = parseInt(format(new Date(), 'MM'));
+        for (let index = 0; index < 12; index++) {
+            let munth = `${format(new Date(), 'yyyy')}-${index < 10 ? ('0' + (index + 1)) : index + 1}`;
+            newArray.push({
+                shem: format(munth, 'LLLL', { locale: he }),
+                tarekh: `${format(new Date(), 'yyyy')}-${index < 10 ? ('0' + (index + 1)) : index + 1}`,
+                msbar: index + 1
+            });
+        }
+        return newArray;
+    }
+
+    const GetYmem = () => {
+        let newArray = [];
+        let AadHkhshav = parseInt(getDaysInMonth(new Date()));
+        for (let index = 0; index < AadHkhshav; index++) {
+            let day = `${format(new Date(), 'yyyy-MM')}-${index < 10 ? ('0' + (index + 1)) : index + 1}`;
+            newArray.push({
+                shem: GetTarekhShem(format(day, 'EEEE')),
+                tarekh: `${index < 10 ? ('0' + (index + 1)) : index + 1}-${format(new Date(), 'MM-yyyy')}`,
+                msbar: index + 1
+            });
+        }
+        return newArray;
+    }
+
+
+    const bdekatYomInKnestKlale = (yom) => {
+        if (!knesotKlale?.length) {
+            return;
+        }
+        for (let index = 0; index < knesotKlale?.length; index++) {
+            if (knesotKlale[index].tarekh === yom) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const [tarekhKlaleNbhar, setTarekhKlaleNbhar] = useState('');
+
+
+    const GetReshmatAobdemYememHodesh = (Yom,knesot,aobdemmm,btehot) => {
+        console.log(knesot);
+        console.log(btehot);
+        let newArray = [];
+        if(knesot.length > 0){
+            if (bdekatYomInKnestKlale(Yom?.tarekh) && btehot.includes(Yom?.tarekh)) {
+                for (let index = 0; index < knesot.length; index++) {
+                    if (knesot[index]?.tarekh === Yom?.tarekh) {
+                        newArray.push(<tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesot[index]?.yetseah}</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesot[index]?.knesa}</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{ }</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{ }</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesot[index]?.headrot}</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{GetTarekhShem(format(flipDate(knesot[index]?.tarekh), 'EEEE'))}</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesot[index]?.tarekh}</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{GetAobedBratem(knesot[index]?.aobed)?.shem}</td>
+                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesot[index]?.headrot && knesot[index]?.yetseah && knesot[index]?.knesa ? <IoMdCheckmarkCircleOutline className="text-success text-[15px]" /> : <VscError className="text-danger text-[15px]" />}</td>
+                        </tr>);
+                    }
+                }
+            }
+            else if (btehot.includes(Yom?.tarekh)) {
+                for (let index = aobdemmm.length - 1; index >= 0; index--) {
+                    newArray.push(<tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{aobdemmm[index].shem}</td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
+                    </tr>);
+                }
+            }
+        }
+        return newArray;
+    }
+
     
 
     return (
         <div>
-            <ModalHosfatKnesaYdnet aobdem={aobdem} show={showModalHosfatKnesaYdnet} disable={() => setShowModalHosfatKnesaYdnet(false)}/>
+            {
+                loading && <Spinner className="absolute top-0 bottom-0 right-0 left-0"/>
+            }
+            <ModalHosfatKnesaYdnet aobdem={aobdem} show={showModalHosfatKnesaYdnet} disable={() => setShowModalHosfatKnesaYdnet(false)} />
             <ModalBrtemNosfemAobed aobed={aobed} show={showModalBrtemNosfemAobed} disable={() => setShowModalBrtemNosfemAobed(false)} />
             <ModalHosfatAobed show={showHosfatAobed} disable={() => setShowHosfatAobed(false)} />
-            <ModalDafeShaot aobdem={aobdem} counter={counter} show={showModalDafeShaot} disable={() => setShowModalDafeShaot(false)}/>
+            <ModalDafeShaot aobdem={aobdem} counter={counter} show={showModalDafeShaot} disable={() => setShowModalDafeShaot(false)} />
             <div className='w-full flex justify-between items-center mt-5 '>
 
                 <div className="w-full flex items-center justify-around flex-wrap">
-
-
                     <div className="p-5 justify-center w-[800px] bg-white rounded-xl shadow-xl mb-20 h-[650px]">
                         <div className="overflow-auto h-fit w-full" dir="rtl">
                             <div dir="ltr">
                                 <div className="mt-5 mb-5 flex justify-around items-center">
                                     <Button size="sm" variant="faded" onClick={() => setShowHosfatAobed(true)}><div className="text-[18px] mr-1">+</div>הוספת עובד חדש</Button>
-                                    <Button onClick={() => setShowModalDafeShaot(true)}><FcOvertime className="text-2xl"/>דפי שעות</Button>
+                                    <Button onClick={() => setShowModalDafeShaot(true)}><FcOvertime className="text-2xl" />דפי שעות</Button>
                                 </div>
                                 <div className="overflow-x-auto h-[500px]">
                                     <table className="w-full table-auto border-collapse">
@@ -306,16 +437,16 @@ export default function Aobdem() {
                     <div className="p-5 justify-center w-[800px] bg-white rounded-xl shadow-xl mb-20 h-[650px]">
                         <div>
                             <div className="flex justify-around items-center mb-5">
-                                <Button variant='faded' className={loh === 'לוח כללי' && 'font-extrabold text-base'} color={loh === 'לוח כללי' ? 'primary' : 'default'} onClick={() => setLoh('לוח כללי')}><FaList className="text-base"/>לוח כללי</Button>
-                                <Button variant='faded' className={loh === 'לוח היום' && 'font-extrabold text-base'} color={loh === 'לוח היום' ? 'primary' : 'default'} onClick={() => setLoh('לוח היום')}><FaListCheck className="text-base"/>לוח היום</Button>
-                                <Button variant='faded' onClick={() => setShowModalHosfatKnesaYdnet(true)}><LuPencilLine className="text-base"/>הוספה ידנית</Button>
+                                <Button variant='faded' className={loh === 'לוח כללי' && 'font-extrabold text-base'} color={loh === 'לוח כללי' ? 'primary' : 'default'} onClick={() => setLoh('לוח כללי')}><FaList className="text-base" />לוח כללי</Button>
+                                <Button variant='faded' className={loh === 'לוח היום' && 'font-extrabold text-base'} color={loh === 'לוח היום' ? 'primary' : 'default'} onClick={() => setLoh('לוח היום')}><FaListCheck className="text-base" />לוח היום</Button>
+                                <Button variant='faded' onClick={() => setShowModalHosfatKnesaYdnet(true)}><LuPencilLine className="text-base" />הוספה ידנית</Button>
                             </div>
                             <Divider />
                             <div className="mt-5 mb-5">
                                 {
                                     loh === 'לוח היום' &&
                                     <div>
-                                        <div className="overflow-x-auto h-[450px]">
+                                        <div className="overflow-x-auto h-[500px]">
                                             <table className="w-full table-auto border-collapse">
                                                 <thead>
                                                     <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-20">
@@ -371,55 +502,91 @@ export default function Aobdem() {
                                 {
                                     loh === 'לוח כללי' &&
                                     <div>
-                                        <div className="overflow-x-auto h-[300px]">
-                                            <table className="w-full table-auto border-collapse">
-                                                <thead>
-                                                    <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
-                                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">יצאה מתוקנת</th>
-                                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">כניסה מתוקנת</th>
-                                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">יצאה</th>
-                                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">כניסה</th>
-                                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">היעדרות</th>
-                                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-500 to-gray-600 font-extrabold text-black">יום</th>
-                                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-600 to-gray-700 font-extrabold text-black">תאריך</th>
-                                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-700 to-gray-800 font-extrabold text-black">שם עובד</th>
-                                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-800 to-gray-900 font-extrabold text-black"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {
-                                                        knesotKlale?.map((knesa, index) => {
-                                                            return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                                <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{knesa?.yetseah}</td>
-                                                                <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{knesa?.knesa}</td>
-                                                                <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{ }</td>
-                                                                <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{ }</td>
-                                                                <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{knesa?.headrot}</td>
-                                                                <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{GetTarekhShem(format(flipDate(knesa?.tarekh), 'EEEE'))}</td>
-                                                                <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{knesa?.tarekh}</td>
-                                                                <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{GetAobedBratem(knesa?.aobed)?.shem}</td>
-                                                                <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{knesa?.headrot && knesa?.yetseah && knesa?.knesa ? <IoMdCheckmarkCircleOutline className="text-success text-[15px]" /> : <VscError className="text-danger text-[15px]" />}</td>
+                                        <div className="overflow-x-auto h-[500px]">
+                                            {
+                                                !tarekhKlaleNbhar && GetHodshem()?.map((hodesh, index) => {
+                                                    return (hodesh?.msbar >= parseInt(format(new Date(), 'MM'))) && <>
+                                                        <div className="flex items-center mt-1 mb-1 p-1 border-b-1">
+                                                            <div className="w-full flex justify-center"><Button isDisabled={hodesh?.msbar !== parseInt(format(new Date(), 'MM'))} onClick={() => { setTarekhKlaleNbhar(hodesh?.tarekh) }} color="primary" variant='light' size="sm">פתח</Button></div>
+                                                            <div className="w-full text-center">{format(hodesh?.tarekh, 'MM-yyyy')}</div>
+                                                            <div className="w-full text-center">{hodesh?.shem}</div>
+                                                        </div>
+                                                    </>
+                                                })
+                                            }
+                                            {
+                                                tarekhKlaleNbhar &&
+                                                <div className="overflow-x-auto h-[500px]">
+                                                    <div className="flex justify-end">
+
+                                                        <Button color="primary" variant='light' className="mb-2" onClick={() => setTarekhKlaleNbhar('')} size="sm"><FaArrowRightFromBracket />חזרה</Button>
+                                                    </div>
+                                                    <table className="w-full table-auto border-collapse">
+                                                        <thead>
+                                                            <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
+                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black ">יצאה מתוקנת</th>
+                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black ">כניסה מתוקנת</th>
+                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black ">יצאה</th>
+                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black ">כניסה</th>
+                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black ">היעדרות</th>
+                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-500 to-gray-600 font-extrabold text-black ">יום</th>
+                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-600 to-gray-700 font-extrabold text-black ">תאריך</th>
+                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-700 to-gray-800 font-extrabold text-black ">שם עובד</th>
+                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-800 to-gray-900 font-extrabold text-black "></th>
                                                             </tr>
-                                                        })
-                                                    }
-                                                </tbody>
-                                            </table>
+                                                        </thead>
+                                                        <tbody>
+                                                            {
+                                                                GetYmem()?.map((Yom, index) => {
+                                                                    return <>
+                                                                        <tr key={index} className="border-t-4 border-gray-200 dark:border-gray-700">
+                                                                            <td className="px-4 py-3 text-center text-[13px] text-black font-extrabold" colSpan={2}>
+                                                                                {
+                                                                                    btehotYom.includes(Yom.tarekh) ?
+                                                                                    <Button onClick={() => toggleYom(Yom.tarekh)} size="sm" className="h-[20px]" color="primary" variant='light'><MdKeyboardArrowUp className="text-lg" /></Button>
+                                                                                    :
+                                                                                    <Button onClick={() => toggleYom(Yom.tarekh)} size="sm" className="h-[20px]" color="primary" variant='light'><MdKeyboardArrowDown className="text-lg" /></Button>
+                                                                                }
+                                                                            </td>
+                                                                            <td className="px-4 py-3 text-center text-[13px] text-black font-extrabold" colSpan={3}>{Yom?.shem}</td>
+                                                                            <td className="px-4 py-3 text-center text-[13px] text-black font-extrabold" colSpan={3}>{Yom?.tarekh}</td>
+                                                                        </tr>
+                                                                        {loading ? <tr><td colSpan={9} className="text-center">Loading...</td></tr> : GetReshmatAobdemYememHodesh(Yom,knesotKlale,aobdem,btehotYom)}
+                                                                    </>
+                                                                })
+                                                            }
+                                                            {/* {
+                                                                knesotKlale?.map((knesa, index) => {
+                                                                    return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesa?.yetseah}</td>
+                                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesa?.knesa}</td>
+                                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{ }</td>
+                                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{ }</td>
+                                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesa?.headrot}</td>
+                                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{GetTarekhShem(format(flipDate(knesa?.tarekh), 'EEEE'))}</td>
+                                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesa?.tarekh}</td>
+                                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{GetAobedBratem(knesa?.aobed)?.shem}</td>
+                                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{knesa?.headrot && knesa?.yetseah && knesa?.knesa ? <IoMdCheckmarkCircleOutline className="text-success text-[15px]" /> : <VscError className="text-danger text-[15px]" />}</td>
+                                                                    </tr>
+                                                                })
+                                                            } */}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            }
                                         </div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+
+
                                     </div>
+
                                 }
                             </div>
                         </div>
                     </div>
                 </div>
-
-
-
-
-
-
-
-
-
             </div>
 
         </div>
