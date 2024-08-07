@@ -70,6 +70,8 @@ import rep99 from '../images/rep99.jpg';
 import rep100 from '../images/rep100.jpg';
 import rep101 from '../images/rep101.jpg';
 import rep102 from '../images/rep102.jpg';
+import rep103 from '../images/rep103.png';
+import rep104 from '../images/rep104.jpg';
 import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { GiHook } from "react-icons/gi";
 import { FaRegCalendarCheck } from "react-icons/fa6";
@@ -92,6 +94,9 @@ export function GetTmonatHelek(remez,msbar) {
     return rep42;
   }
   else if (remez === 'C2') {
+    if(msbar === 'C203' || msbar === 'C202' || msbar === 'C201'){
+      return rep104;
+    }
     if(msbar === 'C204'){
       return rep97;
     }
@@ -212,6 +217,9 @@ export function GetTmonatHelek(remez,msbar) {
     return rep32;
   }
   else if (remez === 'F3') {
+    if(msbar === 'F300' || msbar === 'F303'){
+      return rep103;
+    }
     return rep33;
   }
   else if (remez === 'F4') {
