@@ -72,6 +72,15 @@ import rep101 from '../images/rep101.jpg';
 import rep102 from '../images/rep102.jpg';
 import rep103 from '../images/rep103.png';
 import rep104 from '../images/rep104.jpg';
+import rep105 from '../images/rep105.jpg';
+
+import rep106 from '../images/rep106.png';
+import rep107 from '../images/rep107.png';
+import rep108 from '../images/rep108.png';
+import rep109 from '../images/rep109.png';
+import rep110 from '../images/rep110.png';
+import rep111 from '../images/rep111.jpg';
+
 import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { GiHook } from "react-icons/gi";
 import { FaRegCalendarCheck } from "react-icons/fa6";
@@ -94,7 +103,7 @@ export function GetTmonatHelek(remez,msbar) {
     return rep42;
   }
   else if (remez === 'C2') {
-    if(msbar === 'C203' || msbar === 'C202' || msbar === 'C201'){
+    if(msbar === 'C203' || msbar === 'C202' || msbar === 'C201' || msbar === 'C207' || msbar === 'C206'){
       return rep104;
     }
     if(msbar === 'C204'){
@@ -172,6 +181,9 @@ export function GetTmonatHelek(remez,msbar) {
     return rep19;
   }
   else if (remez === 'A9') {
+    if(msbar === 'A901'){
+      return rep105;
+    }
     return rep73;
   }
   else if (remez === 'A10') {
@@ -217,7 +229,7 @@ export function GetTmonatHelek(remez,msbar) {
     return rep32;
   }
   else if (remez === 'F3') {
-    if(msbar === 'F300' || msbar === 'F303'){
+    if(msbar === 'F300' || msbar === 'F301'){
       return rep103;
     }
     return rep33;
@@ -248,6 +260,24 @@ export function GetTmonatHelek(remez,msbar) {
   }
 
   else if (remez === 'D1') {
+    if(msbar === 'D100'){
+      return rep106;
+    }
+    if(msbar === 'D101'){
+      return rep107;
+    }
+    if(msbar === 'D102'){
+      return rep108;
+    }
+    if(msbar === 'D103'){
+      return rep109;
+    }
+    if(msbar === 'D104'){
+      return rep110;
+    }
+    if(msbar === 'D105'){
+      return rep111;
+    }
     return rep58;
   }
   else if (remez === 'G1') {

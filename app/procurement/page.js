@@ -243,10 +243,10 @@ export default function Procurement() {
             <Button onClick={async () => {
                 let count = 0;
                 for (let index = 0; index < mlae.length; index++) {
-                    if (mlae[index].shem === 'בורג איסכורית אורך 20 ס"מ' && count === 0) {
+                    if (mlae[index].msbar === 'D105' && count === 0) {
                         //console.log(mlae[index]);
                         await updateDoc(doc(firestore, 'mlae', mlae[index].id),{
-                            msbar:'C309'
+                            msbar:'D103'
                         });
                         //count++;
                         //return alert(1);
