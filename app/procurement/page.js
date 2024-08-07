@@ -240,6 +240,20 @@ export default function Procurement() {
     const [showModalAdconBret,setShowModalAdconBret] = useState(false);
     return (
         <div className=''>
+            <Button onClick={async () => {
+                let count = 0;
+                for (let index = 0; index < mlae.length; index++) {
+                    if (mlae[index].msbar === 'F303' && count === 0) {
+                        console.log(mlae[index]);
+                        //await deleteDoc(doc(firestore, 'mlae', mlae[index].id));
+                        //count++;
+                        //return alert(1);
+                    }
+
+                }
+            }}>
+                asd
+            </Button>
             {<ModalMessage Aeshor={async (val) => {
                 if (val) {
                     setLoading(true);
@@ -351,11 +365,11 @@ export default function Procurement() {
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{formatNumberWithCommas(item.alot)}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{GetKmotMtaema(item.mededa,item.kmot)}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbarMdaf}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.shem}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><div dir='rtl'>{item.shem}</div></td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbar}</td>
                                                                         <td>
                                                                             <div className="group relative">
-                                                                                <Image src={GetTmonatHelek(item.categoryMotsar)} className="h-[50px] w-[50px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
+                                                                                <Image src={GetTmonatHelek(item.categoryMotsar,item?.msbar)} className="h-[50px] w-[50px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
                                                                             </div>
                                                                         </td>
                                                                     </tr>

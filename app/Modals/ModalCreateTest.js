@@ -1494,7 +1494,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
             });
         };
         if (agla?.sogAska === 'ייצור' || sogAskaa === 'ייצור') {
-            const itemsToAdd = ['F4', 'F5', 'F6', 'F7', 'F3', 'E1', 'E2', 'E3', 'E4', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C10', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'A8'];
+            const itemsToAdd = ['F4', 'F5', 'F6', 'F7', 'F3', 'E1', 'E2', 'E3', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'A8'];
             const itemsToRemove = [...itemsToAdd];
             if (sogAgla) {
                 updateMotsaremLhatseg(itemsToAdd, []);

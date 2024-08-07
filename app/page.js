@@ -8,46 +8,30 @@ import { useGetDataByCondition, useGetDataByConditionWithoutUseEffect } from "./
 import ModalYetsorMtsavem from "./Modals/ModalYetsorMtsavem";
 import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, where } from "firebase/firestore";
 import { firestore } from "./FireBase/firebase";
-import rep1 from './../images/rep1.png';
-import rep2 from '../images/rep2.jpg';
 import rep3 from '../images/rep3.png';
-import rep4 from '../images/rep4.png';
-import rep5 from '../images/rep5.jpg';
 import rep6 from '../images/rep6.png';
-import rep7 from '../images/rep7.png';
-import rep8 from '../images/rep8.jpg';
-import rep9 from '../images/rep9.jpg';
-import rep10 from '../images/rep10.jpg';
-import rep11 from './../images/rep11.jpg';
 import rep12 from '../images/rep12.png';
-import rep13 from '../images/rep13.jpg';
 import rep14 from '../images/rep14.jpg';
-import rep15 from '../images/rep15.jpg';
 import rep16 from '../images/rep16.jpg';
 import rep17 from '../images/rep17.jpg';
 import rep18 from '../images/rep18.jpg';
 import rep19 from '../images/rep19.png';
 import rep20 from '../images/rep20.png';
 import rep21 from './../images/rep21.jpg';
-import rep22 from '../images/rep22.jpg';
 import rep23 from '../images/rep23.png';
 import rep24 from '../images/rep24.png';
 import rep25 from '../images/rep25.png';
-import rep26 from '../images/rep26.png';
 import rep27 from '../images/rep27.jpg';
 import rep28 from '../images/rep28.jpeg';
 import rep29 from '../images/rep29.png';
-import rep30 from '../images/rep30.jpg';
 import rep31 from './../images/rep31.png';
 import rep32 from '../images/rep32.jpeg';
 import rep33 from '../images/rep33.png';
-import rep34 from '../images/rep34.png';
 import rep35 from '../images/rep35.png';
 import rep36 from '../images/rep36.png';
 import rep37 from '../images/rep37.jpg';
 import rep38 from '../images/rep38.png';
 import rep39 from '../images/rep39.png';
-import rep40 from '../images/rep40.jpeg';
 import rep41 from './../images/rep41.jpg';
 import rep42 from './../images/rep42.jpg';
 import rep43 from '../images/rep43.png';
@@ -60,35 +44,29 @@ import rep49 from '../images/rep49.jpg';
 import rep50 from '../images/rep50.png';
 import rep51 from './../images/rep51.png';
 import rep52 from './../images/rep52.jpg';
-import rep53 from '../images/rep53.jpeg';
-import rep54 from '../images/rep54.png';
 import rep55 from '../images/rep55.jpg';
 import rep56 from '../images/rep56.png';
 import rep57 from '../images/rep57.png';
 import rep58 from '../images/rep58.png';
-import rep59 from '../images/rep59.png';
-import rep60 from '../images/rep60.png';
-import rep61 from './../images/rep61.jpg';
-import rep62 from './../images/rep62.jpg';
-import rep63 from '../images/rep63.png';
-import rep64 from '../images/rep64.png';
-import rep65 from '../images/rep65.png';
-import rep66 from '../images/rep66.png';
 import rep67 from '../images/rep67.jpg';
 import rep68 from '../images/rep68.png';
 import rep69 from '../images/rep69.jpg';
 import rep70 from '../images/rep70.png';
-import rep71 from './../images/rep71.png';
 import rep72 from './../images/rep72.jpg';
 import rep73 from '../images/rep73.png';
 import rep74 from '../images/rep74.png';
-import rep75 from '../images/rep75.png';
 import rep76 from '../images/rep76.jpg';
-import rep77 from '../images/rep77.jpg';
-import rep78 from '../images/rep78.png';
 import rep79 from '../images/rep79.png';
-import rep82 from '../images/rep82.png';
 import rep83 from '../images/rep83.png';
+import rep91 from '../images/rep91.jpg';
+import rep92 from '../images/rep92.jpg';
+import rep93 from '../images/rep93.jpg';
+import rep94 from '../images/rep94.jpg';
+import rep95 from '../images/rep95.jpg';
+import rep96 from '../images/rep96.jpg';
+import rep97 from '../images/rep97.jpg';
+import rep98 from '../images/rep98.jpg';
+import rep99 from '../images/rep99.jpg';
 import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { GiHook } from "react-icons/gi";
 import { FaRegCalendarCheck } from "react-icons/fa6";
@@ -106,14 +84,20 @@ import { useReactToPrint } from "react-to-print";
 
 
 
-export function GetTmonatHelek(remez) {
+export function GetTmonatHelek(remez,msbar) {
   if (remez === 'C1') {
     return rep42;
   }
   else if (remez === 'C2') {
+    if(msbar === 'C204'){
+      return rep97;
+    }
     return rep16;
   }
   else if (remez === 'C3') {
+    if(msbar === 'C306' || msbar === 'C307'){
+      return rep98;
+    }
     return rep18;
   }
   else if (remez === 'C4') {
@@ -140,6 +124,12 @@ export function GetTmonatHelek(remez) {
   else if (remez === 'C11') {
     return rep76;
   }
+
+  else if (remez === 'C12') {
+    return rep95;
+  }
+
+
   else if (remez === 'A1') {
     return rep35;
   }
@@ -204,13 +194,16 @@ export function GetTmonatHelek(remez) {
     return rep67;
   }
   else if (remez === 'F2') {
+    if(msbar === 'F202'){
+      return rep99;
+    }
     return rep32;
   }
   else if (remez === 'F3') {
     return rep33;
   }
   else if (remez === 'F4') {
-    return rep54;
+    return rep91;
   }
   else if (remez === 'F5') {
     return rep52;
@@ -231,7 +224,7 @@ export function GetTmonatHelek(remez) {
     return rep38;
   }
   else if (remez === 'E4') {
-    return rep40;
+    return rep96;
   }
 
   else if (remez === 'D1') {
@@ -255,6 +248,22 @@ export function GetTmonatHelek(remez) {
   else if (remez === 'G6') {
     return rep28;
   }
+
+  else if (remez === 'G7') {
+    return rep92;
+
+  }
+  else if (remez === 'G8') {
+    return rep94;
+
+  }
+  else if (remez === 'G9') {
+    return rep93;
+
+  }
+
+
+
   else if (remez === 'H1') {
     return rep55;
   }

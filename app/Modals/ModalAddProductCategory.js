@@ -54,6 +54,7 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
         setSog('');
         setMherThlte('');
         setMsbarMdaf('');
+        setTmona(null);
         disable();
     }
 
@@ -131,12 +132,13 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                                         disallowEmptySelection
                                         selectionMode="single"
                                         selectedKeys={shem}
+
                                         onSelectionChange={(val) => setShem(val.currentKey)}
                                     >
                                         {
                                             motsarem?.map((motsar, index) => {
                                                 return <DropdownItem key={motsar.shem} onClick={() => setTmona(motsar?.sog)}><div className="flex items-center"><div>
-                                                    <Image src={GetTmonatHelek(motsar?.sog)} className="rounded-full h-[35px] w-[35px]" />
+                                                    <Image src={GetTmonatHelek(motsar?.sog)} className="rounded-full h-[32px] w-[32px]" />
                                                 </div><div className="mr-2">{motsar.shem}</div></div></DropdownItem>
                                             })
                                         }
