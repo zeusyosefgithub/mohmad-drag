@@ -16,9 +16,11 @@ export default function CheckAuth({ children }) {
     const router = useRouter();
     const [contactName, setContactName] = useState(null);
     const [customerSet, setCustomerSet] = useState(null);
+    const [isNehol, setIsNehol] = useState(null);
+    const [aobedAuth, setaobedAuth] = useState(null);
     const admins = GetDocs('admins');
 
-
+    console.log(1);
     useEffect(() => {
         const checkAuth = async () => {
             await new Promise((res) => setTimeout(res, 50));
@@ -35,6 +37,19 @@ export default function CheckAuth({ children }) {
         }
     }
 
+    useEffect(() => {
+        if(currentUser?.email && admins.length > 0){
+            if(bdekatTafked()?.tfked === 'nehol'){
+                setIsNehol(true);
+                setaobedAuth(bdekatTafked());
+            }
+            else{
+                setIsNehol(false);
+                setaobedAuth(bdekatTafked());
+            }
+        }
+    },[currentUser,admins]);
+
     return (
         <div>
             {
@@ -43,9 +58,9 @@ export default function CheckAuth({ children }) {
                     :
                     !loading && currentUser ?
                         <div>
-                            <ContactContext.Provider value={{ contactName, setContactName, customerSet, setCustomerSet }}>
+                            <ContactContext.Provider value={{ contactName, setContactName, customerSet, setCustomerSet,isNehol, setIsNehol,aobedAuth }}>
                                 {
-                                    bdekatTafked()?.tfked === 'admin' ?
+                                    (bdekatTafked()?.tfked === 'admin') || (bdekatTafked()?.tfked === 'nehol') ?
                                         <div>
                                             <div>
                                                 <NavBar />

@@ -1,10 +1,10 @@
 'use client';
-import React, { useEffect, useRef } from "react";
-import { Avatar, Button, Checkbox, CheckboxGroup, Divider, Input, Modal, Spinner, Switch } from "@nextui-org/react";
+import React, { useContext, useEffect, useRef } from "react";
+import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Checkbox, CheckboxGroup, Divider, Input, Modal, Spinner, Switch } from "@nextui-org/react";
 import { useState } from "react";
 import ModalCreate from "./Modals/ModalCreate";
 import ModalTokhnetYetsor from "./Modals/ModalTokhnetYetsor";
-import { useGetDataByCondition, useGetDataByConditionWithoutUseEffect } from "./FireBase/getDataByCondition";
+import { useGetDataByCondition, useGetDataByConditionWithoutUseEffect, useGetDataByConditionWithoutUseEffectTwoQueres } from "./FireBase/getDataByCondition";
 import ModalYetsorMtsavem from "./Modals/ModalYetsorMtsavem";
 import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, where } from "firebase/firestore";
 import { firestore } from "./FireBase/firebase";
@@ -88,40 +88,43 @@ import { FaTrailer } from "react-icons/fa6";
 import { AiOutlineAppstoreAdd } from "react-icons/ai";
 
 import Image from "next/image";
-import { CirclesWithBar, Comment, Hourglass, ThreeCircles, Watch } from "react-loader-spinner";
+import { CirclesWithBar, Comment, Hearts, Hourglass, ThreeCircles, Watch } from "react-loader-spinner";
 import { TofsTokhnetYetsor } from "./Page Components/TofsTokhnetYetsor";
 import GetDocs from "./FireBase/getDocs";
 import { MdDelete } from "react-icons/md";
 import ModalCreateTest from "./Modals/ModalCreateTest";
 import { ReshionLetsor } from "./Page Components/ReshionLetsor";
 import { useReactToPrint } from "react-to-print";
+import ContactContext from "./auth/ContactContext";
+import { useAuth } from "./auth/authContext";
+import { format } from "date-fns";
 
 
 
-export function GetTmonatHelek(remez,msbar) {
+export function GetTmonatHelek(remez, msbar) {
   if (remez === 'C1') {
     return rep42;
   }
   else if (remez === 'C2') {
-    if(msbar === 'C203' || msbar === 'C202' || msbar === 'C201' || msbar === 'C207' || msbar === 'C206'){
+    if (msbar === 'C203' || msbar === 'C202' || msbar === 'C201' || msbar === 'C207' || msbar === 'C206') {
       return rep104;
     }
-    if(msbar === 'C204'){
+    if (msbar === 'C204') {
       return rep97;
     }
     return rep16;
   }
   else if (remez === 'C3') {
-    if(msbar === 'C309' || msbar === 'C310'){
+    if (msbar === 'C309' || msbar === 'C310') {
       return rep102;
     }
-    if(msbar === 'C312' || msbar === 'C313'){
+    if (msbar === 'C312' || msbar === 'C313') {
       return rep101;
     }
-    if(msbar === 'C308'){
+    if (msbar === 'C308') {
       return rep100;
     }
-    if(msbar === 'C306' || msbar === 'C307'){
+    if (msbar === 'C306' || msbar === 'C307') {
       return rep98;
     }
     return rep18;
@@ -181,7 +184,7 @@ export function GetTmonatHelek(remez,msbar) {
     return rep19;
   }
   else if (remez === 'A9') {
-    if(msbar === 'A901'){
+    if (msbar === 'A901') {
       return rep105;
     }
     return rep73;
@@ -223,13 +226,13 @@ export function GetTmonatHelek(remez,msbar) {
     return rep67;
   }
   else if (remez === 'F2') {
-    if(msbar === 'F202'){
+    if (msbar === 'F202') {
       return rep99;
     }
     return rep32;
   }
   else if (remez === 'F3') {
-    if(msbar === 'F300' || msbar === 'F301'){
+    if (msbar === 'F300' || msbar === 'F301') {
       return rep103;
     }
     return rep33;
@@ -260,22 +263,22 @@ export function GetTmonatHelek(remez,msbar) {
   }
 
   else if (remez === 'D1') {
-    if(msbar === 'D100'){
+    if (msbar === 'D100') {
       return rep106;
     }
-    if(msbar === 'D101'){
+    if (msbar === 'D101') {
       return rep107;
     }
-    if(msbar === 'D102'){
+    if (msbar === 'D102') {
       return rep108;
     }
-    if(msbar === 'D103'){
+    if (msbar === 'D103') {
       return rep109;
     }
-    if(msbar === 'D104'){
+    if (msbar === 'D104') {
       return rep110;
     }
-    if(msbar === 'D105'){
+    if (msbar === 'D105') {
       return rep111;
     }
     return rep58;
@@ -324,7 +327,7 @@ export function GetTmonatHelek(remez,msbar) {
     return rep23;
   }
 
-  else if(remez === 'K1'){
+  else if (remez === 'K1') {
     return rep83;
   }
 
@@ -332,8 +335,10 @@ export function GetTmonatHelek(remez,msbar) {
 
 
 export default function Home() {
+  const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol,aobedAuth} = useContext(ContactContext);
   const [mlae, setMlae] = useState([]);
   const category = GetDocs('category');
+  const aobdem = GetDocs('aobdem');
   const Tokhneot = GetDocs('TokhnetYetsorAgla');
   const [showModalCreate, setShowModalCreate] = useState(false);
   const [showModalCreateTokhnetYetsor, setShowModalCreateTokhnetYetsor] = useState(false);
@@ -368,7 +373,7 @@ export default function Home() {
       setLkoh(null);
     }
   };
-  
+
   useEffect(() => {
     let unsubscribe;
     if (msbarLkoh) {
@@ -380,9 +385,6 @@ export default function Home() {
       }
     };
   }, [msbarLkoh]);
-
-
-
 
   const fetchDragData = (msbarDrag) => {
     try {
@@ -404,7 +406,7 @@ export default function Home() {
       setDrag(null);
     }
   };
-  
+
   useEffect(() => {
     let unsubscribe;
     if (msbarDrag) {
@@ -416,19 +418,6 @@ export default function Home() {
       }
     };
   }, [msbarDrag]);
-
-  // useEffect(() => {
-  //   if (lkoh && lkoh.id) {
-  //     const unsub = onSnapshot(doc(firestore, 'customers', lkoh.id), (doc) => {
-  //       if (doc.exists()) {
-  //         setLkoh({ ...doc.data(), id: doc.id });
-  //       } else {
-  //         setLkoh(null);
-  //       }
-  //     });
-  //     return () => unsub();
-  //   }
-  // }, [lkoh?.id]);
 
   useEffect(() => {
     if (tfaolAgla && tfaolAgla.id) {
@@ -447,7 +436,6 @@ export default function Home() {
     setMlae(documents);
   };
 
-  console.log(mlae)
   useEffect(() => {
     const unsubscribe = useGetDataByConditionWithoutUseEffect('mlae', 'active', '==', true, handleData);
     return () => unsubscribe();
@@ -482,7 +470,7 @@ export default function Home() {
 
             <div className="w-full">
               <div className="w-full flex justify-center">
-                <Button color="primary" variant="faded" onClick={() => setShowModalCreateTokhnetYetsor(true)}><AiOutlineAppstoreAdd className="text-3xl text-primary"/><div className="text-xl font-bold tracking-wider">הוספת תוכנית יצור</div></Button>
+                <Button color="primary" variant="faded" onClick={() => setShowModalCreateTokhnetYetsor(true)}><AiOutlineAppstoreAdd className="text-3xl text-primary" /><div className="text-xl font-bold tracking-wider">הוספת תוכנית יצור</div></Button>
               </div>
               <div className="w-full p-5 ">
                 <div className="w-full flex justify-between text-primary text-xl">
@@ -563,7 +551,7 @@ export default function Home() {
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla);setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
                             </tr>
@@ -595,14 +583,14 @@ export default function Home() {
               </div>
             </div>
           </div>
-         
+
 
         </div>
 
         <div className="flex-wrap w-full flex justify-center">
 
-          
-        <div className="flex justify-end items-center w-full max-w-[780px]">
+
+          <div className="flex justify-end items-center w-full max-w-[780px]">
             <div className="flex flex-col w-full mx-auto mr-10 ml-10 mb-5 border border-gray-300 bg-white shadow-lg p-2 rounded-3xl">
               <div className="flex items-center h-full">
                 {
@@ -627,7 +615,7 @@ export default function Home() {
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla);setMsbarDrag(agla.msbarAgla);setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
                             </tr>
@@ -683,7 +671,7 @@ export default function Home() {
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setTfaolAgla(agla); setShowModalCreate(true);setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setTfaolAgla(agla); setShowModalCreate(true); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
                             </tr>
@@ -717,10 +705,10 @@ export default function Home() {
           </div>
 
 
-          
+
 
         </div>
       </div>
     </div>
-  );
+  )
 }

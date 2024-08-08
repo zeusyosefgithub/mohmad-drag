@@ -43,8 +43,7 @@ export default function Procurement() {
 
     const aglotB = useGetDataByCondition('tfaol', 'sogBaola', '==', 'B');
 
-    const { contactName, setContactName, customerSet, setCustomerSet } = useContext(ContactContext);
-    const category = GetDocs('category');
+    const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol } = useContext(ContactContext);    const category = GetDocs('category');
     const mlae = GetDocs('mlae').sort((a, b) => {
         const msbarA = a.msbar.toUpperCase();
         const msbarB = b.msbar.toUpperCase();
@@ -240,22 +239,6 @@ export default function Procurement() {
     const [showModalAdconBret,setShowModalAdconBret] = useState(false);
     return (
         <div className=''>
-            <Button onClick={async () => {
-                let count = 0;
-                for (let index = 0; index < mlae.length; index++) {
-                    if (mlae[index].msbar === 'D105' && count === 0) {
-                        //console.log(mlae[index]);
-                        await updateDoc(doc(firestore, 'mlae', mlae[index].id),{
-                            msbar:'D103'
-                        });
-                        //count++;
-                        //return alert(1);
-                    }
-
-                }
-            }}>
-                asd
-            </Button>
             {<ModalMessage Aeshor={async (val) => {
                 if (val) {
                     setLoading(true);

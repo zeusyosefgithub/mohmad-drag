@@ -1,6 +1,6 @@
 'use client';
 import { Button, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Spinner, Tooltip } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { differenceInMinutes, format, getDaysInMonth, isBefore, parseISO } from 'date-fns';
 import GetDocs from "../FireBase/getDocs";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
@@ -21,10 +21,14 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import { TbClockEdit } from "react-icons/tb";
 import { HiMiniQuestionMarkCircle } from "react-icons/hi2";
 import ModalKnesaKlalet from "../Modals/ModalKnesaKlalet";
+import ContactContext from "../auth/ContactContext";
+import { useRouter } from "next/navigation";
 
 export default function Aobdem() {
 
+    const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol } = useContext(ContactContext);
     const aobdem = GetDocs('aobdem');
+    const router = useRouter();
     const [loh, setLoh] = useState('לוח היום');
     const [knesotHeom, setKnesotHeom] = useState([]);
     const [knesotHeomBdeka, setKnesotHeomBdeka] = useState([]);
@@ -424,10 +428,22 @@ export default function Aobdem() {
         }
         return newArray;
     }
+    
+    const [showInfo,setShowInfo] = useState(false);
+    useEffect(() => {
+        console.log(isNehol);
+        if(isNehol){
+            router.push('/');
+            setShowInfo(false);
+        }
+        else{
+            setShowInfo(true);
+        }
+    },[isNehol]);
 
 
 
-    return (
+    return showInfo && (
         <div>
             <ModalKnesaKlalet counter={counter} yom={yomLaedcon} hodesh={tarekhKlaleNbhar} aobed={aobedLaedcon} knesa={knesaLaedcon} type={typeAdcon} show={showModalAdconHosfaKnesa} disable={() => {setShowModalAdconHosfaKnesa(false);setTypeAdcon('');setAobedLaedcon(null);setKnesaLaedcon(null);setYomLaedcon(null);}} />
             <ModalBrtemNosfemAobed aobed={aobed} show={showModalBrtemNosfemAobed} disable={() => setShowModalBrtemNosfemAobed(false)} />

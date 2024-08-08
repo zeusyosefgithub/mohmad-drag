@@ -28,6 +28,8 @@ export default function aobedDaf({ aobed }) {
         }
     }
 
+    console.log(aobed);
+
     function GetTarekhShem(val) {
         if (val === 'Sunday') {
             return 'ראשון';
@@ -85,9 +87,9 @@ export default function aobedDaf({ aobed }) {
         if (aobed?.name) {
             const unsubscribe = useGetDataByConditionWithoutUseEffect(
                 'aobdem',
-                'shem',
+                'taodatZhot',
                 '==',
-                aobed?.name,
+                aobed?.taodatZhot,
                 result => {
                     setAobedNokhhe(result || []);
                     setLoadingFitching1(false);
@@ -147,14 +149,14 @@ export default function aobedDaf({ aobed }) {
     }, [shaotHeomData, aobedNkhhe]);
 
     const knesaa = async () => {
-        if (!knesotHeom[0].knesa && !knesotHeom[0].headrot && !knesotHeom[0].yetseah) {
+        if (!knesotHeom[0]?.knesa && !knesotHeom[0]?.headrot && !knesotHeom[0]?.yetseah) {
             try {
                 await addDoc(collection(firestore, 'shaotAboda'), {
                     msbar: counter?.count + 1,
                     tarekh: format(new Date(), 'dd-MM-yyyy'),
                     knesa: format(new Date(), 'HH:mm'),
                     yetseah: '',
-                    aobed: knesotHeom[0].msbar,
+                    aobed: knesotHeom[0]?.msbar,
                     headrot: '',
                     hodesh: format(new Date(), 'MM-yyyy')
                 });
@@ -164,6 +166,7 @@ export default function aobedDaf({ aobed }) {
             }
         }
         else {
+            console.log(2);
             try {
                 await updateDoc(doc(firestore, 'shaotAboda', knesotHeom[0].id), {
                     yetseah: format(new Date(), 'HH:mm'),
@@ -177,7 +180,7 @@ export default function aobedDaf({ aobed }) {
         setLoading(false);
     }
 
-    return !loadingFitching && !loadingFitching1 && !loadingFitching2 && (
+    return (
         <div className="h-screen flex justify-center items-center">
             <Card dir="rtl" className="w-[450px]">
                 <CardHeader>
