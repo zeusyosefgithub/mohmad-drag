@@ -30,9 +30,10 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useReactToPrint } from "react-to-print";
 import { GetTmonatHelek } from "../page";
-import { MdKeyboardArrowDown } from "react-icons/md";
+import { MdCancel, MdKeyboardArrowDown } from "react-icons/md";
 import { HiMiniQuestionMarkCircle } from "react-icons/hi2";
 import { FaPlus } from "react-icons/fa";
+import { FiPlusCircle } from "react-icons/fi";
 
 export default function ModalTokhnetYetsor({ show, disable,mlae,category }) {
 
@@ -424,16 +425,116 @@ export default function ModalTokhnetYetsor({ show, disable,mlae,category }) {
         },
         [mafenemMotsarem, motsaremBrofelemSofe] // was setMafenemMotsarem
     );
+
+
+    
+    const GetSortedMafeneMotsarem = (array) => {
+        console.log("Original Array:", array);
+
+        const sortedArray = array.slice().sort((a, b) => {
+            const remezA = a.remez;
+            const remezB = b.remez;
+
+            // Extract the alphabetical and numeric parts
+            const alphaA = remezA.match(/[A-Z]+/)[0];
+            const numA = parseInt(remezA.match(/\d+/)[0], 10);
+
+            const alphaB = remezB.match(/[A-Z]+/)[0];
+            const numB = parseInt(remezB.match(/\d+/)[0], 10);
+
+            console.log(`Comparing ${remezA} (${alphaA}, ${numA}) with ${remezB} (${alphaB}, ${numB})`);
+
+            // First compare the alphabetical part
+            const alphabeticalComparison = alphaA.localeCompare(alphaB);
+            if (alphabeticalComparison !== 0) {
+                return alphabeticalComparison;
+            }
+
+            // Then compare the numeric part
+            return numA - numB;
+        });
+
+        console.log("Sorted Array:", sortedArray);
+
+        return sortedArray;
+    }
+
+    const handleRemoveIndex = (indexToRemove) => {
+        setMafenemMotsarem(prevMafenemMotsarem => {
+            if (!Array.isArray(prevMafenemMotsarem)) {
+                return prevMafenemMotsarem;
+            }
+    
+            // Filter out the item by index
+            const updatedMotsarem = prevMafenemMotsarem.filter((_, index) => index !== indexToRemove);
+    
+            // Sort the remaining items
+            return GetSortedMafeneMotsarem(updatedMotsarem);
+        });
+    };
+
+
+    const renderDropdown = (index, isElse, item) => (
+        <Dropdown dir="rtl">
+            <DropdownTrigger>
+                <Button isDisabled={isElse} size="xs" className='m-2'>
+                    {item?.shem || 'בחר פריט'}<MdKeyboardArrowDown className="text-[20px]" />
+                </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+                aria-label="Multiple selection example"
+                variant="flat"
+                closeOnSelect={true}
+                disallowEmptySelection
+                selectionMode="single"
+                selectedKeys={item?.shem}
+                onSelectionChange={(val) => {
+                    handleInputChange(isElse, index, val.currentKey, 'shem');
+                    handleInputChange(isElse, index, item?.kmot, 'kmot');
+                    handleInputChange(isElse, index, item?.kmot * GetBrtemMotsarMlae(item?.remez, val.currentKey).alot, 'mher')
+                }
+                }
+            >
+                {GetBrtemMotsarMlae(item?.remez).arrayResualt.map((option) => (
+                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                ))}
+            </DropdownMenu>
+        </Dropdown>
+    );
+
     const MotsaremRefs = useRef(Array(51).fill(null).map(() => React.createRef()));
     const renderDropdownWithInputs = useCallback((item, shemSog, index, isElse) => (
         <div className="w-full">
             <div className="mt-5 w-full">
                 <div className="w-full items-center flex justify-center">
+                {!isElse && item?.Ydne ?
+                    <MdCancel className="ml-20 text-xl text-danger cursor-pointer" onClick={() => handleRemoveIndex(index)} />
+                    : <FiPlusCircle className="ml-20 text-xl text-success cursor-pointer" onClick={() => {
+                        setMafenemMotsarem(prev => {
+                            const newMafenemMotsarem = [
+                                ...prev,
+                                {
+                                    kmot: 0,
+                                    kmotYdnet: 0,
+                                    mher: 0,
+                                    shem: "בחר פריט",
+                                    remez: item?.remez,
+                                    message: '',
+                                    sogShem: shemSog,
+                                    Ydne:true
+                                }
+                            ];
+                            return GetSortedMafeneMotsarem(newMafenemMotsarem);
+                        });
+                    }} />}
                     <div className="w-[200px] rounded-xl flex items-center">
                         <div className="group relative z-20">
                             <Image width={70} alt="none" src={GetTmonatHelek(item?.remez)} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
                         </div>
                         <div className="mr-2">{shemSog}</div>
+                    </div>
+                    <div className="w-[200px]">
+                        {renderDropdown(index,isElse,item)}
                     </div>
                     <div className="flex items-center">
                         <Input
@@ -520,7 +621,8 @@ export default function ModalTokhnetYetsor({ show, disable,mlae,category }) {
             if (mafenemMotsarem[index].kmot !== 0) {
                 newArrayMotsarem.push({
                     kmot: mafenemMotsarem[index].kmot,
-                    remez: mafenemMotsarem[index].remez
+                    remez: mafenemMotsarem[index].remez,
+                    Ydne : mafenemMotsarem[index].Ydne || false
                 })
             }
         }

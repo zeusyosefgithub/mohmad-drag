@@ -67,9 +67,6 @@ export default function Management() {
         setGetData(true);
     }
 
-
-
-
     useEffect(() => {
         if (GetData) {
             const unsubscribe = useGetDataByConditionWithoutUseEffect(
@@ -241,13 +238,17 @@ export default function Management() {
     const [showModalAddSbak, setShowModalAddSbak] = useState(false);
 
 
-    const [showModalNetonemThltem,setShowModalNetonemThltem] = useState(false);
+    const [showModalNetonemThltem, setShowModalNetonemThltem] = useState(false);
 
     const tnoahBmz12omnem = GetDocs('tnoahBmzomnem');
+
+
+
+
     return (
         <div>
-            <ModalBerotAskatKsfem Aska={askatKsfem} show={showModalBerotAskatKsfem} disable={() => setShowModalBerotAskatKsfem(false)}/>
-            <ModalNetonemThltem show={showModalNetonemThltem} disable={() => setShowModalNetonemThltem(false)}/>
+            <ModalBerotAskatKsfem Aska={askatKsfem} show={showModalBerotAskatKsfem} disable={() => setShowModalBerotAskatKsfem(false)} />
+            <ModalNetonemThltem show={showModalNetonemThltem} disable={() => setShowModalNetonemThltem(false)} />
             {<ModalShowBerotAska afshrotArekha={afshrotArekha} mlae={mlae} aska={aska} show={showBerotAska} disable={() => { console.log(aska); setShowBerotAska(false) }} />}
             <ModalAddSobak show={showModalAddSbak} disable={() => setShowModalAddSbak(false)} />
             <ModalHtsgatHotsaa sbkemA={sbkem} aobdem={aobdem} aemTshlom={(val1, val2, val3, val4, val5) => {

@@ -13,7 +13,7 @@ import { RiErrorWarningFill } from "react-icons/ri";
 import ModalMessage from "./ModalMessage";
 import ModalAddProductCategory from "./ModalAddProductCategory";
 import ModalBrokAgla from "./ModalBrokAgla";
-import { FiPlus } from "react-icons/fi";
+import { FiPlus, FiPlusCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { Heshvonet } from "../Page Components/Heshvonet";
 import { useReactToPrint } from "react-to-print";
@@ -43,6 +43,7 @@ import { FaCheckDouble } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa";
 import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
 import { TofsTokhnetYetsor } from "../Page Components/TofsTokhnetYetsor";
+import { CiCirclePlus } from "react-icons/ci";
 
 
 export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogAskaa, mlae, category, Tokhneot }) {
@@ -125,7 +126,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
     const [shemTokhnet, setShemTokhnet] = useState('');
     const componentRefTwo = useRef();
     const refggg = useRef(null);
-    const [showModalAddMotsarAher,setShowModalAddMotsarAher] = useState(false);
+    const [showModalAddMotsarAher, setShowModalAddMotsarAher] = useState(false);
 
     const [sogBaola, setSogBaola] = useState('');
     const [hshhyatYetsorZman, setHshhyatYetsorZman] = useState();
@@ -230,7 +231,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
             remez: remez,
             message: ''
         }));
-        setMafenemMotsarem(initialMafenemMotsarem);
+        setMafenemMotsarem(GetSortedMafeneMotsarem(initialMafenemMotsarem));
         setSogAskaAgla('');
         setLkoh('');
         setMherKlale(0);
@@ -437,7 +438,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                         [name]: name === 'kmot' || name === 'mher' ? parseInt(value) : value
                     };
                     newMafenemMotsarem[index] = updatedItem;
-                    return newMafenemMotsarem;
+                    return GetSortedMafeneMotsarem(newMafenemMotsarem);
                 });
             }
         },
@@ -482,7 +483,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                 newArray.push(mafenemMotsarem[index]);
             }
         }
-        setMafenemMotsarem(newArray);
+        setMafenemMotsarem(GetSortedMafeneMotsarem(newArray));
     }
     const addValues = async () => {
         setLoading(true);
@@ -1217,7 +1218,27 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         <div className="w-full">
             <div className="mt-5 w-full">
                 <div className="w-full items-center flex justify-center">
-                    {isElse && <MdCancel className="ml-20 text-3xl text-danger cursor-pointer" onClick={() => shehzorMotsarBrofel(item?.shem, motsBrofs)} />}
+                    {isElse && <MdCancel className="ml-20 text-xl text-danger cursor-pointer" onClick={() => shehzorMotsarBrofel(item?.shem, motsBrofs)} />}
+                    {!isElse && item?.Ydne ?
+                    <MdCancel className="ml-20 text-xl text-danger cursor-pointer" onClick={() => handleRemoveIndex(index)} />
+                    : <FiPlusCircle  className="ml-20 text-xl text-success cursor-pointer" onClick={() => {
+                        setMafenemMotsarem(prev => {
+                            const newMafenemMotsarem = [
+                                ...prev,
+                                {
+                                    kmot: 0,
+                                    kmotYdnet: 0,
+                                    mher: 0,
+                                    shem: "בחר פריט",
+                                    remez: item?.remez,
+                                    message: '',
+                                    sogShem: shemSog,
+                                    Ydne:true
+                                }
+                            ];
+                            return GetSortedMafeneMotsarem(newMafenemMotsarem);
+                        });
+                    }} />}
                     <div className="w-[200px] rounded-xl flex items-center">
                         <div className="group relative z-20">
                             <Image width={70} alt="none" src={GetTmonatHelek(item?.remez)} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
@@ -1373,7 +1394,19 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         </div>
     ), [GetBrtemMotsarMlae]);
 
-
+    const handleRemoveIndex = (indexToRemove) => {
+        setMafenemMotsarem(prevMafenemMotsarem => {
+            if (!Array.isArray(prevMafenemMotsarem)) {
+                return prevMafenemMotsarem;
+            }
+    
+            // Filter out the item by index
+            const updatedMotsarem = prevMafenemMotsarem.filter((_, index) => index !== indexToRemove);
+    
+            // Sort the remaining items
+            return GetSortedMafeneMotsarem(updatedMotsarem);
+        });
+    };
 
 
 
@@ -1401,7 +1434,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                     newArray.push(mafenemMotsarem[index]);
                 }
             }
-            setMafenemMotsarem(newArray);
+            setMafenemMotsarem(GetSortedMafeneMotsarem(newArray));
         }
         else {
             setMotsaremLhatseg((prevItems) => prevItems.filter(item => !remzemd.includes(item)));
@@ -1483,7 +1516,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                 remez: remez,
                 message: ''
             }));
-            setMafenemMotsarem(initialMafenemMotsarem);
+            setMafenemMotsarem(GetSortedMafeneMotsarem(initialMafenemMotsarem));
         }
     }, [Remzem]);
     useEffect(() => {
@@ -1607,7 +1640,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         if (parseInt(msbarTsrem) === 1) {
             scrollToElement(MotsaremRefs.current[GetIndexMotsar('A1')].current);
             RemoveMotsarToNull('A2');
-            setMotsaremLhatseg((prevItems) => prevItems.filter(item => item !== 'A2'));
+            setMotsaremLhatseg((prevItems) => prevItems.filter(item => item !== 'A2'));وس
             setMotsaremLhatseg((prevItems) => [...prevItems, 'A1', 'A10', 'A3']);
         }
         else if (parseInt(msbarTsrem) === 2) {
@@ -1676,10 +1709,28 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
     console.log(mafenemMotsarem);
     useEffect(() => {
         if (tokhnetNokhhet?.sogAgla) {
+            let newArray = [];
             if (tokhnetNokhhet?.motsarem?.length) {
-                for (let index = 0; index < tokhnetNokhhet?.motsarem.length; index++) {
-                    handleInputChange(false, GetIndexMotsar(tokhnetNokhhet?.motsarem[index].remez), tokhnetNokhhet?.motsarem[index].kmot, 'kmot');
+                for (let index = 0; index < mafenemMotsarem.length; index++) {
+                    newArray.push(mafenemMotsarem[index]);
                 }
+                for (let index = 0; index < tokhnetNokhhet?.motsarem.length; index++) {
+                    if(tokhnetNokhhet?.motsarem[index].Ydne){
+                        newArray.push({
+                            ...tokhnetNokhhet?.motsarem[index],
+                            kmotYdnet: 0,
+                            mher: 0,
+                            shem: "בחר פריט",
+                            message: '',
+                        });
+                    }
+                    else{
+                        handleInputChange(false, GetIndexMotsar(tokhnetNokhhet?.motsarem[index].remez), parseFloat(tokhnetNokhhet?.motsarem[index].kmot), 'kmot');
+                    }
+                }
+                
+                console.log(newArray);
+                setMafenemMotsarem(GetSortedMafeneMotsarem(newArray));
             }
             setSogAgla(tokhnetNokhhet?.sogAgla);
             setHlokaTvah(tokhnetNokhhet?.mafenem?.hlokaTvah);
@@ -1773,7 +1824,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
 
     const GetCategoryMotsaremAhrem = () => {
         for (let index = 0; index < category.length; index++) {
-            if(category[index].shem === 'מוצרים אחרים'){
+            if (category[index].shem === 'מוצרים אחרים') {
                 return category[index];
             }
         }
@@ -1782,6 +1833,24 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
 
 
 
+
+
+    const GetSortedMafeneMotsarem = (array) => {
+        const sortedArray = array.slice().sort((a, b) => {
+            const remezA = a.remez;
+            const remezB = b.remez;
+            const alphaA = remezA.match(/[A-Z]+/)[0];
+            const numA = parseInt(remezA.match(/\d+/)[0], 10);
+            const alphaB = remezB.match(/[A-Z]+/)[0];
+            const numB = parseInt(remezB.match(/\d+/)[0], 10);
+            const alphabeticalComparison = alphaA.localeCompare(alphaB);
+            if (alphabeticalComparison !== 0) {
+                return alphabeticalComparison;
+            }
+            return numA - numB;
+        });
+        return sortedArray;
+    }
 
 
 
@@ -1818,7 +1887,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                     </div>
                                 </div>
                             }
-                            <ModalAddProductCategory category={GetCategoryMotsaremAhrem()} mlae={mlae} motsarAher show={showModalAddMotsarAher} disable={() => setShowModalAddMotsarAher(false)}/>
+                            <ModalAddProductCategory category={GetCategoryMotsaremAhrem()} mlae={mlae} motsarAher show={showModalAddMotsarAher} disable={() => setShowModalAddMotsarAher(false)} />
                             {
                                 motsaremBrofelem?.length > 0 && ((sogBaola === 'A' || sogBaola === 'B' || sogBaola === 'C') || (sogAskaa && sogAskaa !== '')) &&
                                 <div className="h-full w-full flex">
@@ -2233,7 +2302,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                             <div className="w-full h-full flex pt-[67px]">
                                                 <div className="w-full h-full border-r-2 border-black">
                                                     <div dir="rtl" className="w-full h-full overflow-y-auto overflow-x-hidden">
-                                                        <div className="w-full bg-gradient-to-r from-gray-300 to-gray-700 text-center p-4 rounded-full sticky top-0 z-40 tracking-wider text-white font-bold text-xl">
+                                                        <div className="ml-2 mr-2 w-full bg-gradient-to-r from-gray-300 to-gray-700 text-center p-2 rounded-full sticky top-0 z-40 tracking-wider text-white font-bold text-xl">
                                                             פירוט מוצרים
                                                         </div>
                                                         {
@@ -2259,9 +2328,9 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                 </div>
                                                 <div className="w-full h-full">
                                                     <div className="w-full h-full overflow-auto">
-                                                        <div className="w-full bg-gradient-to-r from-gray-300 to-gray-700 text-center p-4 rounded-full sticky top-0 z-40 tracking-wider text-white font-bold text-xl">
+                                                        <div >
                                                             <div className="items-center w-full flex justify-around">
-                                                                <div>
+                                                                <div className="ml-2 mr-2">
                                                                     <Dropdown dir="rtl">
                                                                         <DropdownTrigger>
                                                                             <Button isDisabled={!aorkh || !rohf} color="primary">
@@ -2283,7 +2352,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                     </Dropdown>
 
                                                                 </div>
-                                                                <div>תוכנית יצור</div>
+                                                                <div className="w-full ml-2 mr-2 bg-gradient-to-r from-gray-300 to-gray-700 text-center p-2 rounded-full sticky top-0 z-40 tracking-wider text-white font-bold text-xl">תוכנית יצור</div>
                                                             </div>
                                                         </div>
 
@@ -3553,7 +3622,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
 
                                                                                 <tr className="row-spacing">
                                                                                     <th colSpan={3}>תוספת ידנית</th>
-                                                                                    <th><Button onClick={() => setShowModalAddMotsarAher(true)} size="sm" color="primary" className="rounded-full"><FiPlus className="text-xl"/></Button></th>
+                                                                                    <th><Button onClick={() => setShowModalAddMotsarAher(true)} size="sm" color="primary" className="rounded-full"><FiPlus className="text-xl" /></Button></th>
                                                                                 </tr>
 
                                                                                 {
