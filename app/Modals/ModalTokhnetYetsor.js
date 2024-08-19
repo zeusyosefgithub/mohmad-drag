@@ -622,6 +622,7 @@ export default function ModalTokhnetYetsor({ show, disable,mlae,category }) {
                 newArrayMotsarem.push({
                     kmot: mafenemMotsarem[index].kmot,
                     remez: mafenemMotsarem[index].remez,
+                    shem : mafenemMotsarem[index].shem,
                     Ydne : mafenemMotsarem[index].Ydne || false
                 })
             }

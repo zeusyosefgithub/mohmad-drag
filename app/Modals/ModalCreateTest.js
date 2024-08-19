@@ -1722,7 +1722,6 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                             ...tokhnetNokhhet?.motsarem[index],
                             kmotYdnet: 0,
                             mher: 0,
-                            shem: "בחר פריט",
                             message: '',
                         });
                     }
@@ -1731,7 +1730,6 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                             ...tokhnetNokhhet?.motsarem[index],
                             kmotYdnet: 0,
                             mher: 0,
-                            shem: "בחר פריט",
                             message: '',
                         });
                     }
