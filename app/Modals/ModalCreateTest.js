@@ -485,6 +485,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         }
         setMafenemMotsarem(GetSortedMafeneMotsarem(newArray));
     }
+
     const addValues = async () => {
         setLoading(true);
         setErrorMessageText('');
@@ -1704,15 +1705,16 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         }
 
     }, [entries]);
-    console.log(motsaremLhatseg);
-    console.log(entries);
     console.log(mafenemMotsarem);
     useEffect(() => {
         if (tokhnetNokhhet?.sogAgla) {
-            let newArray = [];
             if (tokhnetNokhhet?.motsarem?.length) {
+                let newArray = [];
+                let arrayMotsaremTokhnet = tokhnetNokhhet.motsarem.map(motsar => motsar.remez);
                 for (let index = 0; index < mafenemMotsarem.length; index++) {
-                    newArray.push(mafenemMotsarem[index]);
+                    if (!arrayMotsaremTokhnet.includes(mafenemMotsarem[index].remez)) {
+                        newArray.push(mafenemMotsarem[index]);
+                    }
                 }
                 for (let index = 0; index < tokhnetNokhhet?.motsarem.length; index++) {
                     if(tokhnetNokhhet?.motsarem[index].Ydne){
@@ -1725,11 +1727,15 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                         });
                     }
                     else{
-                        handleInputChange(false, GetIndexMotsar(tokhnetNokhhet?.motsarem[index].remez), parseFloat(tokhnetNokhhet?.motsarem[index].kmot), 'kmot');
+                        newArray.push({
+                            ...tokhnetNokhhet?.motsarem[index],
+                            kmotYdnet: 0,
+                            mher: 0,
+                            shem: "בחר פריט",
+                            message: '',
+                        });
                     }
                 }
-                
-                console.log(newArray);
                 setMafenemMotsarem(GetSortedMafeneMotsarem(newArray));
             }
             setSogAgla(tokhnetNokhhet?.sogAgla);
