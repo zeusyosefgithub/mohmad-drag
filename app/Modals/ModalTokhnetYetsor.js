@@ -623,7 +623,8 @@ export default function ModalTokhnetYetsor({ show, disable,mlae,category }) {
                     kmot: mafenemMotsarem[index].kmot,
                     remez: mafenemMotsarem[index].remez,
                     shem : mafenemMotsarem[index].shem,
-                    Ydne : mafenemMotsarem[index].Ydne || false
+                    Ydne : mafenemMotsarem[index].Ydne || false,
+                    mher : mafenemMotsarem[index].mher
                 })
             }
         }

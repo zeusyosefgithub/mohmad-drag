@@ -89,7 +89,7 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
     function truncateToTwoDecimals(num) {
         // Convert the number to a string with two decimal places
         const truncatedNum = num.toFixed(2);
-        return truncatedNum;
+        return parseFloat(truncatedNum);
     }
 
     return (
@@ -113,10 +113,10 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
                         </div>
                         <div className="h-[500px] overflow-auto">
                             <div className='rounded-lg p-2'>
-                                <div className='mt-5 bg-gray-300'>
+                                <div className='mt-5 bg-white'>
                                     <table className="w-full table-auto border-collapse">
                                         <thead>
-                                            <tr className="bg-gray-500 dark:bg-gray-800">
+                                            <tr className="bg-gray-500 dark:bg-gray-800 top-0 sticky z-30">
                                                 <th className="px-4 py-3 text-center font-medium text-white">אחוז נפל</th>
                                                 <th className="px-4 py-3 text-center font-medium text-white">כמות נפל</th>
                                                 <th className="px-4 py-3 text-center font-medium text-white">כמות בפועל</th>

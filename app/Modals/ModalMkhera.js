@@ -1,6 +1,6 @@
 'use client';
 
-import { Autocomplete, AutocompleteItem, Avatar, Button, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Avatar, Button, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Radio, RadioGroup } from "@nextui-org/react";
 import { Heshvonet } from "../Page Components/Heshvonet";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
@@ -121,6 +121,8 @@ export default function ModalMkhera({ show, disable,mlae,category }) {
         return countErrors !== 0;
     }
 
+    const [aosek,setAosek] = useState('');
+
 
     return (
         <Modal placement="center" className="test-fontt" backdrop={"blur"} size="full" isOpen={show} onClose={ResetAll}>
@@ -133,7 +135,15 @@ export default function ModalMkhera({ show, disable,mlae,category }) {
                                     תמחיר
                                 </div>
                                 <div>
-                                    <Heshvonet msbarHeshvonet={counterHeshvoneot?.count} isNew ref={componentRefOne} lkoh={lkoh} entries={entries || null} hn7a={hn7a} new={{
+                                    <Heshvonet aosek={aosek} msbarHeshvonet={
+                                        aosek === 'נגררי עירון' ?
+                                        counterHeshvoneot?.count
+                                        :
+                                        aosek === 'מ.כ בטיחות בע"מ' ?
+                                        counterHeshvoneot?.count2
+                                        :
+                                        null
+                                        } isNew ref={componentRefOne} lkoh={lkoh} entries={entries || null} hn7a={hn7a} new={{
                                         date: currentDate,
                                         counter: counter
                                     }} />
@@ -145,6 +155,16 @@ export default function ModalMkhera({ show, disable,mlae,category }) {
                                     עסקת מכירה
                                 </div>
                                 <div dir="rtl" className="mt-10 flex flex-col flex-grow">
+                                    <div className="mb-5"> 
+                                        {
+                                            console.log(aosek)
+                                        }
+                                        <RadioGroup value={aosek} onValueChange={(e) => setAosek(e)}>
+                                            <Radio value={'נגררי עירון'}>נגררי עירון</Radio>
+                                            <Radio value={'מ.כ בטיחות בע"מ'}>מ.כ בטיחות בע"מ</Radio>
+                                            <Radio value={'בלי חשבונית'}>בלי חשבונית</Radio>
+                                        </RadioGroup>
+                                    </div>
                                     <div className="mb-5">
                                         <Autocomplete
                                             label="בחר לקוח"
@@ -294,7 +314,7 @@ export default function ModalMkhera({ show, disable,mlae,category }) {
                             <Button className="ml-5 mr-5" size="lg" color="primary" onClick={ResetAll}>
                                 סגור
                             </Button>
-                            <Button isLoading={loading} isDisabled={!lkoh} className="ml-5 mr-5" size="lg" color="primary" onClick={async () => {
+                            <Button isLoading={loading} isDisabled={!lkoh || !aosek} className="ml-5 mr-5" size="lg" color="primary" onClick={async () => {
                                 if (bdekatAeshorMkhera()) {
                                     return;
                                 }

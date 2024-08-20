@@ -5,6 +5,7 @@ export const Heshvonet = React.forwardRef((props, ref) => {
     const motsarr = props?.motsar;
     const msbar = props?.msbarHeshvonet;
     const lkoh = props?.lkoh;
+    const aosek = props?.aosek;
 
     const GetSakhHkolBerot = (indx) => {
         let sum = 0;
@@ -33,29 +34,42 @@ export const Heshvonet = React.forwardRef((props, ref) => {
         return formatted;
     };
 
-    return (
+
+    return (aosek !== 'בלי חשבונית') && (
         <div ref={ref} className="bg-gradient-to-r-f5 h-full">
             <div className="flex justify-end">
                 <div className="w-[250px] bg-f3 mr-8 rounded-es-xl text-f4 p-2">
-                    <div>
-                        <div className="text-center">נגררי עירון</div>
-                        <div dir="rtl" className="flex items-center">
-                            <div className="text-xs text-right w-[80px]">עוסק מורשה : </div>
-                            <div className="text-xs">2</div>
-                        </div>
-                        <div dir="rtl" className="flex items-center">
-                            <div className="text-xs text-right w-[80px]">טלפון : </div>
-                            <div className="text-xs">2</div>
-                        </div>
-                        <div dir="rtl" className="flex items-center">
-                            <div className="text-xs text-right w-[80px]">פקס : </div>
-                            <div className="text-xs">2</div>
-                        </div>
-                        <div dir="rtl" className="flex items-center">
-                            <div className="text-xs text-right w-[80px]">דוא"ל : </div>
-                            <div className="text-xs">2</div>
-                        </div>
-                    </div>
+
+                    {
+                        aosek === 'נגררי עירון' ?
+                            <div>
+                                <div className="text-center">נגררי עירון</div>
+                                <div dir="rtl" className="flex items-center">
+                                    <div className="text-xs text-right w-[80px]">ח.פ : </div>
+                                    <div className="text-xs">516143369</div>
+                                </div>
+                                <div dir="rtl" className="flex items-center">
+                                    <div className="text-xs text-right w-[80px]">טלפון : </div>
+                                    <div className="text-xs">050-909-9989</div>
+                                </div>
+                            </div>
+                            :
+                            aosek === 'מ.כ בטיחות בע"מ' ?
+                                <div>
+                                    <div className="text-center">מ.כ בטיחות בע"מ</div>
+                                    <div dir="rtl" className="flex items-center">
+                                        <div className="text-xs text-right w-[80px]">ח.פ : </div>
+                                        <div className="text-xs">516085552</div>
+                                    </div>
+                                    <div dir="rtl" className="flex items-center">
+                                        <div className="text-xs text-right w-[80px]">טלפון : </div>
+                                        <div className="text-xs">050-909-9989</div>
+                                    </div>
+                                </div>
+                                :
+                                null
+                    }
+
                 </div>
             </div>
             <div className="text-center mt-10">{props?.isNew ? props?.new?.date : motsarr?.tarekh}</div>

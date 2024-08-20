@@ -84,6 +84,7 @@ export default function ModalAdconBret({ disable, show, motsar, categoryMotsar,m
                                 alotLeheda: mherThlte,
                                 zmanHsbaka: zmanAsbka,
                                 msbarMdaf: msbarMdaf,
+                                alot: parseFloat(mherThlte) * parseFloat(motsar?.kmot)
                             });
                             setLoading(false);
                             disable();

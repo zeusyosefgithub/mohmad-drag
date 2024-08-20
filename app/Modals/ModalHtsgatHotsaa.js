@@ -499,8 +499,9 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
 
     const GetSkhomKolel = () => {
         let skhom = 0;
+        let res = AemHeshbonet ? 1.17 : 1;
         for (let index = 0; index < entries.length; index++) {
-            skhom += (entries[index].amount * entries[index].price);
+            skhom += (entries[index].amount * (entries[index].price * res));
         }
         return skhom;
     }
@@ -645,7 +646,7 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
                                 (hotsaa?.sogHotsaa === 'קניות מוצרים') &&
                                 <div>
                                     <div ref={topOfFormRef} />
-                                    <div className='overflow-auto h-[500px] flex justify-center w-full max-w-[900px] min-w-[400px]'>
+                                    <div className='overflow-auto h-[500px] flex justify-center w-full'>
                                         <form className='w-full'>
                                             <div dir='rtl' className=''>
 
@@ -793,6 +794,20 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
                                                             className='m-2'
                                                             onKeyDown={handleKeyDown}
                                                         />
+                                                        {
+                                                            AemHeshbonet &&
+                                                            <Input
+                                                                bordered
+                                                                fullWidth
+                                                                size='sm'
+                                                                type="number"
+                                                                placeholder={`מחיר ליחידה כולל מע"מ`}
+                                                                isReadOnly
+                                                                color='primary'
+                                                                value={(entry.price * 1.17).toFixed(2)}
+                                                                className='m-2'
+                                                                onKeyDown={handleKeyDown} />
+                                                        }
                                                         <div onClick={() => removeItem(index)} className='ml-5 text-danger-500 hover:cursor-pointer'>
                                                             <FaTrash className='text-2xl' />
                                                         </div>
@@ -962,9 +977,16 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
                                         null
                                         :
                                         <div dir="rtl">
-                                            <Input isReadOnly size="sm" color="success" type="number" value={GetSkhomKolel() || skhom || ''} className="max-w-[150px] m-5" label='סכום כולל' />
+                                            <Input isReadOnly size="sm" color="success" type="number" value={
+                                                hotsaa?.sogHotsaa === 'קניות מוצרים'
+                                                ? GetSkhomKolel().toFixed(2)
+                                                : skhom !== undefined && skhom !== null && !isNaN(skhom)
+                                                ? Number(skhom).toFixed(2)
+                                                : '' 
+                                            } className="max-w-[150px] m-5" label='סכום כולל' />
                                         </div>
                                 }
+
                             </div>
                             <div className="w-full flex items-center justify-end">
                                 <Button size="lg" className="mr-5" color="primary" onClick={ResetAll}>

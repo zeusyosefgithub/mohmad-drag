@@ -80,7 +80,7 @@ export default function ModalKsfem({ disable, show, brtemMhtgatHotsaa, lkhot, sb
             skhomKlle: skhomKolel,
             mezoman: kesefMezoman,
             shekem: entries,
-            sogAska: selectedKeys.currentKey,
+            sogAska: selectedKeys,
             msbar: counter?.count,
             lkoh: aobed.msbar,
             active : true,
@@ -99,7 +99,7 @@ export default function ModalKsfem({ disable, show, brtemMhtgatHotsaa, lkhot, sb
             skhomKlle: skhomKolel,
             mezoman: kesefMezoman,
             shekem: entries,
-            sogAska: selectedKeys.currentKey,
+            sogAska: selectedKeys,
             msbar: counter?.count,
             lkoh: sbak.msbar,
             active : true,
@@ -116,7 +116,7 @@ export default function ModalKsfem({ disable, show, brtemMhtgatHotsaa, lkhot, sb
             skhomKlle: skhomKolel,
             mezoman: kesefMezoman,
             shekem: entries,
-            sogAska: selectedKeys.currentKey,
+            sogAska: selectedKeys,
             msbar: counter?.count,
             lkoh: lkoh.idnum,
             active : true,
@@ -446,19 +446,19 @@ export default function ModalKsfem({ disable, show, brtemMhtgatHotsaa, lkhot, sb
                                                         : selectedKeys1 === 'עובדים' ?
                                                             <>
                                                                 {
-                                                                    selectedKeys.currentKey === "תשלום שכר עבודה" ?
+                                                                    selectedKeys === "תשלום שכר עבודה" ?
                                                                         <>
                                                                             <Input dir="ltr" size="sm" color="primary" type="number" value={skhomKolel || ''} onValueChange={(val) => setSkhomKolel(parseFloat(val))} className="max-w-[200px] m-5" label='סכום כולל' />
                                                                             <Input dir="ltr" size="sm" readOnly value={aobed?.skharBroto} color={((aobed?.skharBroto + skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה קודמת' />
                                                                             <Input dir="ltr" size="sm" readOnly value={parseFloat(aobed?.skharBroto + skhomKolel) || ''} color={((aobed?.skharBroto + skhomKolel) >= 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה חדשה' />
                                                                         </>
-                                                                        : selectedKeys.currentKey === "הפרשת פנסיה" ?
+                                                                        : selectedKeys === "הפרשת פנסיה" ?
                                                                             <>
                                                                                 <Input dir="ltr" size="sm" color="primary" type="number" value={skhomKolel || ''} onValueChange={(val) => setSkhomKolel(parseFloat(val))} className="max-w-[200px] m-5" label='סכום כולל' />
                                                                                 <Input dir="ltr" size="sm" readOnly value={aobed?.bensea} color={((aobed?.bensea + skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה קודמת' />
                                                                                 <Input dir="ltr" size="sm" readOnly value={parseFloat(aobed?.bensea + skhomKolel) || ''} color={((aobed?.bensea + skhomKolel) >= 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה חדשה' />
                                                                             </>
-                                                                            : selectedKeys.currentKey === "הפרשת פיצוים" ?
+                                                                            : selectedKeys === "הפרשת פיצוים" ?
                                                                                 <>
                                                                                     <Input dir="ltr" size="sm" color="primary" type="number" value={skhomKolel || ''} onValueChange={(val) => setSkhomKolel(parseFloat(val))} className="max-w-[200px] m-5" label='סכום כולל' />
                                                                                     <Input dir="ltr" size="sm" readOnly value={aobed?.betsoeem} color={((aobed?.betsoeem + skhomKolel) === 0) ? 'success' : "danger"} className="max-w-[200px] m-5" label='יתרת חובה קודמת' />
@@ -565,7 +565,7 @@ export default function ModalKsfem({ disable, show, brtemMhtgatHotsaa, lkhot, sb
                                                             className="max-w-xs m-2"
                                                             placeholder="סכום"
                                                             value={entry.skhom}
-                                                            onChange={(e) => handleInputChange(index, 'skhom', Math.min(e.target.value, handleGetDigits(((skhomKolel - kesefMezoman) / entries.length))))}
+                                                            onChange={(e) => handleInputChange(index, 'skhom', Math.min(e.target.value, handleGetDigits(((skhomKolel - kesefMezoman)))))}
                                                         />
                                                         {
                                                             (index === entries.length - 1)

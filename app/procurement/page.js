@@ -131,24 +131,29 @@ export default function Procurement() {
         return parseFloat(num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')).toFixed(2);
     };
 
-    const GetKmotMtaema = (mededa,val) => {
+    const GetKmotMtaema = (mededa,val,msbar) => {
         if(mededa === 'Y'){
-            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'יח</div><div className='font-bold'>{val}</div></div>;
+            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'יח</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
         }
         if(mededa === 'M'){
-            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'מ</div><div className='font-bold'>{formatNumberWithCommas(val)}</div></div>;
+            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'מ</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
         }
         if(mededa === 'MS'){
-            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>מ"ר</div><div className='font-bold'>{formatNumberWithCommas(val)}</div></div>;
+            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>מ"ר</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
         }
         if(mededa === 'L'){
-            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'ל</div><div className='font-bold'>{formatNumberWithCommas(val)}</div></div>;
+            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'ל</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
         }
         if(mededa === 'MM'){
             return ;
         }
         if(mededa === 'K'){
-            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>ק"ג</div><div className='text-4xl'>∞</div></div>;
+            if(msbar === 'G400'){
+                return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>ק"ג</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
+            }
+            else{
+                return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>ק"ג</div><div className='text-4xl'>∞</div></div>;
+            }
         }
         
     }
@@ -258,8 +263,6 @@ export default function Procurement() {
             {<ModalAddProductCategory mlae={mlae} category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
             {loading && <Spinner className='absolute top-0 left-0 bottom-0 right-0' />}
 
-
-
             <div className='flex items-center justify-around flex-wrap'>
                 <div className="w-full max-w-[400px] mr-5 ml-5 mb-5">
                     <div className="flex justify-around">
@@ -326,15 +329,15 @@ export default function Procurement() {
                                                 <div className='mt-5'>
                                                     <table className="w-full table-auto border-collapse">
                                                         <thead>
-                                                            <tr className="bg-gray-500 dark:bg-gray-800">
+                                                            <tr className="bg-gray-500 dark:bg-gray-800 top-[-22px] sticky z-30">
                                                             <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-white to-gray-50 text-sm"></th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-50 to-gray-50 text-sm"></th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-50 to-gray-100 text-sm">זמן הספקה</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-100 to-gray-200 text-sm">עלות ממוצע</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-200 to-gray-300 text-sm">סה"כ עלות</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-300 to-gray-400 text-sm">כמות</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-300 to-gray-400 text-sm w-[100px]">כמות</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-400 to-gray-500 text-sm">מדף</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-500 to-gray-600 text-sm">שם פריט</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-500 to-gray-600 text-sm w-[200px]">שם פריט</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-600 to-gray-700 text-sm">מק"ט</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-700 to-gray-800 text-sm"></th>
                                                             </tr>
@@ -346,9 +349,9 @@ export default function Procurement() {
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaTrash onClick={() => { setHodatMhekatMotsar(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-danger text-lg cursor-pointer' /></td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaEdit onClick={() => { setShowModalAdconBret(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-primary text-lg cursor-pointer' /></td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.zmanHsbaka}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{formatNumberWithCommas(item.alotLeheda)}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{formatNumberWithCommas(item.alot)}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{GetKmotMtaema(item.mededa,item.kmot)}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{item.alotLeheda}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{parseFloat(item.alot).toFixed(2)}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{GetKmotMtaema(item.mededa,item.kmot,item.msbar)}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbarMdaf}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><div dir='rtl'>{item.shem}</div></td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbar}</td>

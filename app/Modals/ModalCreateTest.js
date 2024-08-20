@@ -59,7 +59,9 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
     const [hskmatLkoh, setHskmatLkoh] = useState(false);
     const [shaotAboda, setShaotAboda] = useState('');
     const [aorkh, setAorkh] = useState(0);
+    const [aorkhSM, setAorkhSM] = useState(0);
     const [rohf, setRohf] = useState(0);
+    const [rohfSM, setRohfSM] = useState(0);
     const [sogGlgalem, setSogGlgalem] = useState('');
     const [thelatYetsor, setThelatYetsor] = useState(false);
     const [msbarAgla, setMsbarAgla] = useState('');
@@ -76,7 +78,9 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
     const [tvahHlokatRmba, setTvahHlokatRmba] = useState(0);
     const [msbarBrofelemHlokatRmba, setMsbarBrofelemHlokatRmba] = useState(0);
     const [aorkhBrofel, setAorkhBrofel] = useState(0);
+    const [aorkhBrofelSM, setAorkhBrofelSM] = useState(0);
     const [aorkhRmbaMsgertRmba, setAorkhRmbaMsgertRmba] = useState(0);
+    const [aorkhRmbaMsgertRmbaSM, setAorkhRmbaMsgertRmbaSM] = useState(0);
     const [msbarBrofelemBretA, setMsbarBrofelmBretA] = useState(null);
     const [aemTseba, setAemTseba] = useState(false);
     const [aemBashbashol, setAemBashbashol] = useState(false);
@@ -90,6 +94,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
     const [aemDelet, setAemDelet] = useState(false);
     const [tosefetReshet, setTosefetReshet] = useState(false);
     const [gobahSolam, setGobahSolam] = useState(0);
+    const [gobahSolamSM, setGobahSolamSM] = useState(0);
     const [tvahAofkeSolam, setTvahAofkeSolam] = useState(0);
     const [tvahAnkheSolam, setTvahAnkheSolam] = useState(0);
     const [msbarBrofelemAofkeSolam, setMsbarBrofelemAofkeSolam] = useState(0);
@@ -107,6 +112,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
     const prevRemzemRef = useRef();
     const [modalHosfatLkoh, setModalHosfatLkoh] = useState(false);
     const [sogAskaAgla, setSogAskaAgla] = useState('');
+    const [aosek, setAosek] = useState('');
     const [motsaremLhatseg, setMotsaremLhatseg] = useState([]);
     const [hkhnsot, setHkhnsot] = useState(0);
     const [hkhnsotHomreGlem, setHkhnsotHomreGlem] = useState(0);
@@ -158,7 +164,8 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         const motsarMlae = mlae?.filter(item => item.categoryMotsar === remez);
         const alot = motsarMlae?.find(item => item.shem === shem)?.alotLeheda || 0;
         const kmot = motsarMlae?.find(item => item.shem === shem)?.kmot || 0;
-        return { arrayResualt: motsarMlae, alot, kmot };
+        const msbar = motsarMlae?.find(item => item.shem === shem)?.msbar || '';
+        return { arrayResualt: motsarMlae, alot, kmot, msbar };
     }, [mlae]);
     const BdekatMtsavE = () => {
         if (Aeshor) {
@@ -237,6 +244,8 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         setMherKlale(0);
         setKveatMher(false);
         setHskmatLkoh(false);
+        setAorkhSM(0);
+        setRohfSM(0);
         setShaotAboda('');
         setAorkh(0);
         setRohf(0);
@@ -253,7 +262,10 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         setTsmegSber(false);
         setAorkhBrofel(0);
         setAorkhBrofel(0);
+        setGobahSolamSM(0);
+        setAorkhBrofelSM(0);
         setAorkhRmbaMsgertRmba(0);
+        setAorkhRmbaMsgertRmbaSM(0);
         setTosftVnel(false);
         setTvahHlokatRmba(0);
         setMsbarBrofelemHlokatRmba(0);
@@ -666,9 +678,16 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                     });
                 }
                 if (BdekatMtsavem() === 'E') {
-                    await updateDoc(doc(firestore, 'metadata', 'counterHeshvoneot'), {
-                        count: counterHeshvoneot?.count + 1
-                    });
+                    if (aosek === 'נגררי עירון') {
+                        await updateDoc(doc(firestore, 'metadata', 'counterHeshvoneot'), {
+                            count: counterHeshvoneot?.count + 1
+                        });
+                    }
+                    else if (aosek === 'מ.כ בטיחות בע"מ') {
+                        await updateDoc(doc(firestore, 'metadata', 'counterHeshvoneot'), {
+                            count2: counterHeshvoneot?.count2 + 1
+                        });
+                    }
                     await updateDoc(doc(firestore, 'customers', lkohTfaol?.id), {
                         yetera: parseFloat(lkohTfaol?.yetera) + parseFloat(mherKlale)
                     });
@@ -1221,28 +1240,28 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                 <div className="w-full items-center flex justify-center">
                     {isElse && <MdCancel className="ml-20 text-xl text-danger cursor-pointer" onClick={() => shehzorMotsarBrofel(item?.shem, motsBrofs)} />}
                     {!isElse && item?.Ydne ?
-                    <MdCancel className="ml-20 text-xl text-danger cursor-pointer" onClick={() => handleRemoveIndex(index)} />
-                    : <FiPlusCircle  className="ml-20 text-xl text-success cursor-pointer" onClick={() => {
-                        setMafenemMotsarem(prev => {
-                            const newMafenemMotsarem = [
-                                ...prev,
-                                {
-                                    kmot: 0,
-                                    kmotYdnet: 0,
-                                    mher: 0,
-                                    shem: "בחר פריט",
-                                    remez: item?.remez,
-                                    message: '',
-                                    sogShem: shemSog,
-                                    Ydne:true
-                                }
-                            ];
-                            return GetSortedMafeneMotsarem(newMafenemMotsarem);
-                        });
-                    }} />}
+                        <MdCancel className="ml-20 text-xl text-danger cursor-pointer" onClick={() => handleRemoveIndex(index)} />
+                        : !isElse ? <FiPlusCircle className="ml-20 text-xl text-success cursor-pointer" onClick={() => {
+                            setMafenemMotsarem(prev => {
+                                const newMafenemMotsarem = [
+                                    ...prev,
+                                    {
+                                        kmot: 0,
+                                        kmotYdnet: 0,
+                                        mher: 0,
+                                        shem: "בחר פריט",
+                                        remez: item?.remez,
+                                        message: '',
+                                        sogShem: shemSog,
+                                        Ydne: true
+                                    }
+                                ];
+                                return GetSortedMafeneMotsarem(newMafenemMotsarem);
+                            });
+                        }} /> : null}
                     <div className="w-[200px] rounded-xl flex items-center">
                         <div className="group relative z-20">
-                            <Image width={70} alt="none" src={GetTmonatHelek(item?.remez)} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
+                            <Image width={70} alt="none" src={GetTmonatHelek(item?.remez, GetBrtemMotsarMlae(item?.remez, item?.shem).msbar)} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg group-hover:bg-white group-hover:translate-x-[-200%] group-hover:border-1 group-hover:rounded-full group-hover:border-primary" />
                         </div>
                         <div className="mr-2">{shemSog}</div>
                     </div>
@@ -1400,10 +1419,10 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
             if (!Array.isArray(prevMafenemMotsarem)) {
                 return prevMafenemMotsarem;
             }
-    
+
             // Filter out the item by index
             const updatedMotsarem = prevMafenemMotsarem.filter((_, index) => index !== indexToRemove);
-    
+
             // Sort the remaining items
             return GetSortedMafeneMotsarem(updatedMotsarem);
         });
@@ -1456,6 +1475,11 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
             setHlokaMsbarBrofelem(agla?.mafenem?.hlokaMsbarBrofelem);
             setAorkhBrofel(agla?.mafenem?.aorkhBrofel);
             setTvahBrofel(agla?.mafenem?.tvahBrofel);
+            setAorkhSM(agla?.mafenem?.aorkh * 100);
+            setRohfSM(agla?.mafenem?.rohf * 100);
+            setAorkhBrofelSM(agla?.mafenem?.aorkhBrofel * 100);
+            setAorkhRmbaMsgertRmbaSM(agla?.mafenem?.aorkhRmbaMsgertRmba * 100);
+            setGobahSolamSM(agla?.mafenem?.gobahSolam * 100);
             setMsbarBrofelem(agla?.mafenem?.msbarBrofelem);
             setHelkBetBnmet(agla?.mafenem?.aemHelkBet);
             setMsbarBrofelmBretA(agla?.mafenem?.msbarBrofelmBretA);
@@ -1530,6 +1554,8 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         if (agla?.sogAska === 'ייצור' || sogAskaa === 'ייצור') {
             const itemsToAdd = ['F4', 'F5', 'F6', 'F7', 'F3', 'E1', 'E2', 'E3', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'A8'];
             const itemsToRemove = [...itemsToAdd];
+            console.log(1232222222222);
+            console.log(sogAgla);
             if (sogAgla) {
                 updateMotsaremLhatseg(itemsToAdd, []);
             } else {
@@ -1545,7 +1571,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
             const itemsToRemove = [];
             updateMotsaremLhatseg(itemsToAdd, []);
         }
-    }, [show]);
+    }, [show, sogAgla]);
     useEffect(() => {
         if (aemTseba) {
             setMotsaremLhatseg((prevItems) => [...prevItems, 'D1']);
@@ -1641,7 +1667,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         if (parseInt(msbarTsrem) === 1) {
             scrollToElement(MotsaremRefs.current[GetIndexMotsar('A1')].current);
             RemoveMotsarToNull('A2');
-            setMotsaremLhatseg((prevItems) => prevItems.filter(item => item !== 'A2'));وس
+            setMotsaremLhatseg((prevItems) => prevItems.filter(item => item !== 'A2'));
             setMotsaremLhatseg((prevItems) => [...prevItems, 'A1', 'A10', 'A3']);
         }
         else if (parseInt(msbarTsrem) === 2) {
@@ -1705,7 +1731,6 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         }
 
     }, [entries]);
-    console.log(mafenemMotsarem);
     useEffect(() => {
         if (tokhnetNokhhet?.sogAgla) {
             if (tokhnetNokhhet?.motsarem?.length) {
@@ -1717,23 +1742,24 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                     }
                 }
                 for (let index = 0; index < tokhnetNokhhet?.motsarem.length; index++) {
-                    if(tokhnetNokhhet?.motsarem[index].Ydne){
+                    if (tokhnetNokhhet?.motsarem[index].Ydne) {
                         newArray.push({
                             ...tokhnetNokhhet?.motsarem[index],
                             kmotYdnet: 0,
-                            mher: 0,
+                            mher: parseFloat(tokhnetNokhhet?.motsarem[index].kmot) * parseFloat(GetBrtemMotsarMlae(tokhnetNokhhet?.motsarem[index].remez, tokhnetNokhhet?.motsarem[index].shem).alot),
                             message: '',
                         });
                     }
-                    else{
+                    else {
                         newArray.push({
                             ...tokhnetNokhhet?.motsarem[index],
                             kmotYdnet: 0,
-                            mher: 0,
+                            mher: parseFloat(tokhnetNokhhet?.motsarem[index].kmot) * parseFloat(GetBrtemMotsarMlae(tokhnetNokhhet?.motsarem[index].remez, tokhnetNokhhet?.motsarem[index].shem).alot),
                             message: '',
                         });
                     }
                 }
+
                 setMafenemMotsarem(GetSortedMafeneMotsarem(newArray));
             }
             setSogAgla(tokhnetNokhhet?.sogAgla);
@@ -1793,22 +1819,39 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         }
     }, [lkohMsbar, agla?.msbarLkoh]);
     useEffect(() => {
+        console.log(123124);
         let sum = 0;
         let sumZmanAboda = 0;
         for (let index = 0; index < mafenemMotsarem?.length; index++) {
             if (mafenemMotsarem[index].kmot > 0) {
-                sum += GetZmanAbodaMotsar(mafenemMotsarem[index].remez) * mafenemMotsarem[index].kmot;
+                sum += ((parseFloat(GetZmanAbodaMotsar(mafenemMotsarem[index].remez)) * parseFloat(mafenemMotsarem[index].kmot)) || 0);
             }
         }
         for (let index = 0; index < motsaremBrofelemSofe?.length; index++) {
             if (motsaremBrofelemSofe[index].kmot > 0) {
-                sum += GetZmanAbodaMotsar(motsaremBrofelemSofe[index].remez) * motsaremBrofelemSofe[index].kmot;
+                sum += ((parseFloat(GetZmanAbodaMotsar(motsaremBrofelemSofe[index].remez)) * parseFloat(motsaremBrofelemSofe[index].kmot)) || 0);
             }
         }
-        setHotsaotSkhar(parseFloat((sum * (parseFloat(counterShaotAboda?.hotsaotSkharYetsor) / parseFloat(counterShaotAboda?.shaotKodmetYestsor)) / 60).toFixed(2)));
-        setHotsaotAkefot(parseFloat((sum * (parseFloat(counterShaotAboda?.hotsaotSkhar - counterShaotAboda?.hotsaotSkharYetsor) / parseFloat(counterShaotAboda?.shaotKodmet - counterShaotAboda?.shaotKodmetYestsor)) / 60).toFixed(2)));
-        const total1 = motsaremBrofelemSofe?.reduce((acc, motsar) => acc + motsar.mher, 0);
-        const total2 = mafenemMotsarem?.reduce((acc, motsar) => acc + motsar.mher, 0);
+        const hotsaotSkharYetsor = parseFloat(counterShaotAboda?.hotsaotSkharYetsor) || 0;
+        const shaotKodmetYestsor = parseFloat(counterShaotAboda?.shaotKodmetYestsor) || 0;
+        const hotsaotSkhar = parseFloat(counterShaotAboda?.hotsaotSkhar) || 0;
+        const shaotKodmet = parseFloat(counterShaotAboda?.shaotKodmet) || 0;
+        const skharRatio = hotsaotSkharYetsor / shaotKodmetYestsor;
+        const hotsaotSkharValue = parseFloat((sum * (isNaN(skharRatio) ? 0 : skharRatio) / 60).toFixed(2));
+        setHotsaotSkhar(hotsaotSkharValue);
+        const akefotRatio = (hotsaotSkhar - hotsaotSkharYetsor) / (shaotKodmet - shaotKodmetYestsor);
+        const hotsaotAkefotValue = parseFloat((sum * (isNaN(akefotRatio) ? 0 : akefotRatio) / 60).toFixed(2));
+        setHotsaotAkefot(hotsaotAkefotValue);
+
+        const total1 = motsaremBrofelemSofe?.reduce((acc, motsar) => {
+            const parsed = parseFloat(motsar.mher);
+            return !isNaN(parsed) ? acc + parsed : acc;
+        }, 0);
+
+        const total2 = mafenemMotsarem?.reduce((acc, motsar) => {
+            const parsed = parseFloat(motsar.mher);
+            return !isNaN(parsed) ? acc + parsed : acc;
+        }, 0);
         setHkhnsotHomreGlem(total1 + total2);
     }, [mafenemMotsarem, motsaremBrofelemSofe]);
     useEffect(() => {
@@ -1857,6 +1900,35 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
     }
 
 
+    useEffect(() => {
+        if (aorkhSM) {
+            setAorkh(aorkhSM / 100);
+        }
+    }, [aorkhSM]);
+
+    useEffect(() => {
+        if (rohfSM) {
+            setRohf(rohfSM / 100);
+        }
+    }, [rohfSM]);
+
+    useEffect(() => {
+        if (aorkhBrofelSM) {
+            setAorkhBrofel(aorkhBrofelSM / 100);
+        }
+    }, [aorkhBrofelSM]);
+
+    useEffect(() => {
+        if (aorkhRmbaMsgertRmbaSM) {
+            setAorkhRmbaMsgertRmba(aorkhRmbaMsgertRmbaSM / 100);
+        }
+    }, [aorkhRmbaMsgertRmbaSM]);
+
+    useEffect(() => {
+        if (gobahSolamSM) {
+            setGobahSolam(gobahSolamSM / 100);
+        }
+    }, [gobahSolamSM]);
 
 
 
@@ -1969,7 +2041,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                 <div className="flex justify-center mt-5">
                                                     <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
                                                         <div className="ml-5 w-[110px] text-green-500">אחוז רווח</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`%${getDigitsAfterDot((((mherKlale - hkhnsotHomreGlem - hotsotSkhar) - parseInt(mherKlale * 0.17)) / mherKlale) || "")}`} />
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`%${((((mherKlale - hkhnsotHomreGlem - hotsotSkhar) - parseInt(mherKlale * 0.17)) * 100 / (mherKlale - hnha)).toFixed(0) || '')}`} />
                                                     </div>
                                                 </div>
                                                 <div className="mt-32"></div>
@@ -2337,7 +2409,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                 <div className="ml-2 mr-2">
                                                                     <Dropdown dir="rtl">
                                                                         <DropdownTrigger>
-                                                                            <Button isDisabled={!aorkh || !rohf} color="primary">
+                                                                            <Button color="primary">
                                                                                 <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet} : תוכנית` : 'בחירת תוכנית'}
                                                                             </Button>
                                                                         </DropdownTrigger>
@@ -2395,8 +2467,8 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                         </div>
                                                                                     </th>
                                                                                     <th className="w-[150px]">שטח עגלה</th>
-                                                                                    <th><Input value={aorkh || ""} onValueChange={(val) => {
-                                                                                        setAorkh(val); setTvahBrofel(''); setMsbarBrofelem('');
+                                                                                    <th><Input value={aorkhSM || ""} onValueChange={(val) => {
+                                                                                        setAorkhSM(val); setTvahBrofel(''); setMsbarBrofelem('');
                                                                                         if (rohf && aorkh) {
                                                                                             for (let index = 0; index < motsaremBrofelem.length; index++) {
                                                                                                 updateMotsaremBrofelem(index,
@@ -2415,8 +2487,8 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                             setSogGlgalem('');
                                                                                             setTsmegSber(false);
                                                                                         }
-                                                                                    }} color="primary" size="sm" className="w-[100px]" label="אורך" type="number" /></th>
-                                                                                    <th><Input value={rohf || ""} onValueChange={(val) => { setRohf(val); setTvahBrofel(''); setMsbarBrofelem(''); }} color="primary" size="sm" className="w-[100px]" label="רוחב" type="number" /></th>
+                                                                                    }} color="primary" size="sm" className="w-[100px]" label={`אורך בס"מ`} type="number" /></th>
+                                                                                    <th><Input value={rohfSM || ""} onValueChange={(val) => { setRohfSM(val); setTvahBrofel(''); setMsbarBrofelem(''); }} color="primary" size="sm" className="w-[100px]" label={`רוחב בס"מ`} type="number" /></th>
                                                                                 </tr>
                                                                                 {
                                                                                     (aorkh !== 0 && aorkh !== '' && rohf !== 0 && rohf !== '') &&
@@ -2657,7 +2729,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                                 </tr>
                                                                                                 <tr className="row-spacing">
                                                                                                     <th>חלוקה תחתונה</th>
-                                                                                                    <th><Input type="number" value={hlokaTvah || ''} onValueChange={(val) => { setHlokaTvah(val); setHlokaMsbarBrofelem(parseInt(Math.floor((aorkh / (val / 100)) - 1))); }} color="primary" size="sm" className="w-[100px]" label="טווח" /></th>
+                                                                                                    <th><Input type="number" value={hlokaTvah || ''} onValueChange={(val) => { setHlokaTvah(val); setHlokaMsbarBrofelem(parseInt(Math.floor((aorkh / (val / 100)) - 1))); }} color="primary" size="sm" className="w-[100px]" label={`טווח בס"מ`} /></th>
                                                                                                     <th><Input type="number" value={hlokaMsbarBrofelem || ''} onValueChange={(val) => { setHlokaMsbarBrofelem(val); setHlokaTvah(formatNumber(((aorkh / (parseFloat(val) + 1)) * 100))); }} color="primary" size="sm" className="w-[100px]" label="מס פרופילים" /></th>
                                                                                                     <th><Dropdown dir="rtl">
                                                                                                         <DropdownTrigger>
@@ -2710,8 +2782,8 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                                 </div>
                                                                                             </th>
                                                                                             <th>יצול</th>
-                                                                                            <th><Input type="number" value={aorkhBrofel || ''} onValueChange={(val) => {
-                                                                                                setAorkhBrofel(parseFloat(val));
+                                                                                            <th><Input type="number" value={aorkhBrofelSM || ''} onValueChange={(val) => {
+                                                                                                setAorkhBrofelSM(parseFloat(val));
                                                                                                 updateMotsaremBrofelem(1,
                                                                                                     {
                                                                                                         kmot: parseFloat((val || 0) * 2),
@@ -2723,7 +2795,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                                         sogShem: 'יצול'
                                                                                                     });
 
-                                                                                            }} color="primary" size="sm" className="w-[100px]" label="אורך פרופיל" /></th>
+                                                                                            }} color="primary" size="sm" className="w-[130px]" label={`אורך פרופיל בס"מ`} /></th>
                                                                                             <th><Dropdown dir="rtl">
                                                                                                 <DropdownTrigger>
                                                                                                     <Button isDisabled={!aorkhBrofel} size="xs" className='m-2'>
@@ -2848,7 +2920,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                                 }
 
 
-                                                                                            }} color="primary" size="sm" className="w-[100px]" label="טווח" /></th>
+                                                                                            }} color="primary" size="sm" className="w-[100px]" label={`טווח בס"מ`} /></th>
                                                                                             <th><Input isReadOnly={!aorkh || !rohf} type="number" value={msbarBrofelem || ''} onValueChange={(val) => {
                                                                                                 setMsbarBrofelem(parseInt(val)); setTvahBrofel(formatNumber(((aorkh / (parseFloat(val) + 1)) * 100)));
                                                                                                 updateMotsaremBrofelem(2,
@@ -3073,7 +3145,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                                         <>
                                                                                                             <tr className="row-spacing">
                                                                                                                 <th>מסגרת רמפה</th>
-                                                                                                                <th><Input type="number" value={aorkhRmbaMsgertRmba || ''} onValueChange={(val) => setAorkhRmbaMsgertRmba(parseFloat(val))} color="primary" size="sm" className="w-[100px]" label="אורך רמפה" /></th>
+                                                                                                                <th><Input type="number" value={aorkhRmbaMsgertRmbaSM || ''} onValueChange={(val) => setAorkhRmbaMsgertRmbaSM(parseFloat(val))} color="primary" size="sm" className="w-[130px]" label={`אורך רמפה בס"מ`} /></th>
                                                                                                                 <th></th>
                                                                                                                 <th><Dropdown dir="rtl">
                                                                                                                     <DropdownTrigger>
@@ -3117,7 +3189,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                                             </tr>
                                                                                                             <tr className="row-spacing">
                                                                                                                 <th>חלוקת רמפה</th>
-                                                                                                                <th><Input type="number" value={tvahHlokatRmba || ''} onValueChange={(val) => { setTvahHlokatRmba(val); setMsbarBrofelemHlokatRmba(parseInt(Math.floor((aorkhRmbaMsgertRmba / (val / 100)) - 1))); }} color="primary" size="sm" className="w-[100px]" label="טווח" /></th>
+                                                                                                                <th><Input type="number" value={tvahHlokatRmba || ''} onValueChange={(val) => { setTvahHlokatRmba(val); setMsbarBrofelemHlokatRmba(parseInt(Math.floor((aorkhRmbaMsgertRmba / (val / 100)) - 1))); }} color="primary" size="sm" className="w-[100px]" label={`טווח בס"מ`} /></th>
                                                                                                                 <th><Input type="number" value={msbarBrofelemHlokatRmba || ''} onValueChange={(val) => { setMsbarBrofelemHlokatRmba(val); setTvahHlokatRmba(formatNumber(((aorkhRmbaMsgertRmba / (parseFloat(val) + 1)) * 100))); }} color="primary" size="sm" className="w-[100px]" label="מס פרופילים" /></th>
                                                                                                                 <th><Dropdown dir="rtl">
                                                                                                                     <DropdownTrigger>
@@ -3268,7 +3340,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                                     <tr className="row-spacing">
                                                                                                         <th></th>
                                                                                                         <th>מסגרת סולם</th>
-                                                                                                        <th><Input type="number" value={gobahSolam || ''} onValueChange={(val) => setGobahSolam(parseFloat(val))} color="primary" size="sm" className="w-[100px]" label="גובה סולם" /></th>
+                                                                                                        <th><Input type="number" value={gobahSolamSM || ''} onValueChange={(val) => setGobahSolamSM(parseFloat(val))} color="primary" size="sm" className="w-[130px]" label={`גובה סולם בס"מ`} /></th>
                                                                                                         <th><Dropdown dir="rtl">
                                                                                                             <DropdownTrigger>
                                                                                                                 <Button size="xs" className='m-2'>
@@ -3341,7 +3413,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                                             setTvahAofkeSolam(val);
                                                                                                             const reverseCalculatedValue = parseInt(Math.floor(((parseFloat(gobahSolam) - 0.4) / parseFloat(val)) - 1));
                                                                                                             setMsbarBrofelemAofkeSolam(reverseCalculatedValue);
-                                                                                                        }} size="sm" className="w-[100px]" label="טווח אופקי" /></th>
+                                                                                                        }} size="sm" className="w-[130px]" label={`טווח אופקי בס"מ`} /></th>
                                                                                                         <th><Input type="number" value={msbarBrofelemAofkeSolam || ''} color="primary" onValueChange={(val) => {
                                                                                                             setMsbarBrofelemAofkeSolam(val);
                                                                                                             const calculatedValue = parseFloat(((parseFloat(gobahSolam) - 0.4) / (parseFloat(val) + 1)).toFixed(2));
@@ -3415,7 +3487,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                                             else {
                                                                                                                 setMsbarBrofelemAnkhe(parseInt(Math.floor((parseFloat(rohf) / (parseFloat(val) / 100)) - 1) + (Math.floor((((parseFloat(aorkh) / (parseFloat(val) / 100)) - 1))) * 2)));
                                                                                                             }
-                                                                                                        }} size="sm" className="w-[100px]" label="טווח אנכי" /></th>
+                                                                                                        }} size="sm" className="w-[130px]" label={`טווח אנכי בס"מ`} /></th>
                                                                                                         <th><Input type="number" value={msbarBrofelemAnkhe || ''} color="primary" onValueChange={(val) => { setMsbarBrofelemAnkhe(val); setTvahAnkheSolam(0); }} size="sm" className="w-[100px]" label="מס פרופילים" /></th>
                                                                                                         <th></th>
                                                                                                     </tr>
@@ -3471,7 +3543,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                                     </tr>
                                                                                                     <tr className="row-spacing">
                                                                                                         <th>מסגרת וניל</th>
-                                                                                                        <th><Input type="number" value={gobahSolam || ''} onValueChange={(val) => setGobahSolam(parseFloat(val))} color="primary" size="sm" className="w-[100px]" label="גובה וניל" /></th>
+                                                                                                        <th><Input type="number" value={gobahSolamSM || ''} onValueChange={(val) => setGobahSolamSMgobahSolamSM(parseFloat(val))} color="primary" size="sm" className="w-[130px]" label={`גובה וניל בס"מ`} /></th>
                                                                                                         <th></th>
                                                                                                         <th><Dropdown dir="rtl">
                                                                                                             <DropdownTrigger>
@@ -3520,7 +3592,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                                             setTvahAofkeSolam(val);
                                                                                                             const reverseCalculatedValue = parseInt(Math.floor(((parseFloat(gobahSolam)) / parseFloat(val)) - 1));
                                                                                                             setMsbarBrofelemAofkeSolam(reverseCalculatedValue);
-                                                                                                        }} size="sm" className="w-[100px]" label="טווח אופקי" /></th>
+                                                                                                        }} size="sm" className="w-[130px]" label={`טווח אופקי בס"מ`} /></th>
                                                                                                         <th><Input type="number" value={msbarBrofelemAofkeSolam || ''} color="primary" onValueChange={(val) => {
                                                                                                             setMsbarBrofelemAofkeSolam(val);
                                                                                                             const calculatedValue = parseFloat(((parseFloat(gobahSolam)) / (parseFloat(val) + 1)).toFixed(2));
@@ -3534,7 +3606,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                                         <th><Input type="number" value={tvahAnkheSolam || ''} color="primary" onValueChange={(val) => {
                                                                                                             setTvahAnkheSolam(val);
                                                                                                             setMsbarBrofelemAnkhe(parseInt((Math.floor((parseFloat(rohf) / (parseFloat(val) / 100)) - 1) * 2) + (Math.floor((((parseFloat(aorkh) / (parseFloat(val) / 100)) - 1))) * 2)));
-                                                                                                        }} size="sm" className="w-[100px]" label="טווח אנכי" /></th>
+                                                                                                        }} size="sm" className="w-[130px]" label={`טווח אנכי בס"מ`} /></th>
                                                                                                         <th><Input type="number" value={msbarBrofelemAnkhe || ''} color="primary" onValueChange={(val) => { setMsbarBrofelemAnkhe(val); setTvahAnkheSolam(0); }} size="sm" className="w-[100px]" label="מס פרופילים" /></th>
                                                                                                         <th></th>
                                                                                                     </tr>
@@ -3927,7 +3999,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                         <div className="flex justify-center bg-primary-200 p-2 rounded-2xl">
                                             תמחיר
                                         </div>
-                                        <Heshvonet ref={componentRefOne} motsar={agla} msbarHeshvonet={counterHeshvoneot?.count} lkoh={lkohTfaol} />
+                                        <Heshvonet aosek={aosek} ref={componentRefOne} motsar={agla} msbarHeshvonet={counterHeshvoneot?.count} lkoh={lkohTfaol} />
                                     </div>
                                     <Divider className="w-[2px] h-full ml-5 mr-5" />
                                     <div className="w-full max-w-[700px] flex flex-col">
@@ -3935,6 +4007,11 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                             עסקת מכירה
                                         </div>
                                         <div dir="rtl" className="mt-10 flex flex-col flex-grow">
+                                        <RadioGroup className="mb-4" value={aosek} onValueChange={(e) => setAosek(e)}>
+                                                <Radio value={'נגררי עירון'}>נגררי עירון</Radio>
+                                                <Radio value={'מ.כ בטיחות בע"מ'}>מ.כ בטיחות בע"מ</Radio>
+                                                <Radio value={'בלי חשבונית'}>בלי חשבונית</Radio>
+                                            </RadioGroup>
                                             <div>
                                                 <Input color="primary" className="max-w-[200px] mb-5" isReadOnly label="לקןח" value={lkohTfaol?.name} />
                                             </div>
@@ -3978,7 +4055,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                         <div className="flex justify-center bg-primary-200 p-2 rounded-2xl">
                                             תמחיר
                                         </div>
-                                        <Heshvonet ref={componentRefOne} msbarHeshvonet={counterHeshvoneot?.count} motsar={agla} lkoh={lkohTfaol} />
+                                        <Heshvonet aosek={aosek} ref={componentRefOne} msbarHeshvonet={counterHeshvoneot?.count} motsar={agla} lkoh={lkohTfaol} />
                                     </div>
                                     <Divider className="w-[2px] h-full ml-5 mr-5" />
                                     <div className="w-full max-w-[700px] flex flex-col">
@@ -3986,6 +4063,11 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                             עסקת מכירה
                                         </div>
                                         <div dir="rtl" className="mt-10 flex flex-col flex-grow">
+                                            <RadioGroup className="mb-4" value={aosek} onValueChange={(e) => setAosek(e)}>
+                                                <Radio value={'נגררי עירון'}>נגררי עירון</Radio>
+                                                <Radio value={'מ.כ בטיחות בע"מ'}>מ.כ בטיחות בע"מ</Radio>
+                                                <Radio value={'בלי חשבונית'}>בלי חשבונית</Radio>
+                                            </RadioGroup>
                                             <div>
                                                 <Input color="primary" className="max-w-[200px] mb-5" isReadOnly label="לקןח" value={lkohTfaol?.name} />
                                             </div>
@@ -4020,7 +4102,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                         <div className="flex justify-center bg-primary-200 p-2 rounded-2xl">
                                             תמחיר
                                         </div>
-                                        <Heshvonet msbarHeshvonet={counterHeshvoneot?.count} ref={componentRefOne} motsar={agla} lkoh={lkohTfaol} />
+                                        <Heshvonet aosek={aosek} msbarHeshvonet={counterHeshvoneot?.count} ref={componentRefOne} motsar={agla} lkoh={lkohTfaol} />
                                     </div>
                                     <Divider className="w-[2px] h-full ml-5 mr-5" />
                                     <div className="w-full max-w-[700px] flex flex-col">
@@ -4028,6 +4110,11 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                             עסקת מכירה
                                         </div>
                                         <div dir="rtl" className="mt-10 flex flex-col flex-grow">
+                                        <RadioGroup className="mb-4" value={aosek} onValueChange={(e) => setAosek(e)}>
+                                                <Radio value={'נגררי עירון'}>נגררי עירון</Radio>
+                                                <Radio value={'מ.כ בטיחות בע"מ'}>מ.כ בטיחות בע"מ</Radio>
+                                                <Radio value={'בלי חשבונית'}>בלי חשבונית</Radio>
+                                            </RadioGroup>
                                             <div>
                                                 <Input color="primary" className="max-w-[200px] mb-5" isReadOnly label="לקןח" value={lkohTfaol?.name} />
                                             </div>
@@ -4147,7 +4234,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                 </Button>
                                 {
                                     (agla?.msbar && sogBaola === 'D' && !Aeshor) ?
-                                        <Button size="lg" className='mr-5 ml-5' color="primary" onClick={() => setShowModalMessage(true)}>
+                                        <Button isDisabled={!aosek} size="lg" className='mr-5 ml-5' color="primary" onClick={() => setShowModalMessage(true)}>
                                             אישור
                                         </Button>
                                         :
