@@ -11,6 +11,8 @@ import { AllPages } from "../Page Components/allPages";
 import { addDoc, collection, count, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../FireBase/firebase";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { format } from "date-fns";
+import { FaUserEdit } from "react-icons/fa";
 
 export default function Activion() {
 
@@ -53,12 +55,10 @@ export default function Activion() {
     const [showDrag, setShowDrag] = useState(false);
     const [licenseid, setLicenseid] = useState(''); // מספר רישוי
     const [chassisnum, setChassisnum] = useState(''); // מספר שלדה
-    const [prodction, setProdction] = useState(''); // תוצר
     const [model, setModel] = useState(''); // קוד דגם
     const [categore, setCategore] = useState(''); // קטגוריה
     const [color, setColor] = useState(''); // צבע
     const [kinddrag, setKinddrag] = useState(''); // סוג הרכב
-    const [producer, setProducer] = useState(''); // יצרן
     const [bodytype, setBodytype] = useState(''); // סוג מרכב
     const [long, setLong] = useState(''); // אורך כללי
     const [space, setSpace] = useState('');  // רוחב כללי
@@ -103,6 +103,8 @@ export default function Activion() {
     const [sheshAehad,setSheshAehad] = useState('');
     const [sheshShtaeem,setSheshShtaeem] = useState('');
     const [sheshShlosh,setSheshShlosh] = useState('');
+    const [sheshArbaa,setSheshArbaa] = useState('');
+    const [sheshHamesh,setSheshHamesh,] = useState('');
 
     const metadata = GetDocs('metadata');
     const counter = metadata.find((count) => count.id === 'counterLkhot');
@@ -115,14 +117,13 @@ export default function Activion() {
    
 
     const GetIdWight = () => {
-        let newDate = new Date();
-        let month = newDate.getMonth();
-        let year = newDate.getFullYear();
-        let id = 50 + counter2?.count;
-        let yearr = year.toString();
-        let idwight = `${yearr[2]}${yearr[3]}${(month + 1) < 10 ? "0" : null}${month + 1}-0${id}`;
+        const newDate = new Date();
+        const month = format(newDate, 'MM'); // Formats month as "MM"
+        const year = format(newDate, 'yy');  // Formats year as "yy"
+        const id = 50 + counter2?.count; // Assuming counter2 is available in the scope
+        const idwight = `${year}${month}-0${id}`;
         return idwight;
-    }
+    };
 
     const checkAemLkohKeam = () => {
         for (let index = 0; index < lkhot.length; index++) {
@@ -223,8 +224,6 @@ export default function Activion() {
                 skhom: skhom,
                 opendate: opendate,
                 opentime: opentime,
-                prodction: prodction,
-                producer: producer,
                 rearextension: rearextension,
                 reviewerid: reviewerid,
                 safetyreview: safetyreview,
@@ -243,6 +242,9 @@ export default function Activion() {
                 sheshAehad: sheshAehad,
                 sheshShtaeem: sheshShtaeem,
                 sheshShlosh: sheshShlosh,
+                sheshArbaa,
+                sheshHamesh
+                
             }
         }
         return { cus, drag };
@@ -295,8 +297,6 @@ export default function Activion() {
             model: model,
             opendate: opendate,
             opentime: opentime,
-            prodction: prodction,
-            producer: producer,
             rearextension: rearextension,
             reviewerid: reviewerid,
             safetyreview: safetyreview,
@@ -315,6 +315,8 @@ export default function Activion() {
             sheshAehad: sheshAehad,
             sheshShtaeem: sheshShtaeem,
             sheshShlosh: sheshShlosh,
+            sheshArbaa,
+            sheshHamesh
 
         }
         !aglaKeamet && await addDoc(collection(firestore, "drags"), drag);
@@ -336,12 +338,10 @@ export default function Activion() {
         setCustomerStreet('');
         setLicenseid('');
         setChassisnum('');
-        setProdction('');
         setModel('');
         setCategore('');
         setColor('');
         setKinddrag('');
-        setProducer('');
         setBodytype('');
         setLong('');
         setSpace('');
@@ -418,7 +418,7 @@ export default function Activion() {
                                                         </thead>
                                                         <tbody>
                                                             {lkhot.map((item, index) => (
-                                                                <tr onClick={() => setLkoh(item)} key={index} className={`border-b border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-primary-200 ${lkoh?.idnum === item.idnum && 'bg-primary-200'}`}>
+                                                                <tr onClick={() => setLkoh(item)} key={index} className={`border-4 cursor-pointer hover:bg-primary-200 ${lkoh?.idnum === item.idnum && 'bg-primary-200 sticky top-11 font-bold text-black border-r-black border-l-black'}`}>
                                                                     <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.city}</td>
                                                                     <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item?.postal}</td>
                                                                     <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item.houseid}</td>
@@ -458,7 +458,8 @@ export default function Activion() {
                                         </>
                                 }
                                 <div className="flex justify-center mt-10">
-                                    <Button isLoading={loading} isDisabled={lkohKeam ? (!lkoh) : (!customerName || !customerLastName || !customerStreet || !customerId || !customerPostal || !customerHouseId || !customerCity)} onClick={hosfatLkoh} size="lg" color="primary">הוספה והמשך<MdOutlineArrowForward className="text-xl" /></Button>
+                                    <Button isDisabled={!lkoh} isLoading={loading} size="lg" color="primary" variant='flat' className="ml-2 mr-2"><FaUserEdit className="text-xl "/>עדכון</Button>
+                                    <Button variant='flat' className="ml-2 mr-2" isLoading={loading} isDisabled={lkohKeam ? (!lkoh) : (!customerName || !customerLastName || !customerStreet || !customerId || !customerPostal || !customerHouseId || !customerCity)} onClick={hosfatLkoh} size="lg" color="primary">הוספה והמשך<MdOutlineArrowForward className="text-xl" /></Button>
                                 </div>
                             </div>
                         }
@@ -520,25 +521,23 @@ export default function Activion() {
                                         <div className="w-1/3">
                                             <Input color="primary" value={licenseid} size="sm" onValueChange={(value) => { setLicenseid(value) }} type="number" label="מספר רישוי" />
                                             <Input color="primary" value={chassisnum} className="mt-10" size="sm" onValueChange={(value) => { setChassisnum(value) }} type="text" label="מספר שלדה" />
-                                            <Input color="primary" value={prodction} className="mt-10" size="sm" onValueChange={(value) => { setProdction(value) }} type="text" label="תוצר" />
                                             <Input color="primary" value={model} className="mt-10" size="sm" onValueChange={(value) => { setModel(value) }} type="text" label="קוד דגם" />
                                             <Input color="primary" value={masTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setMasTaodatABTebos(value) }} type="text" label="מס' תעודת אב טיפוס" />
+                                            <Input color="primary" value={bodytype} className="mt-10" size="sm" onValueChange={(value) => { setBodytype(value) }} type="text" label="סוג מרכב" />
                                         </div>
                                         <div className="m-10" />
                                         <div className="w-1/3">
-                                            <Input color="primary" value={categore} size="sm" onValueChange={(value) => { setCategore(value) }} type="text" label="קטגוריה" />
-                                            <Input color="primary" value={color} className="mt-10" size="sm" onValueChange={(value) => { setColor(value) }} type="text" label="צבע" />
-                                            <Input color="primary" value={kinddrag} className="mt-10" size="sm" onValueChange={(value) => { setKinddrag(value) }} type="text" label="סוג הרכב" />
-                                            <Input color="primary" value={producer} className="mt-10" size="sm" onValueChange={(value) => { setProducer(value) }} type="text" label="יצרן" />
-                                            <Input color="primary" value={tableokefTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setTokefTaodatABTebos(value) }} type="text" label="תוקף תעודת אב טיפוס" />
-                                        </div>
-                                        <div className="m-10" />
-                                        <div className="w-1/3">
-                                            <Input color="primary" value={bodytype} size="sm" onValueChange={(value) => { setBodytype(value) }} type="text" label="סוג מרכב" />
-                                            <Input color="primary" value={long} className="mt-10" size="sm" onValueChange={(value) => { setLong(value) }} type="text" label="אורך כללי" />
+                                            <Input color="primary" value={long} size="sm" onValueChange={(value) => { setLong(value) }} type="text" label="אורך כללי" />
                                             <Input color="primary" value={space} className="mt-10" size="sm" onValueChange={(value) => { setSpace(value) }} type="text" label="רוחב כללי" />
                                             <Input color="primary" value={height} className="mt-10" size="sm" onValueChange={(value) => { setHeight(value) }} type="text" label="גובה כללי" />
                                             <Input color="primary" value={masVTokefResheonYatsran} className="mt-10" size="sm" onValueChange={(value) => { setMasVTokefResheonYatsran(value) }} type="text" label="מס' ותוקף רישיון יצרן" />
+                                            <Input color="primary" value={categore} size="sm" className="mt-10" onValueChange={(value) => { setCategore(value) }} type="text" label="קטגוריה" />
+                                        </div>
+                                        <div className="m-10" />
+                                        <div className="w-1/3">
+                                            <Input color="primary" value={color} size="sm" onValueChange={(value) => { setColor(value) }} type="text" label="צבע" />
+                                            <Input color="primary" value={kinddrag} className="mt-10" size="sm" onValueChange={(value) => { setKinddrag(value) }} type="text" label="סוג הרכב" />
+                                            <Input color="primary" value={tableokefTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setTokefTaodatABTebos(value) }} type="text" label="תוקף תעודת אב טיפוס" />
                                         </div>
                                     </div>
                                 </div>
@@ -609,7 +608,8 @@ export default function Activion() {
                                             <Input color="primary" value={sheshAehad} size="sm" className="mt-10" onValueChange={(value) => { setSheshAehad(value) }} type="number" label="6.1" />
                                             <Input color="primary" value={sheshShtaeem} size="sm" className="mt-10" onValueChange={(value) => { setSheshShtaeem(value) }} type="number" label="6.2" />
                                             <Input color="primary" value={sheshShlosh} size="sm" className="mt-10" onValueChange={(value) => { setSheshShlosh(value) }} type="number" label="6.3" />
-
+                                            <Input color="primary" value={sheshArbaa} size="sm" className="mt-10" onValueChange={(value) => { setSheshArbaa(value) }} type="number" label="6.4" />
+                                            <Input color="primary" value={sheshHamesh} size="sm" className="mt-10" onValueChange={(value) => { setSheshHamesh(value) }} type="number" label="6.5" />
                                         </div>
                                     </div>
                                 </div>

@@ -44,6 +44,13 @@ import { FaCheck } from "react-icons/fa";
 import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
 import { TofsTokhnetYetsor } from "../Page Components/TofsTokhnetYetsor";
 import { CiCirclePlus } from "react-icons/ci";
+import { CgClose, CgCloseO, CgFileDocument } from "react-icons/cg";
+import { BsFillBookmarkCheckFill, BsListCheck } from "react-icons/bs";
+import { RxCheckCircled } from "react-icons/rx";
+import { Box, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popper, TextField, Toolbar, Typography, useTheme } from "@mui/material";
+import MuiAppBar from '@mui/material/AppBar';
+import { styled } from '@mui/material/styles';
+import { FaHandHoldingDollar } from "react-icons/fa6";
 
 
 export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogAskaa, mlae, category, Tokhneot }) {
@@ -711,7 +718,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                     await updateDoc(doc(firestore, 'drags', drag?.id), {
                         active: true
                     });
-                    if(BdekatMtsavem() === 'C'){
+                    if (BdekatMtsavem() === 'C') {
                         handelPrintggg();
                     }
                 }
@@ -722,7 +729,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         }
         else {
             try {
-                if(BdekatMtsavem() === 'C'){
+                if (BdekatMtsavem() === 'C') {
                     handelPrintggg();
                 }
                 if (BdekatMtsavem() === 'C' || BdekatMtsavem() === 'D') {
@@ -1193,7 +1200,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
     const renderDropdown = (index, isElse, item) => (
         <Dropdown dir="rtl">
             <DropdownTrigger>
-                <Button isDisabled={isElse} size="xs" className='m-2'>
+                <Button color={item?.shem ? 'primary' : 'default'} variant='flat' isDisabled={isElse} size="xs" className='m-2'>
                     {item?.shem || 'בחר פריט'}<MdKeyboardArrowDown className="text-[20px]" />
                 </Button>
             </DropdownTrigger>
@@ -1341,7 +1348,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                 ?
                                                 'primary'
                                                 :
-                                                item?.message && (sogBaolaa !== 'C') ? "danger" : "primary"
+                                                item?.message && (sogBaolaa !== 'C') ? "danger" : item?.kmot > 0 ? "primary" : 'default'
                                         }
                                         onValueChange={(val) => {
                                             handleInputChange(isElse, index, '', 'message');
@@ -1370,7 +1377,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                 ?
                                                 'primary'
                                                 :
-                                                item?.message && (sogBaolaa !== 'C') ? "danger" : "primary"
+                                                item?.message && (sogBaolaa !== 'C') ? "danger" : item?.kmot > 0 ? "primary" : 'default'
                                         }
                                         onValueChange={(val) => {
                                             handleInputChange(isElse, index, '', 'message');
@@ -1410,7 +1417,13 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                             value={item?.mher ? `₪${item?.mher}` : ''}
                             size="sm"
                             className="max-w-[100px]"
-                            color="primary"
+                            color={
+                                item?.kmot <= GetBrtemMotsarMlae(item?.remez, item?.shem).kmot && item?.message
+                                    ?
+                                    'primary'
+                                    :
+                                    item?.message && (sogBaolaa !== 'C') ? "danger" : item?.kmot > 0 ? "primary" : 'default'
+                            }
                             label="מחיר"
                         />
                     </div>
@@ -1962,6 +1975,64 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
 
 
 
+    const drawerWidth = 400;
+
+    const AppBar = styled(MuiAppBar, {
+        shouldForwardProp: (prop) => prop !== 'open',
+    })(({ theme, open }) => ({
+        transition: theme.transitions.create(['margin', 'width'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+        ...(open && {
+            width: `calc(100% - ${drawerWidth}px)`,
+            marginLeft: `${drawerWidth}px`,
+            transition: theme.transitions.create(['margin', 'width'], {
+                easing: theme.transitions.easing.easeOut,
+                duration: theme.transitions.duration.enteringScreen,
+            }),
+        }),
+        ...(openTop && {
+            marginTop: `${350}px`,
+            transition: theme.transitions.create(['margin', 'width'], {
+                easing: theme.transitions.easing.easeOut,
+                duration: theme.transitions.duration.enteringScreen,
+            }),
+        }),
+    }));
+
+    const DrawerHeader = styled('div')(({ theme }) => ({
+        display: 'flex',
+        alignItems: 'center',
+        padding: theme.spacing(0, 1),
+        // necessary for content to be below app bar
+        ...theme.mixins.toolbar,
+
+    }));
+
+
+    const theme = useTheme();
+    const [open, setOpen] = React.useState(false);
+    const [openTop, setOpenTop] = React.useState(false);
+
+    const handleDrawerOpen = () => {
+        setOpen(true);
+    };
+
+    const handleDrawerClose = () => {
+        setOpen(false);
+    };
+
+    const handleDrawerOpenTop = () => {
+        setOpenTop(true);
+    };
+
+    const handleDrawerCloseTop = () => {
+        setOpenTop(false);
+    };
+
+    
+
     return (!sogBaola && !sogAskaa) ? null : (
         <Modal placement="center" className="test-fontt" backdrop={"blur"} size={(sogBaola !== 'E') ? 'full' : "2xl"} isOpen={show} onClose={() => {
             ResetAll();
@@ -1997,176 +2068,118 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                             {
                                 motsaremBrofelem?.length > 0 && ((sogBaola === 'A' || sogBaola === 'B' || sogBaola === 'C') || (sogAskaa && sogAskaa !== '')) &&
                                 <div className="h-full w-full flex">
-                                    <div className="w-1/5 h-full border-r-2 border-black overflow-auto">
-                                        <div className="flex justify-center items-center h-full">
-                                            <div className="w-full">
-                                                <div className="flex justify-center">
-                                                    <div className="mr-9 w-full bg-gradient-to-r from-gray-300 to-gray-700 text-center p-4 rounded-full sticky top-0 z-40 tracking-wider text-white font-bold text-xl">
-                                                        תמחיר
+
+
+
+
+
+
+                                    <Box sx={{ position: 'absolute', height: '30px' }}>
+                                        <CssBaseline />
+
+                                        <AppBar className="mr-" sx={{ backgroundColor: '#ffffff', color: 'black' }} open={open}>
+                                            <Toolbar>
+                                                <div className="flex justify-between items-center w-full">
+                                                    <div className="flex justify-around items-center w-full ml-10">
+                                                        <Button color="primary" variant='flat' isDisabled={open} onClick={handleDrawerOpen}>
+                                                            <div className="flex items-center font-bold text-lg"><FaHandHoldingDollar className="mr-3 text-xl" />תמחיר</div>
+                                                        </Button>
+
+
+                                                        <Button color="primary" variant='flat' isDisabled={openTop} onClick={handleDrawerOpenTop}>
+                                                            <div className="flex items-center font-bold text-lg"><BsListCheck className="mr-3 text-2xl font-bold" />שלבי עבודה</div>
+                                                        </Button>
                                                     </div>
+
+
                                                 </div>
-                                                <div className="flex justify-center mt-10 mb-3">
-                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                                        <div className="ml-5 w-[110px] text-green-500">מחיר שוק</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas(mherKlale || "")}`} />
-                                                    </div>
+
+
+                                            </Toolbar>
+                                        </AppBar>
+
+                                        <Drawer
+                                            color='default'
+                                            sx={{
+                                                width: '100%',
+                                                height: '350px',
+                                                flexShrink: 0,
+                                                '& .MuiDrawer-paper': {
+                                                    backgroundColor: '#ffffff',
+                                                    width: '100%',
+                                                    height: '350px',
+                                                    boxSizing: 'border-box',
+                                                },
+                                            }}
+                                            variant="persistent"
+                                            anchor="top"
+                                            open={openTop}
+                                        >
+                                            <DrawerHeader>
+                                                <div className="flex justify-end items-center w-full">
+                                                    <Button onClick={handleDrawerCloseTop} color="danger" variant='flat' className="mr-5"><CgClose className="text-gray text-xl" />סגירה</Button>
                                                 </div>
-                                                <div className="flex justify-center"><Divider className="w-[200px]" /></div>
-                                                <div className="flex justify-center mt-3 mb-3">
-                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                                        <div className="ml-5 w-[110px] text-danger-500">הנחה</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${(hnha || "")}`} />
-                                                    </div>
-                                                </div>
-                                                <div className="flex justify-center"><Divider className="w-[200px]" /></div>
-                                                <div className="flex justify-center mt-3 mb-3">
-                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                                        <div className="ml-5 w-[110px] text-success-500">מחיר מכירה</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas((mherKlale - hnha) || "")}`} />
-                                                    </div>
-                                                </div>
-                                                <div className="flex justify-center"><Divider className="w-[200px]" /></div>
-                                                <div className="flex justify-center mt-3 mb-3">
-                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                                        <div className="ml-5 w-[110px] text-danger-500">הוצאות חו"ג</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${hkhnsotHomreGlem || ""}`} />
-                                                    </div>
-                                                </div>
-                                                <div className="flex justify-center"><Divider className="w-[200px]" /></div>
-                                                <div className="flex justify-center mt-3 mb-3">
-                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                                        <div className="ml-5 w-[110px] text-danger-500">הוצאות שכר</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${hotsotSkhar || ""}`} />
-                                                    </div>
-                                                </div>
-                                                <div className="flex justify-center"><Divider className="w-[200px]" /></div>
-                                                <div className="flex justify-center mt-3 mb-3">
-                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                                        <div className="ml-5 w-[110px] text-green-500">רווח ישיר</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas((mherKlale - hkhnsotHomreGlem - hotsotSkhar) || "")}`} />
-                                                    </div>
-                                                </div>
-                                                <div className="flex justify-center"><Divider className="w-[200px]" /></div>
-                                                <div className="flex justify-center mt-3 mb-3">
-                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                                        <div className="ml-5 w-[110px] text-danger-500">הוצאות עקיפות</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${formatNumberWithCommas(hotsotAkefot) || ''}`} />
-                                                    </div>
-                                                </div>
-                                                <div className="flex justify-center"><Divider className="w-[200px]" /></div>
-                                                <div className="flex justify-center mt-3 mb-3">
-                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                                        <div className="ml-5 w-[110px] text-danger-500">הוצאות מסים</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${formatNumberWithCommas(parseInt(mherKlale * 0.17) || "")}`} />
-                                                    </div>
-                                                </div>
-                                                <div className="flex justify-center"><Divider className="w-[200px]" /></div>
-                                                <div className="flex justify-center mt-3 mb-3">
-                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                                        <div className="ml-5 w-[110px] text-green-500">רווח נקי</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas(((mherKlale - hkhnsotHomreGlem - hotsotSkhar) - parseInt(mherKlale * 0.17)) || "")}`} />
-                                                    </div>
-                                                </div>
-                                                <div className="flex justify-center"><Divider className="w-[200px]" /></div>
-                                                <div className="flex justify-center mt-5">
-                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                                        <div className="ml-5 w-[110px] text-green-500">אחוז רווח</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`%${((((mherKlale - hkhnsotHomreGlem - hotsotSkhar) - parseInt(mherKlale * 0.17)) * 100 / (mherKlale - hnha)).toFixed(0) || '')}`} />
-                                                    </div>
-                                                </div>
-                                                <div className="mt-32"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="w-full h-full">
-                                        <div className="w-full h-[300px]">
-                                            <div dir="rtl" className="w-full h-full">
-                                                <div className="w-full bg-gradient-to-r from-gray-300 to-gray-700 text-center p-4 rounded-full sticky top-0 z-40 tracking-wider text-white font-bold text-xl">
-                                                    <div className="w-full flex justify-center items-center">
-                                                        <div className="ml-3 mr-3">שלבי עבודה</div>
-                                                    </div>
-                                                </div>
-                                                <div className="flex w-full h-full border-b-2 border-black justify-around items-center">
-                                                    {
-                                                        BdekatMtsavem() === 'A' ?
-                                                            <div className="rounded-xl min-w-[90px]">
-                                                                <Divider className="bg-primary h-[1px]" />
-                                                                <div className="tracking-widest w-full text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105 flex items-center">
-                                                                    <div className="w-full">
-                                                                        <div className="text-center w-full text-primary mb-3">הצעה</div>
-                                                                        <div className="flex justify-center w-full">
-                                                                            <Comment
-                                                                                visible={true}
-                                                                                height="80"
-                                                                                width="80"
-                                                                                ariaLabel="comment-loading"
-                                                                                wrapperStyle={{}}
-                                                                                wrapperClass="comment-wrapper"
-                                                                                color="white"
-                                                                                backgroundColor="#3b82f6"
-                                                                            />
-                                                                        </div>
-                                                                        <div className="text-center w-full text-primary mt-3">שלב : 1</div>
-                                                                    </div>
-                                                                </div>
-                                                                <Divider className="bg-primary h-[1px]" />
-                                                            </div>
-                                                            :
-                                                            BdekatMtsavem() === 'B' ?
+                                            </DrawerHeader>
+                                            <List>
+                                                <ListItem>
+                                                    <div dir="rtl" className={`flex w-full h-full justify-around items-center ${open && 'ml-[400px]'}`}>
+                                                        {
+                                                            BdekatMtsavem() === 'A' ?
                                                                 <div className="rounded-xl min-w-[90px]">
                                                                     <Divider className="bg-primary h-[1px]" />
-                                                                    <div className="h-full w-full flex items-center tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105">
+                                                                    <div className="tracking-widest w-full text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105 flex items-center">
                                                                         <div className="w-full">
-                                                                            <div className="text-center w-full text-primary mb-3">המתנה</div>
+                                                                            <div className="text-center w-full text-primary mb-3">הצעה</div>
                                                                             <div className="flex justify-center w-full">
-                                                                                <Hourglass
+                                                                                <Comment
                                                                                     visible={true}
                                                                                     height="80"
                                                                                     width="80"
-                                                                                    ariaLabel="hourglass-loading"
+                                                                                    ariaLabel="comment-loading"
                                                                                     wrapperStyle={{}}
-                                                                                    wrapperClass=""
-                                                                                    color='#3b82f6'
+                                                                                    wrapperClass="comment-wrapper"
+                                                                                    color="white"
                                                                                     backgroundColor="#3b82f6"
                                                                                 />
                                                                             </div>
-                                                                            <div className="text-center w-full text-primary mt-3">שלב : 2</div>
+                                                                            <div className="text-center w-full text-primary mt-3">שלב : 1</div>
                                                                         </div>
                                                                     </div>
                                                                     <Divider className="bg-primary h-[1px]" />
                                                                 </div>
                                                                 :
-                                                                BdekatMtsavem() === 'C' ?
+                                                                BdekatMtsavem() === 'B' ?
                                                                     <div className="rounded-xl min-w-[90px]">
                                                                         <Divider className="bg-primary h-[1px]" />
-                                                                        <div className="h-full w-full tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105 flex items-center">
+                                                                        <div className="h-full w-full flex items-center tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105">
                                                                             <div className="w-full">
-                                                                                <div className="text-center w-full text-primary mb-3">ייצור</div>
+                                                                                <div className="text-center w-full text-primary mb-3">המתנה</div>
                                                                                 <div className="flex justify-center w-full">
-                                                                                    <ThreeCircles
+                                                                                    <Hourglass
                                                                                         visible={true}
                                                                                         height="80"
                                                                                         width="80"
-                                                                                        color="#3b82f6"
-                                                                                        ariaLabel="three-circles-loading"
+                                                                                        ariaLabel="hourglass-loading"
                                                                                         wrapperStyle={{}}
                                                                                         wrapperClass=""
+                                                                                        color='#3b82f6'
+                                                                                        backgroundColor="#3b82f6"
                                                                                     />
                                                                                 </div>
-                                                                                <div className="text-center w-full text-primary mt-3">שלב : 3</div>
+                                                                                <div className="text-center w-full text-primary mt-3">שלב : 2</div>
                                                                             </div>
                                                                         </div>
                                                                         <Divider className="bg-primary h-[1px]" />
                                                                     </div>
                                                                     :
-                                                                    BdekatMtsavem() === 'D' ?
+                                                                    BdekatMtsavem() === 'C' ?
                                                                         <div className="rounded-xl min-w-[90px]">
                                                                             <Divider className="bg-primary h-[1px]" />
                                                                             <div className="h-full w-full tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105 flex items-center">
                                                                                 <div className="w-full">
-                                                                                    <div className="text-center w-full text-primary mb-3">סיום</div>
+                                                                                    <div className="text-center w-full text-primary mb-3">ייצור</div>
                                                                                     <div className="flex justify-center w-full">
-                                                                                        <Puff
+                                                                                        <ThreeCircles
                                                                                             visible={true}
                                                                                             height="80"
                                                                                             width="80"
@@ -2176,237 +2189,362 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                             wrapperClass=""
                                                                                         />
                                                                                     </div>
-                                                                                    <div className="text-center w-full text-primary mt-3">שלב : 4</div>
+                                                                                    <div className="text-center w-full text-primary mt-3">שלב : 3</div>
                                                                                 </div>
                                                                             </div>
                                                                             <Divider className="bg-primary h-[1px]" />
                                                                         </div>
                                                                         :
-                                                                        <div className="rounded-xl min-w-[90px]">
-                                                                            <Divider className="bg-primary h-[1px]" />
-                                                                            <div className="h-full w-full tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105 flex items-center">
-                                                                                <div className="w-full">
-                                                                                    <div className="text-center w-full text-primary mb-3"></div>
-                                                                                    <div className="flex justify-center w-full">
-                                                                                        <RotatingLines
-                                                                                            visible={true}
-                                                                                            height="80"
-                                                                                            width="80"
-                                                                                            strokeColor="#3b82f6"
-                                                                                            strokeWidth="5"
-                                                                                            animationDuration="0.75"
-                                                                                            ariaLabel="rotating-lines-loading"
-                                                                                            wrapperStyle={{}}
-                                                                                            wrapperClass=""
-                                                                                        />
+                                                                        BdekatMtsavem() === 'D' ?
+                                                                            <div className="rounded-xl min-w-[90px]">
+                                                                                <Divider className="bg-primary h-[1px]" />
+                                                                                <div className="h-full w-full tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105 flex items-center">
+                                                                                    <div className="w-full">
+                                                                                        <div className="text-center w-full text-primary mb-3">סיום</div>
+                                                                                        <div className="flex justify-center w-full">
+                                                                                            <Puff
+                                                                                                visible={true}
+                                                                                                height="80"
+                                                                                                width="80"
+                                                                                                color="#3b82f6"
+                                                                                                ariaLabel="three-circles-loading"
+                                                                                                wrapperStyle={{}}
+                                                                                                wrapperClass=""
+                                                                                            />
+                                                                                        </div>
+                                                                                        <div className="text-center w-full text-primary mt-3">שלב : 4</div>
                                                                                     </div>
-                                                                                    <div className="text-center w-full text-primary mt-3">שלב : 0</div>
                                                                                 </div>
+                                                                                <Divider className="bg-primary h-[1px]" />
                                                                             </div>
-                                                                            <Divider className="bg-primary h-[1px]" />
-                                                                        </div>
-                                                    }
-                                                    <Divider className="w-[1px] h-[200px]" />
-                                                    <div className="w-full max-w-[250px]">
-                                                        <div className="flex justify-around">
-                                                            <div>לקוח</div>
-                                                            {
-                                                                lkoh && hskmatLkoh ?
-                                                                    <FaCheckDouble className="text-3xl text-success" />
-                                                                    :
-                                                                    lkoh || hskmatLkoh ?
-                                                                        <FaCheck className="text-3xl text-warning" />
-                                                                        :
-                                                                        <MdOutlineCheckBoxOutlineBlank className="text-3xl text-gray-500" />
-
-                                                            }
-                                                        </div>
-                                                        <div className="h-[200px]">
-                                                            <Divider className="mt-2 mb-2" />
-                                                            <div className="flex justify-center">
+                                                                            :
+                                                                            <div className="rounded-xl min-w-[90px]">
+                                                                                <Divider className="bg-primary h-[1px]" />
+                                                                                <div className="h-full w-full tracking-widest text-black font-extrabold text-2xl p-1 mb-3 text-center transform transition-transform hover:scale-105 flex items-center">
+                                                                                    <div className="w-full">
+                                                                                        <div className="text-center w-full text-primary mb-3"></div>
+                                                                                        <div className="flex justify-center w-full">
+                                                                                            <RotatingLines
+                                                                                                visible={true}
+                                                                                                height="80"
+                                                                                                width="80"
+                                                                                                strokeColor="#3b82f6"
+                                                                                                strokeWidth="5"
+                                                                                                animationDuration="0.75"
+                                                                                                ariaLabel="rotating-lines-loading"
+                                                                                                wrapperStyle={{}}
+                                                                                                wrapperClass=""
+                                                                                            />
+                                                                                        </div>
+                                                                                        <div className="text-center w-full text-primary mt-3">שלב : 0</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <Divider className="bg-primary h-[1px]" />
+                                                                            </div>
+                                                        }
+                                                        <Divider className="w-[1px] h-[200px]" />
+                                                        <div className="w-full max-w-[250px]">
+                                                            <div className="flex justify-around">
+                                                                <div>לקוח</div>
                                                                 {
-                                                                    agla?.msbarLkoh ?
-                                                                        <Input size="sm" color="primary" className="max-w-[200px]" isReadOnly label="לקןח" value={lkohTfaol?.name} />
+                                                                    lkoh && hskmatLkoh ?
+                                                                        <FaCheckDouble className="text-3xl text-success" />
                                                                         :
-                                                                        <div className="flex items-center">
-                                                                            <Autocomplete
-                                                                                label="בחר לקוח"
-                                                                                className="max-w-[200px]"
-                                                                                color="primary"
-                                                                                size="sm"
-                                                                                defaultItems={lkhot}
-                                                                                onSelectionChange={setLkoh}
-                                                                                onInputChange={setLkoh}
-                                                                            >
-                                                                                {
-                                                                                    lkhot.map((lko, index) => (
-                                                                                        <AutocompleteItem onClick={() => { setLkohMsbar(lko.idnum); setHskmatLkoh(false); }} className='text-right' key={lko?.name} value={lko?.name}>
-                                                                                            {lko?.name}
-                                                                                        </AutocompleteItem>
-                                                                                    ))
-                                                                                }
-                                                                            </Autocomplete>
-                                                                            <Button size="sm" className="mr-2" onClick={() => { router.push('/activion'); }}>הוספה</Button>
-                                                                        </div>
+                                                                        lkoh || hskmatLkoh ?
+                                                                            <FaCheck className="text-3xl text-warning" />
+                                                                            :
+                                                                            <MdOutlineCheckBoxOutlineBlank className="text-3xl text-gray-500" />
+
                                                                 }
                                                             </div>
-                                                            <Divider className="mt-2 mb-2" />
-                                                            <div className="flex justify-center">
-                                                                <Switch isSelected={hskmatLkoh} isReadOnly={agla?.thlkhem?.hskmatLkwah || !lkoh} defaultSelected={agla?.thlkhem?.hskmatLkwah} value={hskmatLkoh} onValueChange={(val) => setHskmatLkoh(val)}>
-                                                                    <div className="mr-2">הסכמת לקוח</div>
-                                                                </Switch>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                    <Divider className="w-[1px] h-[200px]" />
-                                                    <div className="w-full max-w-[250px]">
-                                                        <div className="flex justify-around">
-                                                            <div>מחיר</div>
-                                                            {
-                                                                mherKlale && kveatMher ?
-                                                                    <FaCheckDouble className="text-3xl text-success" />
-                                                                    :
-                                                                    mherKlale || kveatMher ?
-                                                                        <FaCheck className="text-3xl text-warning" />
-                                                                        :
-                                                                        <MdOutlineCheckBoxOutlineBlank className="text-3xl text-gray-500" />
-
-                                                            }
-                                                        </div>
-                                                        <div className="h-[200px]">
-                                                            <Divider className="mt-2 mb-2" />
-                                                            <div className="flex justify-center">
-                                                                <div className="flex items-center">
-                                                                    <div className="min-w-[100px]">מחיר השוק</div>
-                                                                    <Input isReadOnly={agla?.mherMkhera} size="xs" type="number" value={mherKlale || ''} onValueChange={(val) => {
-                                                                        setMherKlale(val);
-                                                                        if (!val) {
-                                                                            setKveatMher(false);
-                                                                        }
-                                                                    }} color="primary" className="max-w-[150px]" />
-                                                                </div>
-                                                            </div>
-                                                            <Divider className="mt-2 mb-2" />
-                                                            <div className="flex justify-center">
-                                                                <div className="flex items-center">
-                                                                    <div className="min-w-[100px]">הנחה</div>
-                                                                    <Input size="xs" type="number" value={hnha || ''} onValueChange={(val) => setHnha(Math.min(val, mherKlale))} color="primary" className="max-w-[150px]" />
-                                                                </div>
-                                                            </div>
-                                                            <Divider className="mt-2 mb-2" />
-                                                            <div className="flex justify-center">
-                                                                <Switch isSelected={kveatMher} isReadOnly={agla?.thlkhem?.kveatMher || !mherKlale || (sogAskaa || sogAskaAgla) === 'ייצור' ? (!mherKlale || !hskmatLkoh || !msbarTsrem || !sogGlgalem || !aorkhBrofel || !msbarBrofelem || !aemRmbaAoRgel)
-                                                                    : (sogAskaa || sogAskaAgla) === 'הרכבת וו' ? (mafenemMotsarem[GetIndexMotsar('J1')].kmot === 0)
-                                                                        : (sogAskaa || sogAskaAgla) === 'תיקון' ? (BdekatTekonKmeotMotsarem()) : (true)
-                                                                } defaultSelected={agla?.thlkhem?.kveatMher} value={kveatMher} onValueChange={(val) => setKveatMher(val)}>
-                                                                    <div className="mr-2">קביעת מחיר</div>
-                                                                </Switch>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <Divider className="w-[1px] h-[200px]" />
-                                                    <div className="w-full max-w-[250px]">
-                                                        <div className="flex justify-around">
-                                                            <div>ייצור</div>
-                                                            {
-                                                                thelatYetsor && seomYetsor ?
-                                                                    <FaCheckDouble className="text-3xl text-success" />
-                                                                    :
-                                                                    thelatYetsor || seomYetsor ?
-                                                                        <FaCheck className="text-3xl text-warning" />
-                                                                        :
-                                                                        <MdOutlineCheckBoxOutlineBlank className="text-3xl text-gray-500" />
-
-                                                            }
-                                                        </div>
-                                                        <div className="h-[200px]">
-                                                            <Divider className="mt-2 mb-2" />
-                                                            <div className="flex justify-center">
-                                                                <Switch isSelected={thelatYetsor} onClick={BdekatKolKmoeotHmotsarem} isReadOnly={agla?.thlkhem?.thelatYetsor || BdekatKolKmoeotHmotsaremfff() || !kveatMher} defaultSelected={agla?.thlkhem?.thelatYetsor} value={thelatYetsor} onValueChange={(val) => {
-                                                                    setThelatYetsor(val);
-                                                                    if (!val) {
-                                                                        setSeomYetsor(false);
-                                                                    }
-                                                                }}>
-                                                                    <div className="mr-2">תחילת ייצור</div>
-                                                                </Switch>
-                                                            </div>
-                                                            <Divider className="mt-2 mb-2" />
-                                                            <div className="flex justify-center">
-                                                                <Switch isSelected={seomYetsor} isReadOnly={!hskmatLkoh || !thelatYetsor} defaultSelected={agla?.thlkhem?.seomThlekhYetsor} value={seomYetsor} onValueChange={(val) => setSeomYetsor(val)}>
-                                                                    <div className="mr-2">סיום יצור</div>
-                                                                </Switch>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {
-                                                        (sogAskaAgla === 'ייצור' || sogAskaa === 'ייצור') &&
-                                                        <>
-                                                            <Divider className="w-[1px] h-[200px]" />
-                                                            <div className="w-full max-w-[250px]">
-                                                                <div className="flex justify-around">
-                                                                    <div>רישיון</div>
+                                                            <div className="h-[200px]">
+                                                                <Divider className="mt-2 mb-2" />
+                                                                <div className="flex justify-center">
                                                                     {
-                                                                        msbarAgla && seomReshaion ?
-                                                                            <FaCheckDouble className="text-3xl text-success" />
-                                                                            :
-                                                                            msbarAgla || seomReshaion ?
-                                                                                <FaCheck className="text-3xl text-warning" />
+                                                                        agla?.msbarLkoh ?
+                                                                                <Input size="sm" color="primary" className="max-w-[200px]" isReadOnly label="לקןח" value={lkohTfaol?.name} />
                                                                                 :
-                                                                                <MdOutlineCheckBoxOutlineBlank className="text-3xl text-gray-500" />
+                                                                                <div className="flex items-center">
+                                                                                    <Autocomplete
+                                                                                        label="בחר לקוח"
+                                                                                        className="max-w-[200px]"
+                                                                                        color="primary"
+                                                                                        size="sm"
+                                                                                        defaultItems={lkhot}
+                                                                                        onSelectionChange={setLkoh}
+                                                                                        onInputChange={setLkoh}
+                                                                                    >
+                                                                                        {
+                                                                                            lkhot.map((lko, index) => (
+                                                                                                <AutocompleteItem onClick={() => { setLkohMsbar(lko.idnum); setHskmatLkoh(false); }} className='text-right' key={lko?.name} value={lko?.name}>
+                                                                                                    {lko?.name}
+                                                                                                </AutocompleteItem>
+                                                                                            ))
+                                                                                        }
+                                                                                    </Autocomplete>
 
-                                                                    }
-                                                                </div>
-                                                                <div className="h-[200px]">
-                                                                    <Divider className="mt-2 mb-2" />
-                                                                    {
-                                                                        agla?.msbarAgla ?
-                                                                            <>
-                                                                                <Input size="sm" color="primary" className="max-w-[200px]" isReadOnly label="מספר עגלה" value={drag?.licenseid} />
-                                                                            </>
 
-                                                                            :
-                                                                            <div className="flex justify-center items-center">
-                                                                                <Autocomplete
-                                                                                    isDisabled={!hskmatLkoh}
-                                                                                    label="מספר עגלה"
-                                                                                    className="max-w-[200px]"
-                                                                                    size="sm"
-                                                                                    color="primary"
-                                                                                    onSelectionChange={setMsbarAgla}
-                                                                                    onInputChange={(val) => { setMsbarAgla(val); setSeomReshion(false); }}
-                                                                                >
-                                                                                    {
-                                                                                        aglot?.map((aglaaaaa, index) => (
-                                                                                            (!aglaaaaa?.active) && <AutocompleteItem onClick={() => setSeomReshion(false)} className='text-right' key={aglaaaaa?.licenseid} value={aglaaaaa?.licenseid}>
-                                                                                                {aglaaaaa?.licenseid}
-                                                                                            </AutocompleteItem>
-                                                                                        ))
-                                                                                    }
+                                                                                    <Button size="sm" className="mr-2" onClick={() => { router.push('/activion'); }}>הוספה</Button>
+                                                                                </div>
+                                                                        }
 
-                                                                                </Autocomplete>
-                                                                                <Button isDisabled={!hskmatLkoh} size="sm" className="mr-2" onClick={() => { router.push('/activion'); }}>הוספה</Button>
-                                                                            </div>
-                                                                    }
+                                                                    </div>
                                                                     <Divider className="mt-2 mb-2" />
                                                                     <div className="flex justify-center">
-                                                                        <Switch isSelected={seomReshaion} isReadOnly={agla?.thlkhem?.seomThlekhReshion || !msbarAgla} defaultSelected={agla?.thlkhem?.seomThlekhReshion} value={seomReshaion} onValueChange={(val) => setSeomReshion(val)}>
-                                                                            <div className="mr-2">סיום רישיון</div>
-                                                                        </Switch>
-                                                                    </div>
+                                                                    <Switch isSelected={hskmatLkoh} isReadOnly={agla?.thlkhem?.hskmatLkwah || !lkoh} defaultSelected={agla?.thlkhem?.hskmatLkwah} value={hskmatLkoh} onValueChange={(val) => setHskmatLkoh(val)}>
+                                                                        <div className="mr-2">הסכמת לקוח</div>
+                                                                    </Switch>
                                                                 </div>
                                                             </div>
-                                                        </>
-                                                    }
+
+                                                        </div>
+                                                        <Divider className="w-[1px] h-[200px]" />
+                                                        <div className="w-full max-w-[250px]">
+                                                            <div className="flex justify-around">
+                                                                <div>מחיר</div>
+                                                                {
+                                                                    mherKlale && kveatMher ?
+                                                                        <FaCheckDouble className="text-3xl text-success" />
+                                                                        :
+                                                                        mherKlale || kveatMher ?
+                                                                            <FaCheck className="text-3xl text-warning" />
+                                                                            :
+                                                                            <MdOutlineCheckBoxOutlineBlank className="text-3xl text-gray-500" />
+
+                                                                }
+                                                            </div>
+                                                            <div className="h-[200px]">
+                                                                <Divider className="mt-2 mb-2" />
+                                                                <div className="flex justify-center">
+                                                                    <div className="flex items-center">
+                                                                        <div className="min-w-[100px]">מחיר השוק</div>
+                                                                        <Input isReadOnly={agla?.mherMkhera} size="xs" type="number" value={mherKlale || ''} onValueChange={(val) => {
+                                                                            setMherKlale(val);
+                                                                            if (!val) {
+                                                                                setKveatMher(false);
+                                                                            }
+                                                                        }} color="primary" className="max-w-[150px]" />
+                                                                    </div>
+                                                                </div>
+                                                                <Divider className="mt-2 mb-2" />
+                                                                <div className="flex justify-center">
+                                                                    <div className="flex items-center">
+                                                                        <div className="min-w-[100px]">הנחה</div>
+                                                                        <Input size="xs" type="number" value={hnha || ''} onValueChange={(val) => setHnha(Math.min(val, mherKlale))} color="primary" className="max-w-[150px]" />
+                                                                    </div>
+                                                                </div>
+                                                                <Divider className="mt-2 mb-2" />
+                                                                <div className="flex justify-center">
+                                                                    <Switch isSelected={kveatMher} isReadOnly={agla?.thlkhem?.kveatMher || !mherKlale || (sogAskaa || sogAskaAgla) === 'ייצור' ? (!mherKlale || !hskmatLkoh || !msbarTsrem || !sogGlgalem || !aorkhBrofel || !msbarBrofelem || !aemRmbaAoRgel)
+                                                                        : (sogAskaa || sogAskaAgla) === 'הרכבת וו' ? (mafenemMotsarem[GetIndexMotsar('J1')].kmot === 0)
+                                                                            : (sogAskaa || sogAskaAgla) === 'תיקון' ? (BdekatTekonKmeotMotsarem()) : (true)
+                                                                    } defaultSelected={agla?.thlkhem?.kveatMher} value={kveatMher} onValueChange={(val) => setKveatMher(val)}>
+                                                                        <div className="mr-2">קביעת מחיר</div>
+                                                                    </Switch>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <Divider className="w-[1px] h-[200px]" />
+                                                        <div className="w-full max-w-[250px]">
+                                                            <div className="flex justify-around">
+                                                                <div>ייצור</div>
+                                                                {
+                                                                    thelatYetsor && seomYetsor ?
+                                                                        <FaCheckDouble className="text-3xl text-success" />
+                                                                        :
+                                                                        thelatYetsor || seomYetsor ?
+                                                                            <FaCheck className="text-3xl text-warning" />
+                                                                            :
+                                                                            <MdOutlineCheckBoxOutlineBlank className="text-3xl text-gray-500" />
+
+                                                                }
+                                                            </div>
+                                                            <div className="h-[200px]">
+                                                                <Divider className="mt-2 mb-2" />
+                                                                <div className="flex justify-center">
+                                                                    <Switch isSelected={thelatYetsor} onClick={BdekatKolKmoeotHmotsarem} isReadOnly={agla?.thlkhem?.thelatYetsor || BdekatKolKmoeotHmotsaremfff() || !kveatMher} defaultSelected={agla?.thlkhem?.thelatYetsor} value={thelatYetsor} onValueChange={(val) => {
+                                                                        setThelatYetsor(val);
+                                                                        if (!val) {
+                                                                            setSeomYetsor(false);
+                                                                        }
+                                                                    }}>
+                                                                        <div className="mr-2">תחילת ייצור</div>
+                                                                    </Switch>
+                                                                </div>
+                                                                <Divider className="mt-2 mb-2" />
+                                                                <div className="flex justify-center">
+                                                                    <Switch isSelected={seomYetsor} isReadOnly={!hskmatLkoh || !thelatYetsor} defaultSelected={agla?.thlkhem?.seomThlekhYetsor} value={seomYetsor} onValueChange={(val) => setSeomYetsor(val)}>
+                                                                        <div className="mr-2">סיום יצור</div>
+                                                                    </Switch>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {
+                                                            (sogAskaAgla === 'ייצור' || sogAskaa === 'ייצור') &&
+                                                            <>
+                                                                <Divider className="w-[1px] h-[200px]" />
+                                                                <div className="w-full max-w-[250px]">
+                                                                    <div className="flex justify-around">
+                                                                        <div>רישיון</div>
+                                                                        {
+                                                                            msbarAgla && seomReshaion ?
+                                                                                <FaCheckDouble className="text-3xl text-success" />
+                                                                                :
+                                                                                msbarAgla || seomReshaion ?
+                                                                                    <FaCheck className="text-3xl text-warning" />
+                                                                                    :
+                                                                                    <MdOutlineCheckBoxOutlineBlank className="text-3xl text-gray-500" />
+
+                                                                        }
+                                                                    </div>
+                                                                    <div className="h-[200px]">
+                                                                        <Divider className="mt-2 mb-2" />
+                                                                        {
+                                                                            agla?.msbarAgla ?
+                                                                                <>
+                                                                                    <Input size="sm" color="primary" className="max-w-[200px]" isReadOnly label="מספר עגלה" value={drag?.licenseid} />
+                                                                                </>
+
+                                                                                :
+                                                                                <div className="flex justify-center items-center">
+                                                                                    {/* <Autocomplete
+                                                                                        isDisabled={!hskmatLkoh}
+                                                                                        label="מספר עגלה"
+                                                                                        className="max-w-[200px]"
+                                                                                        size="sm"
+                                                                                        color="primary"
+                                                                                        onSelectionChange={setMsbarAgla}
+                                                                                        onInputChange={(val) => { setMsbarAgla(val); setSeomReshion(false); }}
+                                                                                    >
+                                                                                        {
+                                                                                            aglot?.map((aglaaaaa, index) => (
+                                                                                                (!aglaaaaa?.active) && <AutocompleteItem onClick={() => setSeomReshion(false)} className='text-right' key={aglaaaaa?.licenseid} value={aglaaaaa?.licenseid}>
+                                                                                                    {aglaaaaa?.licenseid}
+                                                                                                </AutocompleteItem>
+                                                                                            ))
+                                                                                        }
+
+                                                                                    </Autocomplete> */}
+                                                                                    <Button isDisabled={!hskmatLkoh} size="sm" className="mr-2" onClick={() => { router.push('/activion'); }}>הוספה</Button>
+                                                                                </div>
+                                                                        }
+                                                                        <Divider className="mt-2 mb-2" />
+                                                                        <div className="flex justify-center">
+                                                                            <Switch isSelected={seomReshaion} isReadOnly={agla?.thlkhem?.seomThlekhReshion || !msbarAgla} defaultSelected={agla?.thlkhem?.seomThlekhReshion} value={seomReshaion} onValueChange={(val) => setSeomReshion(val)}>
+                                                                                <div className="mr-2">סיום רישיון</div>
+                                                                            </Switch>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </>
+                                                        }
+                                                    </div>
+                                                </ListItem>
+                                            </List>
+                                        </Drawer>
+                                        <Drawer
+                                            sx={{
+                                                width: drawerWidth,
+                                                flexShrink: 0,
+                                                '& .MuiDrawer-paper': {
+                                                    backgroundColor: '#ffffff',
+                                                    width: drawerWidth,
+                                                    boxSizing: 'border-box',
+                                                },
+                                            }}
+                                            variant="persistent"
+                                            anchor="left"
+                                            open={open}
+                                        >
+                                            <DrawerHeader>
+                                                <div className="flex justify-end items-center w-full">
+                                                    <Button onClick={handleDrawerClose} color="danger" variant='flat' className="mr-5"><CgClose className="text-gray text-xl" />סגירה</Button>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            </DrawerHeader>
+                                            <Divider />
+                                            <List>
+                                                <ListItem>
+                                                    <div className="font-bold text-center text-2xl w-full">
+                                                        תמחיר
+                                                    </div>
+                                                </ListItem>
+                                                <ListItem>
+                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
+                                                        <div className="ml-5 w-[110px] text-right text-green-500">מחיר שוק</div>
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas(mherKlale || "")}`} />
+                                                    </div>
+                                                </ListItem>
+                                                <ListItem>
+                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
+                                                        <div className="ml-5 w-[110px] text-right text-green-500">מחיר שוק</div>
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas(mherKlale || "")}`} />
+                                                    </div>
+                                                </ListItem>
+
+                                                <ListItem>
+                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
+                                                        <div className="ml-5 w-[110px] text-right text-danger-500">הנחה</div>
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${(hnha || "")}`} />
+                                                    </div>
+                                                </ListItem>
+                                                <ListItem>
+                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
+                                                        <div className="ml-5 w-[110px] text-right text-success-500">מחיר מכירה</div>
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas((mherKlale - hnha) || "")}`} />
+                                                    </div>
+                                                </ListItem>
+                                                <ListItem>
+                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
+                                                        <div className="ml-5 w-[110px] text-right text-danger-500">הוצאות חו"ג</div>
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${hkhnsotHomreGlem || ""}`} />
+                                                    </div>
+                                                </ListItem>
+                                                <ListItem>
+                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
+                                                        <div className="ml-5 w-[110px] text-right text-danger-500">הוצאות שכר</div>
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${hotsotSkhar || ""}`} />
+                                                    </div>
+                                                </ListItem>
+                                                <ListItem>
+                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
+                                                        <div className="ml-5 w-[110px] text-right text-green-500">רווח ישיר</div>
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas((mherKlale - hkhnsotHomreGlem - hotsotSkhar) || "")}`} />
+                                                    </div>
+                                                </ListItem>
+                                                <ListItem>
+                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
+                                                        <div className="ml-5 w-[110px] text-right text-danger-500">הוצאות עקיפות</div>
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${formatNumberWithCommas(hotsotAkefot) || ''}`} />
+                                                    </div>
+                                                </ListItem>
+                                                <ListItem>
+                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
+                                                        <div className="ml-5 w-[110px] text-right text-danger-500">הוצאות מסים</div>
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪${formatNumberWithCommas(parseInt(mherKlale * 0.17) || "")}`} />
+                                                    </div>
+                                                </ListItem>
+                                                <ListItem>
+                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
+                                                        <div className="ml-5 w-[110px] text-right text-green-500">רווח נקי</div>
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas(((mherKlale - hkhnsotHomreGlem - hotsotSkhar) - parseInt(mherKlale * 0.17)) || "")}`} />
+                                                    </div>
+                                                </ListItem>
+                                                <ListItem>
+                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
+                                                        <div className="ml-5 w-[110px] text-right text-green-500">אחוז רווח</div>
+                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`%${((((mherKlale - hkhnsotHomreGlem - hotsotSkhar) - parseInt(mherKlale * 0.17)) * 100 / (mherKlale - hnha)).toFixed(0) || '')}`} />
+                                                    </div>
+                                                </ListItem>
+
+                                            </List>
+                                        </Drawer>
+                                    </Box>
+                                    <div className={`w-full ${open && 'ml-96'} ${openTop ? 'mt-[350px] h-[55vh]' : 'h-[82vh]'}`}>
                                         <div className="w-full h-full">
-                                            <div className="w-full h-full flex pt-[67px]">
+                                            <div className="w-full h-full flex mt-[67px]">
                                                 <div className="w-full h-full border-r-2 border-black">
-                                                    <div dir="rtl" className="w-full h-full overflow-y-auto overflow-x-hidden">
+                                                    <div dir="rtl" className="w-full  h-full overflow-y-auto overflow-x-hidden">
                                                         <div className="ml-2 mr-2 w-full bg-gradient-to-r from-gray-300 to-gray-700 text-center p-2 rounded-full sticky top-0 z-40 tracking-wider text-white font-bold text-xl">
                                                             פירוט מוצרים
                                                         </div>
@@ -2428,36 +2566,40 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                 </div>
                                                             })
                                                         }
-                                                        <div className="mt-[500px]"></div>
+                                                        <div className="mt-[200px]"/>
                                                     </div>
                                                 </div>
+
                                                 <div className="w-full h-full">
                                                     <div className="w-full h-full overflow-auto">
-                                                        <div >
-                                                            <div className="items-center w-full flex justify-around">
-                                                                <div className="ml-2 mr-2">
-                                                                    <Dropdown dir="rtl">
-                                                                        <DropdownTrigger>
-                                                                            <Button color="primary">
-                                                                                <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet} : תוכנית` : 'בחירת תוכנית'}
-                                                                            </Button>
-                                                                        </DropdownTrigger>
-                                                                        <DropdownMenu
-                                                                            aria-label="Multiple selection example"
-                                                                            variant="flat"
-                                                                            closeOnSelect={true}
-                                                                            disallowEmptySelection
-                                                                            selectionMode="single"
-                                                                            onSelectionChange={(val) => setShemTokhnet(val.currentKey)}
-                                                                        >
-                                                                            {Tokhneot?.map((option) => (
-                                                                                <DropdownItem onClick={() => setTokhnetNokhhet(option)} key={option.shem}>{option.shem}</DropdownItem>
-                                                                            ))}
-                                                                        </DropdownMenu>
-                                                                    </Dropdown>
+                                                        <div className="sticky top-0 z-40" >
+                                                            <div className="items-center w-full flex justify-around ">
+                                                                {
+                                                                    !agla?.msbar &&
+                                                                    <div className="ml-2 mr-2">
+                                                                        <Dropdown dir="rtl">
+                                                                            <DropdownTrigger>
+                                                                                <Button color="primary">
+                                                                                    <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet} : תוכנית` : 'בחירת תוכנית'}
+                                                                                </Button>
+                                                                            </DropdownTrigger>
+                                                                            <DropdownMenu
+                                                                                aria-label="Multiple selection example"
+                                                                                variant="flat"
+                                                                                closeOnSelect={true}
+                                                                                disallowEmptySelection
+                                                                                selectionMode="single"
+                                                                                onSelectionChange={(val) => setShemTokhnet(val.currentKey)}
+                                                                            >
+                                                                                {Tokhneot?.map((option) => (
+                                                                                    <DropdownItem onClick={() => setTokhnetNokhhet(option)} key={option.shem}>{option.shem}</DropdownItem>
+                                                                                ))}
+                                                                            </DropdownMenu>
+                                                                        </Dropdown>
 
-                                                                </div>
-                                                                <div className="w-full ml-2 mr-2 bg-gradient-to-r from-gray-300 to-gray-700 text-center p-2 rounded-full sticky top-0 z-40 tracking-wider text-white font-bold text-xl">תוכנית יצור</div>
+                                                                    </div>
+                                                                }
+                                                                <div className="w-full ml-2 mr-2 bg-gradient-to-r from-gray-300 to-gray-700 text-center p-2 rounded-full tracking-wider text-white font-bold text-xl">תוכנית יצור</div>
                                                             </div>
                                                         </div>
 
@@ -3819,12 +3961,11 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                         <FiPlus />
                                                                                     </Button></th>
                                                                                 </tr>
-
-                                                                                <tr>
-                                                                                    <th colSpan={4}><Divider className="mt-[500px]" /></th>
-                                                                                </tr>
                                                                             </>
                                                                         }
+                                                                         <tr>
+                                                                            <th colSpan={4}><Divider className="mt-[200px]" /></th>
+                                                                        </tr>
                                                                     </thead>
                                                                 </table>
                                                             }
@@ -3939,9 +4080,6 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                 </div>
                                                             }
 
-                                                            {
-                                                                console.log(lkoh)
-                                                            }
 
                                                             <div className="w-[1200px] hidden">
                                                                 <TofsTokhnetYetsor brtem={{
@@ -4039,7 +4177,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                             עסקת מכירה
                                         </div>
                                         <div dir="rtl" className="mt-10 flex flex-col flex-grow">
-                                        <RadioGroup className="mb-4" value={aosek} onValueChange={(e) => setAosek(e)}>
+                                            <RadioGroup className="mb-4" value={aosek} onValueChange={(e) => setAosek(e)}>
                                                 <Radio value={'נגררי עירון'}>נגררי עירון</Radio>
                                                 <Radio value={'מ.כ בטיחות בע"מ'}>מ.כ בטיחות בע"מ</Radio>
                                                 <Radio value={'בלי חשבונית'}>בלי חשבונית</Radio>
@@ -4142,7 +4280,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                             עסקת מכירה
                                         </div>
                                         <div dir="rtl" className="mt-10 flex flex-col flex-grow">
-                                        <RadioGroup className="mb-4" value={aosek} onValueChange={(e) => setAosek(e)}>
+                                            <RadioGroup className="mb-4" value={aosek} onValueChange={(e) => setAosek(e)}>
                                                 <Radio value={'נגררי עירון'}>נגררי עירון</Radio>
                                                 <Radio value={'מ.כ בטיחות בע"מ'}>מ.כ בטיחות בע"מ</Radio>
                                                 <Radio value={'בלי חשבונית'}>בלי חשבונית</Radio>
@@ -4250,35 +4388,41 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                         </div>
 
                     </ModalBody>
-                    <ModalFooter className="border-t-2 m-auto w-full items-center sticky bottom-0 bg-white z-40">
+                    <ModalFooter className="border-t-2 bg-white m-auto w-full items-center sticky bottom-0  z-40">
                         <div className="flex w-full">
-                            {
-                                (agla?.msbar && (sogBaola !== 'E')) &&
-                                <Button onClick={async () => {
-                                    await deleteDoc(doc(firestore, 'tfaol', agla?.id));
-                                    ResetAll();
-                                    disable();
-                                }} color="danger" className='mr-5 ml-5' size="lg"><FaTrash />מחיקה</Button>
-                            }
-                            {
-                                BdekatMtsavem() === 'C' &&
-                                <Button size="lg" className='mr-5 ml-5' color="primary" onClick={() => { handelPrintggg(); }}>
-                                    הדפסת תופס עובדים
-                                </Button>
-                            }
+                            <div>
+                                {
+                                    (agla?.msbar && (sogBaola !== 'E')) &&
+                                    <Button onClick={async () => {
+                                        await deleteDoc(doc(firestore, 'tfaol', agla?.id));
+                                        ResetAll();
+                                        disable();
+                                    }} className='mr-5 ml-5 font-bold' color='danger' variant='flat'><FaTrash className="text-xl text-danger" />מחיקה</Button>
+                                }
+                            </div>
+
+                            <div>
+                                {
+                                    (BdekatMtsavem() === 'C') &&
+                                    <Button className='mr-5 ml-5 font-bold' color='primary' variant='flat' onClick={handelPrintggg}>
+                                        <CgFileDocument className="text-2xl text-primary" />הדפסת תופס עובדים
+                                    </Button>
+                                }
+                            </div>
+
                             <div className="flex justify-end w-full">
-                                <Button size="lg" className='mr-5 ml-5' color="primary" variant="bordered" onClick={() => { ResetAll(); disable(); }}>
-                                    סגור
+                                <Button className='mr-5 ml-5 font-bold' color='warning' variant='flat' onClick={() => { ResetAll(); disable(); }}>
+                                    <CgClose className="text-2xl text-warning" />סגור
                                 </Button>
                                 {
                                     (agla?.msbar && sogBaola === 'D' && !Aeshor) ?
-                                        <Button isDisabled={!aosek} size="lg" className='mr-5 ml-5' color="primary" onClick={() => setShowModalMessage(true)}>
-                                            אישור
+                                        <Button isDisabled={!aosek} className='mr-5 ml-5 font-bold' color='success' variant='flat' onClick={() => setShowModalMessage(true)}>
+                                            <RxCheckCircled className="text-2xl text-success" />אישור
                                         </Button>
                                         :
                                         ((sogBaola) && (sogBaola === 'E')) ? null :
-                                            <Button isDisabled={bdekatShmeratTfaol()} isLoading={loading} size="lg" className='mr-5 ml-5' color="primary" onClick={() => { addValues(); handelPrintHeshvonit(); }}>
-                                                שמירה
+                                            <Button isDisabled={bdekatShmeratTfaol()} color='success' variant='flat' isLoading={loading} className='mr-5 ml-5 font-bold' onClick={() => { addValues(); handelPrintHeshvonit(); }}>
+                                                <BsFillBookmarkCheckFill className="text-2xl text-success" />שמירה
                                             </Button>
                                 }
                             </div>

@@ -89,16 +89,10 @@ import { AiOutlineAppstoreAdd } from "react-icons/ai";
 
 import Image from "next/image";
 import { CirclesWithBar, Comment, Hearts, Hourglass, ThreeCircles, Watch } from "react-loader-spinner";
-import { TofsTokhnetYetsor } from "./Page Components/TofsTokhnetYetsor";
 import GetDocs from "./FireBase/getDocs";
 import { MdDelete } from "react-icons/md";
 import ModalCreateTest from "./Modals/ModalCreateTest";
-import { ReshionLetsor } from "./Page Components/ReshionLetsor";
-import { useReactToPrint } from "react-to-print";
 import ContactContext from "./auth/ContactContext";
-import { useAuth } from "./auth/authContext";
-import { format } from "date-fns";
-
 
 
 export function GetTmonatHelek(remez, msbar) {
@@ -453,6 +447,7 @@ export default function Home() {
     }
   }
 
+
   return (
     <div>
       <ModalCreateTest Tokhneot={Tokhneot} category={category} drag={drag} mlae={mlae} sogAskaa={sogAska} show={showModalCreate} lkohTfaol={lkoh} agla={tfaolAgla} disable={() => { setShowModalCreate(false); setSogAska(''); setTfaolAgla(null); }} />
@@ -461,6 +456,8 @@ export default function Home() {
       {<ModalCreate Tokhneot={Tokhneot} category={category} mlae={mlae} lkohTfaol={lkoh} agla={tfaolAgla} show={showModalYetsorMatsav} disable={() => setShowModalYetsorMatsav(false)} />} */}
       <ModalTokhnetYetsor category={category} mlae={mlae} show={showModalCreateTokhnetYetsor} disable={() => setShowModalCreateTokhnetYetsor(false)} />
       {loading && <Spinner className="absolute top-0 bottom-0 right-0 left-0" />}
+
+
 
       <div className="w-full flex flex-wrap mb-24">
 

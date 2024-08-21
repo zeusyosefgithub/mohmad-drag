@@ -604,7 +604,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                             <th className="border-1 border-black w-14">1.2</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag?.prodction}</th>
+                                            <th className="border-1 border-black">נגררי עירון שיווק 2020 בע"מ</th>
                                             <th className="border-1 border-black text-right pr-2">תוצר</th>
                                             <th className="border-1 border-black w-14">1.3</th>
                                         </tr>
@@ -639,7 +639,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                 <table className="w-full mb-2">
                                     <tbody>
                                         <tr>
-                                            <th className="border-1 border-black w-56">{props?.data?.drag?.producer}</th>
+                                            <th className="border-1 border-black w-56">נגררי עירון שיווק 2020 בע"מ</th>
                                             <th className="border-1 border-black w-56 text-right pr-2">יצרן</th>
                                             <th className="border-1 border-black w-14">2.1</th>
                                         </tr>
@@ -744,7 +744,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     <th className="border-1 border-black">{props?.data?.drag?.reviewerid}</th>
                                     <th className="border-1 border-black">{props?.data?.drag?.safetyreview}</th>
                                     <th className="border-1 border-black">{props?.data?.drag?.foundation}</th>
-                                    <th className="border-1 border-black">{props?.data?.drag?.producer}</th>
+                                    <th className="border-1 border-black text-[6.5px]">נגררי עירון שיווק 2020 בע"מ</th>
                                     <th className="border-1 border-black">{props?.data?.drag?.installer}</th>
                                     <th className="border-1 border-black">{props?.data?.drag?.device}</th>
                                     <th className="border-1 border-black w-11">5.1</th>
@@ -771,15 +771,15 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     <tbody>
                                         <tr>
                                             <th className="border-1 border-black">&nbsp;</th>
-                                            <th className="border-1 border-black w-14">6.4</th>
-                                        </tr>
-                                        <tr>
-                                            <th className="border-1 border-black">&nbsp;</th>
-                                            <th className="border-1 border-black w-14">6.5</th>
-                                        </tr>
-                                        <tr>
-                                            <th className="border-1 border-black">&nbsp;</th>
                                             <th className="border-1 border-black w-14">6.6</th>
+                                        </tr>
+                                        <tr>
+                                            <th className="border-1 border-black">&nbsp;</th>
+                                            <th className="border-1 border-black w-14">6.7</th>
+                                        </tr>
+                                        <tr>
+                                            <th className="border-1 border-black">&nbsp;</th>
+                                            <th className="border-1 border-black w-14">6.8</th>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -802,6 +802,14 @@ export const AllPages = React.forwardRef((props, ref) => {
                                         <tr>
                                             <th className="border-1 border-black">{props?.data?.drag?.sheshShlosh}</th>
                                             <th className="border-1 border-black w-14">6.3</th>
+                                        </tr>
+                                        <tr>
+                                            <th className="border-1 border-black">{props?.data?.drag?.sheshArbaa}</th>
+                                            <th className="border-1 border-black w-14">6.4</th>
+                                        </tr>
+                                        <tr>
+                                            <th className="border-1 border-black">{props?.data?.drag?.sheshHamesh}</th>
+                                            <th className="border-1 border-black w-14">6.5</th>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -828,7 +836,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                         </table>
                     </div>
                 </div>
-                <div className="flex justify-center mt-14">
+                <div className="flex justify-center mt-5">
                     <ImageFour />
                 </div>
                 <div className="">
