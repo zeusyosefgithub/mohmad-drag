@@ -4260,6 +4260,12 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                     disable();
                                 }} color="danger" className='mr-5 ml-5' size="lg"><FaTrash />מחיקה</Button>
                             }
+                            {
+                                BdekatMtsavem() === 'C' &&
+                                <Button size="lg" className='mr-5 ml-5' color="primary" onClick={() => { handelPrintggg(); }}>
+                                    הדפסת תופס עובדים
+                                </Button>
+                            }
                             <div className="flex justify-end w-full">
                                 <Button size="lg" className='mr-5 ml-5' color="primary" variant="bordered" onClick={() => { ResetAll(); disable(); }}>
                                     סגור
