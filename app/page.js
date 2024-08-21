@@ -488,11 +488,11 @@ export default function Home() {
                     Tokhneot.map((tokhnet, index) => {
                       return <>
                         <div className="w-full flex justify-between items-center border-b-1 mt-3">
-                          <div className="w-full text-center">
-                            {tokhnet.sogAgla}
+                          <div className="w-full text-center text-xs">
+                            {tokhnet.shem}
                           </div>
                           <div className="w-full text-center">
-                            {tokhnet.shem}
+                            {tokhnet.sogAgla}
                           </div>
                           <div className="w-[60px]">
                             <MdDelete onClick={async () => {

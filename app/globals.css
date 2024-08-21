@@ -165,3 +165,48 @@ body {
   padding-bottom: 20px;
   padding-top: 20px; /* Adjust padding as needed */
 }
+
+
+
+
+.Tarekh_Hnfkat_Hreshion{
+  position: absolute;
+  margin-right: 24%;
+  margin-left: 76%;
+  margin-top: 158px;
+  font-weight: bold;
+  font-size: 14px;
+}
+.Tokef_Yfog_Beom{
+  position: absolute;
+  margin-right: 40%;
+  margin-left: 60%;
+  margin-top: 158px;
+  font-weight: bold;
+  font-size: 14px;
+}
+.Shem_Hmnhel_Hmektsoae{
+  position: absolute;
+  margin-right: 61%;
+  margin-left: 39%;
+  margin-top: 158px;
+  font-weight: bold;
+  font-size: 14px;
+}
+.Taodat_Zhot{
+  position: absolute;
+  margin-right: 76%;
+  margin-left: 24%;
+  margin-top: 158px;
+  font-weight: bold;
+  font-size: 14px;
+}
+.skhommm{
+  position: absolute;
+  margin-right: 54%;
+  margin-left: 46%;
+  margin-top: 80.5%;
+  margin-bottom: 19.5%;
+  font-weight: bold;
+  font-size: 14px;
+}

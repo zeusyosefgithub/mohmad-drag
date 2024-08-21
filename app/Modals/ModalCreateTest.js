@@ -711,6 +711,9 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                     await updateDoc(doc(firestore, 'drags', drag?.id), {
                         active: true
                     });
+                    if(BdekatMtsavem() === 'C'){
+                        handelPrintggg();
+                    }
                 }
             }
             catch (e) {
@@ -719,6 +722,9 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         }
         else {
             try {
+                if(BdekatMtsavem() === 'C'){
+                    handelPrintggg();
+                }
                 if (BdekatMtsavem() === 'C' || BdekatMtsavem() === 'D') {
                     await processItems(mafenemMotsarem, mlae);
                     await processItems(motsaremBrofelemSofe, mlae);
@@ -1801,23 +1807,47 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         }
     }, [tokhnetNokhhet]);
     useEffect(() => {
-        if (lkohMsbar || agla?.msbarLkoh) {
-            const unsubscribe = useGetDataByConditionWithoutUseEffect(
-                'drags',
-                'idcustomer',
-                '==',
-                (lkohMsbar || agla?.msbarLkoh),
-                result => {
-                    result.length && setAglot(result);
-                }
-            );
-            return () => {
-                if (unsubscribe) {
-                    unsubscribe();
-                }
-            };
+        if (lkohMsbar || (agla && agla?.msbarLkoh)) {
+            if (agla?.msbarLkoh) {
+                console.log('123132222222222');
+                console.log(agla?.msbarLkoh);
+                console.log('123132222222222');
+                const unsubscribe = useGetDataByConditionWithoutUseEffect(
+                    'drags',
+                    'idcustomer',
+                    '==',
+                    agla?.msbarLkoh,
+                    result => {
+                        console.log(result);
+                        result.length && setAglot(result);
+                    }
+                );
+                return () => {
+                    if (unsubscribe) {
+                        unsubscribe();
+                    }
+                };
+            }
+            else {
+                const unsubscribe = useGetDataByConditionWithoutUseEffect(
+                    'drags',
+                    'idcustomer',
+                    '==',
+                    lkohMsbar,
+                    result => {
+                        result.length && setAglot(result);
+                    }
+                );
+                return () => {
+                    if (unsubscribe) {
+                        unsubscribe();
+                    }
+                };
+            }
         }
     }, [lkohMsbar, agla?.msbarLkoh]);
+
+    console.log(aglot);
     useEffect(() => {
         console.log(123124);
         let sum = 0;
@@ -2345,7 +2375,6 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                     className="max-w-[200px]"
                                                                                     size="sm"
                                                                                     color="primary"
-                                                                                    defaultItems={aglot}
                                                                                     onSelectionChange={setMsbarAgla}
                                                                                     onInputChange={(val) => { setMsbarAgla(val); setSeomReshion(false); }}
                                                                                 >
@@ -3910,22 +3939,25 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                 </div>
                                                             }
 
+                                                            {
+                                                                console.log(lkoh)
+                                                            }
 
-                                                            <div className="w-[900px] hidden">
+                                                            <div className="w-[1200px] hidden">
                                                                 <TofsTokhnetYetsor brtem={{
-                                                                    shemLkoh: lkohTfaol?.name,
+                                                                    shemLkoh: lkoh,
                                                                     msbar: agla?.msbar,
                                                                     sogAgla: sogAgla,
                                                                     tokhnetYetsor: {
-                                                                        aorkh,
-                                                                        rohf,
+                                                                        aorkhSM,
+                                                                        rohfSM,
                                                                         msbarTsrem,
                                                                         aemBlamem,
                                                                         sogGlgalem,
                                                                         tsmegSber,
                                                                         hlokaTvah,
                                                                         hlokaMsbarBrofelem,
-                                                                        aorkhBrofel,
+                                                                        aorkhBrofelSM,
                                                                         tvahBrofel,
                                                                         msbarBrofelem,
                                                                         msbarBrofelemBretA,

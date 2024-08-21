@@ -36,6 +36,9 @@ export default function Activion() {
     let currentdate = `${day}/${month + 1}/${year}`;
     let currenttime = `${time}/${day}/${month}/${year}`;
 
+
+    const [skhom,setSkhom] = useState(0);
+
     const [showAddCus, setShowAddCus] = useState(true);
     const [customerName, setCustomerName] = useState('');
     const [customerId, setCustomerId] = useState('');
@@ -217,6 +220,7 @@ export default function Activion() {
                 licenseid: licenseid,
                 long: long,
                 model: model,
+                skhom: skhom,
                 opendate: opendate,
                 opentime: opentime,
                 prodction: prodction,
@@ -287,6 +291,7 @@ export default function Activion() {
             lengthhatch: lengthhatch,
             licenseid: licenseid,
             long: long,
+            skhom: skhom,
             model: model,
             opendate: opendate,
             opentime: opentime,
@@ -356,6 +361,7 @@ export default function Activion() {
         setFoundation('');
         setSafetyreview('');
         setReviewerid('');
+        setSkhom(0);
         setLabreport('');
         setLabid('');
         setOpendate('');
@@ -513,7 +519,7 @@ export default function Activion() {
                                     <div className="flex justify-around">
                                         <div className="w-1/3">
                                             <Input color="primary" value={licenseid} size="sm" onValueChange={(value) => { setLicenseid(value) }} type="number" label="מספר רישוי" />
-                                            <Input color="primary" value={chassisnum} className="mt-10" size="sm" onValueChange={(value) => { setChassisnum(value) }} type="number" label="מספר שלדה" />
+                                            <Input color="primary" value={chassisnum} className="mt-10" size="sm" onValueChange={(value) => { setChassisnum(value) }} type="text" label="מספר שלדה" />
                                             <Input color="primary" value={prodction} className="mt-10" size="sm" onValueChange={(value) => { setProdction(value) }} type="text" label="תוצר" />
                                             <Input color="primary" value={model} className="mt-10" size="sm" onValueChange={(value) => { setModel(value) }} type="text" label="קוד דגם" />
                                             <Input color="primary" value={masTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setMasTaodatABTebos(value) }} type="text" label="מס' תעודת אב טיפוס" />
@@ -632,6 +638,7 @@ export default function Activion() {
                                         <div className="w-1/3">
                                             <Input color="primary" value={wight} size="sm" onValueChange={(value) => { setWight(value) }} type="text" label="משקל" />
                                             <Input errorMessage={errorMessageMsbarAgla} color="primary" value={dragnum} className="mt-10" size="sm" onValueChange={(value) => { setDragnum(value) }} type="number" label="מספר גרור" />
+                                            <Input color="primary" value={skhom || ''} className="mt-10" size="sm" onValueChange={(value) => { setSkhom(value) }} type="number" label="סכום אגרה" />
                                         </div>
                                     </div>
                                 </div>
