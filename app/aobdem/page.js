@@ -250,9 +250,6 @@ export default function Aobdem() {
         }
     };
 
-    console.log(knesotKlale);
-
-
     const bdekatYomAemNbhar = (val) => {
         return !(knesotKlale && knesotKlale.some(item => item.tarekh === val));
     };
@@ -318,7 +315,7 @@ export default function Aobdem() {
 
     const bdekatYomInKnestKlale = (yom) => {
         if (!knesotKlale?.length) {
-            return;
+            return false;
         }
         for (let index = 0; index < knesotKlale?.length; index++) {
             if (knesotKlale[index].tarekh === yom) {
@@ -352,19 +349,34 @@ export default function Aobdem() {
         return resArray;
     };
 
-    const GetReshmatAobdemYememHodesh = (Yom) => {
+    const GetKnesotKlaleLfeYom = (Yom) => {
         let newArray = [];
+        for (let index = 0; index < knesotKlale?.length; index++) {
+            if(knesotKlale[index].tarekh === Yom){
+                newArray.push(knesotKlale[index]);
+            }
+        }
+        return newArray;
+    }
+
+    console.log(knesotKlale);
+
+    const GetReshmatAobdemYememHodesh = (Yom,newArrayWithouRpeat) => {
+
+        let newArray = [];
+        if(Yom.tarekh === '29-08-2024'){
+            console.log(newArrayWithouRpeat);
+        }
         if (bdekatYomInKnestKlale(Yom?.tarekh) && btehotYom.includes(Yom?.tarekh)) {
             let arrayAobdemAbdo = [];
-            let newArrayWithouRpeat = removeDuplicates(knesotKlale);
             for (let index = 0; index < newArrayWithouRpeat.length; index++) {
-                if (newArrayWithouRpeat[index]?.tarekh === Yom?.tarekh) {
+                if (newArrayWithouRpeat[index]?.tarekh === Yom?.tarekh) {     
                     arrayAobdemAbdo.push(newArrayWithouRpeat[index].aobed);
                     newArray.push(<tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{newArrayWithouRpeat[index]?.yetseah}</td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{newArrayWithouRpeat[index]?.knesa}</td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{ }</td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{ }</td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">1</td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">1</td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{newArrayWithouRpeat[index]?.headrot}</td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{GetTarekhShem(format(flipDate(newArrayWithouRpeat[index]?.tarekh), 'EEEE'))}</td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{newArrayWithouRpeat[index]?.tarekh}</td>
@@ -377,7 +389,8 @@ export default function Aobdem() {
                             <TbClockEdit onClick={() => {setYomLaedcon(Yom?.tarekh);setKnesaLaedcon(newArrayWithouRpeat[index]);setAobedLaedcon(GetAobedBratem(newArrayWithouRpeat[index].aobed));setTypeAdcon('adcon');setShowModalAdconHosfaKnesa(true);}} className="text-danger cursor-pointer text-[17px]" />
                             :
                             <TbClockEdit onClick={() => {setYomLaedcon(Yom?.tarekh)?.tarekh;setAobedLaedcon(aobdem[index]);setTypeAdcon('hosfaa');setShowModalAdconHosfaKnesa(true);}} className="text-danger cursor-pointer text-[17px]" />}</td>
-                    </tr>);
+                    </tr>)
+
                 }
             }
             for (let index = 0; index < aobdem.length; index++) {
@@ -385,8 +398,8 @@ export default function Aobdem() {
                     newArray.push(<tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">2</td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">2</td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
@@ -404,13 +417,12 @@ export default function Aobdem() {
             }
         }
         else if (btehotYom.includes(Yom?.tarekh)) {
-            console.log(Yom?.tarekh);
             for (let index = aobdem.length - 1; index >= 0; index--) {
                 newArray.push(<tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                     <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                     <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
+                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">3</td>
+                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">3</td>
                     <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                     <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                     <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
@@ -431,7 +443,6 @@ export default function Aobdem() {
     
     const [showInfo,setShowInfo] = useState(false);
     useEffect(() => {
-        console.log(isNehol);
         if(isNehol){
             router.push('/');
             setShowInfo(false);
@@ -636,11 +647,12 @@ export default function Aobdem() {
                                                                         </tr>
                                                                         {(loading && (arrayResualt === index)) ?
                                                                             <tr key={index}><td colSpan={9} className="text-center"><Spinner /></td></tr>
-                                                                            : GetReshmatAobdemYememHodesh(Yom)}
+                                                                            : GetReshmatAobdemYememHodesh(Yom,removeDuplicates(GetKnesotKlaleLfeYom(Yom?.tarekh)))}
                                                                     </>
                                                                 })
                                                             }
                                                         </tbody>
+
                                                     </table>
                                                 </div>
                                             }

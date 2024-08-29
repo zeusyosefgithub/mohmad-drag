@@ -26,8 +26,6 @@ export default function NavBar() {
         "רכש",
     ];
 
-    console.log(isNehol);
-
     return (
         <Navbar dir="rtl" onMenuOpenChange={setIsMenuOpen}>
             <NavbarContent>

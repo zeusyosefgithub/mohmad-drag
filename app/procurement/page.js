@@ -41,6 +41,9 @@ import ModalAdconBret from '../Modals/ModalAdconBret';
 
 export default function Procurement() {
 
+
+    
+
     const aglotB = useGetDataByCondition('tfaol', 'sogBaola', '==', 'B');
 
     const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol } = useContext(ContactContext);    const category = GetDocs('category');

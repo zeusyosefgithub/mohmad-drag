@@ -6,6 +6,14 @@ import { FaLocationDot, FaPhoneFlip } from "react-icons/fa6";
 import { FaWaze } from "react-icons/fa";
 export const TofsTokhnetYetsor = React.forwardRef((props, ref) => {
 
+
+    const GetTsremTsmegemProps = () => {
+        if (parseFloat(props?.brtem?.Brofelem?.tserShtem?.kmot) > 0 || parseFloat(props?.brtem?.Brofelem?.tserAehad?.kmot) > 0) {
+            return true;
+        }
+        return false;
+    }
+
     return (
         <div ref={ref} className="bg-white p-10">
             <div className="flex justify-around items-center w-full">
@@ -134,25 +142,174 @@ export const TofsTokhnetYetsor = React.forwardRef((props, ref) => {
                 </div>
             </div>
             <div dir="rtl">
+                <Divider className="w-[300px] mt-2 mb-2" />
+            </div>
+            <div dir="rtl">
+                <div className="flex items-center">
+                    <div className="text-base flex items-center">
+                        מסגרת תחתונה : 
+                    </div>
+                    <div className="text-base flex items-center mr-1">
+                        <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.msgeretThtona}]</div>
+                    </div>
+                    <div className="text-base flex items-center">
+                        , חלקה תחתונה : 
+                    </div>
+                    <div className="text-base flex items-center mr-1">
+                        <div className="font-bold mr-1 ml-1">{props?.brtem?.tokhnetYetsor?.hlokaMsbarBrofelem} יח'</div>
+                    </div>
+                    <div className="text-base flex items-center mr-1">
+                        <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.hlokaThtona}]</div>
+                    </div>
+                </div>
+            </div>
+            <div dir="rtl">
+                <Divider className="w-[300px] mt-2 mb-2" />
+            </div>
+            <div dir="rtl">
+                <div className="flex items-center">
+                    <div className="text-base flex items-center">
+                      פרופיל תפיסה : 
+                    </div>
+                    <div className="text-base flex items-center mr-1">
+                        <div className="font-bold mr-1 ml-1">2 יח'</div>
+                    </div>
+                    <div className="text-base flex items-center mr-1">
+                        <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.brofelTfesa}]</div>
+                    </div> 
+                </div>
+            </div>
+            <div dir="rtl">
                 <div className="font-bold text-xl border-b-2 border-black mb-2 w-fit mt-5">השלמה</div>
                 <div className="flex items-center">
                     <div className="text-base flex items-center">
-                        חזית : <div className="font-bold mr-1 ml-1">"{props?.brtem?.Brofelem?.hzet}"</div>
+                        חזית : <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.hzet}]</div>
                     </div>
                     ,
                     <div className="text-base flex items-center mr-1">
-                        דופן : <div className="font-bold mr-1 ml-1">"{props?.brtem?.Brofelem?.dofn}"</div>
+                        דופן : <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.dofn}]</div>
                     </div>
                     {
                         props?.brtem?.tokhnetYetsor?.aemRmbaAoRgel === 'רגיל' && <>
                             ,
                             <div className="text-base flex items-center mr-1">
-                                דלת : <div className="font-bold mr-1 ml-1">"{props?.brtem?.Brofelem?.delet}"</div>
+                                דלת : <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.delet}]</div>
                             </div>
                         </>
                     }
                 </div>
             </div>
+            <div dir="rtl">
+                <Divider className="w-[300px] mt-2 mb-2" />
+            </div>
+            <div dir="rtl">
+                <div className="flex items-center">
+                    <div className="text-base flex items-center">
+                        צירים :
+                    </div>
+                    <div className="text-base flex items-center mr-1">
+                        <div className="font-bold mr-1 ml-1">{props?.brtem?.tokhnetYetsor?.msbarTsrem} יח'</div>
+                    </div>
+                    <div className="text-base flex items-center mr-1">
+                        <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.sogTser}]</div>
+                    </div>
+                    <div className="text-base flex items-center">
+                        , צמיגים : 
+                    </div>
+                    <div className="text-base flex items-center mr-1">
+                        <div className="font-bold mr-1 ml-1">{parseFloat(props?.brtem?.tokhnetYetsor?.msbarTsrem) === 1 ? '2' : parseFloat(props?.brtem?.tokhnetYetsor?.msbarTsrem) === 2 ? '4' : ''} יח'</div>
+                    </div>
+                    <div className="text-base flex items-center mr-1">
+                        <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.sogTsmeg}]</div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            {
+                GetTsremTsmegemProps() &&
+                <>
+                    <div dir="rtl">
+                        <Divider className="w-[300px] mt-2 mb-2" />
+                    </div>
+                    <div dir="rtl">
+                        <div className="flex items-center">
+                            <div className="flex items-center">
+                                <div className="">{parseFloat(props?.brtem?.tokhnetYetsor?.msbarTsrem) === 1 ? 'כנף ציר אחד' : parseFloat(props?.brtem?.tokhnetYetsor?.msbarTsrem) === 2 ? 'כנף שני צירים' : ''} :</div>
+                            </div>
+                            <div className="text-base flex items-center mr-1">
+                                <div className="font-bold mr-1 ml-1">2 יח'</div>
+                            </div>
+
+                            <div className="text-base flex items-center mr-1">
+                                <div className="font-bold mr-1 ml-1">[{parseFloat(props?.brtem?.tokhnetYetsor?.msbarTsrem) === 1 ? props?.brtem?.Brofelem?.tserAehad?.sog : parseFloat(props?.brtem?.tokhnetYetsor?.msbarTsrem) === 2 ? props?.brtem?.Brofelem?.tserShtem?.sog : ''}]</div>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            }
+
+            {
+                props?.brtem?.tokhnetYetsor?.solam === 'רק קדמי' && <>
+                    <div dir="rtl">
+                        <Divider className="w-[300px] mt-2 mb-2" />
+                    </div>
+                    <div dir="rtl">
+                        <div className="flex items-center">
+                            <div className="text-base flex items-center">
+                                גובה סולם קדמי : <div className="font-bold mr-1 ml-1">{props?.brtem?.tokhnetYetsor?.gobahSolamSM} ס"מ</div>
+                            </div>
+                            <div className="text-base flex items-center mr-1">
+                                ומסגרת סולם : <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.msgertSolam}]</div>
+                            </div>
+                            <div className="text-base flex items-center mr-1">
+                                וחלוקת סולם :
+                            </div>
+                            <div className="text-base flex items-center mr-1">
+                                <div className="font-bold mr-1 ml-1">{props?.brtem?.tokhnetYetsor?.msbarBrofelemAofkeSolam} יח' באורך</div>
+                            </div>
+                            <div className="text-base flex items-center mr-1">
+                                ו-<div className="font-bold mr-1 ml-1">{props?.brtem?.tokhnetYetsor?.msbarBrofelemAnkhe} יח' ברוחב</div>
+                            </div>
+                            <div className="text-base flex items-center mr-1">
+                                <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.hlokatSolam}]</div>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            }
+
+{
+                props?.brtem?.tokhnetYetsor?.solam === 'רק קדמי' && <>
+                    <div dir="rtl">
+                        <Divider className="w-[300px] mt-2 mb-2" />
+                    </div>
+                    <div dir="rtl">
+                        <div className="flex items-center">
+                            <div className="text-base flex items-center">
+                                גובה סולם קדמי : <div className="font-bold mr-1 ml-1">{props?.brtem?.tokhnetYetsor?.gobahSolamSM} ס"מ</div>
+                            </div>
+                            <div className="text-base flex items-center mr-1">
+                                ומסגרת סולם : <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.msgertSolam}]</div>
+                            </div>
+                            <div className="text-base flex items-center mr-1">
+                                וחלוקת סולם :
+                            </div>
+                            <div className="text-base flex items-center mr-1">
+                                <div className="font-bold mr-1 ml-1">{props?.brtem?.tokhnetYetsor?.msbarBrofelemAofkeSolam} יח' באורך</div>
+                            </div>
+                            <div className="text-base flex items-center mr-1">
+                                ו-<div className="font-bold mr-1 ml-1">{props?.brtem?.tokhnetYetsor?.msbarBrofelemAnkhe} יח' ברוחב</div>
+                            </div>
+                            <div className="text-base flex items-center mr-1">
+                                <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.hlokatSolam}]</div>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            }
+
             {
                 props?.brtem?.tokhnetYetsor?.aemRmbaAoRgel === 'רמפה' && <>
                     <div dir="rtl">
@@ -161,21 +318,21 @@ export const TofsTokhnetYetsor = React.forwardRef((props, ref) => {
                     <div dir="rtl">
                         <div className="flex items-center">
                             <div className="text-base flex items-center">
-                                אורך רמפה : <div className="font-bold mr-1 ml-1">{props?.brtem?.tokhnetYetsor?.aorkhRmbaMsgertRmba} מ'</div>
+                                אורך רמפה : <div className="font-bold mr-1 ml-1">{props?.brtem?.tokhnetYetsor?.aorkhRmbaMsgertRmbaSM} ס"מ</div>
                             </div>
                             <div className="text-base flex items-center mr-1">
-                                ומסגרת רמפה : <div className="font-bold mr-1 ml-1">"{props?.brtem?.Brofelem?.msgeretRmba}"</div>
+                                ומסגרת רמפה : <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.msgeretRmba}]</div>
                             </div>
                             <div className="text-base flex items-center mr-1">
                                 וחלוקת רמפה : <div className="font-bold mr-1 ml-1">{props?.brtem?.tokhnetYetsor?.msbarBrofelemHlokatRmba} יח'</div>
                             </div>
                             <div className="text-base flex items-center mr-1">
-                                <div className="font-bold mr-1 ml-1">"{props?.brtem?.Brofelem?.hlokatRmba}"</div>
+                                <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.hlokatRmba}]</div>
                             </div>
                             {
                                 props?.brtem?.tokhnetYetsor?.tosftVnel &&
                                 <div className="text-base flex items-center mr-1">
-                                    ותוספת וניל : <div className="font-bold mr-1 ml-1">"{props?.brtem?.Brofelem?.tosefetVnel}"</div>
+                                    ותוספת וניל : <div className="font-bold mr-1 ml-1">[{props?.brtem?.Brofelem?.tosefetVnel}]</div>
                                 </div>
                             }
                         </div>

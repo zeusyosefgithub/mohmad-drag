@@ -20,7 +20,6 @@ export default function CheckAuth({ children }) {
     const [aobedAuth, setaobedAuth] = useState(null);
     const admins = GetDocs('admins');
 
-    console.log(1);
     useEffect(() => {
         const checkAuth = async () => {
             await new Promise((res) => setTimeout(res, 50));

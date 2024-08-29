@@ -4081,12 +4081,14 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                             }
 
 
-                                                            <div className="w-[1200px] hidden">
+                                                            <div className="w-[1200px] hidden absolute left-0 bottom-0 bg-white z-50 border-4 border-black">
                                                                 <TofsTokhnetYetsor brtem={{
                                                                     shemLkoh: lkoh,
                                                                     msbar: agla?.msbar,
                                                                     sogAgla: sogAgla,
                                                                     tokhnetYetsor: {
+                                                                        gobahSolamSM,
+                                                                        aorkhRmbaMsgertRmbaSM,
                                                                         aorkhSM,
                                                                         rohfSM,
                                                                         msbarTsrem,
@@ -4121,6 +4123,15 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                     }
                                                                     ,
                                                                     Brofelem: {
+                                                                        hlokatSolam : motsaremBrofelem[10]?.shem,
+                                                                        msgertSolam : motsaremBrofelem[9]?.shem,
+                                                                        tserAehad : {sog : mafenemMotsarem[GetIndexMotsar('A1')]?.shem,kmot : mafenemMotsarem[GetIndexMotsar('A1')]?.kmot},
+                                                                        tserShtem : {sog : mafenemMotsarem[GetIndexMotsar('A2')]?.shem,kmot : mafenemMotsarem[GetIndexMotsar('A2')]?.kmot},
+                                                                        sogTsmeg: mafenemMotsarem[GetIndexMotsar('A3')]?.shem,
+                                                                        sogTser: mafenemMotsarem[GetIndexMotsar('A10')]?.shem,
+                                                                        brofelTfesa: motsaremBrofelem[4]?.shem,
+                                                                        hlokaThtona: motsaremBrofelem[6]?.shem,
+                                                                        msgeretThtona: motsaremBrofelem[5]?.shem,
                                                                         retsba1: motsaremBrofelem[11]?.shem,
                                                                         sboeler: mafenemMotsarem[GetIndexMotsar('B2')]?.shem,
                                                                         sheldaHetsonet: motsaremBrofelem[0]?.shem,
