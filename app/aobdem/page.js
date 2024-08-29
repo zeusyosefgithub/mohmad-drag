@@ -62,7 +62,7 @@ export default function Aobdem() {
         return null;
     };
     const hosfatKnesa = async () => {
-        let count1 = 1;
+        let count1 = 0;
         let count2 = 0;
         let count3 = 0;
 
@@ -565,7 +565,7 @@ export default function Aobdem() {
                                         </div>
                                         {
                                             BdekatAefshrotAedcon() &&
-                                            <div className="flex justify-end mt-4 mr-5">
+                                            <div className="flex justify-end">
                                                 <Button onClick={hosfatKnesa} color="primary">
                                                     אישור
                                                 </Button>

@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input } from "@nextui-org/react";
-import { format } from "date-fns";
+import { differenceInMinutes, format, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import { Hearts } from "react-loader-spinner";
 import { useGetDataByConditionWithoutUseEffect, useGetDataByConditionWithoutUseEffectTwoQueres } from "../FireBase/getDataByCondition";
@@ -59,6 +59,7 @@ export default function aobedDaf({ aobed }) {
     const [aobedNkhhe, setAobedNokhhe] = useState();
     const [shaotHeomData, setShaotHeomData] = useState([]);
     const [knesotHeom, setKnesotHeom] = useState([]);
+    const [knesotHeomBdeka, setKnesotHeomBdeka] = useState([]);
     const counter = GetDocs('metadata').find((count) => count.id === 'counterShaotAboda');
 
     useEffect(() => {
@@ -129,6 +130,7 @@ export default function aobedDaf({ aobed }) {
                 };
             });
             setKnesotHeom(updatedKnesotHeom);
+            setKnesotHeomBdeka(updatedKnesotHeom);
         }
         else if (!shaotHeomData?.length) {
             const updatedKnesotHeom = aobedNkhhe?.map(knesa => {
@@ -144,15 +146,36 @@ export default function aobedDaf({ aobed }) {
                 };
             });
             setKnesotHeom(updatedKnesotHeom);
+            setKnesotHeomBdeka(updatedKnesotHeom);
         }
         setLoadingFitching2(false);
     }, [shaotHeomData, aobedNkhhe]);
 
+    const handleTimeDiffrence = (yetseah, knesa) => {
+        if (yetseah && knesa) {
+            const start = parseISO(`1970-01-01T${knesa}:00`);
+            const end = parseISO(`1970-01-01T${yetseah}:00`);
+            const totalMinutes = differenceInMinutes(end, start);
+
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+
+            const formattedHours = String(hours).padStart(2, '0');
+            const formattedMinutes = String(minutes).padStart(2, '0');
+
+            return parseInt(formattedHours) + parseFloat((formattedMinutes / 60).toFixed(2));
+        }
+        return null;
+    };
+
     const knesaa = async () => {
+        let count1 = 0;
+        let count2 = 0;
+        let count3 = 0;
         if (!knesotHeom[0]?.knesa && !knesotHeom[0]?.headrot && !knesotHeom[0]?.yetseah) {
             try {
                 await addDoc(collection(firestore, 'shaotAboda'), {
-                    msbar: counter?.count + 1,
+                    msbar: counter?.count,
                     tarekh: format(new Date(), 'dd-MM-yyyy'),
                     knesa: format(new Date(), 'HH:mm'),
                     yetseah: '',
@@ -160,6 +183,9 @@ export default function aobedDaf({ aobed }) {
                     headrot: '',
                     hodesh: format(new Date(), 'MM-yyyy')
                 });
+                count1++;
+                count2 += handleTimeDiffrence(knesotHeom[0].yetseah, knesotHeom[0].knesa);
+                count3 += knesotHeom[0]?.tfked === 'A' ? (handleTimeDiffrence(knesotHeom[0].yetseah, knesotHeom[0].knesa)) : 0;
             }
             catch (e) {
                 console.log(e);
@@ -172,11 +198,21 @@ export default function aobedDaf({ aobed }) {
                     yetseah: format(new Date(), 'HH:mm'),
                     headrot: 'נוכח'
                 });
+                count3 += knesotHeom[0]?.tfked === 'A' ? (counter.countShaotAbodaMunth === format(new Date(), 'MM-yyyy') ? (handleTimeDiffrence(knesotHeom[0].yetseah, knesotHeom[0].knesa) - handleTimeDiffrence(knesotHeomBdeka[0].yetseah, knesotHeomBdeka[0].knesa)) : (handleTimeDiffrence(knesotHeom[0].yetseah, knesotHeom[0].knesa) - handleTimeDiffrence(knesotHeomBdeka[0].yetseah, knesotHeomBdeka[0].knesa))) : 0;
+                count2 += counter.countShaotAbodaMunth === format(new Date(), 'MM-yyyy') ? (handleTimeDiffrence(knesotHeom[0].yetseah, knesotHeom[0].knesa) - handleTimeDiffrence(knesotHeomBdeka[0].yetseah, knesotHeomBdeka[0].knesa)) : (handleTimeDiffrence(knesotHeom[0].yetseah, knesotHeom[0].knesa) - handleTimeDiffrence(knesotHeomBdeka[0].yetseah, knesotHeomBdeka[0].knesa));
             }
             catch (e) {
                 console.log(e);
             }
         }
+        await updateDoc(doc(firestore, 'metadata', 'counterShaotAboda'), {
+            count: counter?.count + count1,
+            countShaotAbodaKodemet: counter.countShaotAbodaMunth !== format(new Date(), 'MM-yyyy') ? counter?.countShaotAboda : counter?.countShaotAbodaKodemet,
+            countShaotAboda: counter.countShaotAbodaMunth === format(new Date(), 'MM-yyyy') ? (counter.countShaotAboda + count2) : count2,
+            countShaotAbodaMunth: format(new Date(), 'MM-yyyy'),
+            countShaotAbodaYetsor: counter.countShaotAbodaMunth === format(new Date(), 'MM-yyyy') ? (counter.countShaotAbodaYetsor + count3) : count3,
+            countShaotAbodaYetsorKodem: counter.countShaotAbodaMunth !== format(new Date(), 'MM-yyyy') ? counter?.countShaotAbodaYetsor : counter?.countShaotAbodaYetsorKodem,
+        });
         setLoading(false);
     }
 
