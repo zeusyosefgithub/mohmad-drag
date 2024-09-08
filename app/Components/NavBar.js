@@ -72,6 +72,11 @@ export default function NavBar() {
                         <Button variant="light" color="primary" className="text-lg">משרד תחבורה<IoNewspaperSharp className="text-2xl text-gray-600" /></Button>
                     </Link>
                 </NavbarItem>
+                <NavbarItem>
+                    <Link color="foreground" href="/hnhlatHeshbonot">
+                        <Button variant="light" color="primary" className="text-lg">הנהלת חישבונות<FcManager className="text-[26px]" /></Button>
+                    </Link>
+                </NavbarItem>
                 <Button variant="light" color="primary" className="text-lg pr-8"><div>התראות</div><div className="absolute top-0 right-0 text-[17px] bg-primary-500 text-white w-[27px] rounded-full font-extrabold"><div className="">1</div></div><FaBell className="text-2xl text-blue-700" /></Button>
             </NavbarContent>
             <NavbarContent justify="end">

@@ -4399,7 +4399,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                         </div>
 
                     </ModalBody>
-                    <ModalFooter className="border-t-2 bg-white m-auto w-full items-center sticky bottom-0  z-40">
+                    <ModalFooter className="border-t-2 bg-white m-auto w-full items-center sticky bottom-0 z-40">
                         <div className="flex w-full">
                             <div>
                                 {

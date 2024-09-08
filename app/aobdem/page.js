@@ -375,8 +375,8 @@ export default function Aobdem() {
                     newArray.push(<tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{newArrayWithouRpeat[index]?.yetseah}</td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{newArrayWithouRpeat[index]?.knesa}</td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">1</td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">1</td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{newArrayWithouRpeat[index]?.headrot}</td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{GetTarekhShem(format(flipDate(newArrayWithouRpeat[index]?.tarekh), 'EEEE'))}</td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{newArrayWithouRpeat[index]?.tarekh}</td>
@@ -398,8 +398,8 @@ export default function Aobdem() {
                     newArray.push(<tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">2</td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">2</td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
+                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                         <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
@@ -421,8 +421,8 @@ export default function Aobdem() {
                 newArray.push(<tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                     <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                     <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">3</td>
-                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">3</td>
+                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
+                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                     <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                     <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
                     <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
