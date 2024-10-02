@@ -322,16 +322,16 @@ export default function ModalKsfem({ disable, show, brtemMhtgatHotsaa, lkhot, sb
                                                         selectedKeys={selectedKeys}
                                                         onSelectionChange={(val) => setSelectedKeys(val.currentKey)}
                                                     >
-                                                        <DropdownItem key={'הוצאות שכר'}>{'הוצאות שכר '}</DropdownItem>
-                                                        <DropdownItem key={'קניות מוצרים'}>{'קניות מוצרים'}</DropdownItem>
-                                                        <DropdownItem key={'מסים'}>{'מסים'}</DropdownItem>
-                                                        <DropdownItem key={'הוצאות שוטפות'}>{'הוצאות שוטפות'}</DropdownItem>
-                                                        <DropdownItem key={'הוצאות אחרות'}>{'הוצאות אחרות'}</DropdownItem>
-                                                        <DropdownItem key={'החזר הוצאות שכר'}>{'החזר הוצאות שכר'}</DropdownItem>
-                                                        <DropdownItem key={'החזר קניות מוצרים'}>{'החזר קניות מוצרים'}</DropdownItem>
-                                                        <DropdownItem key={'החזר מסים'}>{'החזר מסים'}</DropdownItem>
-                                                        <DropdownItem key={'החזר הוצאות שוטפות'}>{'החזר הוצאות שוטפות'}</DropdownItem>
-                                                        <DropdownItem key={'החזר הוצאות אחרות'}>{'החזר הוצאות אחרות'}</DropdownItem>
+                                                        <DropdownItem key={'הוצאות שכר'}>{' הוצאות שכר'}</DropdownItem>
+                                                        <DropdownItem key={'קניות מוצרים'}>{' קניות מוצרים'}</DropdownItem>
+                                                        <DropdownItem key={'מסים'}>{' מסים'}</DropdownItem>
+                                                        <DropdownItem key={'הוצאות שוטפות'}>{' הוצאות שוטפות'}</DropdownItem>
+                                                        <DropdownItem key={'הוצאות אחרות'}>{' הוצאות אחרות'}</DropdownItem>
+                                                        <DropdownItem key={'החזר הוצאות שכר'}>{' החזר הוצאות שכר'}</DropdownItem>
+                                                        <DropdownItem key={'החזר קניות מוצרים'}>{' החזר קניות מוצרים'}</DropdownItem>
+                                                        <DropdownItem key={'החזר מסים'}>{' החזר מסים'}</DropdownItem>
+                                                        <DropdownItem key={'החזר הוצאות שוטפות'}>{' החזר הוצאות שוטפות'}</DropdownItem>
+                                                        <DropdownItem key={'החזר הוצאות אחרות'}>{' החזר הוצאות אחרות'}</DropdownItem>
                                                     </DropdownMenu>
                                                 }
                                                 {

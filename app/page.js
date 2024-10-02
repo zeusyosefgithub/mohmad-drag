@@ -1,6 +1,6 @@
 'use client';
 import React, { useContext, useEffect, useRef } from "react";
-import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Checkbox, CheckboxGroup, Divider, Input, Modal, Spinner, Switch } from "@nextui-org/react";
+import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Checkbox, CheckboxGroup, Divider, Input, Modal, Skeleton, Spinner, Switch } from "@nextui-org/react";
 import { useState } from "react";
 import ModalCreate from "./Modals/ModalCreate";
 import ModalTokhnetYetsor from "./Modals/ModalTokhnetYetsor";

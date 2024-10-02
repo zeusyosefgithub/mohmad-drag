@@ -64,7 +64,7 @@ export default function CheckAuth({ children }) {
                                             <div>
                                                 <NavBar />
                                             </div>
-                                            <div className='mt-10 z-10'>
+                                            <div className='mt-10'>
                                                 {children}
                                             </div>
                                         </div>

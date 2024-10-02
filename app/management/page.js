@@ -1,7 +1,7 @@
 'use client';
 import { Autocomplete, AutocompleteItem, Button, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Spinner, Switch } from "@nextui-org/react";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { FaArrowDown, FaArrowUp, FaSleigh, FaTrash } from "react-icons/fa";
+import { FaArrowDown, FaArrowUp, FaRegCalendarCheck, FaSleigh, FaTrailer, FaTrash, FaUser, FaUserTag, FaWarehouse } from "react-icons/fa";
 import { FiPlus } from "react-icons/fi";
 import { addMonths, differenceInDays, differenceInHours, differenceInMinutes, format, parseISO, setDate, subMonths } from 'date-fns';
 import GetDocs, { GetDocsWithLimit } from "../FireBase/getDocs";
@@ -15,10 +15,10 @@ import { useRouter } from "next/navigation";
 import ContactContext from "../auth/ContactContext";
 import ModalBrtemNosfemAobed from '../Modals/ModalBrtemNosfemAobed';
 import ModalKsfem from "../Modals/ModalKsfem";
-import { useGetDataByConditionWithoutUseEffect, useGetDataByLimit } from "../FireBase/getDataByCondition";
+import { useGetDataByCondition, useGetDataByConditionWithoutUseEffect, useGetDataByLimit } from "../FireBase/getDataByCondition";
 import moment from "moment";
 import { VscError } from "react-icons/vsc";
-import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { IoIosWater, IoMdCheckmarkCircleOutline } from "react-icons/io";
 import ModalDafeShaot from "../Modals/ModalDafeShaot";
 import ModalHosfatHotsaaHdasha from "../Modals/ModalHosfatHotsaaHdasha";
 import ModalHtsgatHotsaa from "../Modals/ModalHtsgatHotsaa";
@@ -27,10 +27,15 @@ import ModalShowBerotAska from "../Modals/ModalShowBerotAska";
 import ModalAddSobak from "../Modals/ModalAddSbak";
 import ModalNetonemThltem from "../Modals/ModalNetonemThltem";
 import { FaUsers } from "react-icons/fa";
-import { GiExpense } from "react-icons/gi";
-import { MdOutlineShoppingBag } from "react-icons/md";
+import { GiExpense, GiHook } from "react-icons/gi";
+import { MdElectricBolt, MdOutlineShoppingBag } from "react-icons/md";
 import { FaMoneyBillTrendUp } from "react-icons/fa6";
 import ModalBerotAskatKsfem from "../Modals/ModalBerotAskatKsfem";
+import { FaBoxOpen } from "react-icons/fa";
+import { GrUserWorker } from "react-icons/gr";
+import { BsFillFuelPumpFill } from "react-icons/bs";
+import { CgMoreO } from "react-icons/cg";
+import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 
 
 export default function Management() {
@@ -41,12 +46,11 @@ export default function Management() {
     const hotsaot = GetDocs('hotsaot');
     const aobdem = GetDocs('aobdem');
     const mlae = GetDocs('mlae');
-    const tnoahBmzomnem = GetDocsWithLimit('tnoahBmzomnem',15);
+    const tnoahBmzomnem = GetDocsWithLimit('tnoahBmzomnem', 15);
     const router = useRouter();
     const [htsgatbrtem, sethtsagatBrtem] = useState('לקחות');
     const [loading, setLoading] = useState(false);
     const [showModalKsfem, setShowModalKsfem] = useState(false);
-    const [showModalHosfatHotsaaHdasha, setShowModalHosfatHotsaaHadsha] = useState(false);
     const [showModalHtsgatHotsaa, setShowModalHtsgatHotsaa] = useState(false);
     const [hotsaa, setHotsaa] = useState(null);
     const [brtemMhtsgatHotsaa, setBrtemMhtsgatHotsaa] = useState({});
@@ -56,8 +60,9 @@ export default function Management() {
     const previousMonthDate = subMonths(new Date(), 1);
     const [GetData, setGetData] = useState(false);
     const [heshovShaotAboda, setHeshovShaotAboda] = useState([]);
-    const [askatKsfem,setAskatKsfem] = useState(null);
-    const [showModalBerotAskatKsfem,setShowModalBerotAskatKsfem] = useState(false);
+    const [askatKsfem, setAskatKsfem] = useState(null);
+    const [showModalBerotAskatKsfem, setShowModalBerotAskatKsfem] = useState(false);
+    const [hotsaaType, setHotsaaType] = useState('hotsaot');
 
     const hdbsatDafeShaot = async () => {
 
@@ -156,7 +161,7 @@ export default function Management() {
             collection(firestore, 'tnoahBkneot'),
             limit(20)
         );
-    
+
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const items = [];
             querySnapshot.forEach((doc) => {
@@ -165,7 +170,7 @@ export default function Management() {
             items.sort((a, b) => b.msbar - a.msbar);
             setHestoriaKneot(items);
         });
-    
+
         return () => unsubscribe();
     }, []);
 
@@ -270,18 +275,17 @@ export default function Management() {
                         sbakAoLkoh: val5
                     });
                 }
-            }} show={showModalHtsgatHotsaa} disable={(val) => {setShowModalHtsgatHotsaa(false);
-                if(val){
+            }} show={showModalHtsgatHotsaa} disable={(val) => {
+                setShowModalHtsgatHotsaa(false);
+                if (val) {
                     setShowModalAddSbak(true);
                 }
             }} hotsaa={hotsaa} />
-            <ModalHosfatHotsaaHdasha show={showModalHosfatHotsaaHdasha} disable={() => setShowModalHosfatHotsaaHadsha(false)} />
             <ModalKsfem aobdem={aobdem} lkhot={lkhot} sbkem={sbkem} brtemMhtgatHotsaa={brtemMhtsgatHotsaa} show={showModalKsfem} disable={() => setShowModalKsfem(false)} />
             {loading && <Spinner className="absolute top-0 right-0 bottom-0 left-0" />}
             <div className="w-full pl-16 pr-16">
                 <div className="bg-white shadow-2xl rounded-2xl p-5 flex justify-around">
                     <Button onClick={() => setShowModalNetonemThltem(true)}>נתונים תחלתיים</Button>
-                    <Button isDisabled onClick={() => { }}>תפסים</Button>
                     <Button onClick={() => setShowModalKsfem(true)}>הנהלת חשבונות</Button>
                     {/* <Button onClick={async() => {
                         for (let index = 0; index < tnoahBmzomnem.length; index++) {
@@ -476,10 +480,10 @@ export default function Management() {
 
                     <div className="p-5 justify-center w-full max-w-[750px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[650px]">
                         <div className="w-full flex justify-around items-center">
-                            <Button variant='faded' className={htsgatbrtem === 'סבקים' && 'font-extrabold text-base'} color={htsgatbrtem === 'סבקים' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('סבקים')}><MdOutlineShoppingBag className="text-base"/>ספקים/שלטנות</Button>
-                            <Button variant='faded' className={htsgatbrtem === 'לקחות' && 'font-extrabold text-base'} color={htsgatbrtem === 'לקחות' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('לקחות')}><FaUsers className="text-base"/>לקחות</Button>
-                            <Button variant='faded' className={htsgatbrtem === 'תנועה בהצאות' && 'font-extrabold text-base'} color={htsgatbrtem === 'תנועה בהצאות' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('תנועה בהצאות')}><GiExpense className="text-base"/>תנועה בהצאות</Button>
-                            <Button variant='faded' className={htsgatbrtem === 'תנועה בכספים' && 'font-extrabold text-base'} color={htsgatbrtem === 'תנועה בכספים' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('תנועה בכספים')}><FaMoneyBillTrendUp className="text-base"/>תנועה בכספים</Button>
+                            <Button variant='faded' className={htsgatbrtem === 'סבקים' && 'font-extrabold text-base'} color={htsgatbrtem === 'סבקים' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('סבקים')}><MdOutlineShoppingBag className="text-base" />ספקים/שלטנות</Button>
+                            <Button variant='faded' className={htsgatbrtem === 'לקחות' && 'font-extrabold text-base'} color={htsgatbrtem === 'לקחות' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('לקחות')}><FaUsers className="text-base" />לקחות</Button>
+                            <Button variant='faded' className={htsgatbrtem === 'תנועה בהצאות' && 'font-extrabold text-base'} color={htsgatbrtem === 'תנועה בהצאות' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('תנועה בהצאות')}><GiExpense className="text-base" />תנועה בהצאות</Button>
+                            <Button variant='faded' className={htsgatbrtem === 'תנועה בכספים' && 'font-extrabold text-base'} color={htsgatbrtem === 'תנועה בכספים' ? 'primary' : 'default'} onClick={() => sethtsagatBrtem('תנועה בכספים')}><FaMoneyBillTrendUp className="text-base" />תנועה בכספים</Button>
                         </div>
                         <Divider className="mt-5" />
                         <div className="overflow-auto h-fit w-full" dir="rtl">
@@ -595,7 +599,7 @@ export default function Management() {
                                             }
                                         </tbody>
                                     </table>
-                                </div> 
+                                </div>
                             }
                             {
                                 htsgatbrtem === 'תנועה בכספים' &&
@@ -611,13 +615,13 @@ export default function Management() {
                                         </thead>
                                         <tbody>
                                             {
-                                                tnoahBmzomnem?.map((tnoah,index) => {
+                                                tnoahBmzomnem?.map((tnoah, index) => {
                                                     return (tnoah.active) && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{tnoah.tarekh}</td>
-                                                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => {setShowModalBerotAskatKsfem(true);setAskatKsfem(tnoah)}}>פירוט</Button></td>
-                                                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{formatNumberWithCommas(tnoah.skhomKlle)}</td>
-                                                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{tnoah.msbar}</td>
-                                                </tr>
+                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{tnoah.tarekh}</td>
+                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setShowModalBerotAskatKsfem(true); setAskatKsfem(tnoah) }}>פירוט</Button></td>
+                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{formatNumberWithCommas(tnoah.skhomKlle)}</td>
+                                                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{tnoah.msbar}</td>
+                                                    </tr>
                                                 })
                                             }
                                         </tbody>
@@ -628,32 +632,283 @@ export default function Management() {
                     </div>
 
                     <div className="p-5 justify-center w-full max-w-[750px] ml-10 mr-10 bg-white rounded-xl shadow-xl mb-5 h-[650px]">
-                        <div className="w-full flex justify-around items-end">
-                            <Button variant='faded' color='primary' onClick={() => setShowModalHosfatHotsaaHadsha(true)}><div className="text-[18px] mr-1">+</div>הוספת הוצאה חדשה</Button>
+                        <div className="w-full flex justify-around items-center">
+                            <Button size="sm" onClick={() => setHotsaaType('tkbolem')} variant='flat' color={hotsaaType === 'tkbolem' ? 'primary' : 'default'}>תקבולים / תשלומים</Button>
+                            <Button size="sm" onClick={() => setHotsaaType('hkhnsot')} variant='flat' color={hotsaaType === 'hkhnsot' ? 'primary' : 'default'}>הכנסות</Button>
+                            <Button size="sm" onClick={() => setHotsaaType('hotsaot')} variant='flat' color={hotsaaType === 'hotsaot' ? 'primary' : 'default'}>הוצאות</Button>
                         </div>
                         <Divider className="mt-5 mb-5" />
-                        <div className="overflow-x-auto h-[500px]">
-                            <table className="w-full table-auto border-collapse">
-                                <thead>
-                                    <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
-                                        <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-white to-gray-50 font-extrabold text-black"></th>
-                                        <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">מועד חוב</th>
-                                        <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">שם הוצאה</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        hotsaot.map((hotsaa, index) => {
-                                            return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa(hotsaa); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
-                                                <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td>
-                                                <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.shem}</td>
-                                            </tr>
-                                        })
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                        {
+                            hotsaaType === 'hotsaot' &&
+                            <div className="overflow-x-auto h-[500px]">
+                                <table className="w-full table-auto border-collapse">
+                                    <thead>
+                                        <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
+                                            <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-white to-gray-50 font-extrabold text-black"></th>
+                                            {/* <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">מועד חוב</th> */}
+                                            <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-50 to-gray-200 font-extrabold text-black">סוג הוצאה</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הוצאות',
+                                                hotsaa: 'קניית מוצרים'
+                                            }); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300 "><div className="w-full flex items-center justify-end"> קניית מוצרים<FaBoxOpen className="ml-2 text-2xl text-[#ca8a04]" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הוצאות',
+                                                hotsaa: 'הוצאות שכר'
+                                            }); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end"> הוצאות שכר<GrUserWorker className="ml-2 text-2xl text-primary" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הוצאות',
+                                                hotsaa: 'דלק'
+                                            }); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end"> דלק<BsFillFuelPumpFill className="ml-2 text-2xl text-danger" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הוצאות',
+                                                hotsaa: 'חשמל'
+                                            }); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end"> חשמל<MdElectricBolt className="ml-2 text-2xl text-yellow-400" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הוצאות',
+                                                hotsaa: 'מים'
+                                            }); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end"> מים<IoIosWater className="ml-2 text-2xl text-blue-400" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הוצאות',
+                                                hotsaa: 'שכירות'
+                                            }); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end"> שכירות<FaWarehouse className="ml-2 text-2xl text-success" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הוצאות',
+                                                hotsaa: 'הוצאות אחרות'
+                                            }); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end"> הוצאות אחרות<CgMoreO className="ml-2 text-2xl text-[#334155]" /></div></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        {
+                            hotsaaType === 'hkhnsot' &&
+                            <div className="overflow-x-auto h-[500px]">
+                                <table className="w-full table-auto border-collapse">
+                                    <thead>
+                                        <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
+                                            <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-white to-gray-50 font-extrabold text-black"></th>
+                                            {/* <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">מועד חוב</th> */}
+                                            <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-50 to-gray-200 font-extrabold text-black">סוג הכנסה</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הכנסות',
+                                                hotsaa: 'ייצור עגלות'
+                                            }); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300 "><div className="w-full flex items-center justify-end"> ייצור עגלות<FaTrailer className="ml-2 text-2xl text-success" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הכנסות',
+                                                hotsaa: 'הרכבת ווי גרירה'
+                                            }); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end"> הרכבת ווי גרירה<GiHook className="ml-2 text-2xl text-warning" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הכנסות',
+                                                hotsaa: 'תיקונים'
+                                            }); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end"> תיקונים<HiOutlineWrenchScrewdriver className="ml-2 text-2xl text-danger" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הכנסות',
+                                                hotsaa: 'טסטים'
+                                            }); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end"> טסטים<FaRegCalendarCheck className="ml-2 text-2xl text-primary" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הכנסות',
+                                                hotsaa: 'מכירת מוצרים'
+                                            }); setShowModalHtsgatHotsaa(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end"> מכירת מוצרים<FaBoxOpen className="ml-2 text-2xl text-[#ca8a04]" /></div></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        {
+                            hotsaaType === 'tkbolem' &&
+                            <div className="overflow-x-auto h-[500px]">
+                                <table className="w-full table-auto border-collapse">
+                                    <thead>
+                                        <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
+                                            <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-white to-gray-50 font-extrabold text-black"></th>
+                                            {/* <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">מועד חוב</th> */}
+                                            <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-50 to-gray-200 font-extrabold text-black">סוג הכנסה</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הכנסות',
+                                                hotsaa: 'קבלת כסף מלקוחות'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300 "><div className="w-full flex items-center justify-end">קבלת כסף מלקוחות<FaUser className="ml-2 text-2xl text-success" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הכנסות',
+                                                hotsaa: 'החזר כסף מלקוחות'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300 "><div className="w-full flex items-center justify-end">החזר כסף מלקוחות<FaUser className="ml-2 text-2xl text-success" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הכנסות',
+                                                hotsaa: 'עובדים שכר'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end">עובדים שכר<GrUserWorker className="ml-2 text-2xl text-primary" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הכנסות',
+                                                hotsaa: 'עובדים פנסייה'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end">עובדים פנסייה<GrUserWorker className="ml-2 text-2xl text-primary" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'הכנסות',
+                                                hotsaa: 'עובדים פיצויים'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end"> עובדים פיצויים<GrUserWorker className="ml-2 text-2xl text-primary" /></div></td>
+                                        </tr>
+
+
+
+
+
+
+
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'ספקים',
+                                                hotsaa: 'הוצאות שכר'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end">הוצאות שכר ספקים<FaUserTag className="ml-2 text-2xl text-warning" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'ספקים',
+                                                hotsaa: 'קניות מוצרים'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end">קניות מוצרים ספקים<FaUserTag className="ml-2 text-2xl text-warning" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'ספקים',
+                                                hotsaa: 'מסים'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end">מסים ספקים<FaUserTag className="ml-2 text-2xl text-warning" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'ספקים',
+                                                hotsaa: 'הוצאות שוטפות'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end">הוצאות שוטפות ספקים<FaUserTag className="ml-2 text-2xl text-warning" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'ספקים',
+                                                hotsaa: 'הוצאות אחרות'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end">הוצאות אחרות ספקים<FaUserTag className="ml-2 text-2xl text-warning" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'ספקים',
+                                                hotsaa: 'החזר הוצאות שכר'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end">החזר הוצאות שכר ספקים<FaUserTag className="ml-2 text-2xl text-warning" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'ספקים',
+                                                hotsaa: 'החזר קניות מוצרים'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end">החזר קניות מוצרים ספקים<FaUserTag className="ml-2 text-2xl text-warning" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'ספקים',
+                                                hotsaa: 'החזר מסים'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end">החזר מסים ספקים<FaUserTag className="ml-2 text-2xl text-warning" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'ספקים',
+                                                hotsaa: 'החזר הוצאות שוטפות'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end">החזר הוצאות שוטפות ספקים<FaUserTag className="ml-2 text-2xl text-warning" /></div></td>
+                                        </tr>
+                                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                                            <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
+                                                baola:'ספקים',
+                                                hotsaa: 'החזר הוצאות אחרות'
+                                            }); setShowModalKsfem(true); }}>פתח</Button></td>
+                                            {/* <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{hotsaa?.zmanTshlom === 'תקופתי' && hotsaa?.diff === 0 ? format(setDate(addMonths(hotsaa?.hovKrov, hotsaa?.count), hotsaa?.moaedHov), 'dd-MM-yyyy') : null}</td> */}
+                                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><div className="w-full flex items-center justify-end">החזר הוצאות אחרות ספקים<FaUserTag className="ml-2 text-2xl text-warning" /></div></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
                     </div>
 
 
