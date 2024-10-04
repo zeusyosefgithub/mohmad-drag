@@ -127,6 +127,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
     const [errorMessageText, setErrorMessageText] = useState('');
     const [showModalMessage, setShowModalMessage] = useState(false);
     const [Aeshor, setAeshor] = useState(null);
+    const [brtemLkoh,setBrtemLkoh] = useState(null);
     const [showModalCategoryAgla, setShowModalCategoryAgla] = useState(false);
     const [showModalBerokAgla, setShowModalBerokAgla] = useState(false);
     const [entries, setEntries] = useState([{ category: '', sogMotsar: '', shemMotsar: '', remez: '', message: '' }]);
@@ -251,6 +252,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         setMherKlale(0);
         setKveatMher(false);
         setHskmatLkoh(false);
+        setBrtemLkoh(null);
         setAorkhSM(0);
         setRohfSM(0);
         setShaotAboda('');
@@ -524,8 +526,48 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
             mherMkhera: parseFloat(mherKlale),
             msbarAgla: msbarAgla,
             msbarLkoh: lkohMsbar,
+            shemLkoh: brtemLkoh?.name + ' ' + brtemLkoh?.lastname,
             sogBaola: BdekatMtsavem(),
             tarekh: format(new Date(), 'dd-MM-yyyy'),
+            mtsavYetsor : [
+                {
+                    res : false,
+                    tarekh : '',
+                    shaa : '',
+                    maoshar : ''
+                },
+                {
+                    res : false,
+                    tarekh : '',
+                    shaa : '',
+                    maoshar : ''
+                },
+                {
+                    res : false,
+                    tarekh : '',
+                    shaa : '',
+                    maoshar : ''
+                },
+                {
+                    res : false,
+                    tarekh : '',
+                    shaa : '',
+                    maoshar : ''
+                }
+                ,
+                {
+                    res : false,
+                    tarekh : '',
+                    shaa : '',
+                    maoshar : ''
+                },
+                {
+                    res : false,
+                    tarekh : '',
+                    shaa : '',
+                    maoshar : ''
+                }
+            ],
             zmnem: {
                 zmanThela: null,
                 zmanThelatYetsor: thelatYetsor ? formatDateToDatetimeLocal(new Date) : null,
@@ -2082,7 +2124,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                 <div className="flex justify-between items-center w-full">
                                                     <div className="flex justify-around items-center w-full ml-10">
                                                         <Button color="primary" variant='flat' isDisabled={open} onClick={handleDrawerOpen}>
-                                                            <div className="flex items-center font-bold text-lg"><FaHandHoldingDollar className="mr-3 text-xl" />תמחיר</div>
+                                                            <div className="flex items-center font-bold text-lg"><FaHandHoldingDollar className="mr-3 text-xl" />תמחור</div>
                                                         </Button>
 
 
@@ -2276,7 +2318,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                     >
                                                                                         {
                                                                                             lkhot.map((lko, index) => (
-                                                                                                <AutocompleteItem onClick={() => { setLkohMsbar(lko.idnum); setHskmatLkoh(false); }} className='text-right' key={lko?.name} value={lko?.name}>
+                                                                                                <AutocompleteItem onClick={() => { setBrtemLkoh(lko);setLkohMsbar(lko.idnum); setHskmatLkoh(false); }} className='text-right' key={lko?.name} value={lko?.name}>
                                                                                                     {lko?.name}
                                                                                                 </AutocompleteItem>
                                                                                             ))
@@ -2290,9 +2332,11 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
 
                                                                     </div>
                                                                     <Divider className="mt-2 mb-2" />
+                                                                    <Input type='date' size="xs" label="תאריך אספקה" />
+                                                                    <Divider className="mt-2 mb-2" />
                                                                     <div className="flex justify-center">
                                                                     <Switch isSelected={hskmatLkoh} isReadOnly={agla?.thlkhem?.hskmatLkwah || !lkoh} defaultSelected={agla?.thlkhem?.hskmatLkwah} value={hskmatLkoh} onValueChange={(val) => setHskmatLkoh(val)}>
-                                                                        <div className="mr-2">הסכמת לקוח</div>
+                                                                        <div className="mr-2">הזמנת לקוח</div>
                                                                     </Switch>
                                                                 </div>
                                                             </div>
@@ -2317,7 +2361,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                 <Divider className="mt-2 mb-2" />
                                                                 <div className="flex justify-center">
                                                                     <div className="flex items-center">
-                                                                        <div className="min-w-[100px]">מחיר השוק</div>
+                                                                        <div className="min-w-[100px] text-right">מחיר מחרון</div>
                                                                         <Input isReadOnly={agla?.mherMkhera} size="xs" type="number" value={mherKlale || ''} onValueChange={(val) => {
                                                                             setMherKlale(val);
                                                                             if (!val) {
@@ -2329,7 +2373,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                 <Divider className="mt-2 mb-2" />
                                                                 <div className="flex justify-center">
                                                                     <div className="flex items-center">
-                                                                        <div className="min-w-[100px]">הנחה</div>
+                                                                        <div className="min-w-[100px] text-right">הנחה</div>
                                                                         <Input size="xs" type="number" value={hnha || ''} onValueChange={(val) => setHnha(Math.min(val, mherKlale))} color="primary" className="max-w-[150px]" />
                                                                     </div>
                                                                 </div>
@@ -2466,7 +2510,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                             <List>
                                                 <ListItem>
                                                     <div className="font-bold text-center text-2xl w-full">
-                                                        תמחיר
+                                                        תמחור
                                                     </div>
                                                 </ListItem>
                                                 <ListItem>
@@ -4178,7 +4222,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                     }} motsarem={mafenemMotsarem} Brofelem={motsaremBrofelemSofe} show={showModalBerokAgla} disable={() => setShowModalBerokAgla(false)} />}
                                     <div className="w-full max-w-[700px]">
                                         <div className="flex justify-center bg-primary-200 p-2 rounded-2xl">
-                                            תמחיר
+                                            תמחור
                                         </div>
                                         <Heshvonet aosek={aosek} ref={componentRefOne} motsar={agla} msbarHeshvonet={counterHeshvoneot?.count} lkoh={lkohTfaol} />
                                     </div>
@@ -4234,7 +4278,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                     }} motsarem={mafenemMotsarem} Brofelem={motsaremBrofelemSofe} show={showModalBerokAgla} disable={() => setShowModalBerokAgla(false)} />}
                                     <div className="w-full max-w-[700px]">
                                         <div className="flex justify-center bg-primary-200 p-2 rounded-2xl">
-                                            תמחיר
+                                        תמחור
                                         </div>
                                         <Heshvonet aosek={aosek} ref={componentRefOne} msbarHeshvonet={counterHeshvoneot?.count} motsar={agla} lkoh={lkohTfaol} />
                                     </div>
@@ -4281,7 +4325,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                     }} motsarem={mafenemMotsarem} Brofelem={motsaremBrofelemSofe} show={showModalBerokAgla} disable={() => setShowModalBerokAgla(false)} />}
                                     <div className="w-full max-w-[700px]">
                                         <div className="flex justify-center bg-primary-200 p-2 rounded-2xl">
-                                            תמחיר
+                                        תמחור
                                         </div>
                                         <Heshvonet aosek={aosek} msbarHeshvonet={counterHeshvoneot?.count} ref={componentRefOne} motsar={agla} lkoh={lkohTfaol} />
                                     </div>

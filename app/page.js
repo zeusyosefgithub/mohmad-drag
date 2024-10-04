@@ -89,11 +89,14 @@ import { FaTrailer } from "react-icons/fa6";
 import { AiOutlineAppstoreAdd } from "react-icons/ai";
 
 import Image from "next/image";
-import { CirclesWithBar, Comment, Hearts, Hourglass, ThreeCircles, Watch } from "react-loader-spinner";
+import { CirclesWithBar, Comment, Hearts, Hourglass, Puff, ThreeCircles, Watch } from "react-loader-spinner";
 import GetDocs from "./FireBase/getDocs";
 import { MdDelete } from "react-icons/md";
 import ModalCreateTest from "./Modals/ModalCreateTest";
 import ContactContext from "./auth/ContactContext";
+import ModalMtsavYetsor from "./Modals/ModalMtsavYetsor";
+import Link from "next/link";
+import { CardContent } from "@mui/material";
 
 
 export function GetTmonatHelek(remez, msbar) {
@@ -333,7 +336,7 @@ export function GetTmonatHelek(remez, msbar) {
 
 
 export default function Home() {
-  const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol,aobedAuth} = useContext(ContactContext);
+  const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol, aobedAuth } = useContext(ContactContext);
   const [mlae, setMlae] = useState([]);
   const category = GetDocs('category');
   const aobdem = GetDocs('aobdem');
@@ -343,6 +346,7 @@ export default function Home() {
   const aglotA = useGetDataByCondition('tfaol', 'sogBaola', '==', 'A');
   const aglotB = useGetDataByCondition('tfaol', 'sogBaola', '==', 'B');
   const aglotC = useGetDataByCondition('tfaol', 'sogBaola', '==', 'C');
+  const aglotD = useGetDataByCondition('tfaol', 'sogBaola', '==', 'D');
   const [tfaolAgla, setTfaolAgla] = useState({});
   const [lkoh, setLkoh] = useState();
   const [msbarLkoh, setMsbarLkoh] = useState();
@@ -451,9 +455,64 @@ export default function Home() {
     }
   }
 
+  const [showModalMtsavYetsor, setShowModalMtsavYetsor] = useState(false);
+
+
+  const [mtsav, setMtsav] = useState('A');
+
+
+
+
+
+
+  
+  const res = {
+    a: true,
+    b: true,
+    c: true,
+    d: true,
+    e: true,
+    f: true,
+}
+
+
+
+  const GetResMtsav = (res) => {
+    if(res[5]?.res){
+      return 'מוכן';
+    }
+    else if(res[4]?.res){
+      return 'בקרת איכות';
+    }
+    else if(res[3]?.res){
+      return 'חשמל';
+    }
+    else if(res[2]?.res){
+      return 'צבע';
+    }
+    else if(res[1]?.res){
+      return 'השלמה';
+    }
+    else if(res[0]?.res){
+      return 'שלדה';
+    }
+    else{
+      return 'תכנון';
+    }
+  }
+
+  const [mtsavYetsorRes,setMtsavYetsorRes] = useState([]);
 
   return (
     <div>
+      <ModalMtsavYetsor res={{
+        a : mtsavYetsorRes[0]?.res,
+        b : mtsavYetsorRes[1]?.res,
+        c : mtsavYetsorRes[2]?.res,
+        d : mtsavYetsorRes[3]?.res,
+        e : mtsavYetsorRes[4]?.res,
+        f : mtsavYetsorRes[5]?.res,
+      }} show={showModalMtsavYetsor} disable={() => setShowModalMtsavYetsor(false)} />
       <ModalCreateTest Tokhneot={Tokhneot} category={category} drag={drag} mlae={mlae} sogAskaa={sogAska} show={showModalCreate} lkohTfaol={lkoh} agla={tfaolAgla} disable={() => { setShowModalCreate(false); setSogAska(''); setTfaolAgla(null); }} />
       {/* {<ModalCreate Tokhneot={Tokhneot} category={category} mlae={mlae} sogAskaa={sogAska} show={showModalCreate} disable={() => setShowModalCreate(false)} />}
       
@@ -463,7 +522,496 @@ export default function Home() {
 
 
 
-      <div className="w-full flex flex-wrap mb-24">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <div dir="rtl" className="flex h-[700px] mr-16 ml-16 bg-white shadow-2xl rounded-2xl">
+        <aside className="w-64 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-r-3xl">
+          <div className="p-4">
+            <h1 className="text-xl font-extrabold text-gray-800 dark:text-white">מצבי תפעול</h1>
+          </div>
+          <Divider className="mt-[14px]" />
+          <div className="mr-5 ml-5 mt-2 mb-2 bg">
+            <Button size="sm" color={mtsav === 'A' ? "primary" : 'default'} variant="flat" className="w-full" onClick={() => setMtsav('A')}><div className="flex items-center justify-start w-full">
+              <div className="ml-5">
+                <Comment
+                  visible={true}
+                  height="30"
+                  width="30"
+                  ariaLabel="comment-loading"
+                  wrapperStyle={{}}
+                  wrapperClass="comment-wrapper"
+                  color="white"
+                  backgroundColor="#3b82f6"
+                />
+              </div>
+              <div className="text-xl font-bold tracking-wider"> שלב הצעה</div></div>
+            </Button>
+            <Button size="sm" color={mtsav === 'B' ? "primary" : 'default'} variant="flat" className="w-full mt-1" onClick={() => setMtsav('B')}><div className="flex items-center justify-start w-full">
+              <div className="ml-5">
+                <Hourglass
+                  visible={true}
+                  height="30"
+                  width="30"
+                  ariaLabel="hourglass-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                  color='#3b82f6'
+                  backgroundColor="#3b82f6"
+                />
+              </div>
+              <div className="text-xl font-bold tracking-wider">שלב הזמנה</div></div>
+            </Button>
+            <Button size="sm" color={mtsav === 'C' ? "primary" : 'default'} variant="flat" className="w-full mt-1" onClick={() => setMtsav('C')}><div className="flex items-center justify-start w-full">
+              <div className="ml-5">
+                <ThreeCircles
+                  visible={true}
+                  height="30"
+                  width="30"
+                  color="#3b82f6"
+                  ariaLabel="three-circles-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />
+              </div>
+              <div className="text-xl font-bold tracking-wider">שלב ייצור</div></div>
+            </Button>
+            <Button size="sm" color={mtsav === 'D' ? "primary" : 'default'} variant="flat" className="w-full mt-1" onClick={() => setMtsav('D')}><div className="flex items-center justify-start w-full">
+              <div className="ml-5">
+                <Puff
+                  visible={true}
+                  height="30"
+                  width="30"
+                  color="#3b82f6"
+                  ariaLabel="puff-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />
+              </div>
+              <div className="text-xl font-bold tracking-wider">מצב סיום</div></div>
+            </Button>
+          </div>
+          <div className="p-4">
+            <h1 className="text-xl font-extrabold text-gray-800 dark:text-white">הוספת פעולה</h1>
+          </div>
+          <Divider />
+          <div className="mr-5 ml-5 mt-2 mb-2">
+            <Button size="sm" color="primary" variant="faded" className="w-full" onClick={() => { setShowModalCreate(true); setSogAska('ייצור'); }}><div className="flex items-center justify-start w-full"><FaTrailer className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">ייצור עגלה</div></div></Button>
+            <Button size="sm" color="primary" variant="faded" className="w-full mt-1" onClick={() => { setShowModalCreate(true); setSogAska('הרכבת וו'); }}><div className="flex items-center justify-start w-full"><GiHook className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">הרכבת וו</div></div></Button>
+            <Button size="sm" className="w-full mt-1" color="primary" variant="faded" onClick={() => { setShowModalCreate(true); setSogAska('תיקון'); }}><div className="flex items-center justify-start w-full"><HiOutlineWrenchScrewdriver className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">תיקון</div></div></Button>
+            <Button size="sm" className="w-full mt-1" isDisabled color="primary" variant="faded" onClick={() => { setShowModalCreate(true); setSogAska('טסט'); }}><div className="flex items-center justify-start w-full"><FaRegCalendarCheck className="text-2xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">טסט</div></div></Button>
+          </div>
+          <div className="p-4">
+            <h1 className="text-xl font-extrabold text-gray-800 dark:text-white">תוכניות ייצור</h1>
+          </div>
+          <Divider />
+          <div className="mr-5 ml-5 mt-2 mb-2">
+            <Button size="sm" className="w-full mt-2" color="primary" variant="faded" onClick={() => setShowModalCreateTokhnetYetsor(true)}><div className="flex items-center justify-start w-full"><AiOutlineAppstoreAdd className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">רישמת תוכניות</div></div></Button>
+            <Button size="sm" className="w-full mt-2" color="primary" variant="faded" onClick={() => setShowModalCreateTokhnetYetsor(true)}><div className="flex items-center justify-start w-full"><AiOutlineAppstoreAdd className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">הוספת תוכנית</div></div></Button>
+
+          </div>
+        </aside>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <header className="bg-white rounded-se-3xl dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700">
+            <div className="flex items-center px-4 py-3">
+              {
+                mtsav === 'A' &&
+                <div className="flex items-center w-full justify-center">
+                  <div className="ml-5">
+                    <Comment
+                      visible={true}
+                      height="50"
+                      width="50"
+                      ariaLabel="comment-loading"
+                      wrapperStyle={{}}
+                      wrapperClass="comment-wrapper"
+                      color="white"
+                      backgroundColor="#3b82f6"
+                    />
+                  </div>
+                  <div className="text-3xl">שלב הצעה</div>
+                </div>
+              }
+              {
+                mtsav === 'B' &&
+                <div className="flex items-center w-full justify-center">
+                  <div className="ml-5">
+                    <Hourglass
+                      visible={true}
+                      height="50"
+                      width="50"
+                      ariaLabel="hourglass-loading"
+                      wrapperStyle={{}}
+                      wrapperClass=""
+                      color='#3b82f6'
+                      backgroundColor="#3b82f6"
+                    />
+                  </div>
+                  <div className="text-3xl">שלב הזמנה</div>
+                </div>
+              }
+              {
+                mtsav === 'C' &&
+                <div className="flex items-center w-full justify-center">
+                  <div className="ml-5">
+                    <ThreeCircles
+                      visible={true}
+                      height="50"
+                      width="50"
+                      color="#3b82f6"
+                      ariaLabel="three-circles-loading"
+                      wrapperStyle={{}}
+                      wrapperClass=""
+                    />
+                  </div>
+                  <div className="text-3xl">שלב ייצור</div>
+                </div>
+              }
+              {
+                mtsav === 'D' &&
+                <div className="flex items-center w-full justify-center">
+                  <div className="ml-5">
+                    <Puff
+                      visible={true}
+                      height="50"
+                      width="50"
+                      color="#3b82f6"
+                      ariaLabel="puff-loading"
+                      wrapperStyle={{}}
+                      wrapperClass=""
+                    />
+                  </div>
+                  <div className="text-3xl">שלב סיום</div>
+                </div>
+              }
+              <Button variant="outline">
+                View All
+              </Button>
+            </div>
+          </header>
+          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-white rounded-ee-3xl border-r-2">
+            <div className="container mx-auto px-6 py-8">
+              {
+                mtsav === 'A' &&
+                <div className="" dir="ltr">
+                  <table className="w-full table-auto border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs"></th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך אספקה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">זמן עבר</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שעת תחילה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך תחילה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שם לקוח</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מספר פעולה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">סוג פעולה</th>
+                        <th className="px-4 py-2 text-center  font-medium text-black text-xs w-30"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        aglotA.map((agla, index) => {
+                          return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                                                                                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska === 'ייצור' ? 'עגלה' : agla.sogAska}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
+                          </tr>
+                        })
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+              {
+                mtsav === 'B' &&
+                <div className="" dir="ltr">
+                  <table className="w-full table-auto border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs"></th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך אספקה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">זמן עבר</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שעת תחילה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך תחילה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שם לקוח</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מספר פעולה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">סוג פעולה</th>
+                        <th className="px-4 py-2 text-center  font-medium text-black text-xs w-30"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        aglotB.map((agla, index) => {
+                          return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska === 'ייצור' ? 'עגלה' : agla.sogAska}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
+                          </tr>
+                        })
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+              {
+                mtsav === 'C' &&
+                <div className="" dir="ltr">
+                  <table className="w-full table-auto border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs"></th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs"></th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך אספקה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">זמן עבר</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שעת תחילה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך תחילה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שם לקוח</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מספר פעולה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">סוג פעולה</th>
+                        <th className="px-4 py-2 text-center  font-medium text-black text-xs w-30"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {
+                          aglotC.map((agla, index) => {
+                            return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">
+                                <div className="w-[120px] flex items-center cursor-pointer" onClick={() => { setShowModalMtsavYetsor(true);setMtsavYetsorRes(agla?.mtsavYetsor); }}>
+                                  <div className="w-[120px] text-center fixed font-black text-primary tracking-widest z-10">
+                                    {
+                                      GetResMtsav(agla?.mtsavYetsor)
+                                    }
+                                  </div>
+
+
+
+                                  {
+                                    agla?.mtsavYetsor[5]?.res ?
+                                    <>
+                                    <div className="w-full bg-success-300 h-[30px] flex justify-center items-center rounded-l-2xl">
+                                    </div>
+                                    </>
+                                    :
+                                    <>
+                                    <div className="w-full bg-primary opacity-20 rounded-l-2xl h-[30px] flex justify-center items-center">
+                                    </div>
+                                    </>
+                                  }
+
+                                  
+
+
+                                  {
+                                    agla?.mtsavYetsor[4]?.res ?
+                                    <>
+                                    <div className="w-full bg-success-300 h-[30px] flex justify-center items-center">
+                                    </div>
+                                    </>
+                                    :
+                                    <>
+                                    <div className="w-full bg-primary opacity-20 h-[30px] flex justify-center items-center">
+                                    </div>
+                                    </>
+                                  }
+                                  
+
+
+                                  {
+                                    agla?.mtsavYetsor[3]?.res ?
+                                    <>
+                                    <div className="w-full bg-success-300 h-[30px] flex justify-center items-center">
+                                    </div>
+                                    </>
+                                    :
+                                    <>
+                                    <div className="w-full bg-primary opacity-20 h-[30px] flex justify-center items-center">
+                                    </div>
+                                    </>
+                                  }
+                                  
+
+
+                                  {
+                                    agla?.mtsavYetsor[2]?.res ?
+                                    <>
+                                    <div className="w-full bg-success-300 h-[30px] flex justify-center items-center">
+                                    </div>
+                                    </>
+                                    :
+                                    <>
+                                     <div className="w-full bg-primary opacity-20 h-[30px] flex justify-center items-center">
+                                     </div>
+                                    </>
+                                  }
+                                 
+
+
+                                  {
+                                    agla?.mtsavYetsor[1]?.res ?
+                                    <>
+                                    <div className="w-full bg-success-300 h-[30px] flex justify-center items-center">
+                                    </div>
+                                    </>
+                                    :
+                                    <>
+                                    <div className="w-full bg-primary opacity-20 h-[30px] flex justify-center items-center">
+                                    </div>
+                                    </>
+                                  }
+                                  
+
+
+                                  
+                                  {
+                                    agla?.mtsavYetsor[0]?.res ?
+                                    <>
+                                    <div className="w-full bg-success-300 h-[30px] flex justify-center items-center rounded-r-2xl">
+                                    </div>
+                                    </>
+                                    :
+                                    <>
+                                    <div className="w-full bg-primary opacity-20 rounded-r-2xl h-[30px] flex justify-center items-center">
+                                    </div>
+                                    </>
+                                  }
+                                  
+
+
+
+
+                                </div>
+                                {/* <Button color='primary' className="w-[100px]" variant='flat' size="sm" onClick={() => { setShowModalMtsavYetsor(true); }}>
+                              
+                            </Button> */}
+                              </td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska === 'ייצור' ? 'עגלה' : agla.sogAska}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
+                          </tr>
+                        })
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+              {
+                mtsav === 'D' &&
+                <div className="" dir="ltr">
+                  <table className="w-full table-auto border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs"></th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך אספקה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">זמן עבר</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שעת תחילה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך תחילה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שם לקוח</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מספר פעולה</th>
+                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">סוג פעולה</th>
+                        <th className="px-4 py-2 text-center  font-medium text-black text-xs w-30"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        aglotD.map((agla, index) => {
+                          return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska === 'ייצור' ? 'עגלה' : agla.sogAska}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
+                          </tr>
+                        })
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+
+            </div>
+          </main>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      {/* <div className="w-full flex flex-wrap mb-24">
 
         <div className="flex-wrap w-full flex justify-center">
 
@@ -536,12 +1084,12 @@ export default function Home() {
                       <thead>
                         <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
                           <th className="px-4 py-2 text-center bg-gradient-to-r from-white to-gray-50 font-extrabold text-black text-xs">זמן עבר</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black text-xs">תחילת תהליך</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black text-xs">תאריך תחילה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black text-xs">סוג עסקה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black text-xs">מצב עסקה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black text-xs">מספר מכירה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-500 to-gray-600 font-medium text-black text-xs"></th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תחילת תהליך</th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך תחילה</th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">סוג עסקה</th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מצב עסקה</th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מספר מכירה</th>
+                          <th className="px-4 py-2 text-center  font-medium text-black text-xs"></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -552,7 +1100,7 @@ export default function Home() {
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
                             </tr>
@@ -600,12 +1148,13 @@ export default function Home() {
                       <thead>
                         <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
                           <th className="px-4 py-2 text-center bg-gradient-to-r from-white to-gray-50 font-extrabold text-black text-xs">זמן עבר</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black text-xs">תחילת תהליך</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black text-xs">תאריך תחילה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black text-xs">סוג עסקה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black text-xs">מצב עסקה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black text-xs">מספר מכירה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-500 to-gray-600 font-medium text-black text-xs"></th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תחילת תהליך</th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך תחילה</th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">סוג עסקה</th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מצב ייצור</th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מצב עסקה</th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מספר מכירה</th>
+                          <th className="px-4 py-2 text-center  font-medium text-black text-xs"></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -616,7 +1165,8 @@ export default function Home() {
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalMtsavYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
                             </tr>
@@ -656,12 +1206,12 @@ export default function Home() {
                       <thead>
                         <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
                           <th className="px-4 py-2 text-center bg-gradient-to-r from-white to-gray-50 font-extrabold text-black text-xs">זמן עבר</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black text-xs">תחילת תהליך</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black text-xs">תאריך תחילה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black text-xs">סוג עסקה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black text-xs">מצב עסקה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black text-xs">מספר מכירה</th>
-                          <th className="px-4 py-2 text-center bg-gradient-to-r from-gray-500 to-gray-600 font-medium text-black text-xs"></th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תחילת תהליך</th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך תחילה</th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">סוג עסקה</th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מצב עסקה</th>
+                          <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מספר מכירה</th>
+                          <th className="px-4 py-2 text-center  font-medium text-black text-xs"></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -672,7 +1222,7 @@ export default function Home() {
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setTfaolAgla(agla); setShowModalCreate(true); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>המשך</Button></td>
+                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setTfaolAgla(agla); setShowModalCreate(true); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                               <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
                             </tr>
@@ -709,7 +1259,7 @@ export default function Home() {
 
 
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }

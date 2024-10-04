@@ -778,6 +778,7 @@ export default function Management() {
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        
                                         <tr className="border-b border-gray-200 dark:border-gray-700">
                                             <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><Button size="sm" onClick={() => { setHotsaa({
                                                 baola:'הכנסות',
