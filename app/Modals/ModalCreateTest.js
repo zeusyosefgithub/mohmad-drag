@@ -795,9 +795,6 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         setLoading(false);
         ResetAll();
         disable();
-        if (BdekatMtsavem() === 'D') {
-            router.push('/sales');
-        }
     }
     async function updateInventory(firestore, mlae, currentItems, newItems, isElse) {
         for (let index = 0; index < currentItems.length; index++) {

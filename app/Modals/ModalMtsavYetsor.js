@@ -5,6 +5,13 @@ import { FaRegCheckSquare } from "react-icons/fa";
 
 export default function ModalMtsavYetsor({ show, disable, res }) {
 
+    const [newRes,setNewRes] = useState([]);
+
+    useEffect(() => {
+        console.log(res);
+        setNewRes(res);
+    },[res])
+
     const GetTooltip = (masher,tarekh,shaa,berotMtsav,shemMtsav) => {
         return <Tooltip placement='bottom' closeDelay={100} content={
             <div className="px-1 py-2 w-[200px]">
@@ -32,6 +39,10 @@ export default function ModalMtsavYetsor({ show, disable, res }) {
         </Tooltip>
     }
 
+
+    console.log(res?.a);
+    console.log(newRes);
+
     return (
         <Modal placement="center" className="test-fontt" backdrop={"blur"} size="3xl" isOpen={show} onClose={disable}>
             <ModalContent>
@@ -42,9 +53,9 @@ export default function ModalMtsavYetsor({ show, disable, res }) {
                     <div className="w-full flex justify-center items-center mt-10 mb-10">
 
                         {
-                            res?.f ?
+                            res?.f?.res ?
                                 <>
-                                    {GetTooltip('aws','20-02-2024','20:50','ttttttttt','בקרת איכות')}
+                                    {GetTooltip(res?.f?.maoshar,res?.f?.tarekh,res?.f?.shaa,res?.f?.maoshar,'בקרת איכות')}
                                 </>
                                 :
                                 <>
@@ -52,17 +63,17 @@ export default function ModalMtsavYetsor({ show, disable, res }) {
                                         בקרת איכות
                                     </div>
                                     {
-                                        !res?.e && <Divider className="w-[50px] h-[10px] bg-primary opacity-20" />
+                                        !res?.e?.res && <Divider className="w-[50px] h-[10px] bg-primary opacity-20" />
                                     }
                                 </>
                         }
                         {
-                            res?.e ?
+                            res?.e?.res ?
                                 <>
                                     <Divider className="w-[13px] h-[10px] bg-success-300" />
                                     <FaRegCheckSquare className="text-success-300 text-2xl" />
                                     <Divider className="w-[13px] h-[10px] bg-success-300" />
-                                    {GetTooltip('aws','20-02-2024','20:50','ttttttttt','חשמל')}
+                                    {GetTooltip(res?.e?.maoshar,res?.e?.tarekh,res?.e?.shaa,res?.e?.maoshar,'חשמל')}
                                 </>
                                 :
                                 <>
@@ -70,17 +81,17 @@ export default function ModalMtsavYetsor({ show, disable, res }) {
                                         חשמל
                                     </div>
                                     {
-                                        !res?.d && <Divider className="w-[50px] h-[10px] bg-primary opacity-20" />
+                                        !res?.d?.res && <Divider className="w-[50px] h-[10px] bg-primary opacity-20" />
                                     }
                                 </>
                         }
                         {
-                            res?.d ?
+                            res?.d?.res ?
                                 <>
                                     <Divider className="w-[13px] h-[10px] bg-success-300" />
                                     <FaRegCheckSquare className="text-success-300 text-2xl" />
                                     <Divider className="w-[13px] h-[10px] bg-success-300" />
-                                    {GetTooltip('aws','20-02-2024','20:50','ttttttttt','צבע')}
+                                    {GetTooltip(res?.d?.maoshar,res?.d?.tarekh,res?.d?.shaa,res?.d?.maoshar,'צבע')}
                                 </>
                                 :
                                 <>
@@ -88,17 +99,17 @@ export default function ModalMtsavYetsor({ show, disable, res }) {
                                         צבע
                                     </div>
                                     {
-                                        !res?.c && <Divider className="w-[50px] h-[10px] bg-primary opacity-20" />
+                                        !res?.c?.res && <Divider className="w-[50px] h-[10px] bg-primary opacity-20" />
                                     }
                                 </>
                         }
                         {
-                            res?.c ?
+                            res?.c?.res ?
                                 <>
                                     <Divider className="w-[13px] h-[10px] bg-success-300" />
                                     <FaRegCheckSquare className="text-success-300 text-2xl" />
                                     <Divider className="w-[13px] h-[10px] bg-success-300" />
-                                    {GetTooltip('aws','20-02-2024','20:50','ttttttttt','השלמה')}
+                                    {GetTooltip(res?.c?.maoshar,res?.c?.tarekh,res?.c?.shaa,res?.c?.maoshar,'השלמה')}
                                 </>
                                 :
                                 <>
@@ -106,17 +117,17 @@ export default function ModalMtsavYetsor({ show, disable, res }) {
                                         השלמה
                                     </div>
                                     {
-                                        !res?.b && <Divider className="w-[50px] h-[10px] bg-primary opacity-20" />
+                                        !res?.b?.res && <Divider className="w-[50px] h-[10px] bg-primary opacity-20" />
                                     }
                                 </>
                         }
                         {
-                            res?.b ?
+                            res?.b?.res ?
                                 <>
                                     <Divider className="w-[13px] h-[10px] bg-success-300" />
                                     <FaRegCheckSquare className="text-success-300 text-2xl" />
                                     <Divider className="w-[13px] h-[10px] bg-success-300" />
-                                    {GetTooltip('aws','20-02-2024','20:50','ttttttttt','שלדה')}
+                                    {GetTooltip(res?.b?.maoshar,res?.b?.tarekh,res?.b?.shaa,res?.b?.maoshar,'שלדה')}
                                 </>
                                 :
                                 <>
@@ -124,17 +135,17 @@ export default function ModalMtsavYetsor({ show, disable, res }) {
                                         שלדה
                                     </div>
                                     {
-                                        !res?.a && <Divider className="w-[50px] h-[10px] bg-primary opacity-20" />
+                                        !res?.a?.res && <Divider className="w-[50px] h-[10px] bg-primary opacity-20" />
                                     }
                                 </>
                         }
                         {
-                            res?.a ?
+                            res?.a?.res ?
                                 <>
                                     <Divider className="w-[13px] h-[10px] bg-success-300" />
                                     <FaRegCheckSquare className="text-success-300 text-2xl" />
                                     <Divider className="w-[13px] h-[10px] bg-success-300" />
-                                    {GetTooltip('aws','20-02-2024','20:50','ttttttttt','תכנון')}
+                                    {GetTooltip(res?.a?.maoshar,res?.a?.tarekh,res?.a?.shaa,res?.a?.maoshar,'תכנון')}
 
                                 </>
                                 :

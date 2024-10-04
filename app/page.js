@@ -434,6 +434,9 @@ export default function Home() {
     }
   }, [tfaolAgla?.id]);
 
+
+
+
   const handleData = (documents) => {
     setMlae(documents);
   };
@@ -465,53 +468,57 @@ export default function Home() {
 
 
 
-  
-  const res = {
-    a: true,
-    b: true,
-    c: true,
-    d: true,
-    e: true,
-    f: true,
-}
+
 
 
 
   const GetResMtsav = (res) => {
-    if(res[5]?.res){
+    if (res[5]?.res) {
       return 'מוכן';
     }
-    else if(res[4]?.res){
+    else if (res[4]?.res) {
       return 'בקרת איכות';
     }
-    else if(res[3]?.res){
+    else if (res[3]?.res) {
       return 'חשמל';
     }
-    else if(res[2]?.res){
+    else if (res[2]?.res) {
       return 'צבע';
     }
-    else if(res[1]?.res){
+    else if (res[1]?.res) {
       return 'השלמה';
     }
-    else if(res[0]?.res){
+    else if (res[0]?.res) {
       return 'שלדה';
     }
-    else{
+    else {
       return 'תכנון';
     }
   }
 
-  const [mtsavYetsorRes,setMtsavYetsorRes] = useState([]);
+  const [mtsavYetsorRes, setMtsavYetsorRes] = useState();
+
+
+  useEffect(() => {
+    if (mtsavYetsorRes && mtsavYetsorRes?.id) {
+      const unsub = onSnapshot(doc(firestore, 'tfaol', mtsavYetsorRes?.id), (doc) => {
+        if (doc.exists()) {
+          setMtsavYetsorRes({ ...doc.data(), id: doc.id });
+        }
+      });
+      return () => unsub();
+    }
+  }, [mtsavYetsorRes?.id]);
 
   return (
     <div>
       <ModalMtsavYetsor res={{
-        a : mtsavYetsorRes[0]?.res,
-        b : mtsavYetsorRes[1]?.res,
-        c : mtsavYetsorRes[2]?.res,
-        d : mtsavYetsorRes[3]?.res,
-        e : mtsavYetsorRes[4]?.res,
-        f : mtsavYetsorRes[5]?.res,
+        a: mtsavYetsorRes?.mtsavYetsor[0],
+        b: mtsavYetsorRes?.mtsavYetsor[1],
+        c: mtsavYetsorRes?.mtsavYetsor[2],
+        d: mtsavYetsorRes?.mtsavYetsor[3],
+        e: mtsavYetsorRes?.mtsavYetsor[4],
+        f: mtsavYetsorRes?.mtsavYetsor[5],
       }} show={showModalMtsavYetsor} disable={() => setShowModalMtsavYetsor(false)} />
       <ModalCreateTest Tokhneot={Tokhneot} category={category} drag={drag} mlae={mlae} sogAskaa={sogAska} show={showModalCreate} lkohTfaol={lkoh} agla={tfaolAgla} disable={() => { setShowModalCreate(false); setSogAska(''); setTfaolAgla(null); }} />
       {/* {<ModalCreate Tokhneot={Tokhneot} category={category} mlae={mlae} sogAskaa={sogAska} show={showModalCreate} disable={() => setShowModalCreate(false)} />}
@@ -583,7 +590,14 @@ export default function Home() {
                   backgroundColor="#3b82f6"
                 />
               </div>
-              <div className="text-xl font-bold tracking-wider"> שלב הצעה</div></div>
+              <div className="text-xl font-bold tracking-wider"> שלב הצעה</div>
+              {
+                aglotA.length > 0 &&
+                <div className="flex justify-end w-full">
+                  <div className=" bg-success w-[25px] h-[25px] rounded-full font-black text-[16px] text-white flex justify-center items-center">{aglotA.length}</div>
+                </div>
+              }
+            </div>
             </Button>
             <Button size="sm" color={mtsav === 'B' ? "primary" : 'default'} variant="flat" className="w-full mt-1" onClick={() => setMtsav('B')}><div className="flex items-center justify-start w-full">
               <div className="ml-5">
@@ -598,7 +612,14 @@ export default function Home() {
                   backgroundColor="#3b82f6"
                 />
               </div>
-              <div className="text-xl font-bold tracking-wider">שלב הזמנה</div></div>
+              <div className="text-xl font-bold tracking-wider">שלב הזמנה</div>
+              {
+                aglotB.length > 0 &&
+                <div className="flex justify-end w-full">
+                  <div className=" bg-success w-[25px] h-[25px] rounded-full font-black text-[16px] text-white flex justify-center items-center">{aglotB.length}</div>
+                </div>
+              }
+            </div>
             </Button>
             <Button size="sm" color={mtsav === 'C' ? "primary" : 'default'} variant="flat" className="w-full mt-1" onClick={() => setMtsav('C')}><div className="flex items-center justify-start w-full">
               <div className="ml-5">
@@ -612,7 +633,14 @@ export default function Home() {
                   wrapperClass=""
                 />
               </div>
-              <div className="text-xl font-bold tracking-wider">שלב ייצור</div></div>
+              <div className="text-xl font-bold tracking-wider">שלב ייצור</div>
+              {
+                aglotC.length > 0 &&
+                <div className="flex justify-end w-full">
+                  <div className=" bg-success w-[25px] h-[25px] rounded-full font-black text-[16px] text-white flex justify-center items-center">{aglotC.length}</div>
+                </div>
+              }
+            </div>
             </Button>
             <Button size="sm" color={mtsav === 'D' ? "primary" : 'default'} variant="flat" className="w-full mt-1" onClick={() => setMtsav('D')}><div className="flex items-center justify-start w-full">
               <div className="ml-5">
@@ -626,7 +654,14 @@ export default function Home() {
                   wrapperClass=""
                 />
               </div>
-              <div className="text-xl font-bold tracking-wider">מצב סיום</div></div>
+              <div className="text-xl font-bold tracking-wider">מצב סיום</div>
+              {
+                aglotD.length > 0 &&
+                <div className="flex justify-end w-full">
+                  <div className=" bg-success w-[25px] h-[25px] rounded-full font-black text-[16px] text-white flex justify-center items-center">{aglotD.length}</div>
+                </div>
+              }
+            </div>
             </Button>
           </div>
           <div className="p-4">
@@ -755,7 +790,7 @@ export default function Home() {
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                                                                                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska === 'ייצור' ? 'עגלה' : agla.sogAska}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
@@ -822,125 +857,125 @@ export default function Home() {
                       </tr>
                     </thead>
                     <tbody>
-                        {
-                          aglotC.map((agla, index) => {
-                            return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">
-                                <div className="w-[120px] flex items-center cursor-pointer" onClick={() => { setShowModalMtsavYetsor(true);setMtsavYetsorRes(agla?.mtsavYetsor); }}>
-                                  <div className="w-[120px] text-center fixed font-black text-primary tracking-widest z-10">
-                                    {
-                                      GetResMtsav(agla?.mtsavYetsor)
-                                    }
-                                  </div>
-
-
-
+                      {
+                        aglotC.map((agla, index) => {
+                          return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">
+                              <div className="w-[120px] flex items-center cursor-pointer" onClick={() => { setShowModalMtsavYetsor(true); setMtsavYetsorRes(agla); }}>
+                                <div className="w-[120px] text-center fixed font-black text-primary tracking-widest z-10">
                                   {
-                                    agla?.mtsavYetsor[5]?.res ?
-                                    <>
-                                    <div className="w-full bg-success-300 h-[30px] flex justify-center items-center rounded-l-2xl">
-                                    </div>
-                                    </>
-                                    :
-                                    <>
-                                    <div className="w-full bg-primary opacity-20 rounded-l-2xl h-[30px] flex justify-center items-center">
-                                    </div>
-                                    </>
+                                    GetResMtsav(agla?.mtsavYetsor)
                                   }
-
-                                  
-
-
-                                  {
-                                    agla?.mtsavYetsor[4]?.res ?
-                                    <>
-                                    <div className="w-full bg-success-300 h-[30px] flex justify-center items-center">
-                                    </div>
-                                    </>
-                                    :
-                                    <>
-                                    <div className="w-full bg-primary opacity-20 h-[30px] flex justify-center items-center">
-                                    </div>
-                                    </>
-                                  }
-                                  
-
-
-                                  {
-                                    agla?.mtsavYetsor[3]?.res ?
-                                    <>
-                                    <div className="w-full bg-success-300 h-[30px] flex justify-center items-center">
-                                    </div>
-                                    </>
-                                    :
-                                    <>
-                                    <div className="w-full bg-primary opacity-20 h-[30px] flex justify-center items-center">
-                                    </div>
-                                    </>
-                                  }
-                                  
-
-
-                                  {
-                                    agla?.mtsavYetsor[2]?.res ?
-                                    <>
-                                    <div className="w-full bg-success-300 h-[30px] flex justify-center items-center">
-                                    </div>
-                                    </>
-                                    :
-                                    <>
-                                     <div className="w-full bg-primary opacity-20 h-[30px] flex justify-center items-center">
-                                     </div>
-                                    </>
-                                  }
-                                 
-
-
-                                  {
-                                    agla?.mtsavYetsor[1]?.res ?
-                                    <>
-                                    <div className="w-full bg-success-300 h-[30px] flex justify-center items-center">
-                                    </div>
-                                    </>
-                                    :
-                                    <>
-                                    <div className="w-full bg-primary opacity-20 h-[30px] flex justify-center items-center">
-                                    </div>
-                                    </>
-                                  }
-                                  
-
-
-                                  
-                                  {
-                                    agla?.mtsavYetsor[0]?.res ?
-                                    <>
-                                    <div className="w-full bg-success-300 h-[30px] flex justify-center items-center rounded-r-2xl">
-                                    </div>
-                                    </>
-                                    :
-                                    <>
-                                    <div className="w-full bg-primary opacity-20 rounded-r-2xl h-[30px] flex justify-center items-center">
-                                    </div>
-                                    </>
-                                  }
-                                  
-
-
-
-
                                 </div>
-                                {/* <Button color='primary' className="w-[100px]" variant='flat' size="sm" onClick={() => { setShowModalMtsavYetsor(true); }}>
+
+
+
+                                {
+                                  agla?.mtsavYetsor[5]?.res ?
+                                    <>
+                                      <div className="w-full bg-success-300 h-[30px] flex justify-center items-center rounded-l-2xl">
+                                      </div>
+                                    </>
+                                    :
+                                    <>
+                                      <div className="w-full bg-primary opacity-20 rounded-l-2xl h-[30px] flex justify-center items-center">
+                                      </div>
+                                    </>
+                                }
+
+
+
+
+                                {
+                                  agla?.mtsavYetsor[4]?.res ?
+                                    <>
+                                      <div className="w-full bg-success-300 h-[30px] flex justify-center items-center">
+                                      </div>
+                                    </>
+                                    :
+                                    <>
+                                      <div className="w-full bg-primary opacity-20 h-[30px] flex justify-center items-center">
+                                      </div>
+                                    </>
+                                }
+
+
+
+                                {
+                                  agla?.mtsavYetsor[3]?.res ?
+                                    <>
+                                      <div className="w-full bg-success-300 h-[30px] flex justify-center items-center">
+                                      </div>
+                                    </>
+                                    :
+                                    <>
+                                      <div className="w-full bg-primary opacity-20 h-[30px] flex justify-center items-center">
+                                      </div>
+                                    </>
+                                }
+
+
+
+                                {
+                                  agla?.mtsavYetsor[2]?.res ?
+                                    <>
+                                      <div className="w-full bg-success-300 h-[30px] flex justify-center items-center">
+                                      </div>
+                                    </>
+                                    :
+                                    <>
+                                      <div className="w-full bg-primary opacity-20 h-[30px] flex justify-center items-center">
+                                      </div>
+                                    </>
+                                }
+
+
+
+                                {
+                                  agla?.mtsavYetsor[1]?.res ?
+                                    <>
+                                      <div className="w-full bg-success-300 h-[30px] flex justify-center items-center">
+                                      </div>
+                                    </>
+                                    :
+                                    <>
+                                      <div className="w-full bg-primary opacity-20 h-[30px] flex justify-center items-center">
+                                      </div>
+                                    </>
+                                }
+
+
+
+
+                                {
+                                  agla?.mtsavYetsor[0]?.res ?
+                                    <>
+                                      <div className="w-full bg-success-300 h-[30px] flex justify-center items-center rounded-r-2xl">
+                                      </div>
+                                    </>
+                                    :
+                                    <>
+                                      <div className="w-full bg-primary opacity-20 rounded-r-2xl h-[30px] flex justify-center items-center">
+                                      </div>
+                                    </>
+                                }
+
+
+
+
+
+                              </div>
+                              {/* <Button color='primary' className="w-[100px]" variant='flat' size="sm" onClick={() => { setShowModalMtsavYetsor(true); }}>
                               
                             </Button> */}
-                              </td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
-                              <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
+                            </td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska === 'ייצור' ? 'עגלה' : agla.sogAska}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
                           </tr>
