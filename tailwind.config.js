@@ -23,6 +23,15 @@ module.exports = {
         '250': '2.5',
         '300': '3',
       },
+      keyframes: {
+        moveLeft: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '50%': { transform: 'translateX(-10px)' },
+        },
+      },
+      animation: {
+        'move-arrows': 'moveLeft 0.7s ease-in-out infinite',
+      },
     },
   },
   variants: {

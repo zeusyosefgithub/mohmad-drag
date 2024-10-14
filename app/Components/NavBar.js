@@ -23,11 +23,11 @@ export default function NavBar() {
         "ניהול",
         "יצור",
         "מכירות",
-        "רכש",
+        "מלאי",
     ];
 
     return (
-        <Navbar dir="rtl" onMenuOpenChange={setIsMenuOpen}>
+        <Navbar className="" dir="rtl" onMenuOpenChange={setIsMenuOpen}>
             <NavbarContent>
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -41,7 +41,7 @@ export default function NavBar() {
             <NavbarContent className="hidden sm:flex gap-4" justify="center">
                 <NavbarItem>
                     <Link color="foreground" href="/procurement">
-                        <Button variant="light" color="primary" className="text-lg">רכש<BiSolidPurchaseTag className="text-2xl text-green-400" /></Button>
+                        <Button variant="light" color="primary" className="text-lg">מלאי<BiSolidPurchaseTag className="text-2xl text-green-400" /></Button>
                     </Link>
                 </NavbarItem>
                 <NavbarItem>

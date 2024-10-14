@@ -141,7 +141,6 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
     const componentRefTwo = useRef();
     const refggg = useRef(null);
     const [showModalAddMotsarAher, setShowModalAddMotsarAher] = useState(false);
-
     const [sogBaola, setSogBaola] = useState('');
     const [hshhyatYetsorZman, setHshhyatYetsorZman] = useState();
     const initializeItems = (count) => {
@@ -2449,7 +2448,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
 
                                                                                 :
                                                                                 <div className="flex justify-center items-center">
-                                                                                    {/* <Autocomplete
+                                                                                    <Autocomplete
                                                                                         isDisabled={!hskmatLkoh}
                                                                                         label="מספר עגלה"
                                                                                         className="max-w-[200px]"
@@ -2466,7 +2465,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                             ))
                                                                                         }
 
-                                                                                    </Autocomplete> */}
+                                                                                    </Autocomplete>
                                                                                     <Button isDisabled={!hskmatLkoh} size="sm" className="mr-2" onClick={() => { router.push('/activion'); }}>הוספה</Button>
                                                                                 </div>
                                                                         }
@@ -2516,13 +2515,6 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                         <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas(mherKlale || "")}`} />
                                                     </div>
                                                 </ListItem>
-                                                <ListItem>
-                                                    <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                                        <div className="ml-5 w-[110px] text-right text-green-500">מחיר שוק</div>
-                                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪${formatNumberWithCommas(mherKlale || "")}`} />
-                                                    </div>
-                                                </ListItem>
-
                                                 <ListItem>
                                                     <div className="flex items-center flex-wrap w-full justify-center" dir="rtl">
                                                         <div className="ml-5 w-[110px] text-right text-danger-500">הנחה</div>

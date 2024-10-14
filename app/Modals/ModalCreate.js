@@ -321,7 +321,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, sogAskaa, 
             return 'B';
         }
         else if (BdekatMtsavA()) {
-            return 'A'; // sogAska - lkoh
+            return 'A'; //lkoh
         }
         else {
             return false;

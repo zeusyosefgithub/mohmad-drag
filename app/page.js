@@ -97,6 +97,8 @@ import ContactContext from "./auth/ContactContext";
 import ModalMtsavYetsor from "./Modals/ModalMtsavYetsor";
 import Link from "next/link";
 import { CardContent } from "@mui/material";
+import SlideButton from "./Components/SlideButton";
+import ModalYetsor from "./Modals/ModalYetsor";
 
 
 export function GetTmonatHelek(remez, msbar) {
@@ -510,6 +512,12 @@ export default function Home() {
     }
   }, [mtsavYetsorRes?.id]);
 
+  const handleComplete = () => {
+    alert('Slider reached the end!');
+  };
+
+  const [showModalYetsor,setShowModalYetsor] = useState(false);
+
   return (
     <div>
       <ModalMtsavYetsor res={{
@@ -526,6 +534,7 @@ export default function Home() {
       {<ModalCreate Tokhneot={Tokhneot} category={category} mlae={mlae} lkohTfaol={lkoh} agla={tfaolAgla} show={showModalYetsorMatsav} disable={() => setShowModalYetsorMatsav(false)} />} */}
       <ModalTokhnetYetsor category={category} mlae={mlae} show={showModalCreateTokhnetYetsor} disable={() => setShowModalCreateTokhnetYetsor(false)} />
       {loading && <Spinner className="absolute top-0 bottom-0 right-0 left-0" />}
+      <ModalYetsor category={category} show={showModalYetsor} disable={() => setShowModalYetsor(false)}/>
 
 
 
@@ -561,7 +570,9 @@ export default function Home() {
 
 
 
-
+      {/* <div className="m-10">
+      <SlideButton onComplete={handleComplete} />
+      </div> */}
 
 
 
@@ -757,7 +768,7 @@ export default function Home() {
                   <div className="text-3xl">שלב סיום</div>
                 </div>
               }
-              <Button variant="outline">
+              <Button variant="outline" onClick={() => setShowModalYetsor(true)}>
                 View All
               </Button>
             </div>
