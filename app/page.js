@@ -349,6 +349,8 @@ export default function Home() {
   const aglotB = useGetDataByCondition('tfaol', 'sogBaola', '==', 'B');
   const aglotC = useGetDataByCondition('tfaol', 'sogBaola', '==', 'C');
   const aglotD = useGetDataByCondition('tfaol', 'sogBaola', '==', 'D');
+  const aglot = GetDocs('drags');
+  const lkhot = GetDocs('customers');
   const [tfaolAgla, setTfaolAgla] = useState({});
   const [lkoh, setLkoh] = useState();
   const [msbarLkoh, setMsbarLkoh] = useState();
@@ -534,7 +536,7 @@ export default function Home() {
       {<ModalCreate Tokhneot={Tokhneot} category={category} mlae={mlae} lkohTfaol={lkoh} agla={tfaolAgla} show={showModalYetsorMatsav} disable={() => setShowModalYetsorMatsav(false)} />} */}
       <ModalTokhnetYetsor category={category} mlae={mlae} show={showModalCreateTokhnetYetsor} disable={() => setShowModalCreateTokhnetYetsor(false)} />
       {loading && <Spinner className="absolute top-0 bottom-0 right-0 left-0" />}
-      <ModalYetsor category={category} show={showModalYetsor} disable={() => setShowModalYetsor(false)}/>
+      <ModalYetsor aglot={aglot} lkhot={lkhot} category={category} show={showModalYetsor} disable={() => setShowModalYetsor(false)}/>
 
 
 

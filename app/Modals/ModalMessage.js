@@ -24,14 +24,14 @@ export default function ModalMessage({ disable, show, message, Aeshor,motsar,yet
                         <div className="flex justify-between w-full">
                             {
                                 motsar?.kmot > 0 ?
-                                <Button size="lg" color="primary" onClick={() => {
+                                <Button size="lg" color="primary" variant="flat" onClick={() => {
                                     disable();
                                     Aeshor(false);
                                 }}>
                                     סגור
                                 </Button>
                                 :
-                                <Button size="lg" color="primary" onClick={() => {
+                                <Button size="lg" color="primary" variant="flat" onClick={() => {
                                     disable();
                                     Aeshor(false);
                                 }}>
@@ -43,7 +43,7 @@ export default function ModalMessage({ disable, show, message, Aeshor,motsar,yet
                            
                             {
                                 (motsar?.kmot == 0 || yetsor) &&
-                                <Button size="lg" color="danger" onClick={() => {
+                                <Button size="lg" color="danger" variant="flat" onClick={() => {
                                     disable();
                                     Aeshor(true);
                                 }}>

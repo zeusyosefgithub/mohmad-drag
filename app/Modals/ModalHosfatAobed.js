@@ -34,6 +34,7 @@ export default function ModalHosfatAobed({ disable, show }) {
             yeshov: yeshov,
             aer: aer,
             skharBroto: 0,
+            active : true
         });
         await updateDoc(doc(firestore, 'metadata', counter?.id), { count: counter?.count + 1 });
         setLoading(false);

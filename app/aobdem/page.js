@@ -167,43 +167,48 @@ export default function Aobdem() {
         if (Array.isArray(shaotHeomData) && shaotHeomData.length > 0 && Array.isArray(aobdem) && aobdem.length > 0) {
             const updatedKnesotHeom = aobdem.map(knesa => {
                 const res = shaotHeomData.find(data => data.aobed === knesa.msbar);
-                if (res) {
+                if (knesa.active) {
+                    if (res) {
+                        return {
+                            id: res.id,
+                            msbar: knesa.msbar,
+                            shem: knesa.shem,
+                            tfked: knesa.tfked,
+                            yetseah: res.yetseah,
+                            knesa: res.knesa,
+                            headrot: res.headrot
+                        };
+                    }
                     return {
-                        id: res.id,
+                        id: '',
                         msbar: knesa.msbar,
                         shem: knesa.shem,
                         tfked: knesa.tfked,
-                        yetseah: res.yetseah,
-                        knesa: res.knesa,
-                        headrot: res.headrot
+                        yetseah: '',
+                        tarekh: format(new Date(), 'dd-MM-yyyy'),
+                        knesa: '',
+                        headrot: ''
                     };
                 }
-                return {
-                    id: '',
-                    msbar: knesa.msbar,
-                    shem: knesa.shem,
-                    tfked: knesa.tfked,
-                    yetseah: '',
-                    tarekh: format(new Date(), 'dd-MM-yyyy'),
-                    knesa: '',
-                    headrot: ''
-                };
             });
             setKnesotHeom(updatedKnesotHeom);
             setKnesotHeomBdeka(updatedKnesotHeom);
         }
         else if (!shaotHeomData?.length) {
             const updatedKnesotHeom = aobdem.map(knesa => {
-                return {
-                    id: '',
-                    msbar: knesa.msbar,
-                    shem: knesa.shem,
-                    tfked: knesa.tfked,
-                    yetseah: '',
-                    tarekh: format(new Date(), 'dd-MM-yyyy'),
-                    knesa: '',
-                    headrot: ''
-                };
+                if(knesa.active){
+                    return {
+                        id: '',
+                        msbar: knesa.msbar,
+                        shem: knesa.shem,
+                        tfked: knesa.tfked,
+                        yetseah: '',
+                        tarekh: format(new Date(), 'dd-MM-yyyy'),
+                        knesa: '',
+                        headrot: ''
+                    };
+                }
+               
             });
             setKnesotHeom(updatedKnesotHeom);
             setKnesotHeomBdeka(updatedKnesotHeom);
@@ -274,9 +279,9 @@ export default function Aobdem() {
     };
     const BdekatAefshrotAedcon = () => {
         for (let index = 0; index < knesotHeomBdeka.length; index++) {
-            if (knesotHeomBdeka[index].yetseah !== knesotHeom[index].yetseah ||
-                knesotHeomBdeka[index].knesa !== knesotHeom[index].knesa ||
-                knesotHeomBdeka[index].headrot !== knesotHeom[index].headrot) {
+            if (knesotHeomBdeka[index]?.yetseah !== knesotHeom[index]?.yetseah ||
+                knesotHeomBdeka[index]?.knesa !== knesotHeom[index]?.knesa ||
+                knesotHeomBdeka[index]?.headrot !== knesotHeom[index]?.headrot) {
                 return true;
             }
         }
@@ -487,7 +492,7 @@ export default function Aobdem() {
                                         <tbody>
                                             {
                                                 aobdem.map((aobed, index) => {
-                                                    return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                                                    return aobed.active && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                                                         <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><Button onClick={() => { setShowModalBrtemNosfemAobed(true); setAobed(aobed) }} size="sm">פתח</Button></td>
                                                         <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{aobed?.tarefLshaa}</td>
                                                         <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{aobed?.tfked}</td>
@@ -536,8 +541,8 @@ export default function Aobdem() {
                                                             return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                                                                 <td className="px-4 py-3 text-center text-[15px] text-gray-700 dark:text-gray-300"><Dropdown dir="rtl">
                                                                     <DropdownTrigger>
-                                                                        <Button color={aobed.headrot ? 'success' : "danger"} variant='flat' size="sm" className='m-2'>
-                                                                            {aobed.headrot || 'בחר פריט'}
+                                                                        <Button color={aobed?.headrot ? 'success' : "danger"} variant='flat' size="sm" className='m-2'>
+                                                                            {aobed?.headrot || 'בחר פריט'}
                                                                         </Button>
                                                                     </DropdownTrigger>
                                                                     <DropdownMenu
@@ -554,9 +559,9 @@ export default function Aobdem() {
                                                                         <DropdownItem key={'חופשה ללא תשלום'}>{'חופשה ללא תשלום'}</DropdownItem>
                                                                     </DropdownMenu>
                                                                 </Dropdown></td>
-                                                                <td className="px-4 py-3 text-center text-[15px] text-gray-700 dark:text-gray-300"><div className="flex justify-center"><Input value={aobed.yetseah} onValueChange={(val) => handleChange(index, 'yetseah', handleTime2Change(val, aobed.knesa))} type="time" size="sm" color={aobed.yetseah ? 'success' : "danger"} className="max-w-[80px]" labelPlacement="outside-left" /></div></td>
-                                                                <td className="px-4 py-3 text-center text-[15px] text-gray-700 dark:text-gray-300"><div className="flex justify-center"><Input value={aobed.knesa} onValueChange={(val) => handleChange(index, 'knesa', val)} type="time" size="sm" color={aobed.knesa ? 'success' : "danger"} className="max-w-[80px]" labelPlacement="outside-left" /></div></td>
-                                                                <td className="px-4 py-3 text-center text-[15px] text-gray-700 dark:text-gray-300">{aobed.shem}</td>
+                                                                <td className="px-4 py-3 text-center text-[15px] text-gray-700 dark:text-gray-300"><div className="flex justify-center"><Input value={aobed?.yetseah} onValueChange={(val) => handleChange(index, 'yetseah', handleTime2Change(val, aobed?.knesa))} type="time" size="sm" color={aobed?.yetseah ? 'success' : "danger"} className="max-w-[80px]" labelPlacement="outside-left" /></div></td>
+                                                                <td className="px-4 py-3 text-center text-[15px] text-gray-700 dark:text-gray-300"><div className="flex justify-center"><Input value={aobed?.knesa} onValueChange={(val) => handleChange(index, 'knesa', val)} type="time" size="sm" color={aobed?.knesa ? 'success' : "danger"} className="max-w-[80px]" labelPlacement="outside-left" /></div></td>
+                                                                <td className="px-4 py-3 text-center text-[15px] text-gray-700 dark:text-gray-300">{aobed?.shem}</td>
                                                             </tr>
                                                         })
                                                     }

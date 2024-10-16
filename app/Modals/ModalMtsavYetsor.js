@@ -40,8 +40,6 @@ export default function ModalMtsavYetsor({ show, disable, res }) {
     }
 
 
-    console.log(res?.a);
-    console.log(newRes);
 
     return (
         <Modal placement="center" className="test-fontt" backdrop={"blur"} size="3xl" isOpen={show} onClose={disable}>

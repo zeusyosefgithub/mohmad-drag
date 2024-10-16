@@ -2,11 +2,13 @@
 import { Button, Modal, Input, ModalBody, ModalContent, ModalFooter, ModalHeader, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Divider } from "@nextui-org/react";
 import { useState } from "react";
 import { firestore } from "../FireBase/firebase";
-import { doc, getDoc, runTransaction, setDoc, collection, addDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, runTransaction, setDoc, collection, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import GetDocs from "../FireBase/getDocs";
 
 
 export default function ModalBrtemNosfemAobed({ disable, show, aobed }) {
+
+    const [loading,setLoading] = useState(false);
 
     return (
         <Modal placement="center" className="test-fontt sizeForModals" backdrop={"blur"} size="2xl" isOpen={show} onClose={disable}>
@@ -53,8 +55,18 @@ export default function ModalBrtemNosfemAobed({ disable, show, aobed }) {
                             </div>
                         </div>
                     </ModalBody>
-                    <ModalFooter>
-                        <Button size="lg" color="primary" onClick={disable}>
+                    <ModalFooter className="flex justify-between bg-white border-t-1">
+                        <Button isLoading={loading} size="sm" color="danger" variant="flat" onClick={async() => {
+                            setLoading(true);
+                            await updateDoc(doc(firestore,'aobdem',aobed.id),{
+                                active : false
+                            });
+                            setLoading(false);
+                            disable();
+                        }}>
+                            מחיקה
+                        </Button>
+                        <Button size="sm" color="warning" variant="flat" onClick={disable}>
                             סגור
                         </Button>
                     </ModalFooter>

@@ -6,7 +6,7 @@ import { FaRegCheckSquare } from "react-icons/fa";
 export default function ModalBerotMotsrem({ show, disable,motsaremLhatseg, motsaremRglem, motsaremBrofelem, setMotsaremRglem, setMotsaremBrofelem }) {
 
     const checkAemRemezMataem = useCallback((val) => {
-        for (let index = 0; index < motsaremLhatseg.length; index++) {
+        for (let index = 0; index < motsaremLhatseg?.length; index++) {
             if (motsaremLhatseg[index] === val) {
                 return true;
             }
@@ -26,7 +26,7 @@ export default function ModalBerotMotsrem({ show, disable,motsaremLhatseg, motsa
                         {
                             motsaremRglem?.map((motsar, index) => {
                                 return <div key={index}>
-                                    <div ref={MotsaremRefs.current[index]}>{checkAemRemezMataem(motsar.remez) && renderDropdownWithInputs(motsar, GetBrtemMotsarCategory(motsar?.remez)?.shem, index, false, agla?.newMafeneMotsarem, sogBaola, null, null, null)}</div>
+                                    <div>{checkAemRemezMataem(motsar.remez) && renderDropdownWithInputs(motsar, GetBrtemMotsarCategory(motsar?.remez)?.shem, index, false, agla?.newMafeneMotsarem, sogBaola, null, null, null)}</div>
                                     {
                                         checkAemRemezMataem(motsar.remez) && <Divider className="mt-3 mb-3" />
                                     }
