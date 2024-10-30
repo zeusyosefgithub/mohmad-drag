@@ -512,6 +512,14 @@ export default function Home() {
     alert('Slider reached the end!');
   };
 
+  function flipDate(dateStr) {
+    // Split the date string by '-'
+    const [year, month, day] = dateStr.split('-');
+    
+    // Return the date in 'DD-MM-YYYY' format
+    return `${day}-${month}-${year}`;
+  }
+
   const [showModalYetsor,setShowModalYetsor] = useState(false);
 
   return (
@@ -792,7 +800,7 @@ export default function Home() {
                         aglotA.map((agla, index) => {
                           return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(format(agla.tarekhAsbka,'dd-MM-yyyy'))}</div>{agla.tarekhAsbka}</div></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(flipDate(agla.tarekhAsbka))}</div>{agla.tarekhAsbka}</div></td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaA.tarekh)}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaA.tarekh}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh.name}</td>
@@ -827,7 +835,7 @@ export default function Home() {
                         aglotB.map((agla, index) => {
                           return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(format(agla.tarekhAsbka,'dd-MM-yyyy'))}</div>{agla.tarekhAsbka}</div></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(flipDate(agla.tarekhAsbka))}</div>{agla.tarekhAsbka}</div></td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaB.tarekh)}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaB.tarekh}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh.name}</td>
@@ -972,7 +980,7 @@ export default function Home() {
                               
                             </Button> */}
                             </td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(format(agla.tarekhAsbka,'dd-MM-yyyy'))}</div>{agla.tarekhAsbka}</div></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(flipDate(agla.tarekhAsbka))}</div>{agla.tarekhAsbka}</div></td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaC.tarekh)}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaC.tarekh}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh.name}</td>
@@ -1007,7 +1015,7 @@ export default function Home() {
                         aglotD.map((agla, index) => {
                           return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(format(agla.tarekhAsbka,'dd-MM-yyyy'))}</div>{agla.tarekhAsbka}</div></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(flipDate(agla.tarekhAsbka))}</div>{agla.tarekhAsbka}</div></td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaD.tarekh)}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaD.tarekh}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh.name}</td>
