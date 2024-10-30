@@ -672,6 +672,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         if (yetsorKeam?.msbar) {
             try {
                 updateDoc(doc(firestore, 'tfaol', yetsorKeam?.id), {
+                    tarekhAsbka,
                     msbarAdefot,
                     tnaeTshlom,
                     mherKlale: parseFloat(mherKlale),
