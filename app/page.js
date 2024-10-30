@@ -99,6 +99,7 @@ import Link from "next/link";
 import { CardContent } from "@mui/material";
 import SlideButton from "./Components/SlideButton";
 import ModalYetsor from "./Modals/ModalYetsor";
+import { differenceInDays, format, parse } from "date-fns";
 
 
 export function GetTmonatHelek(remez, msbar) {
@@ -339,16 +340,16 @@ export function GetTmonatHelek(remez, msbar) {
 
 export default function Home() {
   const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol, aobedAuth } = useContext(ContactContext);
-  const [mlae, setMlae] = useState([]);
+  const mlae = GetDocs('mlae');
   const category = GetDocs('category');
   const aobdem = GetDocs('aobdem');
   const Tokhneot = GetDocs('TokhnetYetsorAgla');
   const [showModalCreate, setShowModalCreate] = useState(false);
   const [showModalCreateTokhnetYetsor, setShowModalCreateTokhnetYetsor] = useState(false);
-  const aglotA = useGetDataByCondition('tfaol', 'sogBaola', '==', 'A');
-  const aglotB = useGetDataByCondition('tfaol', 'sogBaola', '==', 'B');
-  const aglotC = useGetDataByCondition('tfaol', 'sogBaola', '==', 'C');
-  const aglotD = useGetDataByCondition('tfaol', 'sogBaola', '==', 'D');
+  const aglotA = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'A');
+  const aglotB = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'B');
+  const aglotC = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'C');
+  const aglotD = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'D');
   const aglot = GetDocs('drags');
   const lkhot = GetDocs('customers');
   const [tfaolAgla, setTfaolAgla] = useState({});
@@ -439,17 +440,6 @@ export default function Home() {
   }, [tfaolAgla?.id]);
 
 
-
-
-  const handleData = (documents) => {
-    setMlae(documents);
-  };
-
-  useEffect(() => {
-    const unsubscribe = useGetDataByConditionWithoutUseEffect('mlae', 'active', '==', true, handleData);
-    return () => unsubscribe();
-  }, []);
-
   function GetTmonaLfeSog(val) {
     if (val === 'ייצור') {
       return <FaTrailer className="text-3xl text-primary" />;
@@ -470,7 +460,11 @@ export default function Home() {
 
 
 
-
+  function daysGoneSince(date) {
+    const givenDate = parse(date, 'dd-MM-yyyy', new Date());
+    const today = new Date();
+    return differenceInDays(today, givenDate);
+  }
 
 
 
@@ -530,13 +524,13 @@ export default function Home() {
         e: mtsavYetsorRes?.mtsavYetsor[4],
         f: mtsavYetsorRes?.mtsavYetsor[5],
       }} show={showModalMtsavYetsor} disable={() => setShowModalMtsavYetsor(false)} />
-      <ModalCreateTest Tokhneot={Tokhneot} category={category} drag={drag} mlae={mlae} sogAskaa={sogAska} show={showModalCreate} lkohTfaol={lkoh} agla={tfaolAgla} disable={() => { setShowModalCreate(false); setSogAska(''); setTfaolAgla(null); }} />
+      {/* <ModalCreateTest Tokhneot={Tokhneot} category={category} drag={drag} mlae={mlae} sogAskaa={sogAska} show={showModalCreate} lkohTfaol={lkoh} agla={tfaolAgla} disable={() => { setShowModalCreate(false); setSogAska(''); setTfaolAgla(null); }} /> */}
       {/* {<ModalCreate Tokhneot={Tokhneot} category={category} mlae={mlae} sogAskaa={sogAska} show={showModalCreate} disable={() => setShowModalCreate(false)} />}
       
       {<ModalCreate Tokhneot={Tokhneot} category={category} mlae={mlae} lkohTfaol={lkoh} agla={tfaolAgla} show={showModalYetsorMatsav} disable={() => setShowModalYetsorMatsav(false)} />} */}
       <ModalTokhnetYetsor category={category} mlae={mlae} show={showModalCreateTokhnetYetsor} disable={() => setShowModalCreateTokhnetYetsor(false)} />
       {loading && <Spinner className="absolute top-0 bottom-0 right-0 left-0" />}
-      <ModalYetsor aglot={aglot} lkhot={lkhot} category={category} show={showModalYetsor} disable={() => setShowModalYetsor(false)}/>
+      <ModalYetsor drag={drag} yetsorKeam={tfaolAgla} lkohTfaol={lkoh} Tokhneot={Tokhneot} sogAskaa={sogAska} mlae={mlae} aglot={aglot} lkhot={lkhot} category={category} show={showModalYetsor} disable={() => {setShowModalYetsor(false);setSogAska('');setTfaolAgla(null); }}/>
 
 
 
@@ -682,10 +676,10 @@ export default function Home() {
           </div>
           <Divider />
           <div className="mr-5 ml-5 mt-2 mb-2">
-            <Button size="sm" color="primary" variant="faded" className="w-full" onClick={() => { setShowModalCreate(true); setSogAska('ייצור'); }}><div className="flex items-center justify-start w-full"><FaTrailer className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">ייצור עגלה</div></div></Button>
-            <Button size="sm" color="primary" variant="faded" className="w-full mt-1" onClick={() => { setShowModalCreate(true); setSogAska('הרכבת וו'); }}><div className="flex items-center justify-start w-full"><GiHook className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">הרכבת וו</div></div></Button>
-            <Button size="sm" className="w-full mt-1" color="primary" variant="faded" onClick={() => { setShowModalCreate(true); setSogAska('תיקון'); }}><div className="flex items-center justify-start w-full"><HiOutlineWrenchScrewdriver className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">תיקון</div></div></Button>
-            <Button size="sm" className="w-full mt-1" isDisabled color="primary" variant="faded" onClick={() => { setShowModalCreate(true); setSogAska('טסט'); }}><div className="flex items-center justify-start w-full"><FaRegCalendarCheck className="text-2xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">טסט</div></div></Button>
+            <Button size="sm" color="primary" variant="faded" className="w-full" onClick={() => { setShowModalYetsor(true); setSogAska('ייצור'); }}><div className="flex items-center justify-start w-full"><FaTrailer className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">ייצור עגלה</div></div></Button>
+            <Button size="sm" color="primary" variant="faded" className="w-full mt-1" onClick={() => { setShowModalYetsor(true); setSogAska('הרכבת וו'); }}><div className="flex items-center justify-start w-full"><GiHook className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">הרכבת וו</div></div></Button>
+            <Button size="sm" className="w-full mt-1" color="primary" variant="faded" onClick={() => { setShowModalYetsor(true); setSogAska('תיקון'); }}><div className="flex items-center justify-start w-full"><HiOutlineWrenchScrewdriver className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">תיקון</div></div></Button>
+            <Button size="sm" className="w-full mt-1" isDisabled color="primary" variant="faded" onClick={() => { setShowModalYetsor(true); setSogAska('טסט'); }}><div className="flex items-center justify-start w-full"><FaRegCalendarCheck className="text-2xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">טסט</div></div></Button>
           </div>
           <div className="p-4">
             <h1 className="text-xl font-extrabold text-gray-800 dark:text-white">תוכניות ייצור</h1>
@@ -786,7 +780,6 @@ export default function Home() {
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs"></th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך אספקה</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">זמן עבר</th>
-                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שעת תחילה</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך תחילה</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שם לקוח</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מספר פעולה</th>
@@ -798,15 +791,14 @@ export default function Home() {
                       {
                         aglotA.map((agla, index) => {
                           return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(format(agla.tarekhAsbka,'dd-MM-yyyy'))}</div>{agla.tarekhAsbka}</div></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaA.tarekh)}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaA.tarekh}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh.name}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska === 'ייצור' ? 'עגלה' : agla.sogAska}</td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAskaa)}</td>
                           </tr>
                         })
                       }
@@ -823,7 +815,6 @@ export default function Home() {
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs"></th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך אספקה</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">זמן עבר</th>
-                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שעת תחילה</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך תחילה</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שם לקוח</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מספר פעולה</th>
@@ -835,15 +826,14 @@ export default function Home() {
                       {
                         aglotB.map((agla, index) => {
                           return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(format(agla.tarekhAsbka,'dd-MM-yyyy'))}</div>{agla.tarekhAsbka}</div></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaB.tarekh)}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaB.tarekh}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh.name}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska === 'ייצור' ? 'עגלה' : agla.sogAska}</td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAskaa)}</td>
                           </tr>
                         })
                       }
@@ -861,7 +851,6 @@ export default function Home() {
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs"></th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך אספקה</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">זמן עבר</th>
-                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שעת תחילה</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך תחילה</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שם לקוח</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מספר פעולה</th>
@@ -873,7 +862,7 @@ export default function Home() {
                       {
                         aglotC.map((agla, index) => {
                           return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">
                               <div className="w-[120px] flex items-center cursor-pointer" onClick={() => { setShowModalMtsavYetsor(true); setMtsavYetsorRes(agla); }}>
                                 <div className="w-[120px] text-center fixed font-black text-primary tracking-widest z-10">
@@ -983,14 +972,13 @@ export default function Home() {
                               
                             </Button> */}
                             </td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(format(agla.tarekhAsbka,'dd-MM-yyyy'))}</div>{agla.tarekhAsbka}</div></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaC.tarekh)}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaC.tarekh}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh.name}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska === 'ייצור' ? 'עגלה' : agla.sogAska}</td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAskaa)}</td>
                           </tr>
                         })
                       }
@@ -1007,7 +995,6 @@ export default function Home() {
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs"></th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך אספקה</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">זמן עבר</th>
-                        <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שעת תחילה</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך תחילה</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שם לקוח</th>
                         <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מספר פעולה</th>
@@ -1020,14 +1007,13 @@ export default function Home() {
                         aglotD.map((agla, index) => {
                           return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"></td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(format(agla.tarekhAsbka,'dd-MM-yyyy'))}</div>{agla.tarekhAsbka}</div></td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaD.tarekh)}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaD.tarekh}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh.name}</td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAska === 'ייצור' ? 'עגלה' : agla.sogAska}</td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAska)}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAskaa)}</td>
                           </tr>
                         })
                       }

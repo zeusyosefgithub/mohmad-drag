@@ -50,6 +50,16 @@ body {
 }
 
 
+.ddtranslate::after,
+.ddtranslate::before {
+  display: none !important;
+  content: '' !important;
+}
+
+
+
+
+
 .hatema{
   position: absolute;
   margin-top: -30px;

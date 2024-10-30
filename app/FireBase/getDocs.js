@@ -41,3 +41,13 @@ export function GetDocsWithLimit(myCollection, limitCount) {
     return loading ? [] : list;
 }
 
+export function formatNumber(num) {
+    if (isNaN(num)) return ''; // Check for invalid input
+
+    const roundedNum = Math.round(num * 10) / 10; // Round to one decimal place
+    const [integerPart, decimalPart] = roundedNum.toString().split('.'); // Split the number
+
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Format the integer part
+
+    return decimalPart ? `${formattedInteger}.${decimalPart}` : formattedInteger; // Reassemble the number
+}

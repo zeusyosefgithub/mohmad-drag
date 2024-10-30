@@ -1577,7 +1577,6 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
             setHnha(agla?.mafenem?.hnha);
             setHshhyatYetsorZman(getDifferenceBetweenDatetimes(agla?.zmnem?.zmanThelatYetsor || '2024-12-25T00:00:00.000Z', agla?.zmnem?.zmanHasheatYetsor || '2024-12-25T00:00:00.000Z'));
             setConstantDate(agla?.zmnem?.zmanThelatYetsor || '2024-12-25T00:00:00.000Z');
-
             setMotsaremBrofelemSofe(agla?.motsaremBrofelemSofe);
             setMafenemMotsarem(agla?.newMafeneMotsarem);
             setEntries(agla?.entries || [{ category: '', sogMotsar: '', shemMotsar: '', remez: '', message: '' }]);
@@ -1898,9 +1897,8 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
         }
     }, [lkohMsbar, agla?.msbarLkoh]);
 
-    console.log(aglot);
     useEffect(() => {
-        console.log(123124);
+
         let sum = 0;
         let sumZmanAboda = 0;
         for (let index = 0; index < mafenemMotsarem?.length; index++) {
@@ -2698,8 +2696,7 @@ export default function ModalCreate({ show, disable, agla, lkohTfaol, drag, sogA
                                                                                     (aorkh !== 0 && aorkh !== '' && rohf !== 0 && rohf !== '') &&
                                                                                     <>
                                                                                         <tr className="row-spacing">
-                                                                                            <th>
-                                                                                            </th>
+                                                                                            <th></th>
                                                                                             <th className="w-[150px]">רצפה</th>
                                                                                             <th><Dropdown dir="rtl">
                                                                                                 <DropdownTrigger>

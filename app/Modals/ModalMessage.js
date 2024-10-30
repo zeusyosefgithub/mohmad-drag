@@ -7,7 +7,7 @@ import GetDocs from "../FireBase/getDocs";
 
 
 export default function ModalMessage({ disable, show, message, Aeshor,motsar,yetsor,withoutBlur }) {
-    console.log(yetsor);
+
 
     return (
         <Modal placement="center" className="" backdrop={withoutBlur ? '' : "blur"} isOpen={show} onClose={disable}>

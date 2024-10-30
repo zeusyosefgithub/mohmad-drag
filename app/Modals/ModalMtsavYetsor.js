@@ -8,7 +8,6 @@ export default function ModalMtsavYetsor({ show, disable, res }) {
     const [newRes,setNewRes] = useState([]);
 
     useEffect(() => {
-        console.log(res);
         setNewRes(res);
     },[res])
 
