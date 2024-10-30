@@ -670,6 +670,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             motsaremLhatseg
         }
         if (yetsorKeam?.msbar) {
+            console.log(1);
             try {
                 updateDoc(doc(firestore, 'tfaol', yetsorKeam?.id), {
                     tarekhAsbka,
@@ -686,7 +687,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                     zmanThelaC,
                     zmanThelaD,
                     zmanThelaE,
-                    zmanAboda: shaotAboda,
+                    zmanAboda: 0,
                     ahozRevah: getDigitsAfterDot((((mherKlale - hkhnsotHomreGlem - hotsotSkhar) - parseInt(mherKlale * 0.17)) / mherKlale) || 0),
                     hkhnsot: 0,
                     hotsaotHomreGlem: hkhnsotHomreGlem,
@@ -772,6 +773,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             }
         }
         else {
+            console.log(2);
             try {
                 if (shlavNokhhe === 'C') {
                     handelPrintggg();
