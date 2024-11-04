@@ -26,6 +26,8 @@ export default function ModalDafeShaot({ disable, show,counter,aobdem }) {
     const bdekatAemAobedKeam = () => {
 
     }
+
+
     const hdbsatDafeShaot = async() => {
         setLoading(true);
         await updateDoc(doc(firestore,'metadata',counter?.id),{
@@ -59,94 +61,33 @@ export default function ModalDafeShaot({ disable, show,counter,aobdem }) {
         }
     }
 
-
-    
-
-    // useEffect(() => {
-    //     if(GetData){
-    //         const unsubscribe = useGetDataByConditionWithoutUseEffect(
-    //             'shaotAboda',
-    //             'hodesh',
-    //             '==',
-    //             format(previousMonthDate, 'MM-yyyy'),
-    //             result => {
-    //                 result.length && sumTimeDifferences(result);
-    //             }
-    //         );
-    //         return () => {
-    //             if (unsubscribe) {
-    //                 unsubscribe();
-    //             }
-    //         };
-    //     }
-    // },[GetData]);
-    // const GetTarefLeshaa = (val) => {
-    //     for (let index = 0; index < aobdem.length; index++) {
-    //         if(aobdem[index].msbar === val){
-    //             return aobdem[index].tarefLshaa;
-    //         }
-    //     }
-    //     return null;
-    // };
-    // const GetSkhomSofe = (result) => {
-    //     let sum = 0;
-    //     for (let index = 0; index < result.length; index++) {
-    //         sum += (result[index].tarefLeshaaa * result[index].totalDifference)
-    //     }
-    //     return sum;
-    // };
-
-    // const sumTimeDifferences = async(arr) => {
-    //     const groupedByAobed = arr.reduce((acc, obj) => {
-    //         if (!acc[obj.aobed]) {
-    //             acc[obj.aobed] = {
-    //                 totalDifference: 0,
-    //                 id: obj.id,
-    //                 tarekh: obj.tarekh,
-    //                 tarefLeshaaa : 0
-    //             };
-    //         }
-    //         const difference = handleTimeDiffrence(obj.yetseah, obj.knesa);
-    //         if (difference) {
-    //             acc[obj.aobed].totalDifference += difference;
-    //         }
-    //         return acc;
-    //     }, {});
-    //     const result = Object.keys(groupedByAobed).map(aobed => ({
-    //         aobed: parseInt(aobed),
-    //         totalDifference: groupedByAobed[aobed].totalDifference,
-    //         id: groupedByAobed[aobed].id,
-    //         tarekh: groupedByAobed[aobed].tarekh,
-    //         tarefLeshaaa : GetTarefLeshaa(parseInt(aobed))
-    //     }));
-    //     if(!result.length)return;
-    //     await updateDoc(doc(firestore,'metadata','counterShaotAboda'),{
-    //         hotsaotSkhar : parseFloat(GetSkhomSofe(result).toFixed(2))
-    //     });
-    // };
-
-
     const totsaotHodeshAobed = () => {
         setLoading(true);
-        try{
-            console.log(aobed);
+        try {
+            const formattedDate = hodeshYdne ? format(hodeshYdne, 'MM-yyyy') : null;
+            if (!formattedDate) {
+                console.warn("Invalid date for hodeshYdne");
+                setLoading(false);
+                return;
+            }
             const unsubscribe = useGetDataByConditionWithoutUseEffectTwoQueres(
                 'shaotAboda',
                 'hodesh',
                 '==',
-                format(hodeshYdne, 'MM-yyyy'),
+                formattedDate,
                 'aobed',
                 '==',
                 parseInt(aobed),
                 result => {
-                    if(result.length){
+                    if (result.length) {
+                        console.log(result);
                         setShaotAobedSave(result);
                     }
                     setLoading(false);
                 }
             );
         }
-        catch(e){
+        catch (e) {
             console.log(e);
             setLoading(false);
         }
@@ -212,10 +153,10 @@ export default function ModalDafeShaot({ disable, show,counter,aobdem }) {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <Button size="lg" color="primary" onClick={disable}>
+                        <Button size="lg" color="warning" variant="flat" onClick={disable}>
                             סגור
                         </Button>
-                        <Button isLoading={loading} isDisabled={!hodeshYdne || !aobed} size="lg" color="primary" onClick={totsaotHodeshAobed}>
+                        <Button isLoading={loading} isDisabled={!hodeshYdne || !aobed} size="lg" color="primary" variant="flat" onClick={totsaotHodeshAobed}>
                             אישור
                         </Button>
                     </ModalFooter>

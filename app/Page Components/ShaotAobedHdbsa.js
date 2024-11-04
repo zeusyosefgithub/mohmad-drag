@@ -40,24 +40,27 @@ export const ShaotAobedHdbsa = React.forwardRef((props, ref) => {
     }
 
     const calculateTimeDifference = (startTime, endTime) => {
-        // Assuming startTime and endTime are strings in "HH:mm" format
         const [startHour, startMinute] = startTime.split(':').map(Number);
         const [endHour, endMinute] = endTime.split(':').map(Number);
-
-        // Create date objects for comparison
         const startDate = new Date(0, 0, 0, startHour, startMinute);
         const endDate = new Date(0, 0, 0, endHour, endMinute);
-
-        // Calculate the difference in minutes
         const diffMinutes = differenceInMinutes(endDate, startDate);
-
-        // Convert minutes to hours and minutes
         const hours = Math.floor(diffMinutes / 60);
         const minutes = diffMinutes % 60;
-
-        // Format the result as "HH:mm"
         return format(new Date(0, 0, 0, hours, minutes), 'HH:mm');
     };
+
+    const GetSkhomKolHshaot = () => {
+        let sum = 0;
+        for (let index = 0; index < shaot.length; index++) {
+            if(shaot[index].knesa && shaot[index].yetseah){
+                sum += parseFloat(calculateTimeDifference(shaot[index].knesa, shaot[index].yetseah));
+            }
+        }
+        return sum;
+    }
+
+
 
     return (
         <div ref={ref} className="bg-white p-10">
@@ -99,7 +102,7 @@ export const ShaotAobedHdbsa = React.forwardRef((props, ref) => {
                     דף שעות עבודה
                 </div>
             </div>
-            <Divider className="mt-3 mb-3 h-[3px] bg-gray-500"/>
+            <Divider className="mt-3 mb-3 h-[3px] bg-gray-500" />
             <div className="flex items-center justify-between" dir="rtl">
                 <div>
                     <div className="flex items-center">
@@ -151,17 +154,26 @@ export const ShaotAobedHdbsa = React.forwardRef((props, ref) => {
                     <tbody>
                         {
                             shaot?.map((shaa, index) => {
-                                return <tr className="border-b-1">
-                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{calculateTimeDifference(shaa?.knesa, shaa?.yetseah)}</td>
-                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{shaa?.yetseah}</td>
-                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{shaa?.knesa}</td>
-                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{shaa?.headrot}</td>
-                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{shaa?.tarekh}</td>
-                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{GetTarekhShem(format(flipDate(shaa?.tarekh), 'EEEE'))}</td>
-                                    <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{index + 1}</td>
+                                return <tr className="border-b-1 text-danger">
+                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.knesa && shaa?.yetseah && calculateTimeDifference(shaa?.knesa, shaa?.yetseah)}</td>
+                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.yetseah}</td>
+                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.knesa}</td>
+                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.headrot}</td>
+                                    <td className={`"px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.tarekh}</td>
+                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.tarekh && GetTarekhShem(format(flipDate(shaa?.tarekh), 'EEEE'))}</td>
+                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{index + 1}</td>
                                 </tr>
                             })
                         }
+                        <tr className="border-b-1">
+                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{GetSkhomKolHshaot()}</td>
+                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"></td>
+                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"></td>
+                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"></td>
+                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"></td>
+                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"></td>
+                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

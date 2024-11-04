@@ -1,9 +1,9 @@
 'use client';
-import { Autocomplete, AutocompleteItem, Avatar, Button, Pagination, Card, CardBody, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Radio, RadioGroup, Switch, Tooltip, DatePicker } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Avatar, Button, Pagination, Card, CardBody, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Radio, RadioGroup, Switch, Tooltip, DatePicker, Accordion, AccordionItem, Popover, PopoverTrigger, PopoverContent, Textarea } from "@nextui-org/react";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { FaBeer, FaRegCheckSquare, FaUser } from "react-icons/fa";
+import { FaBeer, FaPlus, FaRegCheckSquare, FaUser } from "react-icons/fa";
 import GetDocs from "../FireBase/getDocs";
-import { MdKeyboardArrowDown } from "react-icons/md";
+import { MdKeyboardArrowDown, MdMoreHoriz } from "react-icons/md";
 import ModalYetsorTokhnet from "./ModalYetsorTokhnet";
 import ModalBerotMotsrem from "./ModalBerotMotsrem";
 import { AiOutlineFundProjectionScreen } from "react-icons/ai";
@@ -23,6 +23,11 @@ import TokhnetContext from "../auth/TokhnetContext";
 import { CgFileDocument } from "react-icons/cg";
 import { TofsTokhnetYetsor } from "../Page Components/TofsTokhnetYetsor";
 import { useReactToPrint } from "react-to-print";
+import { AnimatePresence,motion } from "framer-motion";
+import ModalAddCustomer from "./ModalAddCustomer";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { LiaCommentSolid } from "react-icons/lia";
+import { Comment, Hourglass, Puff, ThreeCircles } from "react-loader-spinner";
 
 
 export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, yetsorKeam, category, lkhot, aglot, mlae, sogAskaa }) {
@@ -49,14 +54,20 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
     const counterShaotAboda = metadata.find((count) => count.id === 'counterShaotAboda');
     const counterNekoeMaam = metadata.find((count) => count.id === 'counterNekoeMaam');
     const counterHeshvoneot = metadata.find((count) => count.id === 'counterHeshvoneot');
+    const counterLkhot = metadata.find((count) => count.id === 'counterLkhot');
 
     // ---------------------------------------------------------------------------------------- lkoh
     const [brtemLkoh, setBrtemLkoh] = useState(null);
+    const [lkohHdash, setLkohHdash] = useState(false);
+    const [customerName, setCustomerName] = useState('');
+    const [customerCity, setCustomerCity] = useState('');
+    const [customerPhone, setCustomerPhone] = useState('');
+    const [msbarMezahehm, setMsbarMezahehm] = useState('');
     // ---------------------------------------------------------- lkoh -- (functions)
 
     // ---------------------------------------------------------------------------------------- tokhnet
-    const [tokhnetNokhhet, setTokhnetNokhhet] = useState(null);
     const [shemTokhnet, setShemTokhnet] = useState('');
+    const [tokhnet, setTokhnet] = useState(null);
     // ---------------------------------------------------------- tokhnet -- (functions)
 
     // ---------------------------------------------------------------------------------------- modals
@@ -65,15 +76,18 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
     // ---------------------------------------------------------- modals -- (functions)
 
     // ---------------------------------------------------------------------------------------- thlekhem
-    const [shlavNokhhe, setShlavNokhhe] = useState('');
+    const [shlavNokhhe, setShlavNokhhe] = useState('A');
     const [tarekhAsbka, setTarekhAsbka] = useState('');
     const [seomYetsor, setSeomYetsor] = useState(false);
     const [msbarAgla, setMsbarAgla] = useState('');
     const [mherKlale, setMherKlale] = useState(0);
-    const [hnha, setHnha] = useState(0);
-    const [hskmatLkoh, setHskmatLkoh] = useState(false);
-    const [tnaeTshlom, setTnaeTshlom] = useState(['']);
-    const [msbarAdefot,setMsbarAdefot] = useState(5);
+    const [mherKlaleAhre, setMherKlaleAhre] = useState(0);
+    const [tnaeTshlom, setTnaeTshlom] = useState('');
+    const [msbarAdefot, setMsbarAdefot] = useState(5);
+    const [msbarTshlomem,setMsbarTshlomem] = useState(0);
+    const [mkdema,setMkdema] = useState(0);
+    const [haraKlalet,setHaraKlalet] = useState('');
+    const [haraBnmet,setHaraBnmet] = useState('');
 
     // ---------------------------------------------------------- thlekhem -- (functions)
 
@@ -128,7 +142,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
     const [hlokatRmbaDaletBro, setHlokatRmbaDaletBro] = useState(0);
     const [hlokatRmbaDaletTvah, setHlokatRmbaDaletTvah] = useState(0);
     const [tosefetVnel, setToseftVnel] = useState(false);
-    const [solam, setSolam] = useState('רק קדמי');
+    const [toseftVnelBro,setToseftVnelBrof] = useState('בחר');
+    const [solam, setSolam] = useState('ללא');
     const [msgertSolam, setMsgertSolam] = useState('בחר');
     const [gobahSolam, setGobahSolam] = useState(0);
     const [hlokatSolam, setHlokatSolam] = useState('בחר');
@@ -147,20 +162,28 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
     const [msbarBroAnkheVnel, setMsbarBroAnkheVnel] = useState(0);
     const [tosfot, setTosfot] = useState([]);
 
+    const ResetCustomer = () => {
+        setCustomerName('');
+        setCustomerCity('');
+        setCustomerPhone('');
+        setMsbarMezahehm('');
+    }
+
     const ResetAll = () => {
+        setHaraKlalet('');
+        setHaraBnmet('');
+        setMsbarTshlomem(0);
+        setMkdema(0);
         setHotsaotAkefot(0);
         setHotsaotSkhar(0);
         setHkhnsotHomreGlem(0);
         setBrtemLkoh(null);
-        setTokhnetNokhhet(null);
         setShemTokhnet('');
-        setShlavNokhhe('');
+        setShlavNokhhe('A');
         setTarekhAsbka('');
         setSeomYetsor(false);
         setMsbarAgla('');
         setMherKlale(0);
-        setHnha(0);
-        setHskmatLkoh(false);
         const initialMafenemMotsarem = Remzem.map((remez, index) => ({
             yredatMlae: 0,
             kmot: 0,
@@ -226,8 +249,12 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         setTvahAnkheVnel(0);
         setMsbarBroAnkheVnel(0);
         setTosfot([]);
-        setTnaeTshlom([]);
+        setTnaeTshlom('');
         setMsbarAdefot(5);
+        setCustomerName('');
+        setCustomerCity('');
+        setCustomerPhone('');
+        setMsbarMezahehm('');
     }
 
     const contextValue = {
@@ -260,6 +287,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         hlokatRmbaDaletBro, setHlokatRmbaDaletBro,
         hlokatRmbaDaletTvah, setHlokatRmbaDaletTvah,
         tosefetVnel, setToseftVnel,
+        toseftVnelBro,setToseftVnelBrof,
         solam, setSolam,
         msgertSolam, setMsgertSolam,
         gobahSolam, setGobahSolam,
@@ -280,11 +308,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         tosfot, setTosfot,
     };
 
-    const selectedValue = useMemo(
-        () => Array.from(tnaeTshlom).join(", ").replaceAll("_", " "),
-        [tnaeTshlom]
-    );
-
 
     const Remzem = useMemo(() => {
         let newArray = [];
@@ -296,7 +319,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                 }
             }
         }
-        return newArray.sort((a, b) => a.someProperty - b.someProperty); // Customize this sorting logic if needed
+        return newArray.sort((a, b) => a.someProperty - b.someProperty);
     }, [category]);
 
     const GetSortedMotsaremRglem = (array) => {
@@ -354,16 +377,16 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
 
     const shlav = () => {
         let res = '';
-        if (brtemLkoh?.id && shemTokhnet) {
+        if ((brtemLkoh?.id || customerName) && shemTokhnet) {
             res = 'A';
         }
-        if (brtemLkoh?.id && shemTokhnet && hskmatLkoh && mherKlale && BdekatMotsarem()) {
+        if ((brtemLkoh?.id || customerName) && tnaeTshlom && shemTokhnet && mherKlale && mherKlaleAhre && mkdema && msbarTshlomem && BdekatMotsarem()) {
             res = 'B';
         }
-        if (brtemLkoh?.id && shemTokhnet && hskmatLkoh && mherKlale && BdekatMotsarem() && tarekhAsbka) {
+        if ((brtemLkoh?.id || customerName) && tnaeTshlom && shemTokhnet && mherKlale && mherKlaleAhre && mkdema && msbarTshlomem && BdekatMotsarem() && tarekhAsbka) {
             res = 'C';
         }
-        if (brtemLkoh?.id && shemTokhnet && hskmatLkoh && mherKlale && BdekatMotsarem() && tarekhAsbka && msbarAgla) {
+        if ((brtemLkoh?.id || customerName) && tnaeTshlom && shemTokhnet && mherKlale && mherKlaleAhre && mkdema && msbarTshlomem && BdekatMotsarem() && tarekhAsbka && msbarAgla) {
             res = 'D';
         }
         if (false) {
@@ -447,7 +470,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             return;
         }
         if (getNextLetter(shlavNokhhe) === 'C') {
-            console.log(123123123);
             if (!CheckMotsarem()) {
                 GetErrorMessages();
                 setErrorMotsaremRglem(true);
@@ -470,6 +492,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
 
     const [showModalMtsavYetsor, setShowModalMtsavYetsor] = useState(false);
     const [showModalMessage, setShowModalMessage] = useState(false);
+    const [showModalAddCustomer,setShowModalAddCustomer] = useState(false);
 
     const updateMotsaremLhatseg = (itemsToAdd = [], itemsToRemove = []) => {
         setMotsaremLhatseg((prevItems) => {
@@ -517,8 +540,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         content: () => componentRefTwo.current,
     });
 
-    console.log();
-
     const UpdateMotsaremLhANDRe = (motsaremToUpdate) => {
         const updatedMotsarem = motsaremRglem.map((motsar) => {
             const matchingItem = motsaremToUpdate?.find(
@@ -532,6 +553,51 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         const remezValues = motsaremToUpdate?.map((item) => item.remez);
         setMotsaremLhatseg((prevArray) => [...prevArray, ...remezValues]);
     };
+
+
+    const UpdateMotsaremBroLhANDRe = (motsaremToUpdate) => {
+        setMotsaremBrofelem((prevArray) => {
+            const existingIndex = prevArray.findIndex(
+                (item) => item.shem === motsaremToUpdate.shem
+            );
+            if (existingIndex !== -1) {
+                return prevArray.map((item, index) =>
+                    index === existingIndex
+                        ? { ...item, kmot: item.kmot + motsaremToUpdate.kmot }
+                        : item
+                );
+            } else {
+                return [
+                    ...prevArray,
+                    { 
+                        ...motsaremToUpdate,
+                        id: prevArray.length,
+                        mher: 0,
+                        yredatMlae: 0,
+                        message: '',
+                    }
+                ];
+            }
+        });
+    };
+
+    const RemoveMotsaremBro = (shem, amountToRemove) => {
+        setMotsaremBrofelem((prevArray) => 
+            prevArray.reduce((acc, item) => {
+                if (item.shem === shem) {
+                    const newKmot = item.kmot - amountToRemove;
+                    if (newKmot > 0) {
+                        acc.push({ ...item, kmot: newKmot });
+                    }
+                } else {
+                    acc.push(item);
+                }
+                return acc;
+            }, [])
+        );
+    }
+
+    //
 
     const ResetMotsaremLhANDRe = (motsaremToReset) => {
         const updatedMotsaremRglem = motsaremRglem.map((item) => {
@@ -571,6 +637,11 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
     const saveValues = async () => {
         setLoading(true);
         const Props = {
+            haraBnmet,
+            haraKlalet,
+            mkdema,
+            msbarTshlomem,
+            shemTokhnet,
             msbarAdefot,
             tnaeTshlom,
             tarekhAsbka,
@@ -582,7 +653,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             brtemLkoh,
             shlavNokhhe,
             tarekh: format(new Date(), 'dd-MM-yyyy'),
-            hskmatLkoh,
             seomYetsor,
             mtsavYetsor: [
                 {
@@ -637,16 +707,15 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             maam: formatNumberWithCommas(parseInt(mherKlale * 0.17) || 0),
             revahYsher: formatNumberWithCommas((mherKlale - hkhnsotHomreGlem - hotsotSkhar) || 0),
             revhNke: formatNumberWithCommas(((mherKlale - hkhnsotHomreGlem - hotsotSkhar) - parseInt(mherKlale * 0.17)) || 0),
-            hnha,
             tvahAofkeSolam,
             msbarBroAofkeSolam,
             tvahAnkheSolam,
             msbarBroAnkheSolam,
             gobahSolam,
-            toseftReshet : toseftReshet || false,
+            toseftReshet: toseftReshet || false,
             daletAleon,
             solam,
-            tosefetVnel : tosefetVnel || false,
+            tosefetVnel: tosefetVnel || false,
             hlokatRmbaDaletTvah,
             hlokatRmbaDaletBro,
             msgertRmbaDaletAorkh,
@@ -654,25 +723,49 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             msbarBroSheldaBnemetShne,
             tvahHlokaThtona,
             msbarBrofHlokaThotona,
-            tsmgem : tsmgem || false,
+            tsmgem: tsmgem || false,
             aorkh: parseFloat(aorkh),
             rohav: parseFloat(rohav),
             msbarTsrem,
             AemBlamem,
-            tsmgSber : tsmgSber || false,
+            tsmgSber: tsmgSber || false,
             aorkhBroYetsol,
             msbarBroSheldaBnemet,
             tvahSheldaBnemet,
             dalet,
             tosfot,
+            retsba,
+            brofelTfesa,
+            msgeretThtonah,
+            hlokaThtonah,
+            yetsol,
+            sheldaHetsonet,
+            helekReshonSheldaBnemet,
+            helekShneSheldaBnemet,
+            msgertRmbaDalet,
+            hlokatRmbaDalet,
+            toseftVnelBro,
+            msgertSolam,
+            hlokatSolam,
+            vnel,
+            msgertVnel,
+            gobahVnel,
+            tvahAofkeVnel,
+            msbarBroAofkeVnel,
+            tvahAnkheVnel,
+            msbarBroAnkheVnel,
             motsaremRglem,
             motsaremBrofelem,
             motsaremLhatseg
         }
         if (yetsorKeam?.msbar) {
-            console.log(1);
             try {
                 updateDoc(doc(firestore, 'tfaol', yetsorKeam?.id), {
+                    haraBnmet,
+                    haraKlalet,
+                    msbarTshlomem,
+                    mkdema,
+                    shemTokhnet,
                     tarekhAsbka,
                     msbarAdefot,
                     tnaeTshlom,
@@ -680,7 +773,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                     shlavNokhhe,
                     sogAglaBS,
                     msbarAgla,
-                    hskmatLkoh,
                     seomYetsor,
                     zmanThelaA,
                     zmanThelaB,
@@ -696,16 +788,15 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                     maam: formatNumberWithCommas(parseInt(mherKlale * 0.17) || 0),
                     revahYsher: formatNumberWithCommas((mherKlale - hkhnsotHomreGlem - hotsotSkhar) || 0),
                     revhNke: formatNumberWithCommas(((mherKlale - hkhnsotHomreGlem - hotsotSkhar) - parseInt(mherKlale * 0.17)) || 0),
-                    hnha,
                     tvahAofkeSolam,
                     msbarBroAofkeSolam,
                     tvahAnkheSolam,
                     msbarBroAnkheSolam,
                     gobahSolam,
-                    toseftReshet : toseftReshet || false,
+                    toseftReshet: toseftReshet || false,
                     daletAleon,
                     solam,
-                    tosefetVnel : tosefetVnel || false,
+                    tosefetVnel: tosefetVnel || false,
                     hlokatRmbaDaletTvah,
                     hlokatRmbaDaletBro,
                     msgertRmbaDaletAorkh,
@@ -713,17 +804,37 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                     msbarBroSheldaBnemetShne,
                     tvahHlokaThtona,
                     msbarBrofHlokaThotona,
-                    tsmgem : tsmgem || false,
+                    tsmgem: tsmgem || false,
                     aorkh: parseFloat(aorkh),
                     rohav: parseFloat(rohav),
                     msbarTsrem,
                     AemBlamem,
-                    tsmgSber : tsmgSber || false,
+                    tsmgSber: tsmgSber || false,
                     aorkhBroYetsol,
                     msbarBroSheldaBnemet,
                     tvahSheldaBnemet,
                     dalet,
                     tosfot,
+                    retsba,
+                    brofelTfesa,
+                    msgeretThtonah,
+                    hlokaThtonah,
+                    yetsol,
+                    sheldaHetsonet,
+                    helekReshonSheldaBnemet,
+                    helekShneSheldaBnemet,
+                    msgertRmbaDalet,
+                    hlokatRmbaDalet,
+                    toseftVnelBro,
+                    msgertSolam,
+                    hlokatSolam,
+                    vnel,
+                    msgertVnel,
+                    gobahVnel,
+                    tvahAofkeVnel,
+                    msbarBroAofkeVnel,
+                    tvahAnkheVnel,
+                    msbarBroAnkheVnel,
                     motsaremRglem,
                     motsaremBrofelem,
                     motsaremLhatseg,
@@ -748,10 +859,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                         countE: counter.countE + 1,
                         countEAglot: counter.countEAglot + 1,
                         countESumAglot: parseFloat(counter.countESumAglot) + parseFloat(mherKlale),
-                        countEHnhotAglot: counter.countEHnhotAglot + hnha,
                         countESumHGAglot: counter.countESumHGAglot + hkhnsotHomreGlem,
                         countESumAglotMunth: counter.countESumAglotForMunth === format(new Date(), 'MM-yyyy') ? (parseFloat(counter.countESumAglotMunth) + parseFloat(mherKlale)) : (parseFloat(mherKlale)),
-                        countESumHnhotAglotMunth: counter.countESumAglotForMunth === format(new Date(), 'MM-yyyy') ? (counter.countESumHnhotAglotMunth + hnha) : (hnha),
                         countESumHGAglotMunth: counter.countESumAglotForMunth === format(new Date(), 'MM-yyyy') ? (counter.countESumHGAglotMunth + hkhnsotHomreGlem) : (hkhnsotHomreGlem),
                         countESumAglotForMunth: format(new Date(), 'MM-yyyy'),
 
@@ -773,7 +882,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             }
         }
         else {
-            console.log(2);
             try {
                 if (shlavNokhhe === 'C') {
                     handelPrintggg();
@@ -837,6 +945,10 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
 
     useEffect(() => {
         if (yetsorKeam?.msbar) {
+            setHaraKlalet(yetsorKeam.haraKlalet);
+            setHaraBnmet(yetsorKeam.haraBnmet);
+            setMsbarTshlomem(yetsorKeam.msbarTshlomem);
+            setMkdema(yetsorKeam.mkdema);
             setHotsaotAkefot(yetsorKeam.hotsaotAkefot);
             setHotsaotSkhar(yetsorKeam.hotsaotSkhar);
             setHkhnsotHomreGlem(yetsorKeam.hkhnsotHomreGlem);
@@ -844,8 +956,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             setTarekhAsbka(yetsorKeam.tarekhAsbka);
             setMsbarAgla(yetsorKeam.msbarAgla);
             setMherKlale(yetsorKeam.mherKlale);
-            setHnha(yetsorKeam.hnha);
-            setHskmatLkoh(yetsorKeam.hskmatLkoh);
             setMotsaremRglem(yetsorKeam.motsaremRglem);
             setMotsaremBrofelem(yetsorKeam.motsaremBrofelem);
             setMotsaremLhatseg(yetsorKeam.motsaremLhatseg);
@@ -858,8 +968,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             setBrofelTfesa(yetsorKeam.brofelTfesa);
             setTsmegem(yetsorKeam.tsmegem);
             setTsmegSber(yetsorKeam.tsmegSber);
-            setTMsgeretThtonah(yetsorKeam.tMsgeretThtonah);
-            setTHlokaThtonah(yetsorKeam.tHlokaThtonah);
+            setTMsgeretThtonah(yetsorKeam.msgeretThtonah);
+            setTHlokaThtonah(yetsorKeam.hlokaThtonah);
             setTvahHlokaThtona(yetsorKeam.tvahHlokaThtona);
             setMsbarBrofHlokaThotona(yetsorKeam.msbarBrofHlokaThotona);
             setYetsol(yetsorKeam.yetsol);
@@ -896,6 +1006,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             setTvahAnkheVnel(yetsorKeam.tvahAnkheVnel);
             setMsbarBroAnkheVnel(yetsorKeam.msbarBroAnkheVnel);
             setTosfot(yetsorKeam.tosfot);
+            setToseftVnelBrof(yetsorKeam.toseftVnelBro);
             setZmanThelaA(yetsorKeam.zmanThelaA);
             setZmanThelaB(yetsorKeam.zmanThelaB);
             setZmanThelaC(yetsorKeam.zmanThelaC);
@@ -904,10 +1015,65 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             setShlavNokhhe(yetsorKeam.shlavNokhhe);
             setTnaeTshlom(yetsorKeam.tnaeTshlom);
             setMsbarAdefot(yetsorKeam.msbarAdefot);
+            setShemTokhnet(yetsorKeam.shemTokhnet);
         }
     }, [yetsorKeam]);
 
-    console.log(msbarAdefot);
+    useEffect(() => {
+        if (tokhnet) {
+            setSogAglaBS(tokhnet.sogAglaBS);
+            setAorkh(tokhnet.aorkh);
+            setRohav(tokhnet.rohav);
+            setRetsba(tokhnet.retsba);
+            setMsbarTsrem(tokhnet.msbarTsrem);
+            setAemBlamem(tokhnet.AemBlamem);
+            setBrofelTfesa(tokhnet.brofelTfesa);
+            setTsmegem(tokhnet.tsmgem);
+            setTsmegSber(tokhnet.tsmgSber);
+            setTMsgeretThtonah(tokhnet.msgeretThtonah);
+            setTHlokaThtonah(tokhnet.hlokaThtonah);
+            setTvahHlokaThtona(tokhnet.tvahHlokaThtona);
+            setMsbarBrofHlokaThotona(tokhnet.msbarBrofHlokaThotona);
+            setYetsol(tokhnet.yetsol);
+            setAorkhBroYetsol(tokhnet.aorkhBroYetsol);
+            setSheldaHetsonet(tokhnet.sheldaHetsonet);
+            setTvahSheldaBnemet(tokhnet.tvahSheldaBnemet);
+            setMsbarBroSheldaBnemet(tokhnet.msbarBroSheldaBnemet);
+            setHelekReshonSheldaBnemet(tokhnet.helekReshonSheldaBnemet);
+            setMsbarBroSheldaBnemetReshon(tokhnet.msbarBroSheldaBnemetReshon);
+            sethelekShneSheldaBnemet(tokhnet.helekShneSheldaBnemet);
+            setMsbarBroSheldaBnemetShne(tokhnet.msbarBroSheldaBnemetShne);
+            setDalet(tokhnet.dalet);
+            setMsgertRmbaDalet(tokhnet.msgertRmbaDalet);
+            setMsgertRmbaDaletAorkh(tokhnet.msgertRmbaDaletAorkh);
+            setHlokatRmbaDalet(tokhnet.hlokatRmbaDalet);
+            setHlokatRmbaDaletBro(tokhnet.hlokatRmbaDaletBro);
+            setHlokatRmbaDaletTvah(tokhnet.hlokatRmbaDaletTvah);
+            setToseftVnel(tokhnet.tosefetVnel);
+            setToseftVnelBrof(tokhnet.toseftVnelBro);
+            setSolam(tokhnet.solam);
+            setMsgertSolam(tokhnet.msgertSolam);
+            setGobahSolam(tokhnet.gobahSolam);
+            setHlokatSolam(tokhnet.hlokatSolam);
+            setTvahAofkeSolam(tokhnet.tvahAofkeSolam);
+            setMsbarBroAofkeSolam(tokhnet.msbarBroAofkeSolam);
+            setTvahAnkheSolam(tokhnet.tvahAnkheSolam);
+            setMsbarBroAnkheSolam(tokhnet.msbarBroAnkheSolam);
+            setDaletAleon(tokhnet.daletAleon);
+            setTosefetReshet(tokhnet.toseftReshet);
+            setVnel(tokhnet.vnel);
+            setMsgertVnel(tokhnet.msgertVnel);
+            setGobahVnel(tokhnet.gobahVnel);
+            setTvahAofkeVnel(tokhnet.tvahAofkeVnel);
+            setMsbarBroAofkeVnel(tokhnet.msbarBroAofkeVnel);
+            setTvahAnkheVnel(tokhnet.tvahAnkheVnel);
+            setMsbarBroAnkheVnel(tokhnet.msbarBroAnkheVnel);
+            setTosfot(tokhnet.tosfot);
+            setMotsaremBrofelem(tokhnet.motsaremBrofelem);
+            setMotsaremRglem(tokhnet.motsaremRglem);
+            setMotsaremLhatseg(tokhnet.motsaremLhatseg);
+        }
+    }, [tokhnet]);
 
     useEffect(() => {
         if (shlavNokhhe === 'A') {
@@ -927,12 +1093,74 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         }
     }, [shlavNokhhe]);
 
-    console.log('================================');
-    console.log(zmanThelaA);
-    console.log(zmanThelaB);
-    console.log(zmanThelaC);
-    console.log(zmanThelaD);
-    console.log(zmanThelaE);
+
+    const GetMotionTitels = (titel) => {
+        return (
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key="shlavNokhhe"
+                    initial={{ opacity: 0, x: 100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -100 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <div className="flex items-center justify-center">
+                        {
+                            titel === 'שלב הצעה' &&
+                            <Comment
+                                visible={true}
+                                height="50"
+                                width="50"
+                                ariaLabel="comment-loading"
+                                wrapperStyle={{}}
+                                wrapperClass="comment-wrapper"
+                                color="white"
+                                backgroundColor="#3b82f6"
+                            />
+                        }
+                        {
+                            titel === 'שלב המתנה' &&
+                            <Hourglass
+                                visible={true}
+                                height="50"
+                                width="50"
+                                ariaLabel="hourglass-loading"
+                                wrapperStyle={{}}
+                                wrapperClass=""
+                                color='#3b82f6'
+                                backgroundColor="#3b82f6"
+                            />
+                        }
+                        {
+                            titel === 'שלב ייצור' &&
+                            <ThreeCircles
+                                visible={true}
+                                height="50"
+                                width="50"
+                                color="#3b82f6"
+                                ariaLabel="three-circles-loading"
+                                wrapperStyle={{}}
+                                wrapperClass=""
+                            />
+                        }
+                        {
+                            titel === 'שלב מכר' &&
+                            <Puff
+                                visible={true}
+                                height="50"
+                                width="50"
+                                color="#3b82f6"
+                                ariaLabel="puff-loading"
+                                wrapperStyle={{}}
+                                wrapperClass=""
+                            />
+                        }
+                        <div className="mr-5 text-2xl font-bold text-center text-gray-800">{titel}</div>
+                    </div>
+                </motion.div>
+            </AnimatePresence>
+        )
+    }
 
     return (
         <Modal placement="center" className="test-fontt select-none" backdrop={"blur"} size="full" isOpen={show} onClose={() => { setShowModalMessage(true); }}>
@@ -955,9 +1183,15 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                         }
                     }} message={'האם אתה בטוח שאתה רוצה לסגור את הדף, הפרטיים שהזנו לא ישמרו'} show={showModalMessage} disable={() => setShowModalMessage(false)} />
                     <TokhnetContext.Provider value={contextValue}>
-                        <ModalYetsorTokhnet reset={(val) => ResetMotsaremLhANDRe(val)} add={(val) => UpdateMotsaremLhANDRe(val)} mlae={mlae} setMotsaremLhatseg={(value) => setMotsaremLhatseg(value)} show={showModalTokhnetYetsor} disable={() => setShowModalTokhnetYetsor(false)} />
+                        <ModalYetsorTokhnet resetBro={(val1, val2) => RemoveMotsaremBro(val1, val2)} reset={(val) => ResetMotsaremLhANDRe(val)} addBro={(val) => UpdateMotsaremBroLhANDRe(val)} add={(val) => UpdateMotsaremLhANDRe(val)} mlae={mlae} setMotsaremLhatseg={(value) => setMotsaremLhatseg(value)} show={showModalTokhnetYetsor} disable={() => setShowModalTokhnetYetsor(false)} />
                     </TokhnetContext.Provider>
                     <ModalBerotMotsrem GetError={(val) => setErrorMotsaremRglem(val)} shlav={getNextLetter(shlavNokhhe)} category={category} mlae={mlae} setMotsaremRglem={(value) => setMotsaremRglem(value)} setMotsaremBrofelem={(value) => setMotsaremBrofelem(value)} motsaremLhatseg={motsaremLhatseg} motsaremBrofelem={motsaremBrofelem} motsaremRglem={motsaremRglem} show={showModalBerotMotsrem} disable={() => setShowModalBerotMotsrem(false)} />
+                    <ModalAddCustomer brtem={{
+                        customerName,
+                        customerCity,
+                        customerPhone,
+                        msbarMezahehm
+                    }} lkhot={lkhot} counter={counterLkhot} show={showModalAddCustomer} disable={() => setShowModalAddCustomer(false)} />
                     {
                         yetsorKeam?.msbar && <ModalMtsavYetsor res={{
                             a: yetsorKeam?.mtsavYetsor[0] || null,
@@ -974,15 +1208,11 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                 <CardBody>
 
                                     <div className="bg-gray-200 rounded-lg p-1">
-                                        <div className="text-2xl font-bold text-center text-gray-800">תמחיר</div>
+                                        <div className="text-2xl font-bold text-center h-[50px] items-center flex justify-center text-gray-800">תמחיר</div>
                                     </div>
                                     <div className="h-full flex items-center flex-wrap w-full justify-center" dir="rtl">
                                         <div className="ml-5 w-[110px] text-right text-green-500">מחיר שוק</div>
                                         <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪`} />
-                                    </div>
-                                    <div className="h-full flex items-center flex-wrap w-full justify-center" dir="rtl">
-                                        <div className="ml-5 w-[110px] text-right text-danger-500">הנחה</div>
-                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪`} />
                                     </div>
                                     <div className="h-full flex items-center flex-wrap w-full justify-center" dir="rtl">
                                         <div className="ml-5 w-[110px] text-right text-success-500">מחיר מכירה</div>
@@ -1023,184 +1253,111 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                             <Card dir="rtl" className="w-full h-full">
                                 <CardBody>
                                     <div className="bg-gray-200 rounded-lg p-1">
-                                        <div className="text-2xl font-bold text-center text-gray-800">{shlavNokhhe ? GetShlavemInHebrow(shlavNokhhe) : <div>&nbsp;</div>}</div>
+                                        {GetShlavemInHebrow(shlavNokhhe) === 'שלב המתנה' && GetMotionTitels('שלב המתנה')}
+                                        {GetShlavemInHebrow(shlavNokhhe) === 'שלב הצעה' && GetMotionTitels('שלב הצעה')}
+                                        {GetShlavemInHebrow(shlavNokhhe) === 'שלב ייצור' && GetMotionTitels('שלב ייצור')}
+                                        {GetShlavemInHebrow(shlavNokhhe) === 'שלב מכר' && GetMotionTitels('שלב מכר')}
                                     </div>
                                     <div className="w-full flex-grow p-4 overflow-auto">
                                         <div className="w-full p-10">
-                                            {(shlavNokhhe === '') &&
-                                                <>
-                                                    <div className="w-full flex items-center pb-3 border-b-1">
-                                                        <FaUser className="text-xl text-primary" />
-                                                        <div className="mr-2 border-r-2 pr-2">
-                                                            <Autocomplete
-                                                                label="בחר לקוח"
-                                                                className="max-w-[200px]"
-                                                                color="primary"
-                                                                size="sm"
-                                                                defaultItems={lkhot}
-                                                            >
-                                                                {
-                                                                    lkhot.map((lko, index) => (
-                                                                        <AutocompleteItem onClick={() => { setBrtemLkoh(lko); setHskmatLkoh(false); }} className='text-right' key={lko?.name} value={lko?.name}>
-                                                                            {lko?.name}
-                                                                        </AutocompleteItem>
-                                                                    ))
-                                                                }
-                                                            </Autocomplete>
-                                                        </div>
-                                                    </div>
-                                                    <div className="border-b-1 pt-3 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <FaShekelSign className="text-xl text-primary" />
-                                                            <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                <Input label="מחיר מחרון" isReadOnly={yetsorKeam?.mherKlale} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val); }} color="primary" className="max-w-[150px]" />
-                                                                <Input label="הנחה" size="sm" type="number" value={hnha || ''} onValueChange={(val) => setHnha(Math.min(val, mherKlale))} color="primary" className="max-w-[150px] mr-3" />
-                                                                <Dropdown dir="rtl" className="select-none">
-                                                                    <DropdownTrigger>
-                                                                        <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="lg">
-                                                                            <MdKeyboardArrowDown className="text-xl" />{selectedValue || 'תנאי תשלום'}
-                                                                        </Button>
-                                                                    </DropdownTrigger>
-                                                                    <DropdownMenu
-                                                                        aria-label="Multiple selection example"
-                                                                        variant="flat"
-                                                                        closeOnSelect={false}
-                                                                        disallowEmptySelection
-                                                                        selectionMode="multiple"
-                                                                        selectedKeys={tnaeTshlom}
-                                                                        onSelectionChange={setTnaeTshlom}
-                                                                    >
-                                                                        <DropdownItem key={'מזומן'}>{'מזומן'}</DropdownItem>
-                                                                        <DropdownItem key={'העברה בנקאית'}>{'העברה בנקאית'}</DropdownItem>
-                                                                        <DropdownItem key={'כרטיס אשראי'}>{'כרטיס אשראי'}</DropdownItem>
-                                                                        <DropdownItem key={'תשלום דיגיטלי'}>{'תשלום דיגיטלי'}</DropdownItem>
-                                                                        <DropdownItem key={'שיק'}>{'שיק'}</DropdownItem>
-                                                                        <DropdownItem key={'אשראי'}>{'אשראי'}</DropdownItem>
-                                                                        <DropdownItem key={'החלפה'}>{'החלפה'}</DropdownItem>
-                                                                        <DropdownItem key={'אחר'}>{'אחר'}</DropdownItem>
-                                                                    </DropdownMenu>
-                                                                </Dropdown>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="border-b-1 pt-3 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <PiClockBold className="text-xl text-primary" />
-                                                            <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                <Input className="max-w-[150px] " value={tarekhAsbka || format(new Date(), 'dd-MM-yyyy')} onValueChange={(value) => setTarekhAsbka(value)} color="primary" variant="flat" type='date' size="sm" label="תאריך אספקה" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="border-b-1 pt-3 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <div>
-                                                                <AiOutlineFundProjectionScreen className="text-xl text-primary ml-2" />
-                                                            </div>
-                                                            <div className="border-r-2 pr-2">
-                                                                <div className="flex justify-start">
-                                                                    <Dropdown dir="rtl">
-                                                                        <DropdownTrigger>
-                                                                            <Button dir="ltr" color="primary" variant='flat' size="lg">
-                                                                                <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet}` : 'בחירת תוכנית'}
-                                                                            </Button>
-                                                                        </DropdownTrigger>
-                                                                        <DropdownMenu
-                                                                            aria-label="Multiple selection example"
-                                                                            variant="flat"
-                                                                            closeOnSelect={true}
-                                                                            disallowEmptySelection
-                                                                            selectionMode="single"
-                                                                            onSelectionChange={(val) => setShemTokhnet(val.currentKey)}
-                                                                        >
-                                                                            <DropdownItem key='תוכנית ידנית' onClick={() => setTokhnetNokhhet('תוכנית ידנית')}>תוכנית ידנית</DropdownItem>
-                                                                            {Tokhneot?.map((option) => (
-                                                                                <DropdownItem onClick={() => setTokhnetNokhhet(option)} key={option.shem}>{option.shem}</DropdownItem>
-                                                                            ))}
-                                                                        </DropdownMenu>
-                                                                    </Dropdown>
-                                                                </div>
-                                                                <div className="mt-3">
-                                                                    <Button isDisabled={!tokhnetNokhhet} className="ml-2" size='md' variant="flat" onClick={() => setShowModalTokhnetYetsor(true)} color='primary'>תוכנית ייצור</Button>
-                                                                    <Button isDisabled={!tokhnetNokhhet} className="mr-2 ml-2" size='md' variant="flat" onClick={() => setShowModalBerotMotsrem(true)} color="primary">פירוט מוצרים</Button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </>
-                                            }
-
 
                                             {(shlavNokhhe === 'A') &&
-                                                <>
-                                                    <div className="w-full flex items-center pb-3 border-b-1">
-                                                        <div className="w-full flex items-center">
-                                                            <div>
-                                                                <FaUser className="text-xl text-primary ml-2" />
-                                                            </div>
-                                                            <div className="border-r-2 pr-2">
-                                                                <Switch size='md' dir="ltr" isSelected={hskmatLkoh} isReadOnly={yetsorKeam?.thlkhem?.hskmatLkwah || !brtemLkoh} defaultSelected={yetsorKeam?.thlkhem?.hskmatLkwah} value={hskmatLkoh} onValueChange={(val) => setHskmatLkoh(val)}>
-                                                                    <div className="mr-2 w-[100px] text-right">הזמנת לקוח</div>
-                                                                </Switch>
-                                                            </div>
+                                                <AnimatePresence mode="wait">
+                                                    <motion.div
+                                                        key="A"
+                                                        initial={{ opacity: 0, x: 100 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        exit={{ opacity: 0, x: -100 }}
+                                                        transition={{ duration: 0.5 }}
+                                                    >
+
+                                                        <div className="w-full flex items-center pb-3 border-b-1">
+                                                            <FaUser className="text-xl text-primary" />
+                                                            {
+                                                                lkohHdash &&
+                                                                (
+                                                                    <>
+                                                                        <div className="mr-2 border-r-2 pr-2">
+                                                                            <Button onClick={() => {setLkohHdash(false);ResetCustomer();}} size="sm" color="primary" variant="flat" className="text-base rounded-full">
+                                                                                <IoIosArrowForward className="text-xl" />
+                                                                            </Button>
+                                                                        </div>
+                                                                        <AnimatePresence mode="wait">
+                                                                            <motion.div
+                                                                                key="A"
+                                                                                initial={{ opacity: 0, x: 100 }}
+                                                                                animate={{ opacity: 1, x: 0 }}
+                                                                                exit={{ opacity: 0, x: -100 }}
+                                                                                transition={{ duration: 0.5 }}
+                                                                            >
+                                                                                <div className="mr-2 flex items-center">
+                                                                                    <Input value={customerName} onValueChange={(val) => setCustomerName(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="שם לקוח" />
+                                                                                    <Input value={msbarMezahehm} onValueChange={(val) => setMsbarMezahehm(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מספר מזהה" />
+                                                                                    <Input value={customerPhone} onValueChange={(val) => setCustomerPhone(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מס טלפון" />
+                                                                                    <Input value={customerCity} onValueChange={(val) => setCustomerCity(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="ישוב" />
+                                                                                    <Button onClick={() => {setShowModalAddCustomer(true);}} size="sm" color="primary" variant="flat" className="text-base rounded-full">
+                                                                                        <MdMoreHoriz className="text-3xl" />
+                                                                                    </Button>
+                                                                                </div>
+                                                                            </motion.div>
+                                                                        </AnimatePresence>
+                                                                    </>
+                                                                )
+                                                            }
+                                                            {
+                                                                !lkohHdash &&
+                                                                (
+                                                                    <>
+                                                                        <AnimatePresence mode="wait">
+                                                                            <motion.div
+                                                                                key="A"
+                                                                                initial={{ opacity: 0, x: 100 }}
+                                                                                animate={{ opacity: 1, x: 0 }}
+                                                                                exit={{ opacity: 0, x: -100 }}
+                                                                                transition={{ duration: 0.5 }}
+                                                                            >
+                                                                                <div className="mr-2 border-r-2 pr-2">
+                                                                                    <Autocomplete
+                                                                                        label="בחר לקוח"
+                                                                                        className="max-w-[200px]"
+                                                                                        color="primary"
+                                                                                        size="sm"
+                                                                                        defaultItems={lkhot}
+                                                                                    >
+                                                                                        {
+                                                                                            lkhot.map((lko, index) => (
+                                                                                                <AutocompleteItem onClick={() => { setBrtemLkoh(lko); }} className='text-right' key={lko?.id} value={lko?.name}>
+                                                                                                    {lko?.name}
+                                                                                                </AutocompleteItem>
+                                                                                            ))
+                                                                                        }
+                                                                                    </Autocomplete>
+                                                                                </div>
+                                                                            </motion.div>
+                                                                        </AnimatePresence>
+                                                                        <div className="mr-2">
+                                                                            <Button onClick={() => setLkohHdash(true)} size="sm" color="primary" variant="flat" className="text-base rounded-full">
+                                                                                חדש <IoIosArrowBack className="text-xl" />
+                                                                            </Button>
+                                                                        </div>
+                                                                    </>
+                                                                )
+                                                            }
+
                                                         </div>
-                                                    </div>
-                                                    <div className="border-b-1 pt-3 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <FaShekelSign className="text-xl text-primary" />
-                                                            <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                <Input label="מחיר מחרון" isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val); }} color="primary" className="max-w-[150px]" />
-                                                                <Input label="הנחה" size="sm" type="number" value={hnha || ''} onValueChange={(val) => setHnha(Math.min(val, mherKlale))} color="primary" className="max-w-[150px] mr-3" />
-                                                                <Dropdown dir="rtl" className="select-none">
-                                                                    <DropdownTrigger>
-                                                                        <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="lg">
-                                                                            <MdKeyboardArrowDown className="text-xl" />{selectedValue || 'תנאי תשלום'}
-                                                                        </Button>
-                                                                    </DropdownTrigger>
-                                                                    <DropdownMenu
-                                                                        aria-label="Multiple selection example"
-                                                                        variant="flat"
-                                                                        closeOnSelect={false}
-                                                                        disallowEmptySelection
-                                                                        selectionMode="multiple"
-                                                                        selectedKeys={tnaeTshlom}
-                                                                        onSelectionChange={setTnaeTshlom}
-                                                                    >
-                                                                        <DropdownItem key={'מזומן'}>{'מזומן'}</DropdownItem>
-                                                                        <DropdownItem key={'העברה בנקאית'}>{'העברה בנקאית'}</DropdownItem>
-                                                                        <DropdownItem key={'כרטיס אשראי'}>{'כרטיס אשראי'}</DropdownItem>
-                                                                        <DropdownItem key={'תשלום דיגיטלי'}>{'תשלום דיגיטלי'}</DropdownItem>
-                                                                        <DropdownItem key={'שיק'}>{'שיק'}</DropdownItem>
-                                                                        <DropdownItem key={'אשראי'}>{'אשראי'}</DropdownItem>
-                                                                        <DropdownItem key={'החלפה'}>{'החלפה'}</DropdownItem>
-                                                                        <DropdownItem key={'אחר'}>{'אחר'}</DropdownItem>
-                                                                    </DropdownMenu>
-                                                                </Dropdown>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="border-b-1 pt-3 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <PiClockBold className="text-xl text-primary" />
-                                                            <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                <Input className="max-w-[150px] " value={tarekhAsbka || format(new Date(), 'dd-MM-yyyy')} onValueChange={(value) => setTarekhAsbka(value)} color="primary" variant="flat" type='date' size="sm" label="תאריך אספקה" />
-                                                                <div className="mr-2 ml-3 w-[150px]">
-                                                                    מספר עדיפות
-                                                                </div>
-                                                                <Pagination page={msbarAdefot} onChange={setMsbarAdefot} className="w-full" total={5} initialPage={1} />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="border-b-1 pt-3 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <div>
-                                                                <AiOutlineFundProjectionScreen className="text-xl text-primary ml-2" />
-                                                            </div>
-                                                            <div className="border-r-2 pr-2">
-                                                                <div className="flex justify-start">
-                                                                    <Dropdown dir="rtl">
+
+                                                        <div className="border-b-1 pt-3 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <FaShekelSign className="text-xl text-primary" />
+                                                                <div className="w-full flex items-center mr-2 border-r-2 pr-2">
+                                                                    <Input label={`סכום הזמנה (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val);setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[180px]" />
+                                                                    <Input label={`סכום הזמנה (אחרי מע"מ)`} isReadOnly={yetsorKeam?.mherMkheraAhre} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val);setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Input label={`מקדימה`} isReadOnly={yetsorKeam?.mkdema} size="sm" type="number" value={mkdema || ''} onValueChange={(val) => setMkdema(val)} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Input label={`מספר תשלומים`} isReadOnly={yetsorKeam?.msbarTshlomem} size="sm" type="number" value={msbarTshlomem || ''} onValueChange={(val) => setMsbarTshlomem(val)} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Dropdown dir="rtl" className="select-none">
                                                                         <DropdownTrigger>
-                                                                            <Button dir="ltr" color="primary" variant='flat' size="lg">
-                                                                                <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet}` : 'בחירת תוכנית'}
+                                                                            <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="lg">
+                                                                                <MdKeyboardArrowDown className="text-xl" />{tnaeTshlom || 'אמצעי תשלום'}
                                                                             </Button>
                                                                         </DropdownTrigger>
                                                                         <DropdownMenu
@@ -1208,87 +1365,118 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                                             variant="flat"
                                                                             closeOnSelect={true}
                                                                             disallowEmptySelection
-                                                                            selectionMode="single"
-                                                                            onSelectionChange={(val) => setShemTokhnet(val.currentKey)}
+                                                                            selectionMode='single'
+                                                                            selectedKeys={tnaeTshlom}
+                                                                            onSelectionChange={(val) => setTnaeTshlom(val.currentKey)}
                                                                         >
-                                                                            <DropdownItem key='תוכנית ידנית' onClick={() => setTokhnetNokhhet('תוכנית ידנית')}>תוכנית ידנית</DropdownItem>
-                                                                            {Tokhneot?.map((option) => (
-                                                                                <DropdownItem onClick={() => setTokhnetNokhhet(option)} key={option.shem}>{option.shem}</DropdownItem>
-                                                                            ))}
+                                                                            <DropdownItem key={'העברה'}>{'העברה'}</DropdownItem>
+                                                                            <DropdownItem key={'מזומן'}>{'מזומן'}</DropdownItem>
+                                                                            <DropdownItem key={'כרטיס אשראי'}>{'כרטיס אשראי'}</DropdownItem>
+                                                                            <DropdownItem key={'שיק'}>{'שיק'}</DropdownItem>
+                                                                            <DropdownItem key={'אחר'}>{'אחר'}</DropdownItem>
                                                                         </DropdownMenu>
                                                                     </Dropdown>
                                                                 </div>
-                                                                <div className="mt-3">
-                                                                    <Button isDisabled={!tokhnetNokhhet} className="ml-2" size='md' variant="flat" onClick={() => setShowModalTokhnetYetsor(true)} color='primary'>תוכנית ייצור</Button>
-                                                                    <Button isDisabled={!tokhnetNokhhet} className="mr-2 ml-2" size='md' variant="flat" onClick={() => setShowModalBerotMotsrem(true)} color="primary">פירוט מוצרים</Button>
+                                                            </div>
+                                                        </div>
+                                                        <div className="border-b-1 pt-3 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <PiClockBold className="text-xl text-primary" />
+                                                                <div className="w-full flex items-center mr-2 border-r-2 pr-2">
+                                                                    <Input className="max-w-[150px] " value={tarekhAsbka || format(new Date(), 'dd-MM-yyyy')} onValueChange={(value) => setTarekhAsbka(value)} color="primary" variant="flat" type='date' size="sm" label="תאריך אספקה" />
+                                                                    <div className="mr-2 ml-3 w-[150px]">
+                                                                        מספר עדיפות
+                                                                    </div>
+                                                                    <Pagination page={msbarAdefot} onChange={setMsbarAdefot} className="w-full" total={5} initialPage={1} />
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </>
+                                                        <div className="border-b-1 pt-3 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <div>
+                                                                    <AiOutlineFundProjectionScreen className="text-xl text-primary ml-2" />
+                                                                </div>
+                                                                <div className="border-r-2 pr-2">
+                                                                    <div className="flex justify-start">
+                                                                        <Dropdown dir="rtl">
+                                                                            <DropdownTrigger>
+                                                                                <Button dir="ltr" color="primary" variant='flat' size="lg">
+                                                                                    <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet}` : 'בחירת תוכנית'}
+                                                                                </Button>
+                                                                            </DropdownTrigger>
+                                                                            <DropdownMenu
+                                                                                aria-label="Multiple selection example"
+                                                                                variant="flat"
+                                                                                closeOnSelect={true}
+                                                                                disallowEmptySelection
+                                                                                selectionMode="single"
+                                                                                onSelectionChange={(val) => setShemTokhnet(val.currentKey)}
+                                                                            >
+                                                                                <DropdownItem key='תוכנית ידנית'>תוכנית ידנית</DropdownItem>
+                                                                                {Tokhneot?.map((option) => (
+                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                ))}
+                                                                            </DropdownMenu>
+                                                                        </Dropdown>
+                                                                    </div>
+                                                                    <div className="mt-3">
+                                                                        <Button isDisabled={!shemTokhnet} className="ml-2" size='md' variant="flat" onClick={() => setShowModalTokhnetYetsor(true)} color='primary'>תוכנית ייצור</Button>
+                                                                        <Button isDisabled={!shemTokhnet} className="mr-2 ml-2" size='md' variant="flat" onClick={() => setShowModalBerotMotsrem(true)} color="primary">פירוט מוצרים</Button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="pt-3 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <LiaCommentSolid className="text-xl text-primary" />
+                                                                <div className="w-full flex items-center mr-2 border-r-2 pr-2">
+                                                                    <Textarea
+                                                                        maxRows={3}
+                                                                        label="הערה כללית..."
+                                                                        className="max-w-[300px] w-full ml-2"
+                                                                        value={haraKlalet}
+                                                                        onValueChange={(val) => setHaraKlalet(val)}
+                                                                        color="primary"
+                                                                        variant="flat"
+                                                                    />
+
+                                                                    <Textarea
+                                                                        maxRows={3}
+                                                                        label="הערה פנמית..."
+                                                                        value={haraBnmet}
+                                                                        onValueChange={(val) => setHaraBnmet(val)}
+                                                                        className="max-w-[300px] w-full mr-2 ml-2"
+                                                                        color="primary"
+                                                                        variant="flat"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </motion.div>
+                                                </AnimatePresence>
                                             }
 
 
 
                                             {(shlavNokhhe === 'B') &&
-                                                <>
-                                                    <div className="border-b-1 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <FaShekelSign className="text-xl text-primary" />
-                                                            <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                <Input label="מחיר מחרון" isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val); }} color="primary" className="max-w-[150px]" />
-                                                                <Input label="הנחה" size="sm" type="number" value={hnha || ''} onValueChange={(val) => setHnha(Math.min(val, mherKlale))} color="primary" className="max-w-[150px] mr-3" />
-                                                                <Dropdown dir="rtl" className="select-none">
-                                                                    <DropdownTrigger>
-                                                                        <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="lg">
-                                                                            <MdKeyboardArrowDown className="text-xl" />{selectedValue || 'תנאי תשלום'}
-                                                                        </Button>
-                                                                    </DropdownTrigger>
-                                                                    <DropdownMenu
-                                                                        aria-label="Multiple selection example"
-                                                                        variant="flat"
-                                                                        closeOnSelect={false}
-                                                                        disallowEmptySelection
-                                                                        selectionMode="multiple"
-                                                                        selectedKeys={tnaeTshlom}
-                                                                        onSelectionChange={setTnaeTshlom}
-                                                                    >
-                                                                        <DropdownItem key={'מזומן'}>{'מזומן'}</DropdownItem>
-                                                                        <DropdownItem key={'העברה בנקאית'}>{'העברה בנקאית'}</DropdownItem>
-                                                                        <DropdownItem key={'כרטיס אשראי'}>{'כרטיס אשראי'}</DropdownItem>
-                                                                        <DropdownItem key={'תשלום דיגיטלי'}>{'תשלום דיגיטלי'}</DropdownItem>
-                                                                        <DropdownItem key={'שיק'}>{'שיק'}</DropdownItem>
-                                                                        <DropdownItem key={'אשראי'}>{'אשראי'}</DropdownItem>
-                                                                        <DropdownItem key={'החלפה'}>{'החלפה'}</DropdownItem>
-                                                                        <DropdownItem key={'אחר'}>{'אחר'}</DropdownItem>
-                                                                    </DropdownMenu>
-                                                                </Dropdown>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="border-b-1 pt-3 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <PiClockBold className="text-xl text-primary" />
-                                                            <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                <Input className="max-w-[150px] " value={tarekhAsbka || format(new Date(), 'dd-MM-yyyy')} onValueChange={(value) => setTarekhAsbka(value)} color="primary" variant="flat" type='date' size="sm" label="תאריך אספקה" />
-                                                                <div className="mr-2 ml-3 w-[150px]">
-                                                                    מספר עדיפות
-                                                                </div>
-                                                                <Pagination page={msbarAdefot} onChange={setMsbarAdefot} className="w-full" total={5} initialPage={1} />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="border-b-1 pt-3 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <div>
-                                                                <AiOutlineFundProjectionScreen className="text-xl text-primary ml-2" />
-                                                            </div>
-                                                            <div className="border-r-2 pr-2">
-                                                                <div className="flex justify-start">
-                                                                    <Dropdown dir="rtl">
+                                                <AnimatePresence mode="wait">
+                                                    <motion.div
+                                                        key="B"
+                                                        initial={{ opacity: 0, x: 100 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        exit={{ opacity: 0, x: -100 }}
+                                                        transition={{ duration: 0.5 }}
+                                                    >
+                                                        <div className="border-b-1 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <FaShekelSign className="text-xl text-primary" />
+                                                                <div className="w-full flex items-center mr-2 border-r-2 pr-2">
+                                                                <Input label={`סכום הזמנה (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val);setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[180px]" />
+                                                                    <Input label={`סכום הזמנה (אחרי מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val);setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Dropdown dir="rtl" className="select-none">
                                                                         <DropdownTrigger>
-                                                                            <Button dir="ltr" color="primary" variant='flat' size="lg">
-                                                                                <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet}` : 'בחירת תוכנית'}
+                                                                            <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="lg">
+                                                                                <MdKeyboardArrowDown className="text-xl" />{tnaeTshlom || 'אמצעי תשלום'}
                                                                             </Button>
                                                                         </DropdownTrigger>
                                                                         <DropdownMenu
@@ -1296,102 +1484,133 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                                             variant="flat"
                                                                             closeOnSelect={true}
                                                                             disallowEmptySelection
-                                                                            selectionMode="single"
-                                                                            onSelectionChange={(val) => setShemTokhnet(val.currentKey)}
+                                                                            selectionMode='single'
+                                                                            selectedKeys={tnaeTshlom}
+                                                                            onSelectionChange={(val) => setTnaeTshlom(val.currentKey)}
                                                                         >
-                                                                            <DropdownItem key='תוכנית ידנית' onClick={() => setTokhnetNokhhet('תוכנית ידנית')}>תוכנית ידנית</DropdownItem>
-                                                                            {Tokhneot?.map((option) => (
-                                                                                <DropdownItem onClick={() => setTokhnetNokhhet(option)} key={option.shem}>{option.shem}</DropdownItem>
-                                                                            ))}
+                                                                            <DropdownItem key={'העברה'}>{'העברה'}</DropdownItem>
+                                                                            <DropdownItem key={'מזומן'}>{'מזומן'}</DropdownItem>
+                                                                            <DropdownItem key={'כרטיס אשראי'}>{'כרטיס אשראי'}</DropdownItem>
+                                                                            <DropdownItem key={'שיק'}>{'שיק'}</DropdownItem>
+                                                                            <DropdownItem key={'אחר'}>{'אחר'}</DropdownItem>
                                                                         </DropdownMenu>
                                                                     </Dropdown>
                                                                 </div>
-                                                                <div className="mt-3 flex items-center">
-                                                                    <div>
-                                                                        <Button isDisabled={!tokhnetNokhhet} className="ml-2" size='md' variant="flat" onClick={() => setShowModalTokhnetYetsor(true)} color='primary'>תוכנית ייצור</Button>
+                                                            </div>
+                                                        </div>
+                                                        <div className="border-b-1 pt-3 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <PiClockBold className="text-xl text-primary" />
+                                                                <div className="w-full flex items-center mr-2 border-r-2 pr-2">
+                                                                    <Input className="max-w-[150px] " value={tarekhAsbka || format(new Date(), 'dd-MM-yyyy')} onValueChange={(value) => setTarekhAsbka(value)} color="primary" variant="flat" type='date' size="sm" label="תאריך אספקה" />
+                                                                    <div className="mr-2 ml-3 w-[150px]">
+                                                                        מספר עדיפות
                                                                     </div>
-                                                                    <div className="relative">
-                                                                        {
-                                                                            errorMotsaremRglem && <Tooltip
-                                                                                content={<div className='text-danger text-xs'>כמות מוצרים חורגת</div>}
-                                                                                placement="top"
-                                                                                trigger="hover"
-                                                                                className="z-50 border-1 border-danger"
-                                                                                showArrow={true}
+                                                                    <Pagination page={msbarAdefot} onChange={setMsbarAdefot} className="w-full" total={5} initialPage={1} />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="border-b-1 pt-3 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <div>
+                                                                    <AiOutlineFundProjectionScreen className="text-xl text-primary ml-2" />
+                                                                </div>
+                                                                <div className="border-r-2 pr-2">
+                                                                    <div className="flex justify-start">
+                                                                        <Dropdown dir="rtl">
+                                                                            <DropdownTrigger>
+                                                                                <Button dir="ltr" color="primary" variant='flat' size="lg">
+                                                                                    <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet}` : 'בחירת תוכנית'}
+                                                                                </Button>
+                                                                            </DropdownTrigger>
+                                                                            <DropdownMenu
+                                                                                aria-label="Multiple selection example"
+                                                                                variant="flat"
+                                                                                closeOnSelect={true}
+                                                                                disallowEmptySelection
+                                                                                selectionMode="single"
+                                                                                onSelectionChange={(val) => setShemTokhnet(val.currentKey)}
                                                                             >
-                                                                                <div className=" absolute top-[-10px] left-0 z-50"><MdError className="text-2xl text-danger" /></div>
-                                                                            </Tooltip>
-                                                                        }
-                                                                        <Button isDisabled={!tokhnetNokhhet} className="mr-2 ml-2" size='md' variant="flat" onClick={() => setShowModalBerotMotsrem(true)} color="primary">פירוט מוצרים</Button>
+                                                                                <DropdownItem key='תוכנית ידנית'>תוכנית ידנית</DropdownItem>
+                                                                                {Tokhneot?.map((option) => (
+                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                ))}
+                                                                            </DropdownMenu>
+                                                                        </Dropdown>
+                                                                    </div>
+                                                                    <div className="mt-3 flex items-center">
+                                                                        <div>
+                                                                            <Button isDisabled={!shemTokhnet} className="ml-2" size='md' variant="flat" onClick={() => setShowModalTokhnetYetsor(true)} color='primary'>תוכנית ייצור</Button>
+                                                                        </div>
+                                                                        <div className="relative">
+                                                                            {
+                                                                                errorMotsaremRglem && <Tooltip
+                                                                                    content={<div className='text-danger text-xs'>כמות מוצרים חורגת</div>}
+                                                                                    placement="top"
+                                                                                    trigger="hover"
+                                                                                    className="z-50 border-1 border-danger"
+                                                                                    showArrow={true}
+                                                                                >
+                                                                                    <div className=" absolute top-[-10px] left-0 z-50"><MdError className="text-2xl text-danger" /></div>
+                                                                                </Tooltip>
+                                                                            }
+                                                                            <Button isDisabled={!shemTokhnet} className="mr-2 ml-2" size='md' variant="flat" onClick={() => setShowModalBerotMotsrem(true)} color="primary">פירוט מוצרים</Button>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </>
+                                                        <div className="pt-3 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <LiaCommentSolid className="text-xl text-primary" />
+                                                                <div className="w-full flex items-center mr-2 border-r-2 pr-2">
+                                                                    <Textarea
+                                                                        maxRows={3}
+                                                                        label="הערה כללית..."
+                                                                        className="max-w-[300px] w-full ml-2"
+                                                                        value={haraKlalet}
+                                                                        onValueChange={(val) => setHaraKlalet(val)}
+                                                                        color="primary"
+                                                                        variant="flat"
+                                                                    />
+
+                                                                    <Textarea
+                                                                        maxRows={3}
+                                                                        label="הערה פנמית..."
+                                                                        value={haraBnmet}
+                                                                        onValueChange={(val) => setHaraBnmet(val)}
+                                                                        className="max-w-[300px] w-full mr-2 ml-2"
+                                                                        color="primary"
+                                                                        variant="flat"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </motion.div>
+                                                </AnimatePresence>
                                             }
 
 
 
                                             {(shlavNokhhe === 'C') &&
-                                                <>
-                                                    <div className="border-b-1 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <FaShekelSign className="text-xl text-primary" />
-                                                            <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                <Input label="מחיר מחרון" isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val); }} color="primary" className="max-w-[150px]" />
-                                                                <Input label="הנחה" size="sm" type="number" value={hnha || ''} onValueChange={(val) => setHnha(Math.min(val, mherKlale))} color="primary" className="max-w-[150px] mr-3" />
-                                                                <Dropdown dir="rtl" className="select-none">
-                                                                    <DropdownTrigger>
-                                                                        <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="lg">
-                                                                            <MdKeyboardArrowDown className="text-xl" />{selectedValue || 'תנאי תשלום'}
-                                                                        </Button>
-                                                                    </DropdownTrigger>
-                                                                    <DropdownMenu
-                                                                        aria-label="Multiple selection example"
-                                                                        variant="flat"
-                                                                        closeOnSelect={false}
-                                                                        disallowEmptySelection
-                                                                        selectionMode="multiple"
-                                                                        selectedKeys={tnaeTshlom}
-                                                                        onSelectionChange={setTnaeTshlom}
-                                                                    >
-                                                                        <DropdownItem key={'מזומן'}>{'מזומן'}</DropdownItem>
-                                                                        <DropdownItem key={'העברה בנקאית'}>{'העברה בנקאית'}</DropdownItem>
-                                                                        <DropdownItem key={'כרטיס אשראי'}>{'כרטיס אשראי'}</DropdownItem>
-                                                                        <DropdownItem key={'תשלום דיגיטלי'}>{'תשלום דיגיטלי'}</DropdownItem>
-                                                                        <DropdownItem key={'שיק'}>{'שיק'}</DropdownItem>
-                                                                        <DropdownItem key={'אשראי'}>{'אשראי'}</DropdownItem>
-                                                                        <DropdownItem key={'החלפה'}>{'החלפה'}</DropdownItem>
-                                                                        <DropdownItem key={'אחר'}>{'אחר'}</DropdownItem>
-                                                                    </DropdownMenu>
-                                                                </Dropdown>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="border-b-1 pt-3 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <PiClockBold className="text-xl text-primary" />
-                                                            <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                <Input className="max-w-[150px] " value={tarekhAsbka || format(new Date(), 'dd-MM-yyyy')} onValueChange={(value) => setTarekhAsbka(value)} color="primary" variant="flat" type='date' size="sm" label="תאריך אספקה" />
-                                                                <div className="mr-2 ml-3 w-[150px]">
-                                                                    מספר עדיפות
-                                                                </div>
-                                                                <Pagination className="w-full" total={5} initialPage={1} />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="border-b-1 pt-3 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <div>
-                                                                <AiOutlineFundProjectionScreen className="text-xl text-primary ml-2" />
-                                                            </div>
-                                                            <div className="border-r-2 pr-2">
-                                                                <div className="flex justify-start">
-                                                                    <Dropdown dir="rtl">
+                                                <AnimatePresence mode="wait">
+                                                    <motion.div
+                                                        key="C"
+                                                        initial={{ opacity: 0, x: 100 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        exit={{ opacity: 0, x: -100 }}
+                                                        transition={{ duration: 0.5 }}
+                                                    >
+                                                        <div className="border-b-1 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <FaShekelSign className="text-xl text-primary" />
+                                                                <div className="w-full flex items-center mr-2 border-r-2 pr-2">
+                                                                <Input label={`סכום הזמנה (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val);setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[180px]" />
+                                                                    <Input label={`סכום הזמנה (אחרי מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val);setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Dropdown dir="rtl" className="select-none">
                                                                         <DropdownTrigger>
-                                                                            <Button dir="ltr" color="primary" variant='flat' size="lg">
-                                                                                <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet}` : 'בחירת תוכנית'}
+                                                                            <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="lg">
+                                                                                <MdKeyboardArrowDown className="text-xl" />{tnaeTshlom || 'אמצעי תשלום'}
                                                                             </Button>
                                                                         </DropdownTrigger>
                                                                         <DropdownMenu
@@ -1399,60 +1618,131 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                                             variant="flat"
                                                                             closeOnSelect={true}
                                                                             disallowEmptySelection
-                                                                            selectionMode="single"
-                                                                            onSelectionChange={(val) => setShemTokhnet(val.currentKey)}
+                                                                            selectionMode='single'
+                                                                            selectedKeys={tnaeTshlom}
+                                                                            onSelectionChange={(val) => setTnaeTshlom(val.currentKey)}
                                                                         >
-                                                                            <DropdownItem key='תוכנית ידנית' onClick={() => setTokhnetNokhhet('תוכנית ידנית')}>תוכנית ידנית</DropdownItem>
-                                                                            {Tokhneot?.map((option) => (
-                                                                                <DropdownItem onClick={() => setTokhnetNokhhet(option)} key={option.shem}>{option.shem}</DropdownItem>
-                                                                            ))}
+                                                                            <DropdownItem key={'העברה'}>{'העברה'}</DropdownItem>
+                                                                            <DropdownItem key={'מזומן'}>{'מזומן'}</DropdownItem>
+                                                                            <DropdownItem key={'כרטיס אשראי'}>{'כרטיס אשראי'}</DropdownItem>
+                                                                            <DropdownItem key={'שיק'}>{'שיק'}</DropdownItem>
+                                                                            <DropdownItem key={'אחר'}>{'אחר'}</DropdownItem>
                                                                         </DropdownMenu>
                                                                     </Dropdown>
                                                                 </div>
-                                                                <div className="mt-3">
-                                                                    <Button isDisabled={!tokhnetNokhhet} className="ml-2" size='md' variant="flat" onClick={() => setShowModalTokhnetYetsor(true)} color='primary'>תוכנית ייצור</Button>
-                                                                    <Button isDisabled={!tokhnetNokhhet} className="mr-2 ml-2" size='md' variant="flat" onClick={() => setShowModalBerotMotsrem(true)} color="primary">פירוט מוצרים</Button>
+                                                            </div>
+                                                        </div>
+                                                        <div className="border-b-1 pt-3 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <PiClockBold className="text-xl text-primary" />
+                                                                <div className="w-full flex items-center mr-2 border-r-2 pr-2">
+                                                                    <Input className="max-w-[150px] " value={tarekhAsbka || format(new Date(), 'dd-MM-yyyy')} onValueChange={(value) => setTarekhAsbka(value)} color="primary" variant="flat" type='date' size="sm" label="תאריך אספקה" />
+                                                                    <div className="mr-2 ml-3 w-[150px]">
+                                                                        מספר עדיפות
+                                                                    </div>
+                                                                    <Pagination className="w-full" total={5} initialPage={1} />
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div className="border-b-1 pt-3 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <IoSettings className="text-xl text-primary" />
-                                                            <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                <Button size="md" variant="flat" color="primary" onClick={() => setShowModalMtsavYetsor(true)}>שלבי ייצור</Button>
+                                                        <div className="border-b-1 pt-3 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <div>
+                                                                    <AiOutlineFundProjectionScreen className="text-xl text-primary ml-2" />
+                                                                </div>
+                                                                <div className="border-r-2 pr-2">
+                                                                    <div className="flex justify-start">
+                                                                        <Dropdown dir="rtl">
+                                                                            <DropdownTrigger>
+                                                                                <Button dir="ltr" color="primary" variant='flat' size="lg">
+                                                                                    <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet}` : 'בחירת תוכנית'}
+                                                                                </Button>
+                                                                            </DropdownTrigger>
+                                                                            <DropdownMenu
+                                                                                aria-label="Multiple selection example"
+                                                                                variant="flat"
+                                                                                closeOnSelect={true}
+                                                                                disallowEmptySelection
+                                                                                selectionMode="single"
+                                                                                onSelectionChange={(val) => setShemTokhnet(val.currentKey)}
+                                                                            >
+                                                                                <DropdownItem key='תוכנית ידנית'>תוכנית ידנית</DropdownItem>
+                                                                                {Tokhneot?.map((option) => (
+                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                ))}
+                                                                            </DropdownMenu>
+                                                                        </Dropdown>
+                                                                    </div>
+                                                                    <div className="mt-3">
+                                                                        <Button isDisabled={!shemTokhnet} className="ml-2" size='md' variant="flat" onClick={() => setShowModalTokhnetYetsor(true)} color='primary'>תוכנית ייצור</Button>
+                                                                        <Button isDisabled={!shemTokhnet} className="mr-2 ml-2" size='md' variant="flat" onClick={() => setShowModalBerotMotsrem(true)} color="primary">פירוט מוצרים</Button>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div className="pt-3 pb-3">
-                                                        <div className="w-full flex items-center">
-                                                            <div>
-                                                                <GrCertificate className="text-xl text-primary ml-2" />
+                                                        <div className="border-b-1 pt-3 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <IoSettings className="text-xl text-primary" />
+                                                                <div className="w-full flex items-center mr-2 border-r-2 pr-2">
+                                                                    <Button size="md" variant="flat" color="primary" onClick={() => setShowModalMtsavYetsor(true)}>שלבי ייצור</Button>
+                                                                </div>
                                                             </div>
-                                                            <div className="border-r-2 pr-2">
-                                                                <div className="w-full flex">
-                                                                    <Autocomplete
-                                                                        label="מספר עגלה"
-                                                                        className="max-w-[200px]"
-                                                                        size="sm"
-                                                                        color="primary"
-                                                                        onSelectionChange={setMsbarAgla}
-                                                                        onInputChange={(val) => { setMsbarAgla(val); }}
-                                                                    >
-                                                                        {
-                                                                            aglot?.map((aglaaaaa, index) => (
-                                                                                (!aglaaaaa?.active) && <AutocompleteItem className='text-right' key={aglaaaaa?.licenseid} value={aglaaaaa?.licenseid}>
-                                                                                    {aglaaaaa?.licenseid}
-                                                                                </AutocompleteItem>
-                                                                            ))
-                                                                        }
+                                                        </div>
+                                                        <div className="pt-3 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <div>
+                                                                    <GrCertificate className="text-xl text-primary ml-2" />
+                                                                </div>
+                                                                <div className="border-r-2 pr-2">
+                                                                    <div className="w-full flex">
+                                                                        <Autocomplete
+                                                                            label="מספר עגלה"
+                                                                            className="max-w-[200px]"
+                                                                            size="sm"
+                                                                            color="primary"
+                                                                            onSelectionChange={setMsbarAgla}
+                                                                            onInputChange={(val) => { setMsbarAgla(val); }}
+                                                                        >
+                                                                            {
+                                                                                aglot?.map((aglaaaaa, index) => (
+                                                                                    (!aglaaaaa?.active) && <AutocompleteItem className='text-right' key={aglaaaaa?.licenseid} value={aglaaaaa?.licenseid}>
+                                                                                        {aglaaaaa?.licenseid}
+                                                                                    </AutocompleteItem>
+                                                                                ))
+                                                                            }
 
-                                                                    </Autocomplete>
+                                                                        </Autocomplete>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </>
+                                                        <div className="pt-3 pb-3">
+                                                            <div className="w-full flex items-center">
+                                                                <LiaCommentSolid className="text-xl text-primary" />
+                                                                <div className="w-full flex items-center mr-2 border-r-2 pr-2">
+                                                                    <Textarea
+                                                                        maxRows={3}
+                                                                        label="הערה כללית..."
+                                                                        className="max-w-[300px] w-full ml-2"
+                                                                        value={haraKlalet}
+                                                                        onValueChange={(val) => setHaraKlalet(val)}
+                                                                        color="primary"
+                                                                        variant="flat"
+                                                                    />
+
+                                                                    <Textarea
+                                                                        maxRows={3}
+                                                                        label="הערה פנמית..."
+                                                                        value={haraBnmet}
+                                                                        onValueChange={(val) => setHaraBnmet(val)}
+                                                                        className="max-w-[300px] w-full mr-2 ml-2"
+                                                                        color="primary"
+                                                                        variant="flat"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </motion.div>
+                                                </AnimatePresence>
                                             }
 
 

@@ -12,7 +12,7 @@ import { formatNumber } from '../FireBase/getDocs';
 import { TbExclamationMark } from "react-icons/tb";
 import { MdError } from "react-icons/md";
 
-const ProductCard = ({ motsarem, index, mlae, change, reset, src, add, remove,shlav }) => {
+const ProductCard = ({ motsarem, index, mlae, change, reset, src, add, remove,shlav,Bro,Tokhnet }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const nextProduct = () => {
@@ -90,6 +90,50 @@ const ProductCard = ({ motsarem, index, mlae, change, reset, src, add, remove,sh
         }
     }
 
+    const GetBrofelemItems = () => {
+        const arrayChooisedItems = motsarem.map(item => item.shem);
+        const combinedResults = [
+            ...GetBrtemMotsarMlae('B4').arrayResualt,
+            ...GetBrtemMotsarMlae('B5').arrayResualt,
+            ...GetBrtemMotsarMlae('B6').arrayResualt
+        ];
+        return (
+            <>
+                {combinedResults.map(option => (
+                    <DropdownItem
+                        className={`select-none ${arrayChooisedItems.includes(option.shem) ? ' bg-danger-300' : ''}`}
+                        key={option.shem}
+                        isDisabled={arrayChooisedItems.includes(option.shem)}
+                    >
+                        {option.shem}
+                    </DropdownItem>
+                ))}
+            </>
+        );
+    };
+
+    const GetRgelemItems = () => {
+        const arrayChooisedItems = motsarem.map(item => item.shem);
+        const combinedResults = [
+            ...GetBrtemMotsarMlae(product?.remez).arrayResualt,
+        ];
+        return (
+            <>
+                {combinedResults.map(option => (
+                    <DropdownItem
+                        className={`select-none ${arrayChooisedItems.includes(option.shem) ? ' bg-danger-300' : ''}`}
+                        key={option.shem}
+                        isDisabled={arrayChooisedItems.includes(option.shem)}
+                    >
+                        {option.shem}
+                    </DropdownItem>
+                ))}
+            </>
+        );
+    };
+
+
+
     return (
         <Card className={`m-5 overflow-hidden border ${GetBorderColor()}`}>
             <CardBody className=' overflow-hidden'>
@@ -98,7 +142,20 @@ const ProductCard = ({ motsarem, index, mlae, change, reset, src, add, remove,sh
                         <IoIosArrowBack onClick={() => prevProduct()} className="text-4xl transform scale-x-[-1] hover:text-primary" />
                     </div>
                     <div className="flex items-center w-full">
-                        <div className="mr-1 ml-1 w-full text-center bg-primary-100 rounded-full font-bold text-gray">{currentIndex + 1}</div>
+                        {
+                            Bro ?
+                                <Tooltip
+                                    content={<div className='text-danger text-xs'>{product.message}</div>}
+                                    placement="top"
+                                    trigger="hover"
+                                    className="z-50"
+                                    showArrow={true}
+                                >
+                                    <div className="mr-1 ml-1 w-full text-center bg-warning-100 rounded-full font-bold text-gray">{currentIndex + 1}</div>
+                                </Tooltip>
+                                :
+                                <div className="mr-1 ml-1 w-full text-center bg-primary-100 rounded-full font-bold text-gray">{currentIndex + 1}</div>
+                        }
                         <div className="mr-1 ml-1 w-full text-center flex justify-center"><GoPlusCircle onClick={() => { add(product?.remez); nextProduct(); }} className="min-h-[22px] min-w-[22px] rounded-full cursor-pointer hover:text-primary" /></div>
                     </div>
 
@@ -136,7 +193,7 @@ const ProductCard = ({ motsarem, index, mlae, change, reset, src, add, remove,sh
                             }
                             <div className='w-full flex items-center max-w-[190px]'>
                                 {
-                                    product.shem && <div className='ml-1 w-[200px] text-sm text-right text-primary flex items-center'><div className='ml-1 font-black'>{GetBrtemMotsarMlae(product.remez, product.shem).kmot}</div> במלאי</div>
+                                    product.shem && !Tokhnet && <div className='ml-1 w-[200px] text-sm text-right text-primary flex items-center'><div className='ml-1 font-black'>{GetBrtemMotsarMlae(product.remez, product.shem).kmot}</div> במלאי</div>
                                 }
                                 <Dropdown dir="rtl">
                                     <DropdownTrigger>
@@ -153,15 +210,18 @@ const ProductCard = ({ motsarem, index, mlae, change, reset, src, add, remove,sh
                                         onSelectionChange={(val) => change(product?.id, 'shem', val.currentKey)}
                                         className='max-h-[500px] overflow-auto'
                                     >
-                                        {GetBrtemMotsarMlae(product?.remez).arrayResualt.map((option) => (
-                                            <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
-                                        ))}
                                         {
-                                            product?.shem && <DropdownItem color='warning' className="text-warning" onClick={() => reset(product?.id)}>הסרה</DropdownItem>
+                                            Bro ?
+                                                GetBrofelemItems()
+                                                :
+                                                GetRgelemItems()
+                                        }
+                                        {
+                                            product?.shem && <DropdownItem color='warning' className="text-warning select-none" onClick={() => reset(product?.id)}>הסרה</DropdownItem>
                                         }
                                     </DropdownMenu>
                                 </Dropdown>
-                                </div>
+                            </div>
 
                             <div className='w-full flex items-center max-w-[190px]'>
                                 <div className='ml-1'>כמות</div>

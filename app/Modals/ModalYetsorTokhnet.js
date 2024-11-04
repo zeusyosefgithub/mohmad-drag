@@ -28,7 +28,7 @@ import { useAppTokhnetContext } from "./ModalYetsor";
 import TokhnetContext from "../auth/TokhnetContext";
 
 
-export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, mlae, add, reset }) {
+export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, mlae, add, reset,addBro,resetBro }) {
 
 
     const {
@@ -61,6 +61,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
         hlokatRmbaDaletBro, setHlokatRmbaDaletBro,
         hlokatRmbaDaletTvah, setHlokatRmbaDaletTvah,
         tosefetVnel, setToseftVnel,
+        toseftVnelBro,setToseftVnelBrof,
         solam, setSolam,
         msgertSolam, setMsgertSolam,
         gobahSolam, setGobahSolam,
@@ -127,7 +128,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
 
     const GetTypeElement = (value, insider) => {
         if (value?.val === 'Input') {
-            return <Input type="number" size={insider === null ? 'sm' : 'md'} variant='underlined' className={`pr-2 pl-2 ${value.getVal && 'text-primary'}`} color={value.getVal ? 'primary' : 'default'} value={value.getVal || ''} onValueChange={(newValue) => value.setVal(newValue)} label={value.chooises} />
+            return <Input type="number" size={insider === null ? 'sm' : 'md'} variant='underlined' className={`pr-2 pl-2 ${value.getVal && 'text-primary'}`} color={value.getVal ? 'primary' : 'default'} value={value.getVal || ''} onValueChange={(newValue) => value.setVal(Math.max(0,newValue))} label={value.chooises} />
         }
         else if (value?.val === 'Radio') {
             return <RadioGroup
@@ -136,8 +137,8 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                 onValueChange={(newValue) => value.setVal(newValue)}
             >
                 {
-                    value?.chooises?.map((cho) => {
-                        return <Radio value={cho}><div className="text-xs">{cho}</div></Radio>
+                    value?.chooises?.map((cho,index) => {
+                        return <Radio key={index} value={cho}><div className="text-xs">{cho}</div></Radio>
                     })
                 }
             </RadioGroup>
@@ -145,7 +146,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
         else if (value?.val === 'DropDown') {
             return <Dropdown dir="rtl">
                 <DropdownTrigger>
-                    <Button variant='flat' color={value.getVal !== 'בחר' ? 'primary' : 'default'} size={insider === null ? 'sm' : 'md'} className='pr-2 pl-2'>
+                    <Button isDisabled={value.disable} variant='flat' color={value.disable ? 'default' : value.getVal !== 'בחר' ? 'primary' : 'warning'} size={insider === null ? 'sm' : 'md'} className='pr-2 pl-2'>
                         {value.getVal}
                     </Button>
                 </DropdownTrigger>
@@ -155,17 +156,25 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                     disallowEmptySelection
                     selectionMode="single"
                     selectedKeys={value.getVal}
-                    onSelectionChange={(val) => value.setVal(val)}
+                    onSelectionChange={(val) => {value.setVal(val.currentKey);}}
                 >
                     {
                         value.chooises.map((res) => (
                             GetBrtemMotsarMlae(res).arrayResualt.map((option) => (
-                                <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                <DropdownItem onClick={() => {
+                                    if(value.getVal !== 'בחר'){
+                                        resetBro(value.getVal,value.calc);
+                                        addBro({shem : option.shem,remez : option.categoryMotsar,kmot : value.calc});
+                                    }
+                                    else{
+                                        addBro({shem : option.shem,remez : option.categoryMotsar,kmot : value.calc});
+                                    }
+                                }} key={option.shem}>{option.shem}</DropdownItem>
                             ))
                         ))
                     }
                     {
-                        value.getVal !== 'בחר' && <DropdownItem color='warning' className="text-warning" onClick={() => value.setVal('בחר')}>הסרה</DropdownItem>
+                        value.getVal !== 'בחר' && <DropdownItem color='warning' className="text-warning" onClick={() => {value.setVal('בחר');resetBro(value.getVal,value.calc);}}>הסרה</DropdownItem>
                     }
                 </DropdownMenu>
             </Dropdown>
@@ -346,7 +355,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
         setMsbarBroSheldaBnemetShne(0);
         setDalet('רגיל');
         setMsgertRmbaDalet('בחר');
-        setMsgertRmbaDaletBro(0);
+        setMsgertRmbaDaletAorkh(0);
         setHlokatRmbaDalet('בחר');
         setHlokatRmbaDaletBro(0);
         setHlokatRmbaDaletTvah(0);
@@ -371,7 +380,15 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
         setTosfot([]);
     }
 
-    //
+
+    useEffect(() => {
+        const reshon = Math.ceil(msbarBroSheldaBnemet / 2);
+        const shne = msbarBroSheldaBnemet - reshon;
+        setMsbarBroSheldaBnemetReshon(reshon);
+        setMsbarBroSheldaBnemetShne(shne);
+    },[msbarBroSheldaBnemet]);
+
+
 
 
     return (
@@ -386,6 +403,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                             resetAll();
                         }
                     }} yetsor message={'האם אתה בטוח לשחזור כל הנתונים !?'} show={showResetAllMessage} disable={() => setShowResetAllMessage(false)} />
+
                     <div dir="rtl" className="w-full flex justify-center">
                         <div className="w-full max-w-[700px]"> {/* Inner content */}
                             <div className="w-full mt-4"></div>
@@ -443,6 +461,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                     {
                                         val: 'DropDown',
                                         chooises: ['B1'],
+                                        calc: parseFloat(((aorkh / 100) * (rohav / 100)).toFixed(1)),
                                         getVal: retsba,
                                         setVal: (val) => setRetsba(val)
                                     },
@@ -484,6 +503,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                     {
                                         val: 'DropDown',
                                         chooises: ['B4', 'B5', 'B6'],
+                                        calc: parseInt(msbarTsrem) === 1 ? (0.6) : parseInt(msbarTsrem) === 2 ? (1.2) : 0,
                                         getVal: brofelTfesa,
                                         setVal: (val) => setBrofelTfesa(val)
                                     },
@@ -525,6 +545,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                     {
                                         val: 'DropDown',
                                         chooises: ['B4', 'B5', 'B6'],
+                                        calc: parseFloat(((aorkh / 100) * 2) + ((rohav / 100) * 2)),
                                         getVal: msgeretThtonah,
                                         setVal: (val) => setTMsgeretThtonah(val)
                                     },
@@ -542,6 +563,8 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                     {
                                         val: 'DropDown',
                                         chooises: ['B4', 'B5', 'B6'],
+                                        disable: !tvahHlokaThtona && !msbarBrofHlokaThotona,
+                                        calc: parseFloat(msbarBrofHlokaThotona * (rohav / 100)), 
                                         getVal: hlokaThtonah,
                                         setVal: (val) => setTHlokaThtonah(val)
                                     },
@@ -578,7 +601,9 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                     'יצול',
                                     {
                                         val: 'DropDown',
-                                        chooises: ['B1', 'B5', 'B6'],
+                                        chooises: ['B4', 'B5', 'B6'],
+                                        disable: !aorkhBroYetsol,
+                                        calc: (parseFloat((aorkhBroYetsol || 0) * 2) / 100), 
                                         getVal: yetsol,
                                         setVal: (val) => setYetsol(val)
                                     },
@@ -603,7 +628,8 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                     'שלדה חיצונית',
                                     {
                                         val: 'DropDown',
-                                        chooises: ['B1', 'B5', 'B6'],
+                                        chooises: ['B4', 'B5', 'B6'],
+                                        calc: parseFloat(((aorkh / 100) * 2) + ((rohav / 100) * 2)),
                                         getVal: sheldaHetsonet,
                                         setVal: (val) => setSheldaHetsonet(val)
                                     },
@@ -623,13 +649,13 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                         val: 'Input',
                                         chooises: `טווח בס"מ`,
                                         getVal: tvahSheldaBnemet,
-                                        setVal: (val) => setTvahSheldaBnemet(val)
+                                        setVal: (val) => {setTvahSheldaBnemet(val);setMsbarBroSheldaBnemet(parseInt(Math.floor(((aorkh / 100) / (val / 100)) - 1)));resetBro(helekReshonSheldaBnemet,msbarBroSheldaBnemetReshon);setHelekReshonSheldaBnemet('בחר');resetBro(helekShneSheldaBnemet,msbarBroSheldaBnemetShne);sethelekShneSheldaBnemet('בחר');}
                                     },
                                     {
                                         val: 'Input',
                                         chooises: "מס פרופילים",
                                         getVal: msbarBroSheldaBnemet,
-                                        setVal: (val) => setMsbarBroSheldaBnemet(val)
+                                        setVal: (val) => {setMsbarBroSheldaBnemet(val);setTvahSheldaBnemet(formatNumber((((aorkh / 100) / (parseFloat(val) + 1)) * 100)));resetBro(helekReshonSheldaBnemet,msbarBroSheldaBnemetReshon);setHelekReshonSheldaBnemet('בחר');resetBro(helekShneSheldaBnemet,msbarBroSheldaBnemetShne);sethelekShneSheldaBnemet('בחר');}
                                     },
 
                                 )
@@ -645,7 +671,9 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                     'חלק 1',
                                     {
                                         val: 'DropDown',
-                                        chooises: ['B1', 'B5', 'B6'],
+                                        chooises: ['B4', 'B5', 'B6'],
+                                        disable: !msbarBroSheldaBnemetReshon,
+                                        calc: msbarBroSheldaBnemetReshon,
                                         getVal: helekReshonSheldaBnemet,
                                         setVal: (val) => setHelekReshonSheldaBnemet(val)
                                     },
@@ -653,7 +681,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                         val: 'Input',
                                         chooises: "מס פרופילים",
                                         getVal: msbarBroSheldaBnemetReshon,
-                                        setVal: (val) => setMsbarBroSheldaBnemetReshon(val)
+                                        setVal: (val) => {resetBro(helekReshonSheldaBnemet,val);setHelekReshonSheldaBnemet('בחר');setMsbarBroSheldaBnemetReshon(Math.min(val,msbarBroSheldaBnemet));setMsbarBroSheldaBnemetShne(msbarBroSheldaBnemet - Math.min(val,msbarBroSheldaBnemet));}
                                     },
                                 )
                             }
@@ -668,7 +696,9 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                     'חלק 2',
                                     {
                                         val: 'DropDown',
-                                        chooises: ['B1', 'B5', 'B6'],
+                                        chooises: ['B4', 'B5', 'B6'],
+                                        disable: !msbarBroSheldaBnemetShne,
+                                        calc: msbarBroSheldaBnemetShne,
                                         getVal: helekShneSheldaBnemet,
                                         setVal: (val) => sethelekShneSheldaBnemet(val)
                                     },
@@ -676,7 +706,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                         val: 'Input',
                                         chooises: "מס פרופילים",
                                         getVal: msbarBroSheldaBnemetShne,
-                                        setVal: (val) => setMsbarBroSheldaBnemetShne(val)
+                                        setVal: (val) => {resetBro(helekShneSheldaBnemet,val);sethelekShneSheldaBnemet('בחר');setMsbarBroSheldaBnemetShne(Math.min(val,msbarBroSheldaBnemet));setMsbarBroSheldaBnemetReshon(msbarBroSheldaBnemet - Math.min(val,msbarBroSheldaBnemet));}
                                     },
                                 )
                             }
@@ -687,7 +717,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                     {
                                         GetRow(
                                             '9',
-                                            (msgertRmbaDalet !== 'בחר') && (msgertRmbaDaletAorkh || '') && (hlokatRmbaDalet !== 'בחר') && (hlokatRmbaDaletBro || '') && (hlokatRmbaDaletTvah || ''),
+                                            dalet === 'רגיל' ? true : (tosefetVnel ? toseftVnelBro !== 'בחר' : true) && (msgertRmbaDalet !== 'בחר') && (msgertRmbaDaletAorkh || '') && (hlokatRmbaDalet !== 'בחר') && (hlokatRmbaDaletBro || '') && (hlokatRmbaDaletTvah || ''),
                                             {
                                                 val: 'Image',
                                                 chooises: rep11,
@@ -713,7 +743,9 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                             'מסגרת רמפה',
                                             {
                                                 val: 'DropDown',
-                                                chooises: ['B1', 'B5', 'B6'],
+                                                chooises: ['B4', 'B5', 'B6'],
+                                                disable: !msgertRmbaDaletAorkh,
+                                                calc: parseFloat((msgertRmbaDaletAorkh / 100) * 2 + (rohav / 100) * 2),
                                                 getVal: msgertRmbaDalet,
                                                 setVal: (val) => setMsgertRmbaDalet(val)
                                             },
@@ -721,7 +753,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                                 val: 'Input',
                                                 chooises: `אורך רמפה בס"מ`,
                                                 getVal: msgertRmbaDaletAorkh,
-                                                setVal: (val) => setMsgertRmbaDaletAorkh(val)
+                                                setVal: (val) => {setMsgertRmbaDaletAorkh(val);setMsgertRmbaDalet('בחר');resetBro(msgertRmbaDalet,parseFloat((msgertRmbaDaletAorkh / 100) * 2 + (rohav / 100) * 2));setHlokatRmbaDalet('בחר');resetBro(hlokatRmbaDalet,parseFloat(hlokatRmbaDaletBro * (rohav / 100)));}
                                             },
                                         )
                                     }
@@ -736,7 +768,9 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                             'חלוקת רמפה',
                                             {
                                                 val: 'DropDown',
-                                                chooises: ['B1', 'B5', 'B6'],
+                                                chooises: ['B4', 'B5', 'B6'],
+                                                disable: !hlokatRmbaDaletTvah && !hlokatRmbaDaletBro,
+                                                calc: parseFloat(hlokatRmbaDaletBro * (rohav / 100)),
                                                 getVal: hlokatRmbaDalet,
                                                 setVal: (val) => setHlokatRmbaDalet(val)
                                             },
@@ -752,13 +786,13 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                                 val: 'Input',
                                                 chooises: `טווח בס"מ`,
                                                 getVal: hlokatRmbaDaletTvah,
-                                                setVal: (val) => { setHlokatRmbaDaletTvah(val); setHlokatRmbaDaletBro(parseInt(Math.floor((msgertRmbaDaletAorkh / (val / 100)) - 1))); }
+                                                setVal: (val) => { setHlokatRmbaDalet('בחר');resetBro(hlokatRmbaDalet,parseFloat(hlokatRmbaDaletBro * (rohav / 100)));setHlokatRmbaDaletTvah(val); setHlokatRmbaDaletBro(parseInt(Math.floor((msgertRmbaDaletAorkh / (val / 100)) - 1))); }
                                             },
                                             {
                                                 val: 'Input',
                                                 chooises: "מס פרופילים",
                                                 getVal: hlokatRmbaDaletBro,
-                                                setVal: (val) => { setHlokatRmbaDaletBro(val); setHlokatRmbaDaletTvah(formatNumber(((msgertRmbaDaletAorkh / (parseFloat(val) + 1)) * 100))); }
+                                                setVal: (val) => { setHlokatRmbaDalet('בחר');resetBro(hlokatRmbaDalet,parseFloat(hlokatRmbaDaletBro * (rohav / 100)));setHlokatRmbaDaletBro(val); setHlokatRmbaDaletTvah(formatNumber(((msgertRmbaDaletAorkh / (parseFloat(val) + 1)) * 100))); }
                                             },
                                         )
                                     }
@@ -777,14 +811,21 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                                 getVal: tosefetVnel,
                                                 setVal: (val) => setToseftVnel(val)
                                             },
-
+                                            tosefetVnel && {
+                                                val: 'DropDown',
+                                                chooises: ['B4', 'B5', 'B6'],
+                                                calc: parseFloat((msgertRmbaDaletAorkh / 100) * (rohav / 100)),
+                                                getVal: toseftVnelBro,
+                                                setVal: (val) => setToseftVnelBrof(val)
+                                            }
                                         )
                                     }
-                                    <div className={`w-full border-t-1 mt-4 mb-4 ${(msgertRmbaDalet !== 'בחר') && (msgertRmbaDaletAorkh || '') && (hlokatRmbaDalet !== 'בחר') && (hlokatRmbaDaletBro || '') && (hlokatRmbaDaletTvah || '') && 'border-primary-200'}`}></div>
+
+                                    <div className={`w-full border-t-1 mt-4 mb-4 ${dalet === 'רגיל' ? true : (tosefetVnel && toseftVnelBro !== 'בחר') && (msgertRmbaDalet !== 'בחר') && (msgertRmbaDaletAorkh || '') && (hlokatRmbaDalet !== 'בחר') && (hlokatRmbaDaletBro || '') && (hlokatRmbaDaletTvah || '') && 'border-primary-200'}`}></div>
                                     {
                                         GetRow(
                                             '10',
-                                            (msgertSolam !== 'בחר') && (gobahSolam || '') && (hlokatSolam !== 'בחר') && (tvahAnkheSolam || '') && (tvahAofkeSolam || '') && (msbarBroAnkheSolam || '') && (msbarBroAofkeSolam || ''),
+                                            solam === 'ללא' ? true : (msgertSolam !== 'בחר') && (gobahSolam || '') && (hlokatSolam !== 'בחר') && (tvahAnkheSolam || '') && (tvahAofkeSolam || '') && (msbarBroAnkheSolam || '') && (msbarBroAofkeSolam || ''),
                                             {
                                                 val: 'Image',
                                                 chooises: rep13,
@@ -792,14 +833,14 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                             'סולם',
                                             {
                                                 val: 'Radio',
-                                                chooises: ['רק קדמי', 'הכל'],
+                                                chooises: ['ללא','רק קדמי', 'הכל'],
                                                 getVal: solam,
                                                 setVal: (val) => setSolam(val)
                                             },
                                         )
                                     }
                                     {
-                                        GetRow(
+                                        solam !== 'ללא' && GetRow(
                                             '10.1',
                                             null,
                                             {
@@ -809,7 +850,9 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                             'מסגרת סולם',
                                             {
                                                 val: 'DropDown',
-                                                chooises: ['B1', 'B5', 'B6'],
+                                                chooises: ['B4', 'B5', 'B6'],
+                                                disable: !gobahSolam,
+                                                calc: solam === 'רק קדמי' ? parseFloat(((gobahSolam / 100) * 2) + ((rohav / 100) * 2)) : ((solam === 'הכל') && !daletAleon) ? parseFloat((((gobahSolam / 100) * 4) + ((rohav / 100) * 2)) + ((aorkh / 100) * 4)) : ((solam === 'הכל') && daletAleon) ? parseFloat((((((gobahSolam / 100) * 6) - 0.8) + ((rohav / 100) * 4)) + ((aorkh / 100) * 4)).toFixed(1)) : null,
                                                 getVal: msgertSolam,
                                                 setVal: (val) => setMsgertSolam(val)
                                             },
@@ -817,12 +860,12 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                                 val: 'Input',
                                                 chooises: `גובה סולם בס"מ`,
                                                 getVal: gobahSolam,
-                                                setVal: (val) => setGobahSolam(val)
+                                                setVal: (val) => {setGobahSolam(val);setMsgertSolam('בחר');setHlokatSolam('בחר');resetBro(hlokatSolam,(solam === 'רק קדמי') ? parseFloat((msbarBroAofkeSolam * (rohav / 100)) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : (solam === 'הכל') ? parseFloat((msbarBroAofkeSolam * (parseFloat((rohav / 100) * (daletAleon ? 2 : 0)) + ((aorkh / 100) * 2))) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : null);resetBro(msgertSolam,solam === 'רק קדמי' ? parseFloat(((gobahSolam / 100) * 2) + ((rohav / 100) * 2)) : ((solam === 'הכל') && !daletAleon) ? parseFloat((((gobahSolam / 100) * 4) + ((rohav / 100) * 2)) + ((aorkh / 100) * 4)) : ((solam === 'הכל') && daletAleon) ? parseFloat((((((gobahSolam / 100) * 6) - 0.8) + ((rohav / 100) * 4)) + ((aorkh / 100) * 4)).toFixed(1)) : null);}
                                             },
                                         )
                                     }
                                     {
-                                        GetRow(
+                                        solam !== 'ללא' && GetRow(
                                             '10.2',
                                             null,
                                             {
@@ -832,14 +875,16 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                             'חלוקת סולם',
                                             {
                                                 val: 'DropDown',
-                                                chooises: ['B1', 'B5', 'B6'],
+                                                chooises: ['B4', 'B5', 'B6'],
+                                                disable: (!tvahAofkeSolam && !msbarBroAofkeSolam) || (!tvahAnkheSolam && !msbarBroAnkheSolam),
+                                                calc: (solam === 'רק קדמי') ? parseFloat((msbarBroAofkeSolam * (rohav / 100)) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : (solam === 'הכל') ? parseFloat((msbarBroAofkeSolam * (parseFloat((rohav / 100) * (daletAleon ? 2 : 0)) + ((aorkh / 100) * 2))) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : null,
                                                 getVal: hlokatSolam,
                                                 setVal: (val) => setHlokatSolam(val)
                                             },
                                         )
                                     }
                                     {
-                                        GetRow(
+                                        solam !== 'ללא' && GetRow(
                                             '',
                                             null,
                                             '10.2.1',
@@ -847,18 +892,18 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                                 val: 'Input',
                                                 chooises: `טווח אופקי בס"מ`,
                                                 getVal: tvahAofkeSolam,
-                                                setVal: (val) => { setTvahAofkeSolam(val); const reverseCalculatedValue = parseInt(Math.floor(((parseFloat((gobahSolam / 100)) - 0.4) / parseFloat(val)) - 1)); setMsbarBroAofkeSolam(reverseCalculatedValue); }
+                                                setVal: (val) => { setHlokatSolam('בחר');resetBro(hlokatSolam,(solam === 'רק קדמי') ? parseFloat((msbarBroAofkeSolam * (rohav / 100)) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : (solam === 'הכל') ? parseFloat((msbarBroAofkeSolam * (parseFloat((rohav / 100) * (daletAleon ? 2 : 0)) + ((aorkh / 100) * 2))) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : null);setTvahAofkeSolam(val); const reverseCalculatedValue = parseInt(Math.floor(((parseFloat((gobahSolam / 100)) - 0.4) / parseFloat(val)) - 1)); setMsbarBroAofkeSolam(reverseCalculatedValue); }
                                             },
                                             {
                                                 val: 'Input',
-                                                chooises: "מס פרופילים",
+                                                chooises: "מס פרופילים אופקי",
                                                 getVal: msbarBroAofkeSolam,
-                                                setVal: (val) => { setMsbarBroAofkeSolam(val); const calculatedValue = parseFloat(((parseFloat((gobahSolam / 100)) - 0.4) / (parseFloat(val) + 1)).toFixed(2)); setTvahAofkeSolam(calculatedValue); }
+                                                setVal: (val) => { setHlokatSolam('בחר');resetBro(hlokatSolam,(solam === 'רק קדמי') ? parseFloat((msbarBroAofkeSolam * (rohav / 100)) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : (solam === 'הכל') ? parseFloat((msbarBroAofkeSolam * (parseFloat((rohav / 100) * (daletAleon ? 2 : 0)) + ((aorkh / 100) * 2))) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : null);setMsbarBroAofkeSolam(val); const calculatedValue = parseFloat(((parseFloat((gobahSolam / 100)) - 0.4) / (parseFloat(val) + 1)).toFixed(2)); setTvahAofkeSolam(calculatedValue); }
                                             },
                                         )
                                     }
                                     {
-                                        GetRow(
+                                        solam !== 'ללא' && GetRow(
                                             '',
                                             null,
                                             '10.2.2',
@@ -868,6 +913,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                                 getVal: tvahAnkheSolam,
                                                 setVal: (val) => {
                                                     setTvahAnkheSolam(val);
+                                                    setHlokatSolam('בחר');resetBro(hlokatSolam,(solam === 'רק קדמי') ? parseFloat((msbarBroAofkeSolam * (rohav / 100)) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : (solam === 'הכל') ? parseFloat((msbarBroAofkeSolam * (parseFloat((rohav / 100) * (daletAleon ? 2 : 0)) + ((aorkh / 100) * 2))) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : null);
                                                     if (solam === 'רק קדמי') {
                                                         setMsbarBroAnkheSolam(parseInt(Math.floor(((parseFloat((rohav / 100))) / (parseFloat(val) / 100)) - 3)));
                                                     }
@@ -881,9 +927,9 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                             },
                                             {
                                                 val: 'Input',
-                                                chooises: "מס פרופילים",
+                                                chooises: "מס פרופילים אנכי",
                                                 getVal: msbarBroAnkheSolam,
-                                                setVal: (val) => { setMsbarBroAnkheSolam(val); setTvahAnkheSolam(0); }
+                                                setVal: (val) => { setHlokatSolam('בחר');resetBro(hlokatSolam,(solam === 'רק קדמי') ? parseFloat((msbarBroAofkeSolam * (rohav / 100)) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : (solam === 'הכל') ? parseFloat((msbarBroAofkeSolam * (parseFloat((rohav / 100) * (daletAleon ? 2 : 0)) + ((aorkh / 100) * 2))) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : null);setMsbarBroAnkheSolam(val); setTvahAnkheSolam(0); }
                                             },
                                         )
                                     }
@@ -915,7 +961,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                             },
                                         )
                                     }
-                                    <div className={`w-full border-t-1 mt-4 mb-4 ${(msgertSolam !== 'בחר') && (gobahSolam || '') && (hlokatSolam !== 'בחר') && (tvahAnkheSolam || '') && (tvahAofkeSolam || '') && (msbarBroAnkheSolam || '') && (msbarBroAofkeSolam || '') && 'border-primary-200'}`}></div>
+                                    <div className={`w-full border-t-1 mt-4 mb-4 ${ solam === 'ללא' ? true : (msgertSolam !== 'בחר') && (gobahSolam || '') && (hlokatSolam !== 'בחר') && (tvahAnkheSolam || '') && (tvahAofkeSolam || '') && (msbarBroAnkheSolam || '') && (msbarBroAofkeSolam || '') && 'border-primary-200'}`}></div>
                                 </>
                             }
                             {
@@ -932,7 +978,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                             'וניל',
                                             {
                                                 val: 'DropDown',
-                                                chooises: ['B1', 'B5', 'B6'],
+                                                chooises: ['B4', 'B5', 'B6'],
                                                 getVal: vnel,
                                                 setVal: (val) => setVnel(val)
                                             },
@@ -949,7 +995,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                             'מסגרת וניל',
                                             {
                                                 val: 'DropDown',
-                                                chooises: ['B1', 'B5', 'B6'],
+                                                chooises: ['B4', 'B5', 'B6'],
                                                 getVal: msgertVnel,
                                                 setVal: (val) => setMsgertVnel(val)
                                             },
