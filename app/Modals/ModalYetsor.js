@@ -18,7 +18,7 @@ import ModalMessage from "./ModalMessage";
 import { MdError } from "react-icons/md";
 import { Alert } from "@mui/material";
 import { firestore } from "../FireBase/firebase";
-import { addDoc, collection, doc, updateDoc, writeBatch } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, updateDoc, writeBatch } from "firebase/firestore";
 import TokhnetContext from "../auth/TokhnetContext";
 import { CgFileDocument } from "react-icons/cg";
 import { TofsTokhnetYetsor } from "../Page Components/TofsTokhnetYetsor";
@@ -28,6 +28,7 @@ import ModalAddCustomer from "./ModalAddCustomer";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { LiaCommentSolid } from "react-icons/lia";
 import { Comment, Hourglass, Puff, ThreeCircles } from "react-loader-spinner";
+import { MtsavemPage } from "../Page Components/MtsavemPage";
 
 
 export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, yetsorKeam, category, lkhot, aglot, mlae, sogAskaa }) {
@@ -35,6 +36,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
 
 
     const [loading, setLoading] = useState(false);
+    const PrintRef = useRef();
     // ---------------------------------------------------------------------------------------- hotsaot 
     const [hotsotAkefot, setHotsaotAkefot] = useState(0);
     const [hotsotSkhar, setHotsaotSkhar] = useState(0);
@@ -308,6 +310,13 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         tosfot, setTosfot,
     };
 
+    const hdbsatMtsavem = useReactToPrint({
+        pageStyle: `@page {
+            size: A4;
+            margin: 0;
+        }`,
+        content: () => PrintRef.current,
+    });
 
     const Remzem = useMemo(() => {
         let newArray = [];
@@ -486,13 +495,23 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                 updateMotsaremRglemYredatMlae();
             }
         }
+        if (getNextLetter(shlavNokhhe) === 'B' && (!brtemLkoh?.id && !customerName) || !tnaeTshlom || !shemTokhnet || !mherKlale || !mherKlaleAhre || !mkdema || !msbarTshlomem || !BdekatMotsarem()) {
+            setShowAlertMessage('חסר פרטיים לשלב הבא.');
+            setShowAlertType('warning');
+            setShowAlert(true);
+            setTimeout(() => {
+                setShowAlert(false);
+            }, 1500);
+            return;
+        }
         setErrorMotsaremRglem(false);
+        hdbsatMtsavem();
         setShlavNokhhe(GetShlav());
     }
 
     const [showModalMtsavYetsor, setShowModalMtsavYetsor] = useState(false);
     const [showModalMessage, setShowModalMessage] = useState(false);
-    const [showModalAddCustomer,setShowModalAddCustomer] = useState(false);
+    const [showModalAddCustomer, setShowModalAddCustomer] = useState(false);
 
     const updateMotsaremLhatseg = (itemsToAdd = [], itemsToRemove = []) => {
         setMotsaremLhatseg((prevItems) => {
@@ -1192,6 +1211,56 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                         customerPhone,
                         msbarMezahehm
                     }} lkhot={lkhot} counter={counterLkhot} show={showModalAddCustomer} disable={() => setShowModalAddCustomer(false)} />
+                    <div className="w-[1200px] absolute hidden h-[900px] overflow-auto bg-white z-50 border-2 border-black"><MtsavemPage tokhnet={{
+                        sogAglaBS,
+                        aorkh,
+                        rohav,
+                        retsba,
+                        msbarTsrem,
+                        AemBlamem,
+                        brofelTfesa,
+                        tsmgem,
+                        tsmgSber,
+                        msgeretThtonah,
+                        hlokaThtonah,
+                        tvahHlokaThtona,
+                        msbarBrofHlokaThotona,
+                        yetsol,
+                        aorkhBroYetsol,
+                        sheldaHetsonet,
+                        tvahSheldaBnemet,
+                        msbarBroSheldaBnemet,
+                        helekReshonSheldaBnemet,
+                        msbarBroSheldaBnemetReshon,
+                        helekShneSheldaBnemet,
+                        msbarBroSheldaBnemetShne,
+                        dalet,
+                        msgertRmbaDalet,
+                        msgertRmbaDaletAorkh,
+                        hlokatRmbaDalet,
+                        hlokatRmbaDaletBro,
+                        hlokatRmbaDaletTvah,
+                        tosefetVnel,
+                        toseftVnelBro,
+                        solam,
+                        msgertSolam,
+                        gobahSolam,
+                        hlokatSolam,
+                        tvahAofkeSolam,
+                        msbarBroAofkeSolam,
+                        tvahAnkheSolam,
+                        msbarBroAnkheSolam,
+                        daletAleon,
+                        toseftReshet,
+                        vnel,
+                        msgertVnel,
+                        gobahVnel,
+                        tvahAofkeVnel,
+                        msbarBroAofkeVnel,
+                        tvahAnkheVnel,
+                        msbarBroAnkheVnel,
+                        tosfot
+                    }} mlae={mlae} motsarem={{motsaremRglem,motsaremBrofelem,motsaremLhatseg}} mtsav={GetShlavemInHebrow(shlavNokhhe)} ref={PrintRef} /></div>
                     {
                         yetsorKeam?.msbar && <ModalMtsavYetsor res={{
                             a: yetsorKeam?.mtsavYetsor[0] || null,
@@ -1318,10 +1387,12 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                                             >
                                                                                 <div className="mr-2 border-r-2 pr-2">
                                                                                     <Autocomplete
+                                                                                        isDisabled={yetsorKeam?.brtemLkoh?.id}
                                                                                         label="בחר לקוח"
                                                                                         className="max-w-[200px]"
                                                                                         color="primary"
                                                                                         size="sm"
+                                                                                        selectedKey={brtemLkoh?.id}
                                                                                         defaultItems={lkhot}
                                                                                     >
                                                                                         {
@@ -1336,7 +1407,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                                             </motion.div>
                                                                         </AnimatePresence>
                                                                         <div className="mr-2">
-                                                                            <Button onClick={() => setLkohHdash(true)} size="sm" color="primary" variant="flat" className="text-base rounded-full">
+                                                                            <Button isDisabled={yetsorKeam?.brtemLkoh?.id} onClick={() => setLkohHdash(true)} size="sm" color="primary" variant="flat" className="text-base rounded-full">
                                                                                 חדש <IoIosArrowBack className="text-xl" />
                                                                             </Button>
                                                                         </div>
@@ -1414,7 +1485,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                                             >
                                                                                 <DropdownItem key='תוכנית ידנית'>תוכנית ידנית</DropdownItem>
                                                                                 {Tokhneot?.map((option) => (
-                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                    <DropdownItem onClick={() => setTokhnet(option)} key={option.shem}>{option.shem}</DropdownItem>
                                                                                 ))}
                                                                             </DropdownMenu>
                                                                         </Dropdown>
@@ -1533,7 +1604,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                                             >
                                                                                 <DropdownItem key='תוכנית ידנית'>תוכנית ידנית</DropdownItem>
                                                                                 {Tokhneot?.map((option) => (
-                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                    <DropdownItem onClick={() => setTokhnet(option)} key={option.shem}>{option.shem}</DropdownItem>
                                                                                 ))}
                                                                             </DropdownMenu>
                                                                         </Dropdown>
@@ -1667,7 +1738,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                                             >
                                                                                 <DropdownItem key='תוכנית ידנית'>תוכנית ידנית</DropdownItem>
                                                                                 {Tokhneot?.map((option) => (
-                                                                                    <DropdownItem key={option.shem}>{option.shem}</DropdownItem>
+                                                                                    <DropdownItem onClick={() => setTokhnet(option)} key={option.shem}>{option.shem}</DropdownItem>
                                                                                 ))}
                                                                             </DropdownMenu>
                                                                         </Dropdown>
@@ -1916,6 +1987,19 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                 </ModalBody>
 
                 <ModalFooter className="border-t-2">
+                    <div>
+                        {
+                            yetsorKeam?.id && ((shlavNokhhe === 'A') || (shlavNokhhe === 'B')) &&
+                            <Button size="sm" color="danger" isLoading={loading} variant="flat" onClick={async () => {
+                                setLoading(true);
+                                await deleteDoc(doc(firestore, 'tfaol', yetsorKeam?.id));
+                                setLoading(false);
+                                disable();
+                            }}>
+                                מחיקה
+                            </Button>
+                        }
+                    </div>
                     <div className="w-full flex justify-end">
                         <Button color='warning' variant='flat' size="sm" className="mr-2" onClick={() => setShowModalMessage(true)}>סגור</Button>
                         {/* {
@@ -1924,6 +2008,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                 <CgFileDocument className="text-2xl text-primary" />הדפסת תופס עובדים
                             </Button>
                         } */}
+
                         {shlavNokhhe !== '' && <Button onClick={saveValues} color='primary' variant='flat' size="sm" className="mr-2">שמירה</Button>}
                     </div>
                 </ModalFooter>

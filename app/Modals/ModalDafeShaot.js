@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { firestore } from "../FireBase/firebase";
 import { doc, getDoc, runTransaction, setDoc, collection, addDoc, updateDoc } from "firebase/firestore";
 import GetDocs from "../FireBase/getDocs";
-import { differenceInMinutes, format, parseISO, subMonths } from "date-fns";
+import { differenceInMinutes, format, getDaysInMonth, parse, parseISO, subMonths } from "date-fns";
 import { useGetDataByConditionWithoutUseEffect, useGetDataByConditionWithoutUseEffectTwoQueres } from "../FireBase/getDataByCondition";
 import { useReactToPrint } from "react-to-print";
 import { ShaotAobedHdbsa } from "../Page Components/ShaotAobedHdbsa";
@@ -61,6 +61,15 @@ export default function ModalDafeShaot({ disable, show,counter,aobdem }) {
         }
     }
 
+    const GetYmem = (hodesh) => {
+        let newArray = [];
+        let AadHkhshav = parseInt(getDaysInMonth(parse(hodesh,'MM-yyyy',new Date())));
+        for (let index = 0; index < AadHkhshav; index++) {
+            newArray.push(`${index < 9 ? ('0' + (index + 1)) : index + 1}-${hodesh}`);
+        }
+        return newArray;
+    }
+
     const totsaotHodeshAobed = () => {
         setLoading(true);
         try {
@@ -79,9 +88,27 @@ export default function ModalDafeShaot({ disable, show,counter,aobdem }) {
                 '==',
                 parseInt(aobed),
                 result => {
-                    if (result.length) {
-                        console.log(result);
-                        setShaotAobedSave(result);
+                    if (result.length && result[0]?.hodesh) {
+                        let Ymem = GetYmem(result[0]?.hodesh);
+                        let sortedArray = (result || []).sort((a, b) => {
+                            const dateA = parse(a.tarekh || '', 'dd-MM-yyyy', new Date());
+                            const dateB = parse(b.tarekh || '', 'dd-MM-yyyy', new Date());
+                            return dateA - dateB;
+                        });
+                        let workingDates = sortedArray.map(item => item.tarekh).filter(Boolean);
+                        let missingDates = Ymem.filter(date => !workingDates.includes(date));
+                        missingDates.forEach((miss,index) => (
+                            sortedArray.push({
+                                tarekh : miss,
+                                headrot : 'חופשה'
+                            })
+                        ));
+                        sortedArray.sort((a, b) => {
+                            const dateA = parse(a.tarekh, 'dd-MM-yyyy', new Date());
+                            const dateB = parse(b.tarekh, 'dd-MM-yyyy', new Date());
+                            return dateA - dateB;
+                        });
+                        setShaotAobedSave(sortedArray);
                     }
                     setLoading(false);
                 }

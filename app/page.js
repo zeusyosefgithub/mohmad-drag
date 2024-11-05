@@ -354,7 +354,10 @@ export default function Home() {
     }
     const dateA = new Date(a.tarekhAsbka);
     const dateB = new Date(b.tarekhAsbka);
-    return dateA - dateB;
+    if (dateA.getTime() !== dateB.getTime()) {
+      return dateA - dateB;
+    }
+    return a.msbar - b.msbar;
   });
   const aglotB = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'B').sort((a, b) => {
     if (a.msbarAdefot !== b.msbarAdefot) {
@@ -362,7 +365,10 @@ export default function Home() {
     }
     const dateA = new Date(a.tarekhAsbka);
     const dateB = new Date(b.tarekhAsbka);
-    return dateA - dateB;
+    if (dateA.getTime() !== dateB.getTime()) {
+      return dateA - dateB;
+    }
+    return a.msbar - b.msbar;
   });
   const aglotC = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'C').sort((a, b) => {
     if (a.msbarAdefot !== b.msbarAdefot) {
@@ -370,7 +376,10 @@ export default function Home() {
     }
     const dateA = new Date(a.tarekhAsbka);
     const dateB = new Date(b.tarekhAsbka);
-    return dateA - dateB;
+    if (dateA.getTime() !== dateB.getTime()) {
+      return dateA - dateB;
+    }
+    return a.msbar - b.msbar;
   });
   const aglotD = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'D').sort((a, b) => {
     if (a.msbarAdefot !== b.msbarAdefot) {
@@ -378,7 +387,10 @@ export default function Home() {
     }
     const dateA = new Date(a.tarekhAsbka);
     const dateB = new Date(b.tarekhAsbka);
-    return dateA - dateB;
+    if (dateA.getTime() !== dateB.getTime()) {
+      return dateA - dateB;
+    }
+    return a.msbar - b.msbar;
   });
   const aglot = GetDocs('drags');
   const lkhot = GetDocs('customers');
@@ -507,6 +519,25 @@ export default function Home() {
     const givenDate = parse(date, 'dd-MM-yyyy', new Date());
     const today = new Date();
     return differenceInDays(today, givenDate);
+  }
+
+  function daysSinceOrUntil(date) {
+    const givenDate = parse(date, 'dd-MM-yyyy', new Date());
+    const today = new Date();
+
+    // Calculate the difference in milliseconds and convert to days
+    const msDifference = givenDate - today;
+    const daysDifference = Math.ceil(msDifference / (1000 * 60 * 60 * 24));
+
+    if (daysDifference > 0) {
+      return <div className="mr-3 bg-success text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysDifference}</div>;
+    } else if (daysDifference < 0) {
+      return <div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{Math.abs(daysDifference)}</div>;
+    } else if(daysDifference === 0) {
+      return <div className="mr-3 bg-primary text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{Math.abs(daysDifference)}</div>;
+    }else{
+      return '';
+    }
   }
 
   const GetResMtsav = (res) => {
@@ -829,10 +860,10 @@ export default function Home() {
                             aglotA.map((agla, index) => {
                               return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center">{agla.tarekhAsbka && daysGoneSince(flipDate(agla.tarekhAsbka)) > 0 && <div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(flipDate(agla.tarekhAsbka))}</div>}{agla.tarekhAsbka && flipDate(agla.tarekhAsbka)}</div></td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaA.tarekh)}</td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center">{daysSinceOrUntil(flipDate(agla.tarekhAsbka))} {agla.tarekhAsbka && flipDate(agla.tarekhAsbka)}</div></td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaA.tarekh) || '0'}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaA.tarekh}</td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh.name}</td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh?.name}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAskaa,agla.msbarAdefot)}</td>
@@ -874,8 +905,8 @@ export default function Home() {
                             aglotB.map((agla, index) => {
                               return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center">{agla.tarekhAsbka && daysGoneSince(flipDate(agla.tarekhAsbka)) > 0 && <div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(flipDate(agla.tarekhAsbka))}</div>}{agla.tarekhAsbka && flipDate(agla.tarekhAsbka)}</div></td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaB.tarekh)}</td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center">{daysSinceOrUntil(flipDate(agla.tarekhAsbka))} {agla.tarekhAsbka && flipDate(agla.tarekhAsbka)}</div></td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaB.tarekh) || '0'}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaB.tarekh}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh.name}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
@@ -1001,8 +1032,8 @@ export default function Home() {
                                     }
                                   </div>
                                 </td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center">{agla.tarekhAsbka && daysGoneSince(flipDate(agla.tarekhAsbka)) > 0 && <div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(flipDate(agla.tarekhAsbka))}</div>}{agla.tarekhAsbka && flipDate(agla.tarekhAsbka)}</div></td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaC.tarekh)}</td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center">{daysSinceOrUntil(flipDate(agla.tarekhAsbka))} {agla.tarekhAsbka && flipDate(agla.tarekhAsbka)}</div></td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaC.tarekh) || '0'}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaC.tarekh}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh.name}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
@@ -1046,8 +1077,8 @@ export default function Home() {
                             aglotD.map((agla, index) => {
                               return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalCreate(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center">{agla.tarekhAsbka && daysGoneSince(flipDate(agla.tarekhAsbka)) > 0 && <div className="mr-3 bg-danger text-[16px] w-[30px] h-[30px] rounded-full font-black text-white flex items-center justify-center animate-pulse">{daysGoneSince(flipDate(agla.tarekhAsbka))}</div>}{agla.tarekhAsbka && flipDate(agla.tarekhAsbka)}</div></td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaD.tarekh)}</td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center">{daysSinceOrUntil(flipDate(agla.tarekhAsbka))} {agla.tarekhAsbka && flipDate(agla.tarekhAsbka)}</div></td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaD.tarekh) || '0'}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaD.tarekh}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh.name}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
