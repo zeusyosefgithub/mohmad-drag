@@ -16,7 +16,7 @@ export default function ModalBheratMlae({ disable, show, Bhera }) {
         <Modal placement="center" className="test-fontt sizeForModals" backdrop={"blur"} size="xl" isOpen={show} onClose={disable}>
             <ModalContent>
                 <>
-                    <ModalHeader className="shadow-2xl flex justify-center border-b-2">בחירת סניף</ModalHeader>
+                    <ModalHeader className="shadow-2xl flex justify-center border-b-2">בחר סניף ייצור</ModalHeader>
                     <ModalBody className="shadow-2xl bg-white">
                         <div dir="rtl" className="flex items-center justify-around">
                             <div onClick={() => { disable(); Bhera('עארה'); }} className="m-4 rounded-2xl">

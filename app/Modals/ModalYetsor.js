@@ -1362,19 +1362,19 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                     </div>
                                     <div className="h-full flex items-center flex-wrap w-full justify-center" dir="rtl">
                                         <div className="ml-5 w-[110px] text-right text-green-500">מחיר שוק</div>
-                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪`} />
+                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪ ${mherKlale}`} />
                                     </div>
                                     <div className="h-full flex items-center flex-wrap w-full justify-center" dir="rtl">
                                         <div className="ml-5 w-[110px] text-right text-success-500">מחיר מכירה</div>
-                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪`} />
+                                        <Input isReadOnly size="xs" className="w-[100px]" color="success" value={`₪ ${mherKlaleAhre}`} />
                                     </div>
                                     <div className="h-full flex items-center flex-wrap w-full justify-center" dir="rtl">
                                         <div className="ml-5 w-[110px] text-right text-danger-500">הוצאות חו"ג</div>
-                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪`} />
+                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪ ${hkhnsotHomreGlem}`} />
                                     </div>
                                     <div className="h-full flex items-center flex-wrap w-full justify-center" dir="rtl">
                                         <div className="ml-5 w-[110px] text-right text-danger-500">הוצאות שכר</div>
-                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪`} />
+                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪ ${hotsotSkhar}`} />
                                     </div>
                                     <div className="h-full flex items-center flex-wrap w-full justify-center" dir="rtl">
                                         <div className="ml-5 w-[110px] text-right text-green-500">רווח ישיר</div>
@@ -1382,7 +1382,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                     </div>
                                     <div className="h-full flex items-center flex-wrap w-full justify-center" dir="rtl">
                                         <div className="ml-5 w-[110px] text-right text-danger-500">הוצאות עקיפות</div>
-                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪`} />
+                                        <Input isReadOnly size="xs" className="w-[100px]" color="danger" value={`₪ ${hotsotAkefot}`} />
                                     </div>
                                     <div className="h-full flex items-center flex-wrap w-full justify-center" dir="rtl">
                                         <div className="ml-5 w-[110px] text-right text-danger-500">הוצאות מסים</div>
