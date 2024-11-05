@@ -1,5 +1,5 @@
 'use client';
-import { Autocomplete, AutocompleteItem, Avatar, Button, Pagination, Card, CardBody, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Radio, RadioGroup, Switch, Tooltip, DatePicker, Accordion, AccordionItem, Popover, PopoverTrigger, PopoverContent, Textarea } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Avatar, Button, Pagination, Card, CardBody, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Radio, RadioGroup, Switch, Tooltip, DatePicker, Accordion, AccordionItem, Popover, PopoverTrigger, PopoverContent, Textarea, Progress } from "@nextui-org/react";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { FaBeer, FaPlus, FaRegCheckSquare, FaUser } from "react-icons/fa";
 import GetDocs from "../FireBase/getDocs";
@@ -23,15 +23,17 @@ import TokhnetContext from "../auth/TokhnetContext";
 import { CgFileDocument } from "react-icons/cg";
 import { TofsTokhnetYetsor } from "../Page Components/TofsTokhnetYetsor";
 import { useReactToPrint } from "react-to-print";
-import { AnimatePresence,motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import ModalAddCustomer from "./ModalAddCustomer";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { LiaCommentSolid } from "react-icons/lia";
 import { Comment, Hourglass, Puff, ThreeCircles } from "react-loader-spinner";
 import { MtsavemPage } from "../Page Components/MtsavemPage";
+import { RiFileList3Fill } from "react-icons/ri";
+import Image from "next/image";
 
 
-export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, yetsorKeam, category, lkhot, aglot, mlae, sogAskaa }) {
+export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, drag, yetsorKeam, category, lkhot, aglot, mlae, sogAskaa }) {
 
 
 
@@ -61,7 +63,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
     // ---------------------------------------------------------------------------------------- lkoh
     const [brtemLkoh, setBrtemLkoh] = useState(null);
     const [lkohHdash, setLkohHdash] = useState(false);
-    const [lkohForAdd,setLkohForAdd] = useState('');
+    const [lkohForAdd, setLkohForAdd] = useState('');
     const [customerName, setCustomerName] = useState('');
     const [customerCity, setCustomerCity] = useState('');
     const [customerPhone, setCustomerPhone] = useState('');
@@ -87,10 +89,10 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
     const [mherKlaleAhre, setMherKlaleAhre] = useState(0);
     const [tnaeTshlom, setTnaeTshlom] = useState('');
     const [msbarAdefot, setMsbarAdefot] = useState(5);
-    const [msbarTshlomem,setMsbarTshlomem] = useState(0);
-    const [mkdema,setMkdema] = useState(0);
-    const [haraKlalet,setHaraKlalet] = useState('');
-    const [haraBnmet,setHaraBnmet] = useState('');
+    const [msbarTshlomem, setMsbarTshlomem] = useState(0);
+    const [mkdema, setMkdema] = useState(0);
+    const [haraKlalet, setHaraKlalet] = useState('');
+    const [haraBnmet, setHaraBnmet] = useState('');
 
     // ---------------------------------------------------------- thlekhem -- (functions)
 
@@ -145,7 +147,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
     const [hlokatRmbaDaletBro, setHlokatRmbaDaletBro] = useState(0);
     const [hlokatRmbaDaletTvah, setHlokatRmbaDaletTvah] = useState(0);
     const [tosefetVnel, setToseftVnel] = useState(false);
-    const [toseftVnelBro,setToseftVnelBrof] = useState('בחר');
+    const [toseftVnelBro, setToseftVnelBrof] = useState('בחר');
     const [solam, setSolam] = useState('ללא');
     const [msgertSolam, setMsgertSolam] = useState('בחר');
     const [gobahSolam, setGobahSolam] = useState(0);
@@ -260,6 +262,9 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         setCustomerCity('');
         setCustomerPhone('');
         setMsbarMezahehm('');
+        setValueProgress(0);
+        setValueProgressdd(false);
+        setValueMtsavD(false);
     }
 
     const contextValue = {
@@ -292,7 +297,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         hlokatRmbaDaletBro, setHlokatRmbaDaletBro,
         hlokatRmbaDaletTvah, setHlokatRmbaDaletTvah,
         tosefetVnel, setToseftVnel,
-        toseftVnelBro,setToseftVnelBrof,
+        toseftVnelBro, setToseftVnelBrof,
         solam, setSolam,
         msgertSolam, setMsgertSolam,
         gobahSolam, setGobahSolam,
@@ -507,6 +512,10 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             }, 1500);
             return;
         }
+        if(getNextLetter(shlavNokhhe) === 'D'){
+            setValueMtsavD(true);
+            setZmanThelaD({ shaa: format(new Date(), 'HH:mm'), tarekh: format(new Date(), 'dd-MM-yyyy') });
+        }
         setErrorMotsaremRglem(false);
         hdbsatMtsavem();
         setShlavNokhhe(GetShlav());
@@ -591,7 +600,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             } else {
                 return [
                     ...prevArray,
-                    { 
+                    {
                         ...motsaremToUpdate,
                         id: prevArray.length,
                         mher: 0,
@@ -604,7 +613,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
     };
 
     const RemoveMotsaremBro = (shem, amountToRemove) => {
-        setMotsaremBrofelem((prevArray) => 
+        setMotsaremBrofelem((prevArray) =>
             prevArray.reduce((acc, item) => {
                 if (item.shem === shem) {
                     const newKmot = item.kmot - amountToRemove;
@@ -656,11 +665,14 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
 
-    const saveValues = async () => {
+    const saveValues = async (res) => {
         setLoading(true);
         const Props = {
-            lkohHdash : lkohHdash || false,
-            newCustomer : {customerName : customerName || '',customerCity : customerCity || '',customerPhone : customerPhone || '',msbarMezahehm : msbarMezahehm || ''},
+            htsaaNdbas : true,
+            locationYetsor,
+            mherKlaleAhre,
+            lkohHdash: lkohHdash || false,
+            newCustomer: { customerName: customerName || '', customerCity: customerCity || '', customerPhone: customerPhone || '', msbarMezahehm: msbarMezahehm || '' },
             haraBnmet,
             haraKlalet,
             mkdema,
@@ -784,11 +796,11 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         }
         if (yetsorKeam?.msbar) {
             try {
-                console.log(customerName);
                 updateDoc(doc(firestore, 'tfaol', yetsorKeam?.id), {
+                    mherKlaleAhre,
                     msbarAdefot,
-                    lkohHdash : lkohHdash || false,
-                    newCustomer : {customerName : customerName || '',customerCity : customerCity || '',customerPhone : customerPhone || '',msbarMezahehm : msbarMezahehm || ''},
+                    lkohHdash: lkohHdash || false,
+                    newCustomer: { customerName: customerName || '', customerCity: customerCity || '', customerPhone: customerPhone || '', msbarMezahehm: msbarMezahehm || '' },
                     haraBnmet,
                     haraKlalet,
                     msbarTshlomem,
@@ -900,7 +912,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                         active: true
                     });
                 }
-                if (shlavNokhhe === 'C') {
+                if (shlavNokhhe === 'C' && !res) {
                     handelPrintggg();
                 }
             }
@@ -910,7 +922,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         }
         else {
             try {
-                if (shlavNokhhe === 'C') {
+                if (shlavNokhhe === 'C' && !res) {
                     handelPrintggg();
                 }
                 await addDoc(collection(firestore, "tfaol"), Props);
@@ -921,8 +933,11 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         }
         (!yetsorKeam?.msbar) && await updateDoc(doc(firestore, 'metadata', 'counterTfaol'), { count: counter?.count + 1 });
         setLoading(false);
-        ResetAll();
-        disable();
+        if(shlavNokhhe === 'A' && !yetsorKeam?.htsaaNdbas){
+            hdbsatMtsavem();
+        }
+        !res && ResetAll();
+        !res && disable();
     }
 
     const GetZmanAbodaMotsar = (val) => {
@@ -1048,6 +1063,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             setCustomerPhone(yetsorKeam?.newCustomer?.customerPhone);
             setMsbarMezahehm(yetsorKeam?.newCustomer?.msbarMezahehm);
             setLkohHdash(yetsorKeam.lkohHdash);
+            setMherKlaleAhre(yetsorKeam.mherKlaleAhre);
         }
     }, [yetsorKeam]);
 
@@ -1117,24 +1133,18 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         else if (shlavNokhhe === 'C') {
             setZmanThelaC({ shaa: format(new Date(), 'HH:mm'), tarekh: format(new Date(), 'dd-MM-yyyy') });
         }
-        else if (shlavNokhhe === 'D') {
-            setZmanThelaD({ shaa: format(new Date(), 'HH:mm'), tarekh: format(new Date(), 'dd-MM-yyyy') });
-        }
-        else if (shlavNokhhe === 'E') {
-            setZmanThelaE({ shaa: format(new Date(), 'HH:mm'), tarekh: format(new Date(), 'dd-MM-yyyy') });
-        }
-    }, [shlavNokhhe]);
+    }, [shlavNokhhe, show]);
 
 
     useEffect(() => {
-        if(lkohForAdd){
+        if (lkohForAdd) {
             for (let index = 0; index < lkhot.length; index++) {
-                if(lkhot[index].name === lkohForAdd){
+                if (lkhot[index].name === lkohForAdd) {
                     setBrtemLkoh(lkhot[index]);
                 }
             }
         }
-    },[lkohHdash]);
+    }, [lkohHdash]);
 
 
     const GetMotionTitels = (titel) => {
@@ -1187,7 +1197,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                             />
                         }
                         {
-                            titel === 'שלב מכר' &&
+                            titel === 'שלב סיום' &&
                             <Puff
                                 visible={true}
                                 height="50"
@@ -1204,6 +1214,37 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             </AnimatePresence>
         )
     }
+
+
+    const [valueProgress, setValueProgress] = useState(0);
+    const [valueProgressdd, setValueProgressdd] = useState(false);
+    const [valueMtsavD, setValueMtsavD] = useState(false);
+
+    useEffect(() => {
+        if (valueProgressdd) {
+            const timer = setTimeout(() => {
+                setValueProgress((v) => {
+                    if (v >= 100) {
+                        disable();
+                        ResetAll();
+                        setValueProgress(0);
+                        return 0;
+                    } else {
+                        return v + 10;
+                    }
+                });
+            }, 600);
+    
+            return () => clearTimeout(timer);
+        }
+    }, [valueProgressdd, valueProgress]);
+
+    useEffect(() => {
+        if (valueMtsavD) {
+            setValueProgressdd(true);
+            saveValues(true);
+        }
+    }, [valueMtsavD])
 
     return (
         <Modal placement="center" className="test-fontt select-none" backdrop={"blur"} size="full" isOpen={show} onClose={() => { setShowModalMessage(true); }}>
@@ -1229,8 +1270,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                         <ModalYetsorTokhnet resetBro={(val1, val2) => RemoveMotsaremBro(val1, val2)} reset={(val) => ResetMotsaremLhANDRe(val)} addBro={(val) => UpdateMotsaremBroLhANDRe(val)} add={(val) => UpdateMotsaremLhANDRe(val)} mlae={mlae} setMotsaremLhatseg={(value) => setMotsaremLhatseg(value)} show={showModalTokhnetYetsor} disable={() => setShowModalTokhnetYetsor(false)} />
                     </TokhnetContext.Provider>
                     <ModalBerotMotsrem GetError={(val) => setErrorMotsaremRglem(val)} shlav={getNextLetter(shlavNokhhe)} category={category} mlae={mlae} setMotsaremRglem={(value) => setMotsaremRglem(value)} setMotsaremBrofelem={(value) => setMotsaremBrofelem(value)} motsaremLhatseg={motsaremLhatseg} motsaremBrofelem={motsaremBrofelem} motsaremRglem={motsaremRglem} show={showModalBerotMotsrem} disable={() => setShowModalBerotMotsrem(false)} />
-                    <ModalAddCustomer LkohHdash={(val1,val2) => {
-                        if(val1){
+                    <ModalAddCustomer LkohHdash={(val1, val2) => {
+                        if (val1) {
                             setLkohHdash(false);
                             setLkohForAdd(val2);
                             ResetCustomer();
@@ -1241,7 +1282,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                         customerPhone,
                         msbarMezahehm
                     }} lkhot={lkhot} counter={counterLkhot} show={showModalAddCustomer} disable={() => setShowModalAddCustomer(false)} />
-                    <div className="w-[1200px] absolute hidden h-[900px] overflow-auto bg-white z-50 border-2 border-black"><MtsavemPage tokhnet={{
+                    <div className="w-[1200px] absolute h-[900px] hidden overflow-auto bg-white z-50 border-2 border-black"><MtsavemPage tokhnet={{
                         sogAglaBS,
                         aorkh,
                         rohav,
@@ -1290,7 +1331,18 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                         tvahAnkheVnel,
                         msbarBroAnkheVnel,
                         tosfot
-                    }} mlae={mlae} motsarem={{motsaremRglem,motsaremBrofelem,motsaremLhatseg}} mtsav={GetShlavemInHebrow(shlavNokhhe)} ref={PrintRef} /></div>
+                    }} brtemKlalem={{
+                        snef: yetsorKeam?.locationYetsor || locationYetsor,
+                        msbarAglaHzmna: yetsorKeam?.msbar ||  counter?.count,
+                        shemlkoh: brtemLkoh?.name || customerName,
+                        tarekhAsbka,
+                        mherKlale,
+                        mherKlaleAhre,
+                        mkdema,
+                        msbarTshlomem,
+                        tnaeTshlom,
+                        haraKlalet,
+                    }} mlae={mlae} motsarem={{ motsaremRglem, motsaremBrofelem, motsaremLhatseg }} mtsav={GetShlavemInHebrow(shlavNokhhe)} ref={PrintRef} /></div>
                     {
                         yetsorKeam?.msbar && <ModalMtsavYetsor res={{
                             a: yetsorKeam?.mtsavYetsor[0] || null,
@@ -1354,7 +1406,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                         {GetShlavemInHebrow(shlavNokhhe) === 'שלב המתנה' && GetMotionTitels('שלב המתנה')}
                                         {GetShlavemInHebrow(shlavNokhhe) === 'שלב הצעה' && GetMotionTitels('שלב הצעה')}
                                         {GetShlavemInHebrow(shlavNokhhe) === 'שלב ייצור' && GetMotionTitels('שלב ייצור')}
-                                        {GetShlavemInHebrow(shlavNokhhe) === 'שלב מכר' && GetMotionTitels('שלב מכר')}
+                                        {GetShlavemInHebrow(shlavNokhhe) === 'שלב סיום' && GetMotionTitels('שלב סיום')}
                                     </div>
                                     <div className="w-full flex-grow p-4 overflow-auto">
                                         <div className="w-full p-10">
@@ -1370,13 +1422,35 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                     >
 
                                                         <div className="w-full flex items-center pb-3 border-b-1">
+                                                            <RiFileList3Fill className="text-xl text-primary" />
+                                                            <div className="mr-2 border-r-2 pr-2 flex items-center font-black text-black">
+                                                                <div className="flex items-center">
+                                                                    <div>
+                                                                        סניף :
+                                                                    </div>
+                                                                    <div className="mr-1">
+                                                                        {yetsorKeam?.locationYetsor || locationYetsor}
+                                                                    </div>
+                                                                </div>
+                                                                <div className="mr-2 ml-2">|</div>
+                                                                <div className="flex items-center">
+                                                                    <div>
+                                                                        מס עגלה :
+                                                                    </div>
+                                                                    <div className="mr-1">
+                                                                        {yetsorKeam?.msbar || counter?.count}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="w-full flex items-center pb-3 pt-3 border-b-1">
                                                             <FaUser className="text-xl text-primary" />
                                                             {
                                                                 lkohHdash &&
                                                                 (
                                                                     <>
                                                                         <div className="mr-2 border-r-2 pr-2">
-                                                                            <Button onClick={() => {setLkohHdash(false);ResetCustomer();}} size="sm" color="primary" variant="flat" className="text-base rounded-full">
+                                                                            <Button onClick={() => { setLkohHdash(false); ResetCustomer(); }} size="sm" color="primary" variant="flat" className="text-base rounded-full">
                                                                                 <IoIosArrowForward className="text-xl" />
                                                                             </Button>
                                                                         </div>
@@ -1393,7 +1467,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                                                     <Input value={msbarMezahehm} onValueChange={(val) => setMsbarMezahehm(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מספר מזהה" />
                                                                                     <Input value={customerPhone} onValueChange={(val) => setCustomerPhone(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מס טלפון" />
                                                                                     <Input value={customerCity} onValueChange={(val) => setCustomerCity(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="ישוב" />
-                                                                                    <Button onClick={() => {setShowModalAddCustomer(true);}} size="sm" color="primary" variant="flat" className="text-base rounded-full">
+                                                                                    <Button onClick={() => { setShowModalAddCustomer(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full">
                                                                                         <MdMoreHoriz className="text-3xl" />
                                                                                     </Button>
                                                                                 </div>
@@ -1406,52 +1480,72 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                                 !lkohHdash &&
                                                                 (
                                                                     <>
-                                                                        <AnimatePresence mode="wait">
-                                                                            <motion.div
-                                                                                key="A"
-                                                                                initial={{ opacity: 0, x: 100 }}
-                                                                                animate={{ opacity: 1, x: 0 }}
-                                                                                exit={{ opacity: 0, x: -100 }}
-                                                                                transition={{ duration: 0.5 }}
-                                                                            >
-                                                                                <div className="mr-2 border-r-2 pr-2">
-                                                                                    <Autocomplete
-                                                                                        isDisabled={yetsorKeam?.brtemLkoh?.id}
-                                                                                        label="בחר לקוח"
-                                                                                        className="max-w-[200px]"
-                                                                                        color="primary"
-                                                                                        size="sm"
-                                                                                        selectedKey={brtemLkoh?.id}
-                                                                                        defaultItems={lkhot}
+                                                                        {
+                                                                            yetsorKeam?.brtemLkoh?.id ?
+                                                                                <AnimatePresence mode="wait">
+                                                                                    <motion.div
+                                                                                        key="A"
+                                                                                        initial={{ opacity: 0, x: 100 }}
+                                                                                        animate={{ opacity: 1, x: 0 }}
+                                                                                        exit={{ opacity: 0, x: -100 }}
+                                                                                        transition={{ duration: 0.5 }}
                                                                                     >
-                                                                                        {
-                                                                                            lkhot.map((lko, index) => (
-                                                                                                <AutocompleteItem onClick={() => { setBrtemLkoh(lko); }} className='text-right' key={lko?.id} value={lko?.name}>
-                                                                                                    {lko?.name}
-                                                                                                </AutocompleteItem>
-                                                                                            ))
-                                                                                        }
-                                                                                    </Autocomplete>
-                                                                                </div>
-                                                                            </motion.div>
-                                                                        </AnimatePresence>
-                                                                        <div className="mr-2">
-                                                                            <Button isDisabled={yetsorKeam?.brtemLkoh?.id} onClick={() => setLkohHdash(true)} size="sm" color="primary" variant="flat" className="text-base rounded-full">
-                                                                                חדש <IoIosArrowBack className="text-xl" />
-                                                                            </Button>
-                                                                        </div>
+                                                                                        <div className="mr-2 border-r-2 pr-2">
+                                                                                            <Input isReadOnly value={yetsorKeam?.brtemLkoh?.name} color="primary" size="sm" className="max-w-[200px]" />
+                                                                                        </div>
+                                                                                    </motion.div>
+                                                                                </AnimatePresence>
+                                                                                :
+                                                                                <AnimatePresence mode="wait">
+                                                                                    <motion.div
+                                                                                        key="A"
+                                                                                        initial={{ opacity: 0, x: 100 }}
+                                                                                        animate={{ opacity: 1, x: 0 }}
+                                                                                        exit={{ opacity: 0, x: -100 }}
+                                                                                        transition={{ duration: 0.5 }}
+                                                                                    >
+                                                                                        <div className="mr-2 border-r-2 pr-2">
+                                                                                            <Autocomplete
+                                                                                                isDisabled={yetsorKeam?.brtemLkoh?.id}
+                                                                                                label="בחר לקוח"
+                                                                                                className="max-w-[200px]"
+                                                                                                color="primary"
+                                                                                                size="sm"
+                                                                                                selectedKey={brtemLkoh?.id}
+                                                                                                defaultItems={lkhot}
+                                                                                            >
+                                                                                                {
+                                                                                                    lkhot.map((lko, index) => (
+                                                                                                        <AutocompleteItem onClick={() => { setBrtemLkoh(lko); }} className='text-right' key={lko?.id} value={lko?.name}>
+                                                                                                            {lko?.name}
+                                                                                                        </AutocompleteItem>
+                                                                                                    ))
+                                                                                                }
+                                                                                            </Autocomplete>
+                                                                                        </div>
+                                                                                    </motion.div>
+                                                                                </AnimatePresence>
+                                                                        }
+                                                                        {
+                                                                            !yetsorKeam?.brtemLkoh?.id &&
+                                                                            <div className="mr-2">
+                                                                                <Button onClick={() => {setLkohHdash(true);setBrtemLkoh(null);}} size="sm" color="primary" variant="flat" className="text-base rounded-full">
+                                                                                    חדש <IoIosArrowBack className="text-xl" />
+                                                                                </Button>
+                                                                            </div>
+                                                                        }
+
                                                                     </>
                                                                 )
                                                             }
-
                                                         </div>
 
                                                         <div className="border-b-1 pt-3 pb-3">
                                                             <div className="w-full flex items-center">
                                                                 <FaShekelSign className="text-xl text-primary" />
                                                                 <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                    <Input label={`סכום הזמנה (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val);setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[180px]" />
-                                                                    <Input label={`סכום הזמנה (אחרי מע"מ)`} isReadOnly={yetsorKeam?.mherMkheraAhre} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val);setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Input label={`סכום הזמנה (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val); setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[180px]" />
+                                                                    <Input label={`סכום הזמנה (אחרי מע"מ)`} isReadOnly={yetsorKeam?.mherMkheraAhre} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val); setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[180px]" />
                                                                     <Input label={`מקדימה`} isReadOnly={yetsorKeam?.mkdema} size="sm" type="number" value={mkdema || ''} onValueChange={(val) => setMkdema(val)} color="primary" className="mr-3 max-w-[180px]" />
                                                                     <Input label={`מספר תשלומים`} isReadOnly={yetsorKeam?.msbarTshlomem} size="sm" type="number" value={msbarTshlomem || ''} onValueChange={(val) => setMsbarTshlomem(val)} color="primary" className="mr-3 max-w-[180px]" />
                                                                     <Dropdown dir="rtl" className="select-none">
@@ -1567,12 +1661,133 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                         exit={{ opacity: 0, x: -100 }}
                                                         transition={{ duration: 0.5 }}
                                                     >
-                                                        <div className="border-b-1 pb-3">
+                                                        <div className="w-full flex items-center pb-3 border-b-1">
+                                                            <RiFileList3Fill className="text-xl text-primary" />
+                                                            <div className="mr-2 border-r-2 pr-2 flex items-center font-black text-black">
+                                                                <div className="flex items-center">
+                                                                    <div>
+                                                                        סניף :
+                                                                    </div>
+                                                                    <div className="mr-1">
+                                                                        {yetsorKeam?.locationYetsor || locationYetsor}
+                                                                    </div>
+                                                                </div>
+                                                                <div className="mr-2 ml-2">|</div>
+                                                                <div className="flex items-center">
+                                                                    <div>
+                                                                        מס עגלה :
+                                                                    </div>
+                                                                    <div className="mr-1">
+                                                                        {yetsorKeam?.msbar || counter?.count}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="w-full flex items-center pb-3 pt-3 border-b-1">
+                                                            <FaUser className="text-xl text-primary" />
+                                                            {
+                                                                lkohHdash &&
+                                                                (
+                                                                    <>
+                                                                        <div className="mr-2 border-r-2 pr-2">
+                                                                            <Button onClick={() => { setLkohHdash(false); ResetCustomer(); }} size="sm" color="primary" variant="flat" className="text-base rounded-full">
+                                                                                <IoIosArrowForward className="text-xl" />
+                                                                            </Button>
+                                                                        </div>
+                                                                        <AnimatePresence mode="wait">
+                                                                            <motion.div
+                                                                                key="A"
+                                                                                initial={{ opacity: 0, x: 100 }}
+                                                                                animate={{ opacity: 1, x: 0 }}
+                                                                                exit={{ opacity: 0, x: -100 }}
+                                                                                transition={{ duration: 0.5 }}
+                                                                            >
+                                                                                <div className="mr-2 flex items-center">
+                                                                                    <Input value={customerName} onValueChange={(val) => setCustomerName(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="שם לקוח" />
+                                                                                    <Input value={msbarMezahehm} onValueChange={(val) => setMsbarMezahehm(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מספר מזהה" />
+                                                                                    <Input value={customerPhone} onValueChange={(val) => setCustomerPhone(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מס טלפון" />
+                                                                                    <Input value={customerCity} onValueChange={(val) => setCustomerCity(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="ישוב" />
+                                                                                    <Button onClick={() => { setShowModalAddCustomer(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full">
+                                                                                        <MdMoreHoriz className="text-3xl" />
+                                                                                    </Button>
+                                                                                </div>
+                                                                            </motion.div>
+                                                                        </AnimatePresence>
+                                                                    </>
+                                                                )
+                                                            }
+                                                            {
+                                                                !lkohHdash &&
+                                                                (
+                                                                    <>
+                                                                        {
+                                                                            yetsorKeam?.brtemLkoh?.id ?
+                                                                                <AnimatePresence mode="wait">
+                                                                                    <motion.div
+                                                                                        key="A"
+                                                                                        initial={{ opacity: 0, x: 100 }}
+                                                                                        animate={{ opacity: 1, x: 0 }}
+                                                                                        exit={{ opacity: 0, x: -100 }}
+                                                                                        transition={{ duration: 0.5 }}
+                                                                                    >
+                                                                                        <div className="mr-2 border-r-2 pr-2">
+                                                                                            <Input isReadOnly value={yetsorKeam?.brtemLkoh?.name} color="primary" size="sm" className="max-w-[200px]" />
+                                                                                        </div>
+                                                                                    </motion.div>
+                                                                                </AnimatePresence>
+                                                                                :
+                                                                                <AnimatePresence mode="wait">
+                                                                                    <motion.div
+                                                                                        key="A"
+                                                                                        initial={{ opacity: 0, x: 100 }}
+                                                                                        animate={{ opacity: 1, x: 0 }}
+                                                                                        exit={{ opacity: 0, x: -100 }}
+                                                                                        transition={{ duration: 0.5 }}
+                                                                                    >
+                                                                                        <div className="mr-2 border-r-2 pr-2">
+                                                                                            <Autocomplete
+                                                                                                isDisabled={yetsorKeam?.brtemLkoh?.id}
+                                                                                                label="בחר לקוח"
+                                                                                                className="max-w-[200px]"
+                                                                                                color="primary"
+                                                                                                size="sm"
+                                                                                                selectedKey={brtemLkoh?.id}
+                                                                                                defaultItems={lkhot}
+                                                                                            >
+                                                                                                {
+                                                                                                    lkhot.map((lko, index) => (
+                                                                                                        <AutocompleteItem onClick={() => { setBrtemLkoh(lko); }} className='text-right' key={lko?.id} value={lko?.name}>
+                                                                                                            {lko?.name}
+                                                                                                        </AutocompleteItem>
+                                                                                                    ))
+                                                                                                }
+                                                                                            </Autocomplete>
+                                                                                        </div>
+                                                                                    </motion.div>
+                                                                                </AnimatePresence>
+                                                                        }
+                                                                        {
+                                                                            !yetsorKeam?.brtemLkoh?.id &&
+                                                                            <div className="mr-2">
+                                                                                <Button onClick={() => {setLkohHdash(true);setBrtemLkoh(null);}} size="sm" color="primary" variant="flat" className="text-base rounded-full">
+                                                                                    חדש <IoIosArrowBack className="text-xl" />
+                                                                                </Button>
+                                                                            </div>
+                                                                        }
+
+                                                                    </>
+                                                                )
+                                                            }
+
+                                                        </div>
+                                                        <div className="border-b-1 pb-3 pt-3">
                                                             <div className="w-full flex items-center">
                                                                 <FaShekelSign className="text-xl text-primary" />
                                                                 <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                <Input label={`סכום הזמנה (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val);setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[180px]" />
-                                                                    <Input label={`סכום הזמנה (אחרי מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val);setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Input label={`סכום הזמנה (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val); setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[180px]" />
+                                                                    <Input label={`סכום הזמנה (אחרי מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val); setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Input label={`מקדימה`} isReadOnly={yetsorKeam?.mkdema} size="sm" type="number" value={mkdema || ''} onValueChange={(val) => setMkdema(val)} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Input label={`מספר תשלומים`} isReadOnly={yetsorKeam?.msbarTshlomem} size="sm" type="number" value={msbarTshlomem || ''} onValueChange={(val) => setMsbarTshlomem(val)} color="primary" className="mr-3 max-w-[180px]" />
                                                                     <Dropdown dir="rtl" className="select-none">
                                                                         <DropdownTrigger>
                                                                             <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="lg">
@@ -1701,12 +1916,133 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                         exit={{ opacity: 0, x: -100 }}
                                                         transition={{ duration: 0.5 }}
                                                     >
-                                                        <div className="border-b-1 pb-3">
+                                                        <div className="w-full flex items-center pb-3 border-b-1">
+                                                            <RiFileList3Fill className="text-xl text-primary" />
+                                                            <div className="mr-2 border-r-2 pr-2 flex items-center font-black text-black">
+                                                                <div className="flex items-center">
+                                                                    <div>
+                                                                        סניף :
+                                                                    </div>
+                                                                    <div className="mr-1">
+                                                                        {yetsorKeam?.locationYetsor || locationYetsor}
+                                                                    </div>
+                                                                </div>
+                                                                <div className="mr-2 ml-2">|</div>
+                                                                <div className="flex items-center">
+                                                                    <div>
+                                                                        מס עגלה :
+                                                                    </div>
+                                                                    <div className="mr-1">
+                                                                        {yetsorKeam?.msbar || counter?.count}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="w-full flex items-center pb-3 pt-3 border-b-1">
+                                                            <FaUser className="text-xl text-primary" />
+                                                            {
+                                                                lkohHdash &&
+                                                                (
+                                                                    <>
+                                                                        <div className="mr-2 border-r-2 pr-2">
+                                                                            <Button onClick={() => { setLkohHdash(false); ResetCustomer(); }} size="sm" color="primary" variant="flat" className="text-base rounded-full">
+                                                                                <IoIosArrowForward className="text-xl" />
+                                                                            </Button>
+                                                                        </div>
+                                                                        <AnimatePresence mode="wait">
+                                                                            <motion.div
+                                                                                key="A"
+                                                                                initial={{ opacity: 0, x: 100 }}
+                                                                                animate={{ opacity: 1, x: 0 }}
+                                                                                exit={{ opacity: 0, x: -100 }}
+                                                                                transition={{ duration: 0.5 }}
+                                                                            >
+                                                                                <div className="mr-2 flex items-center">
+                                                                                    <Input value={customerName} onValueChange={(val) => setCustomerName(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="שם לקוח" />
+                                                                                    <Input value={msbarMezahehm} onValueChange={(val) => setMsbarMezahehm(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מספר מזהה" />
+                                                                                    <Input value={customerPhone} onValueChange={(val) => setCustomerPhone(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מס טלפון" />
+                                                                                    <Input value={customerCity} onValueChange={(val) => setCustomerCity(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="ישוב" />
+                                                                                    <Button onClick={() => { setShowModalAddCustomer(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full">
+                                                                                        <MdMoreHoriz className="text-3xl" />
+                                                                                    </Button>
+                                                                                </div>
+                                                                            </motion.div>
+                                                                        </AnimatePresence>
+                                                                    </>
+                                                                )
+                                                            }
+                                                            {
+                                                                !lkohHdash &&
+                                                                (
+                                                                    <>
+                                                                        {
+                                                                            yetsorKeam?.brtemLkoh?.id ?
+                                                                                <AnimatePresence mode="wait">
+                                                                                    <motion.div
+                                                                                        key="A"
+                                                                                        initial={{ opacity: 0, x: 100 }}
+                                                                                        animate={{ opacity: 1, x: 0 }}
+                                                                                        exit={{ opacity: 0, x: -100 }}
+                                                                                        transition={{ duration: 0.5 }}
+                                                                                    >
+                                                                                        <div className="mr-2 border-r-2 pr-2">
+                                                                                            <Input isReadOnly value={yetsorKeam?.brtemLkoh?.name} color="primary" size="sm" className="max-w-[200px]" />
+                                                                                        </div>
+                                                                                    </motion.div>
+                                                                                </AnimatePresence>
+                                                                                :
+                                                                                <AnimatePresence mode="wait">
+                                                                                    <motion.div
+                                                                                        key="A"
+                                                                                        initial={{ opacity: 0, x: 100 }}
+                                                                                        animate={{ opacity: 1, x: 0 }}
+                                                                                        exit={{ opacity: 0, x: -100 }}
+                                                                                        transition={{ duration: 0.5 }}
+                                                                                    >
+                                                                                        <div className="mr-2 border-r-2 pr-2">
+                                                                                            <Autocomplete
+                                                                                                isDisabled={yetsorKeam?.brtemLkoh?.id}
+                                                                                                label="בחר לקוח"
+                                                                                                className="max-w-[200px]"
+                                                                                                color="primary"
+                                                                                                size="sm"
+                                                                                                selectedKey={brtemLkoh?.id}
+                                                                                                defaultItems={lkhot}
+                                                                                            >
+                                                                                                {
+                                                                                                    lkhot.map((lko, index) => (
+                                                                                                        <AutocompleteItem onClick={() => { setBrtemLkoh(lko); }} className='text-right' key={lko?.id} value={lko?.name}>
+                                                                                                            {lko?.name}
+                                                                                                        </AutocompleteItem>
+                                                                                                    ))
+                                                                                                }
+                                                                                            </Autocomplete>
+                                                                                        </div>
+                                                                                    </motion.div>
+                                                                                </AnimatePresence>
+                                                                        }
+                                                                        {
+                                                                            !yetsorKeam?.brtemLkoh?.id &&
+                                                                            <div className="mr-2">
+                                                                                <Button onClick={() => {setLkohHdash(true);setBrtemLkoh(null);}} size="sm" color="primary" variant="flat" className="text-base rounded-full">
+                                                                                    חדש <IoIosArrowBack className="text-xl" />
+                                                                                </Button>
+                                                                            </div>
+                                                                        }
+
+                                                                    </>
+                                                                )
+                                                            }
+
+                                                        </div>
+                                                        <div className="border-b-1 pb-3 pt-3">
                                                             <div className="w-full flex items-center">
                                                                 <FaShekelSign className="text-xl text-primary" />
                                                                 <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                <Input label={`סכום הזמנה (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val);setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[180px]" />
-                                                                    <Input label={`סכום הזמנה (אחרי מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val);setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Input label={`סכום הזמנה (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val); setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[180px]" />
+                                                                    <Input label={`סכום הזמנה (אחרי מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val); setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Input label={`מקדימה`} isReadOnly={yetsorKeam?.mkdema} size="sm" type="number" value={mkdema || ''} onValueChange={(val) => setMkdema(val)} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Input label={`מספר תשלומים`} isReadOnly={yetsorKeam?.msbarTshlomem} size="sm" type="number" value={msbarTshlomem || ''} onValueChange={(val) => setMsbarTshlomem(val)} color="primary" className="mr-3 max-w-[180px]" />
                                                                     <Dropdown dir="rtl" className="select-none">
                                                                         <DropdownTrigger>
                                                                             <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="lg">
@@ -1740,7 +2076,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                                     <div className="mr-2 ml-3 w-[150px]">
                                                                         מספר עדיפות
                                                                     </div>
-                                                                    <Pagination className="w-full" total={5} initialPage={1} />
+                                                                    <Pagination page={msbarAdefot} onChange={setMsbarAdefot} className="w-full" total={5} initialPage={1} />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1794,23 +2130,28 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                                                 </div>
                                                                 <div className="border-r-2 pr-2">
                                                                     <div className="w-full flex">
-                                                                        <Autocomplete
-                                                                            label="מספר עגלה"
-                                                                            className="max-w-[200px]"
-                                                                            size="sm"
-                                                                            color="primary"
-                                                                            onSelectionChange={setMsbarAgla}
-                                                                            onInputChange={(val) => { setMsbarAgla(val); }}
-                                                                        >
-                                                                            {
-                                                                                aglot?.map((aglaaaaa, index) => (
-                                                                                    (!aglaaaaa?.active) && <AutocompleteItem className='text-right' key={aglaaaaa?.licenseid} value={aglaaaaa?.licenseid}>
-                                                                                        {aglaaaaa?.licenseid}
-                                                                                    </AutocompleteItem>
-                                                                                ))
-                                                                            }
+                                                                        {
+                                                                            yetsorKeam?.msbarAgla ?
+                                                                            <Input isReadOnly value={yetsorKeam?.msbarAgla} color="primary" size="sm" className="max-w-[200px]" />
+                                                                            :
+                                                                                <Autocomplete
+                                                                                    label="מספר עגלה"
+                                                                                    className="max-w-[200px]"
+                                                                                    size="sm"
+                                                                                    color="primary"
+                                                                                    onSelectionChange={setMsbarAgla}
+                                                                                    onInputChange={(val) => { setMsbarAgla(val); }}
+                                                                                >
+                                                                                    {
+                                                                                        aglot?.map((aglaaaaa, index) => (
+                                                                                            (!aglaaaaa?.active) && <AutocompleteItem className='text-right' key={aglaaaaa?.licenseid} value={aglaaaaa?.licenseid}>
+                                                                                                {aglaaaaa?.licenseid}
+                                                                                            </AutocompleteItem>
+                                                                                        ))
+                                                                                    }
 
-                                                                        </Autocomplete>
+                                                                                </Autocomplete>
+                                                                        }
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1849,95 +2190,71 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
 
                                             {
                                                 (shlavNokhhe === 'D') &&
-                                                <div></div>
+                                                <AnimatePresence mode="wait">
+                                                    <motion.div
+                                                        key="D"
+                                                        initial={{ opacity: 0, x: 100 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                            exit={{ opacity: 0, x: -100 }}
+                                                            transition={{ duration: 0.5 }}
+                                                        >
+                                                            <div className="flex justify-center">
+                                                                <div className="">
+                                                                    <div className="flex justify-center w-full items-center">
+                                                                    <Image
+                                                                        src={'https://cdn-icons-png.flaticon.com/512/5610/5610944.png'}
+                                                                        className="w-[120px] h-[120px]"
+                                                                        width={120}
+                                                                        height={120}
+                                                                    />
+                                                                    </div>
+                                                                    <div className="w-full text-center mt-8 mb-8 font-bold text-success text-xl">
+                                                                        תהליך ייצור עגלה הסתיים בהצלחה!!!
+                                                                    </div>
+                                                                    <Progress
+                                                                        aria-label="Downloading..."
+                                                                        size="md"
+                                                                        value={valueProgress}
+                                                                        color="success"
+                                                                        showValueLabel={true}
+                                                                        className="max-w-md m-auto"
+                                                                    />
+                                                                </div>
+
+                                                            </div>
+                                                        </motion.div>
+                                                    </AnimatePresence>
                                             }
-
-
-
-                                            {
-                                                (shlavNokhhe === 'E') &&
-                                                <div></div>
-                                            }
-
-
-
-
-
-                                            {/* <div className="border-b-1 pt-3 pb-3">
-                                                <div className="w-full flex items-center">
-                                                    <div>
-                                                        <IoSettings className="text-xl text-primary ml-2" />
-                                                    </div>
-                                                    <div className="border-r-2 pr-2">
-                                                        <div className="w-full flex mt-3">
-                                                            <Switch size='md' dir="ltr" isSelected={hskmatLkoh} isReadOnly={agla?.thlkhem?.hskmatLkwah || !brtemLkoh} defaultSelected={agla?.thlkhem?.hskmatLkwah} value={hskmatLkoh} onValueChange={(val) => setHskmatLkoh(val)}>
-                                                                <div className="mr-2 w-[100px] text-right">הזמנת לקוח</div>
-                                                            </Switch>
-                                                        </div>
-                                                        <div className="w-full flex mt-3">
-                                                            <Switch size='md' dir="ltr" className="flex mt-3" isSelected={seomYetsor} isReadOnly={!hskmatLkoh || !thelatYetsor} defaultSelected={agla?.thlkhem?.seomThlekhYetsor} value={seomYetsor} onValueChange={(val) => setSeomYetsor(val)}>
-                                                                <div className="mr-2 w-[100px] text-right">סיום יצור</div>
-                                                            </Switch>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="pt-3 pb-3">
-                                                <div className="w-full flex items-center">
-                                                    <div>
-                                                        <GrCertificate className="text-xl text-primary ml-2" />
-                                                    </div>
-                                                    <div className="border-r-2 pr-2">
-                                                        <div className="w-full flex">
-                                                            <Autocomplete
-                                                                isDisabled={!hskmatLkoh}
-                                                                label="מספר עגלה"
-                                                                className="max-w-[200px]"
-                                                                size="sm"
-                                                                color="primary"
-                                                                onSelectionChange={setMsbarAgla}
-                                                                onInputChange={(val) => { setMsbarAgla(val); }}
-                                                            >
-                                                                {
-                                                                    aglot?.map((aglaaaaa, index) => (
-                                                                        (!aglaaaaa?.active) && <AutocompleteItem onClick={() => setSeomReshion(false)} className='text-right' key={aglaaaaa?.licenseid} value={aglaaaaa?.licenseid}>
-                                                                            {aglaaaaa?.licenseid}
-                                                                        </AutocompleteItem>
-                                                                    ))
-                                                                }
-
-                                                            </Autocomplete>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> */}
 
 
 
 
                                         </div>
                                     </div>
-                                    <div className=" w-full flex justify-center pt-3 border-t-1">
-                                        <Tooltip closeDelay={200} content={
-                                            <div dir="rtl" className="w-full flex items-center">
-                                                <div className="text-primary font-black">
-                                                    השלב הבא :
-                                                </div>
-                                                <div className="mr-1">
-                                                    {shlavNokhhe ? GetShlavemInHebrow(getNextLetter(shlavNokhhe)) : GetShlavemInHebrow('A')}
-                                                </div>
-                                            </div>
-                                        }>
-                                            <Button onClick={Next} className="h-[40px] " color='secondary' variant="flat" size='md'>
-                                                <div className="inline-block animate-move-arrows">
-                                                    <div className="flex justify-start items-center">
-                                                        <div className="ml-2 text-right text-base font-bold">הבא</div>
-                                                        <TbPlayerTrackNextFilled className="text-4xl text-secondary transform scale-x-[-1]" />
+                                    {
+                                        shlavNokhhe !== 'D' &&
+                                        <div className=" w-full flex justify-center pt-3 border-t-1">
+                                            <Tooltip closeDelay={200} content={
+                                                <div dir="rtl" className="w-full flex items-center">
+                                                    <div className="text-primary font-black">
+                                                        השלב הבא :
+                                                    </div>
+                                                    <div className="mr-1">
+                                                        {shlavNokhhe ? GetShlavemInHebrow(getNextLetter(shlavNokhhe)) : GetShlavemInHebrow('A')}
                                                     </div>
                                                 </div>
-                                            </Button>
-                                        </Tooltip>
-                                    </div>
+                                            }>
+                                                <Button onClick={Next} className="h-[40px] " color='secondary' variant="flat" size='md'>
+                                                    <div className="inline-block animate-move-arrows">
+                                                        <div className="flex justify-start items-center">
+                                                            <div className="ml-2 text-right text-base font-bold">הבא</div>
+                                                            <TbPlayerTrackNextFilled className="text-4xl text-secondary transform scale-x-[-1]" />
+                                                        </div>
+                                                    </div>
+                                                </Button>
+                                            </Tooltip>
+                                        </div>
+                                    }
                                     {/* <div className="w-[1200px] hidden absolute left-0 bottom-0 bg-white z-50 border-4 border-black">
                                         <TofsTokhnetYetsor brtem={{
                                             shemLkoh: brtemLkoh.shem,
@@ -2015,33 +2332,36 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                     </div>
                 </ModalBody>
 
-                <ModalFooter className="border-t-2">
-                    <div>
-                        {
-                            yetsorKeam?.id && ((shlavNokhhe === 'A') || (shlavNokhhe === 'B')) &&
-                            <Button size="sm" color="danger" isLoading={loading} variant="flat" onClick={async () => {
-                                setLoading(true);
-                                await deleteDoc(doc(firestore, 'tfaol', yetsorKeam?.id));
-                                setLoading(false);
-                                ResetAll();
-                                disable();
-                            }}>
-                                מחיקה
-                            </Button>
-                        }
-                    </div>
-                    <div className="w-full flex justify-end">
-                        <Button color='warning' variant='flat' size="sm" className="mr-2" onClick={() => setShowModalMessage(true)}>סגור</Button>
-                        {/* {
+                {
+                    shlavNokhhe !== 'D' &&
+                    <ModalFooter className="border-t-2">
+                        <div>
+                            {
+                                yetsorKeam?.id && ((shlavNokhhe === 'A') || (shlavNokhhe === 'B')) &&
+                                <Button size="sm" color="danger" isLoading={loading} variant="flat" onClick={async () => {
+                                    setLoading(true);
+                                    await deleteDoc(doc(firestore, 'tfaol', yetsorKeam?.id));
+                                    setLoading(false);
+                                    ResetAll();
+                                    disable();
+                                }}>
+                                    מחיקה
+                                </Button>
+                            }
+                        </div>
+                        <div className="w-full flex justify-end">
+                            <Button color='warning' variant='flat' size="sm" className="mr-2" onClick={() => setShowModalMessage(true)}>סגור</Button>
+                            {/* {
                             (shlavNokhhe === 'C') &&
                             <Button className='mr-5 ml-5 font-bold' color='primary' variant='flat' onClick={handelPrintggg}>
                                 <CgFileDocument className="text-2xl text-primary" />הדפסת תופס עובדים
                             </Button>
                         } */}
 
-                        {shlavNokhhe !== '' && <Button onClick={saveValues} color='primary' variant='flat' size="sm" className="mr-2">שמירה</Button>}
-                    </div>
-                </ModalFooter>
+                            <Button isLoading={loading} isDisabled={!(brtemLkoh?.id || customerName) || (!tokhnet && !shemTokhnet)} onClick={() => saveValues(false)} color='primary' variant='flat' size="sm" className="mr-2">שמירה</Button>
+                        </div>
+                    </ModalFooter>
+                }
             </ModalContent>
         </Modal>
     )

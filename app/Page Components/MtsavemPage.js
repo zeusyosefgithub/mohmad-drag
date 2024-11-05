@@ -24,6 +24,7 @@ import rep50 from '../../images/rep50.png';
 import rep57 from '../../images/rep57.png';
 import Image from "next/image";
 import { GetTmonatHelek } from "../page";
+import { format, parse } from "date-fns";
 
 export const MtsavemPage = React.forwardRef((props, ref) => {
 
@@ -31,6 +32,7 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
     const tokhnet = props.tokhnet;
     const motsarem = props.motsarem;
     const mlae = props.mlae;
+    const brtem = props.brtemKlalem;
 
     const GetBrtemMotsarMlae = useCallback((remez, shem) => {
         const motsarMlae = mlae?.filter(item => item.categoryMotsar === remez);
@@ -40,8 +42,12 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
         const id = motsarMlae?.find(item => item.shem === shem)?.id || '';
         return { arrayResualt: motsarMlae, alot, kmot, msbar, id };
     }, [mlae]);
+
+    function flipDate(dateStr) {
+        const [year, month, day] = dateStr.split('-');
+        return `${day}-${month}-${year}`;
+      }
     
-    console.log(motsarem);
 
     const GetRow = (val1, val2, val3, val4, val5, val6) => {
         let newArray = [];
@@ -162,6 +168,30 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                 <div className="text-base font-bold text-center max-w-[150px] w-full">
                     תופס {mtsav}
                 </div>
+            </div>
+            <div dir="rtl" className="p-3">
+                <div className="tracking-widest border-b-1 font-black">פרטים כלליים</div>
+                <div className="p-3 flex justify-around">
+                    <div>
+                        <div className="flex items-center"><div className="w-[130px]">סניף :</div><div className="mr-1">{brtem?.snef}</div></div>
+                        <div className="flex items-center"><div className="w-[130px]">מס הזמנה :</div><div className="mr-1">{brtem?.msbarAglaHzmna}</div></div>
+                        <div className="flex items-center"><div className="w-[130px]">שם לקוח :</div><div className="mr-1">{brtem?.shemlkoh}</div></div>
+                        <div className="flex items-center"><div className="w-[130px]">תאריך הצעה :</div><div className="mr-1">{format(new Date(), 'dd-MM-yyyy')}</div></div>
+                        <div className="flex items-center"><div className="w-[130px]">תאריך אספקה :</div><div className="mr-1">{brtem?.tarekhAsbka && flipDate(brtem?.tarekhAsbka)}</div></div>
+                    </div>
+                    <div>
+                        <div className="flex items-center"><div className="w-[200px]">סכום הזמנה (לפני מע"מ) :</div><div className="mr-1">{brtem?.mherKlale || ''}</div></div>
+                        <div className="flex items-center"><div className="w-[200px]">סכום הזמנה (אחרי מע"מ) :</div><div className="mr-1">{brtem?.mherKlaleAhre || ''}</div></div>
+                        <div className="flex items-center"><div className="w-[200px]">מקדימה :</div><div className="mr-1">{brtem?.mkdema || ''}</div></div>
+                        <div className="flex items-center"><div className="w-[200px]">מספר תשלומים :</div><div className="mr-1">{brtem?.msbarTshlomem || ''}</div></div>
+                        <div className="flex items-center"><div className="w-[200px]">אמצעי תשלום :</div><div className="mr-1">{brtem?.tnaeTshlom || ''}</div></div>
+                    </div>
+                </div>
+                {
+                    brtem?.haraKlalet && <div className="border-t-1">
+                        *הערות* : {brtem?.haraKlalet}
+                    </div>
+                }
             </div>
             <div dir="rtl" className="p-3">
                 <div className="tracking-widest border-b-1 font-black">תוכנית</div>

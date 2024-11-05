@@ -1,5 +1,5 @@
 'use client';
-import { Button, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Spinner, Tooltip } from "@nextui-org/react";
+import { Accordion, AccordionItem, Button, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@nextui-org/react";
 import { useContext, useEffect, useState } from "react";
 import { differenceInMinutes, format, getDaysInMonth, isBefore, parseISO } from 'date-fns';
 import GetDocs from "../FireBase/getDocs";
@@ -43,7 +43,7 @@ export default function Aobdem() {
     const [showModalHosfatKnesaYdnet, setShowModalHosfatKnesaYdnet] = useState(false);
     const [arrayResualt, setArrayResualt] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [getAdconem,setGetAdconem] = useState(false);
+    const [getAdconem, setGetAdconem] = useState(false);
 
     const handleTimeDiffrence = (yetseah, knesa) => {
         if (yetseah && knesa) {
@@ -196,7 +196,7 @@ export default function Aobdem() {
         }
         else if (!shaotHeomData?.length) {
             const updatedKnesotHeom = aobdem.map(knesa => {
-                if(knesa.active){
+                if (knesa.active) {
                     return {
                         id: '',
                         msbar: knesa.msbar,
@@ -208,7 +208,7 @@ export default function Aobdem() {
                         headrot: ''
                     };
                 }
-               
+
             });
             setKnesotHeom(updatedKnesotHeom);
             setKnesotHeomBdeka(updatedKnesotHeom);
@@ -224,7 +224,7 @@ export default function Aobdem() {
     };
 
     const toggleYom = (val) => {
-        
+
         if (btehotYom.includes(val)) {
             handleRemoveYom(val);
         } else {
@@ -330,11 +330,11 @@ export default function Aobdem() {
         return false;
     }
 
-    const [showModalAdconHosfaKnesa,setShowModalAdconHosfaKnesa] = useState(false);
-    const [typeAdcon,setTypeAdcon] = useState('');
-    const [aobedLaedcon,setAobedLaedcon] = useState(null);
-    const [knesaLaedcon,setKnesaLaedcon] = useState(null);
-    const [yomLaedcon,setYomLaedcon] = useState(null);
+    const [showModalAdconHosfaKnesa, setShowModalAdconHosfaKnesa] = useState(false);
+    const [typeAdcon, setTypeAdcon] = useState('');
+    const [aobedLaedcon, setAobedLaedcon] = useState(null);
+    const [knesaLaedcon, setKnesaLaedcon] = useState(null);
+    const [yomLaedcon, setYomLaedcon] = useState(null);
     const [tarekhKlaleNbhar, setTarekhKlaleNbhar] = useState('');
 
     const isCurrentDateBefore = (date) => {
@@ -346,7 +346,7 @@ export default function Aobdem() {
         let newArray = [];
         let resArray = [];
         for (let i = array.length - 1; i >= 0; i--) {
-            if(!newArray.includes(array[i].msbar)){
+            if (!newArray.includes(array[i].msbar)) {
                 resArray.push(array[i]);
                 newArray.push(array[i].msbar);
             }
@@ -357,7 +357,7 @@ export default function Aobdem() {
     const GetKnesotKlaleLfeYom = (Yom) => {
         let newArray = [];
         for (let index = 0; index < knesotKlale?.length; index++) {
-            if(knesotKlale[index].tarekh === Yom){
+            if (knesotKlale[index].tarekh === Yom) {
                 newArray.push(knesotKlale[index]);
             }
         }
@@ -366,134 +366,206 @@ export default function Aobdem() {
 
     console.log(knesotKlale);
 
-    const GetReshmatAobdemYememHodesh = (Yom,newArrayWithouRpeat) => {
+    // const GetReshmatAobdemYememHodesh = (Yom, newArrayWithouRpeat) => {
+    //     let newArray = [];
+    //     if (bdekatYomInKnestKlale(Yom?.tarekh) && btehotYom.includes(Yom?.tarekh)) {
+    //         let arrayAobdemAbdo = [];
+    //         for (let index = 0; index < newArrayWithouRpeat.length; index++) {
+    //             if (newArrayWithouRpeat[index]?.tarekh === Yom?.tarekh) {
+    //                 arrayAobdemAbdo.push(newArrayWithouRpeat[index].aobed);
+    //                 newArray.push(<tr key={index}>
+    //                     <td>{newArrayWithouRpeat[index]?.yetseah}</td>
+    //                     <td>{newArrayWithouRpeat[index]?.knesa}</td>
+    //                     <td></td>
+    //                     <td></td>
+    //                     <td>{newArrayWithouRpeat[index]?.headrot}</td>
+    //                     <td>{GetTarekhShem(format(flipDate(newArrayWithouRpeat[index]?.tarekh), 'EEEE'))}</td>
+    //                     <td>{newArrayWithouRpeat[index]?.tarekh}</td>
+    //                     <td>{GetAobedBratem(newArrayWithouRpeat[index]?.aobed)?.shem}</td>
+    //                     <td>
+    //                         {newArrayWithouRpeat[index]?.headrot && newArrayWithouRpeat[index]?.yetseah && newArrayWithouRpeat[index]?.knesa
+    //                             ?
+    //                             <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh); setKnesaLaedcon(newArrayWithouRpeat[index]); setAobedLaedcon(GetAobedBratem(newArrayWithouRpeat[index].aobed)); setTypeAdcon('adcon'); setShowModalAdconHosfaKnesa(true); }} className="text-success cursor-pointer text-[18px]" />
+    //                             : newArrayWithouRpeat[index]?.headrot || newArrayWithouRpeat[index]?.yetseah || newArrayWithouRpeat[index]?.knesa ?
+    //                                 <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh); setKnesaLaedcon(newArrayWithouRpeat[index]); setAobedLaedcon(GetAobedBratem(newArrayWithouRpeat[index].aobed)); setTypeAdcon('adcon'); setShowModalAdconHosfaKnesa(true); }} className="text-danger cursor-pointer text-[17px]" />
+    //                                 :
+    //                                 <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh)?.tarekh; setAobedLaedcon(aobdem[index]); setTypeAdcon('hosfaa'); setShowModalAdconHosfaKnesa(true); }} className="text-danger cursor-pointer text-[17px]" />}</td>
+    //                 </tr>)
 
+    //             }
+    //         }
+    //         for (let index = 0; index < aobdem.length; index++) {
+    //             if (!arrayAobdemAbdo.includes(aobdem[index].msbar)) {
+    //                 newArray.push(<tr key={index}>
+    //                     <td></td>
+    //                     <td></td>
+    //                     <td></td>
+    //                     <td></td>
+    //                     <td></td>
+    //                     <td></td>
+    //                     <td></td>
+    //                     <td><div className={!isCurrentDateBefore(flipDate(Yom?.tarekh)) && 'text-danger'}>{aobdem[index].shem}</div></td>
+    //                     <td>
+    //                         {
+    //                             isCurrentDateBefore(flipDate(Yom?.tarekh)) ?
+    //                                 <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh); setAobedLaedcon(aobdem[index]); setTypeAdcon('hosfaa'); setShowModalAdconHosfaKnesa(true); }} className={`text-[17px] cursor-pointer text-primary`} />
+    //                                 :
+    //                                 <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh); setAobedLaedcon(aobdem[index]); setTypeAdcon('hosfaa'); setShowModalAdconHosfaKnesa(true); }} className={`text-[17px] cursor-pointer text-danger`} />
+    //                         }
+    //                     </td>
+    //                 </tr>);
+    //             }
+    //         }
+    //     }
+    //     else if (btehotYom.includes(Yom?.tarekh)) {
+    //         for (let index = aobdem.length - 1; index >= 0; index--) {
+    //             newArray.push(<tr key={index}>
+    //                 <td></td>
+    //                 <td></td>
+    //                 <td></td>
+    //                 <td></td>
+    //                 <td></td>
+    //                 <td></td>
+    //                 <td></td>
+    //                 <td><div className={!isCurrentDateBefore(flipDate(Yom?.tarekh)) && 'text-danger'}>{aobdem[index].shem}</div></td>
+    //                 <td>
+    //                     {
+    //                         isCurrentDateBefore(flipDate(Yom?.tarekh)) ?
+    //                             <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh); setAobedLaedcon(aobdem[index]); setTypeAdcon('hosfaa'); setShowModalAdconHosfaKnesa(true); }} className={`text-[17px] cursor-pointer text-primary`} />
+    //                             :
+    //                             <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh); setAobedLaedcon(aobdem[index]); setTypeAdcon('hosfaa'); setShowModalAdconHosfaKnesa(true); }} className={`text-[17px] cursor-pointer text-danger`} />
+    //                     }
+    //                 </td>
+    //             </tr>);
+    //         }
+    //     }
+    //     return newArray;
+    // }
+
+    const GetReshematShaotAobdem = (Yom, newArrayWithouRpeat) => {
         let newArray = [];
-        if(Yom.tarekh === '29-08-2024'){
-            console.log(newArrayWithouRpeat);
-        }
         if (bdekatYomInKnestKlale(Yom?.tarekh) && btehotYom.includes(Yom?.tarekh)) {
             let arrayAobdemAbdo = [];
             for (let index = 0; index < newArrayWithouRpeat.length; index++) {
-                if (newArrayWithouRpeat[index]?.tarekh === Yom?.tarekh) {     
+                if (newArrayWithouRpeat[index]?.tarekh === Yom?.tarekh) {
                     arrayAobdemAbdo.push(newArrayWithouRpeat[index].aobed);
-                    newArray.push(<tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{newArrayWithouRpeat[index]?.yetseah}</td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{newArrayWithouRpeat[index]?.knesa}</td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{newArrayWithouRpeat[index]?.headrot}</td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{GetTarekhShem(format(flipDate(newArrayWithouRpeat[index]?.tarekh), 'EEEE'))}</td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{newArrayWithouRpeat[index]?.tarekh}</td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">{GetAobedBratem(newArrayWithouRpeat[index]?.aobed)?.shem}</td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">
-                            {newArrayWithouRpeat[index]?.headrot && newArrayWithouRpeat[index]?.yetseah && newArrayWithouRpeat[index]?.knesa 
-                            ?
-                            <TbClockEdit onClick={() => {setYomLaedcon(Yom?.tarekh);setKnesaLaedcon(newArrayWithouRpeat[index]);setAobedLaedcon(GetAobedBratem(newArrayWithouRpeat[index].aobed));setTypeAdcon('adcon');setShowModalAdconHosfaKnesa(true);}} className="text-success cursor-pointer text-[18px]" /> 
-                            : newArrayWithouRpeat[index]?.headrot || newArrayWithouRpeat[index]?.yetseah || newArrayWithouRpeat[index]?.knesa ?
-                            <TbClockEdit onClick={() => {setYomLaedcon(Yom?.tarekh);setKnesaLaedcon(newArrayWithouRpeat[index]);setAobedLaedcon(GetAobedBratem(newArrayWithouRpeat[index].aobed));setTypeAdcon('adcon');setShowModalAdconHosfaKnesa(true);}} className="text-danger cursor-pointer text-[17px]" />
-                            :
-                            <TbClockEdit onClick={() => {setYomLaedcon(Yom?.tarekh)?.tarekh;setAobedLaedcon(aobdem[index]);setTypeAdcon('hosfaa');setShowModalAdconHosfaKnesa(true);}} className="text-danger cursor-pointer text-[17px]" />}</td>
-                    </tr>)
+                    newArray.push(<TableRow key={index + Yom?.tarekh + '1'}>
+                        <TableCell className="text-[10px] text-right">{newArrayWithouRpeat[index]?.yetseah}</TableCell>
+                        <TableCell className="text-[10px] text-right">{newArrayWithouRpeat[index]?.knesa}</TableCell>
+                        <TableCell className="text-[10px] text-right"></TableCell>
+                        <TableCell className="text-[10px] text-right"></TableCell>
+                        <TableCell className="text-[10px] text-right">{newArrayWithouRpeat[index]?.headrot}</TableCell>
+                        <TableCell className="text-[10px] text-right">{GetTarekhShem(format(flipDate(newArrayWithouRpeat[index]?.tarekh), 'EEEE'))}</TableCell>
+                        <TableCell className="text-[10px] text-right">{newArrayWithouRpeat[index]?.tarekh}</TableCell>
+                        <TableCell className="text-[10px] text-right">{GetAobedBratem(newArrayWithouRpeat[index]?.aobed)?.shem}</TableCell>
+                        <TableCell className="text-[10px] text-right">
+                            {newArrayWithouRpeat[index]?.headrot && newArrayWithouRpeat[index]?.yetseah && newArrayWithouRpeat[index]?.knesa
+                                ?
+                                <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh); setKnesaLaedcon(newArrayWithouRpeat[index]); setAobedLaedcon(GetAobedBratem(newArrayWithouRpeat[index].aobed)); setTypeAdcon('adcon'); setShowModalAdconHosfaKnesa(true); }} className="text-success cursor-pointer text-[18px]" />
+                                : newArrayWithouRpeat[index]?.headrot || newArrayWithouRpeat[index]?.yetseah || newArrayWithouRpeat[index]?.knesa ?
+                                    <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh); setKnesaLaedcon(newArrayWithouRpeat[index]); setAobedLaedcon(GetAobedBratem(newArrayWithouRpeat[index].aobed)); setTypeAdcon('adcon'); setShowModalAdconHosfaKnesa(true); }} className="text-danger cursor-pointer text-[17px]" />
+                                    :
+                                    <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh)?.tarekh; setAobedLaedcon(aobdem[index]); setTypeAdcon('hosfaa'); setShowModalAdconHosfaKnesa(true); }} className="text-danger cursor-pointer text-[17px]" />}</TableCell>
+                    </TableRow>)
 
                 }
             }
             for (let index = 0; index < aobdem.length; index++) {
                 if (!arrayAobdemAbdo.includes(aobdem[index].msbar)) {
-                    newArray.push(<tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><div className={!isCurrentDateBefore(flipDate(Yom?.tarekh)) && 'text-danger'}>{aobdem[index].shem}</div></td>
-                        <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">
+                    newArray.push(<TableRow key={index + Yom?.tarekh + '2'}>
+                        <TableCell className="text-[10px] text-right"></TableCell>
+                        <TableCell className="text-[10px] text-right"></TableCell>
+                        <TableCell className="text-[10px] text-right"></TableCell>
+                        <TableCell className="text-[10px] text-right"></TableCell>
+                        <TableCell className="text-[10px] text-right"></TableCell>
+                        <TableCell className="text-[10px] text-right"></TableCell>
+                        <TableCell className="text-[10px] text-right"></TableCell>
+                        <TableCell className="text-[10px] text-right"><div className={!isCurrentDateBefore(flipDate(Yom?.tarekh)) && 'text-danger'}>{aobdem[index].shem}</div></TableCell>
+                        <TableCell className="text-[10px] text-right">
                             {
                                 isCurrentDateBefore(flipDate(Yom?.tarekh)) ?
-                                    <TbClockEdit onClick={() => {setYomLaedcon(Yom?.tarekh);setAobedLaedcon(aobdem[index]);setTypeAdcon('hosfaa');setShowModalAdconHosfaKnesa(true);}} className={`text-[17px] cursor-pointer text-primary`} />
+                                    <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh); setAobedLaedcon(aobdem[index]); setTypeAdcon('hosfaa'); setShowModalAdconHosfaKnesa(true); }} className={`text-[17px] cursor-pointer text-primary`} />
                                     :
-                                    <TbClockEdit onClick={() => {setYomLaedcon(Yom?.tarekh);setAobedLaedcon(aobdem[index]);setTypeAdcon('hosfaa');setShowModalAdconHosfaKnesa(true);}} className={`text-[17px] cursor-pointer text-danger`} />
+                                    <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh); setAobedLaedcon(aobdem[index]); setTypeAdcon('hosfaa'); setShowModalAdconHosfaKnesa(true); }} className={`text-[17px] cursor-pointer text-danger`} />
                             }
-                        </td>
-                    </tr>);
+                        </TableCell>
+                    </TableRow>);
                 }
             }
         }
         else if (btehotYom.includes(Yom?.tarekh)) {
             for (let index = aobdem.length - 1; index >= 0; index--) {
-                newArray.push(<tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"></td>
-                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300"><div className={!isCurrentDateBefore(flipDate(Yom?.tarekh)) && 'text-danger'}>{aobdem[index].shem}</div></td>
-                    <td className="px-4 py-3 text-center text-[10px] text-gray-700 dark:text-gray-300">
+                newArray.push(<TableRow key={index + Yom?.tarekh + '3'} >
+                    <TableCell className="text-[10px] text-right"></TableCell>
+                    <TableCell className="text-[10px] text-right"></TableCell>
+                    <TableCell className="text-[10px] text-right"></TableCell>
+                    <TableCell className="text-[10px] text-right"></TableCell>
+                    <TableCell className="text-[10px] text-right"></TableCell>
+                    <TableCell className="text-[10px] text-right"></TableCell>
+                    <TableCell className="text-[10px] text-right"></TableCell>
+                    <TableCell className="text-[10px] text-right"><div className={!isCurrentDateBefore(flipDate(Yom?.tarekh)) && 'text-danger'}>{aobdem[index].shem}</div></TableCell>
+                    <TableCell className="text-[10px] text-right">
                         {
                             isCurrentDateBefore(flipDate(Yom?.tarekh)) ?
-                                <TbClockEdit onClick={() => {setYomLaedcon(Yom?.tarekh);setAobedLaedcon(aobdem[index]);setTypeAdcon('hosfaa');setShowModalAdconHosfaKnesa(true);}} className={`text-[17px] cursor-pointer text-primary`} />
+                                <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh); setAobedLaedcon(aobdem[index]); setTypeAdcon('hosfaa'); setShowModalAdconHosfaKnesa(true); }} className={`text-[17px] cursor-pointer text-primary`} />
                                 :
-                                <TbClockEdit onClick={() => {setYomLaedcon(Yom?.tarekh);setAobedLaedcon(aobdem[index]);setTypeAdcon('hosfaa');setShowModalAdconHosfaKnesa(true);}} className={`text-[17px] cursor-pointer text-danger`} />
+                                <TbClockEdit onClick={() => { setYomLaedcon(Yom?.tarekh); setAobedLaedcon(aobdem[index]); setTypeAdcon('hosfaa'); setShowModalAdconHosfaKnesa(true); }} className={`text-[17px] cursor-pointer text-danger`} />
                         }
-                    </td>
-                </tr>);
+                    </TableCell>
+                </TableRow>);
             }
         }
         return newArray;
     }
-    
-    const [showInfo,setShowInfo] = useState(false);
+
+    const [showInfo, setShowInfo] = useState(false);
     useEffect(() => {
-        if(isNehol){
+        if (isNehol) {
             router.push('/');
             setShowInfo(false);
         }
-        else{
+        else {
             setShowInfo(true);
         }
-    },[isNehol]);
+    }, [isNehol]);
 
 
 
     return showInfo && (
         <div>
-            <ModalKnesaKlalet counter={counter} yom={yomLaedcon} hodesh={tarekhKlaleNbhar} aobed={aobedLaedcon} knesa={knesaLaedcon} type={typeAdcon} show={showModalAdconHosfaKnesa} disable={() => {setShowModalAdconHosfaKnesa(false);setTypeAdcon('');setAobedLaedcon(null);setKnesaLaedcon(null);setYomLaedcon(null);}} />
+            <ModalKnesaKlalet counter={counter} yom={yomLaedcon} hodesh={tarekhKlaleNbhar} aobed={aobedLaedcon} knesa={knesaLaedcon} type={typeAdcon} show={showModalAdconHosfaKnesa} disable={() => { setShowModalAdconHosfaKnesa(false); setTypeAdcon(''); setAobedLaedcon(null); setKnesaLaedcon(null); setYomLaedcon(null); }} />
             <ModalBrtemNosfemAobed aobed={aobed} show={showModalBrtemNosfemAobed} disable={() => setShowModalBrtemNosfemAobed(false)} />
             <ModalHosfatAobed show={showHosfatAobed} disable={() => setShowHosfatAobed(false)} />
             <ModalDafeShaot aobdem={aobdem} counter={counter} show={showModalDafeShaot} disable={() => setShowModalDafeShaot(false)} />
             <div className='w-full flex justify-between items-center mt-5 '>
 
                 <div className="w-full flex items-center justify-around flex-wrap">
-                    <div className="p-5 justify-center w-[800px] bg-white rounded-xl shadow-xl mb-20 h-[650px]">
+                    <div className="p-5 justify-center w-[900px] bg-white rounded-xl shadow-xl mb-20 h-[650px]">
                         <div className="overflow-auto h-fit w-full" dir="rtl">
                             <div dir="ltr">
                                 <div className="mt-5 mb-5 flex justify-around items-center">
-                                    <Button size="sm" variant="faded" onClick={() => setShowHosfatAobed(true)}><div className="text-[18px] mr-1">+</div>הוספת עובד חדש</Button>
-                                    <Button onClick={() => setShowModalDafeShaot(true)}><FcOvertime className="text-2xl" />דפי שעות</Button>
+                                    <Button size="sm" variant="flat" color="primary" onClick={() => setShowHosfatAobed(true)}><div className="text-[18px] mr-1">+</div>הוספת עובד חדש</Button>
+                                    <Button size="sm" variant="flat" color="primary" onClick={() => setShowModalDafeShaot(true)}><FcOvertime className="text-2xl" />דפי שעות</Button>
                                 </div>
                                 <div className="overflow-x-auto h-[500px]">
                                     <table className="w-full table-auto border-collapse">
                                         <thead>
                                             <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-white to-gray-50 font-extrabold text-black">פרטיים נוספיים</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black">תעריף לשעה</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black">תפקיד</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">נייד</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">עיר</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">ישוב</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-500 to-gray-600 font-extrabold text-black">שם עובד</th>
-                                                <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-600 to-gray-700 font-extrabold text-black">מספר עובד</th>
+                                                <th className="px-4 py-2 text-center text-[14px] font-extrabold text-black"></th>
+                                                <th className="px-4 py-2 text-center text-[14px] font-extrabold text-black">תעריף לשעה</th>
+                                                <th className="px-4 py-2 text-center text-[14px] font-extrabold text-black">תפקיד</th>
+                                                <th className="px-4 py-2 text-center text-[14px] font-extrabold text-black">נייד</th>
+                                                <th className="px-4 py-2 text-center text-[14px] font-extrabold text-black">עיר</th>
+                                                <th className="px-4 py-2 text-center text-[14px] font-extrabold text-black">ישוב</th>
+                                                <th className="px-4 py-2 text-center text-[14px] font-extrabold text-black">שם עובד</th>
+                                                <th className="px-4 py-2 text-center text-[14px] font-extrabold text-black">מספר עובד</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {
                                                 aobdem.map((aobed, index) => {
                                                     return aobed.active && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><Button onClick={() => { setShowModalBrtemNosfemAobed(true); setAobed(aobed) }} size="sm">פתח</Button></td>
+                                                        <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"><Button variant="flat" color="primary" onClick={() => { setShowModalBrtemNosfemAobed(true); setAobed(aobed) }} size="sm">פתח</Button></td>
                                                         <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{aobed?.tarefLshaa}</td>
                                                         <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{aobed?.tfked}</td>
                                                         <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{aobed?.nead}</td>
@@ -514,11 +586,11 @@ export default function Aobdem() {
 
 
 
-                    <div className="p-5 justify-center w-[800px] bg-white rounded-xl shadow-xl mb-20 h-[650px]">
+                    <div className="p-5 justify-center w-[900px] bg-white rounded-xl shadow-xl mb-20 h-[650px]">
                         <div>
                             <div className="flex justify-around items-center mb-5">
-                                <Button variant='faded' className={loh === 'לוח כללי' && 'font-extrabold text-base'} color={loh === 'לוח כללי' ? 'primary' : 'default'} onClick={() => setLoh('לוח כללי')}><FaList className="text-base" />לוח כללי</Button>
-                                <Button variant='faded' className={loh === 'לוח היום' && 'font-extrabold text-base'} color={loh === 'לוח היום' ? 'primary' : 'default'} onClick={() => setLoh('לוח היום')}><FaListCheck className="text-base" />לוח היום</Button>
+                                <Button variant='flat' className={loh === 'לוח כללי' && 'font-extrabold text-base'} color={loh === 'לוח כללי' ? 'primary' : 'default'} onClick={() => setLoh('לוח כללי')}><FaList className="text-base" />לוח כללי</Button>
+                                <Button variant='flat' className={loh === 'לוח היום' && 'font-extrabold text-base'} color={loh === 'לוח היום' ? 'primary' : 'default'} onClick={() => setLoh('לוח היום')}><FaListCheck className="text-base" />לוח היום</Button>
                             </div>
                             <Divider />
                             <div className="mt-5 mb-5">
@@ -529,10 +601,10 @@ export default function Aobdem() {
                                             <table className="w-full table-auto border-collapse">
                                                 <thead>
                                                     <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-20">
-                                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black">היעדרות</th>
-                                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black">יצאה</th>
-                                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black">כניסה</th>
-                                                        <th className="px-4 py-2 text-center text-[14px] bg-gradient-to-r from-gray-500 to-gray-600 font-extrabold text-black">שם עובד</th>
+                                                        <th className="px-4 py-2 text-center text-[14px] font-extrabold text-black">היעדרות</th>
+                                                        <th className="px-4 py-2 text-center text-[14px] font-extrabold text-black">יצאה</th>
+                                                        <th className="px-4 py-2 text-center text-[14px] font-extrabold text-black">כניסה</th>
+                                                        <th className="px-4 py-2 text-center text-[14px] font-extrabold text-black">שם עובד</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -581,19 +653,15 @@ export default function Aobdem() {
                                 {
                                     loh === 'לוח כללי' &&
                                     <div>
-                                        {
-                                            console.log(tarekhKlaleNbhar)
-                                        }
                                         <div className="overflow-x-auto h-[500px]">
                                             {
                                                 !tarekhKlaleNbhar && GetHodshem()?.map((hodesh, index) => {
-                                                    return <>
-                                                        <div key={index} className="flex items-center mt-1 mb-1 p-1 border-b-1">
-                                                            <div className="w-full flex justify-center"><Button onClick={() => { setTarekhKlaleNbhar(hodesh?.tarekh) }} color="primary" variant='light' size="sm">פתח</Button></div>
-                                                            <div className="w-full text-center">{format(hodesh?.tarekh, 'MM-yyyy')}</div>
-                                                            <div className="w-full text-center">{hodesh?.shem}</div>
-                                                        </div>
-                                                    </>
+                                                    return <div key={hodesh?.tarekh} className="flex items-center mt-1 mb-1 p-1 border-b-1">
+                                                        <div className="w-full flex justify-center"><Button variant='flat' onClick={() => { setTarekhKlaleNbhar(hodesh?.tarekh) }} color="primary" size="sm">פתח</Button></div>
+                                                        <div className="w-full text-center">{format(hodesh?.tarekh, 'MM-yyyy')}</div>
+                                                        <div className="w-full text-center">{hodesh?.shem}</div>
+                                                    </div>
+
                                                 })
                                             }
                                             {
@@ -621,47 +689,99 @@ export default function Aobdem() {
                                                         }>
                                                             <div><HiMiniQuestionMarkCircle className="text-2xl text-primary ml-2" /></div>
                                                         </Tooltip>
-                                                        <Button color="primary" variant='light' className="mb-2 mr-2" onClick={() => setTarekhKlaleNbhar('')} size="sm"><FaArrowRightFromBracket />חזרה</Button>
+                                                        <Button color="primary" variant='flat' className="mb-2 mr-2" onClick={() => setTarekhKlaleNbhar('')} size="sm"><FaArrowRightFromBracket />חזרה</Button>
                                                     </div>
-                                                    <table className="w-full table-auto border-collapse">
-                                                        <thead>
-                                                            <tr className="bg-gray-100 dark:bg-gray-800 sticky top-10 z-10">
-                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-50 to-gray-100 font-extrabold text-black ">יצאה מתוקנת</th>
-                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-100 to-gray-200 font-extrabold text-black ">כניסה מתוקנת</th>
-                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-200 to-gray-300 font-extrabold text-black ">יצאה</th>
-                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-300 to-gray-400 font-extrabold text-black ">כניסה</th>
-                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-400 to-gray-500 font-extrabold text-black ">היעדרות</th>
-                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-500 to-gray-400 font-extrabold text-black ">יום</th>
-                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-400 to-gray-300 font-extrabold text-black ">תאריך</th>
-                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-300 to-gray-200 font-extrabold text-black ">שם עובד</th>
-                                                                <th className="px-4 py-2 text-center text-[12px] bg-gradient-to-r from-gray-200 to-gray-100 font-extrabold text-black "></th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {
-                                                                GetYmem()?.map((Yom, index) => {
-                                                                    return <>
-                                                                        <tr key={index} className="border-t-4 border-gray-200 dark:border-gray-700">
-                                                                            <td className="px-4 py-3 text-center text-[13px] text-black font-extrabold" colSpan={2}>
-                                                                                {
-                                                                                    btehotYom.includes(Yom.tarekh) ?
-                                                                                        <Button onClick={() => toggleYom(Yom.tarekh)} size="sm" className="h-[20px]" color="primary" variant='faded'><MdKeyboardArrowUp className="text-lg" /></Button>
-                                                                                        :
-                                                                                        <Button onClick={() => { toggleYom(Yom.tarekh); setArrayResualt(index); }} size="sm" className="h-[20px]" color="primary" variant='faded'><MdKeyboardArrowDown className="text-lg" /></Button>
-                                                                                }
-                                                                            </td>
-                                                                            <td className="px-4 py-3 text-center text-[13px] text-black font-extrabold" colSpan={3}>{Yom?.shem}</td>
-                                                                            <td className="px-4 py-3 text-center text-[13px] text-black font-extrabold" colSpan={4}>{Yom?.tarekh}</td>
-                                                                        </tr>
-                                                                        {(loading && (arrayResualt === index)) ?
-                                                                            <tr key={index}><td colSpan={9} className="text-center"><Spinner /></td></tr>
-                                                                            : GetReshmatAobdemYememHodesh(Yom,removeDuplicates(GetKnesotKlaleLfeYom(Yom?.tarekh)))}
-                                                                    </>
-                                                                })
-                                                            }
-                                                        </tbody>
+                                                    {/* <table className="w-full table-auto border-collapse">
+                                                            <thead>
+                                                                <tr className="bg-gray-100 dark:bg-gray-800 sticky top-10 z-10">
+                                                                    <th className="px-4 py-2 text-center text-[12px] font-extrabold text-black ">יצאה מתוקנת</th>
+                                                                    <th className="px-4 py-2 text-center text-[12px]  font-extrabold text-black ">כניסה מתוקנת</th>
+                                                                    <th className="px-4 py-2 text-center text-[12px]  font-extrabold text-black ">יצאה</th>
+                                                                    <th className="px-4 py-2 text-center text-[12px]  font-extrabold text-black ">כניסה</th>
+                                                                    <th className="px-4 py-2 text-center text-[12px]  font-extrabold text-black ">היעדרות</th>
+                                                                    <th className="px-4 py-2 text-center text-[12px]  font-extrabold text-black ">יום</th>
+                                                                    <th className="px-4 py-2 text-center text-[12px]  font-extrabold text-black ">תאריך</th>
+                                                                    <th className="px-4 py-2 text-center text-[12px]  font-extrabold text-black ">שם עובד</th>
+                                                                    <th className="px-4 py-2 text-center text-[12px]  font-extrabold text-black "></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {
+                                                                    GetYmem()?.map((Yom, index) => {
+                                                                        return <>
 
-                                                    </table>
+                                                                            <tr key={index} className="border-t-4 border-gray-200 dark:border-gray-700">
+                                                                                <td className="px-4 py-3 text-center text-[13px] text-black font-extrabold" colSpan={2}>
+                                                                                    {
+                                                                                        btehotYom.includes(Yom.tarekh) ?
+                                                                                            <Button onClick={() => toggleYom(Yom.tarekh)} size="sm" className="h-[20px]" color="primary" variant='faded'><MdKeyboardArrowUp className="text-lg" /></Button>
+                                                                                            :
+                                                                                            <Button onClick={() => { toggleYom(Yom.tarekh); setArrayResualt(index); }} size="sm" className="h-[20px]" color="primary" variant='faded'><MdKeyboardArrowDown className="text-lg" /></Button>
+                                                                                    }
+                                                                                </td>
+                                                                                <td className="px-4 py-3 text-center text-[13px] text-black font-extrabold" colSpan={3}>{Yom?.shem}</td>
+                                                                                <td className="px-4 py-3 text-center text-[13px] text-black font-extrabold" colSpan={4}>{Yom?.tarekh}</td>
+                                                                            </tr>
+                                                                            {(loading && (arrayResualt === index)) ?
+                                                                                <tr key={index}><td colSpan={9} className="text-center"><Spinner /></td></tr>
+                                                                                : GetReshmatAobdemYememHodesh(Yom, )}
+                                                                        </>
+                                                                    })
+                                                                }
+                                                            </tbody>
+                                                            {
+                                                                console.log(btehotYom)
+                                                            }
+                                                            {
+                                                                console.log()
+                                                            }
+
+                                                        </table> */}
+                                                    <div className="bg-white p-3">
+                                                        <Accordion selectedKeys={btehotYom} onSelectionChange={(val) => {
+                                                            console.log(val.currentKey);
+                                                            val.currentKey && toggleYom(val.currentKey);
+                                                            setBtehotYom((prev) => [...prev, val.currentKey]);
+                                                        }} dir="rtl" className="w-full" variant="splitted" selectionMode='multiple'>
+                                                            {
+                                                                GetYmem()?.map((Yom, index) => (
+                                                                    <AccordionItem
+                                                                        dir="rtl"
+                                                                        className="w-full table-row bg-gray-50"
+                                                                        key={Yom?.tarekh}
+                                                                        title={
+                                                                            <div className="w-full flex items-center">
+                                                                                <div className="w-full max-w-[100px]">{Yom?.shem}</div>
+                                                                                <div>{Yom?.tarekh}</div>
+                                                                            </div>
+                                                                        }
+                                                                    >
+                                                                        <div className="p-1">
+                                                                            <Table dir="ltr" aria-label="Example static collection table">
+                                                                                <TableHeader>
+                                                                                    <TableColumn className="text-right text-xs">יצאה מתוקנת</TableColumn>
+                                                                                    <TableColumn className="text-right text-xs">כניסה מתוקנת</TableColumn>
+                                                                                    <TableColumn className="text-right text-xs">יצאה</TableColumn>
+                                                                                    <TableColumn className="text-right text-xs">כניסה</TableColumn>
+                                                                                    <TableColumn className="text-right text-xs">היעדרות</TableColumn>
+                                                                                    <TableColumn className="text-right text-xs">יום</TableColumn>
+                                                                                    <TableColumn className="text-right text-xs">תאריך</TableColumn>
+                                                                                    <TableColumn className="text-right text-xs">שם</TableColumn>
+                                                                                    <TableColumn className="text-right text-xs"></TableColumn>
+                                                                                </TableHeader>
+                                                                                <TableBody>
+                                                                                    {
+                                                                                        (loading && (arrayResualt === index)) ? <TableRow><TableColumn className="text-center" colSpan={9}><Spinner/></TableColumn></TableRow> :
+                                                                                        GetReshematShaotAobdem(Yom, removeDuplicates(GetKnesotKlaleLfeYom(Yom?.tarekh)))
+                                                                                    }
+                                                                                </TableBody>
+                                                                            </Table>
+                                                                        </div>
+                                                                    </AccordionItem>
+                                                                ))
+                                                            }
+                                                        </Accordion>
+                                                    </div>
                                                 </div>
                                             }
                                         </div>
@@ -682,3 +802,5 @@ export default function Aobdem() {
         </div>
     )
 }
+
+

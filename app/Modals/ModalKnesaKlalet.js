@@ -236,12 +236,12 @@ export default function ModalKnesaKlalet({ disable, show, type, aobed, knesa, yo
                             <div>
                             </div>
                             <div>
-                                <Button size="md" color="primary" onClick={ResetAll}>סגור</Button>
+                                <Button variant="flat" color="warning"  onClick={ResetAll}>סגור</Button>
                                 {
                                     type === 'adcon' ?
-                                        <Button isDisabled={isDisabeldAdcon()} isLoading={loading} size="md" color="primary" className="mr-2 ml-2" onClick={AdconKnesa}>אישור</Button>
+                                        <Button isDisabled={isDisabeldAdcon()} isLoading={loading} variant="flat" color="primary" className="mr-2 ml-2" onClick={AdconKnesa}>אישור</Button>
                                         :
-                                        <Button isDisabled={isDisabelHosfa()} isLoading={loading} size="md" color="primary" className="mr-2 ml-2" onClick={HosafatKnesa}>אישור</Button>
+                                        <Button isDisabled={isDisabelHosfa()} isLoading={loading} variant="flat" color="primary" className="mr-2 ml-2" onClick={HosafatKnesa}>אישור</Button>
                                 }
                             </div>
                         </div>
