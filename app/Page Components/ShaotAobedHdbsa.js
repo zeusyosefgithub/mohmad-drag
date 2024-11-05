@@ -160,7 +160,7 @@ export const ShaotAobedHdbsa = React.forwardRef((props, ref) => {
                         {
                             shaot?.map((shaa, index) => {
                                 return <tr className="border-b-1 text-danger">
-                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.knesa && shaa?.yetseah && calculateTimeDifference(shaa?.knesa, shaa?.yetseah)}</td>
+                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.knesa && shaa?.yetseah && parseFloat(timeToDecimal(calculateTimeDifference(shaot[index].knesa, shaot[index].yetseah))).toFixed(2)}</td>
                                     <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.yetseah}</td>
                                     <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.knesa}</td>
                                     <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.headrot || shaa.knesa && shaa.yetseah && 'נוכח'}</td>
