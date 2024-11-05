@@ -305,12 +305,12 @@ export default function Aobdem() {
 
     const GetYmem = () => {
         let newArray = [];
-        let AadHkhshav = parseInt(getDaysInMonth(new Date()));
+        let AadHkhshav = parseInt(getDaysInMonth(new Date(tarekhKlaleNbhar)));
         for (let index = 0; index < AadHkhshav; index++) {
             let day = `${format(new Date(), 'yyyy-MM')}-${index < 10 ? ('0' + (index + 1)) : index + 1}`;
             newArray.push({
                 shem: GetTarekhShem(format(day, 'EEEE')),
-                tarekh: `${index < 9 ? ('0' + (index + 1)) : index + 1}-${format(new Date(), 'MM-yyyy')}`,
+                tarekh: `${index < 9 ? ('0' + (index + 1)) : index + 1}-${format(new Date(tarekhKlaleNbhar), 'MM-yyyy')}`,
                 msbar: index + 1
             });
         }
@@ -581,12 +581,15 @@ export default function Aobdem() {
                                 {
                                     loh === 'לוח כללי' &&
                                     <div>
+                                        {
+                                            console.log(tarekhKlaleNbhar)
+                                        }
                                         <div className="overflow-x-auto h-[500px]">
                                             {
                                                 !tarekhKlaleNbhar && GetHodshem()?.map((hodesh, index) => {
-                                                    return (hodesh?.msbar >= parseInt(format(new Date(), 'MM'))) && <>
+                                                    return <>
                                                         <div key={index} className="flex items-center mt-1 mb-1 p-1 border-b-1">
-                                                            <div className="w-full flex justify-center"><Button isDisabled={hodesh?.msbar !== parseInt(format(new Date(), 'MM'))} onClick={() => { setTarekhKlaleNbhar(hodesh?.tarekh) }} color="primary" variant='light' size="sm">פתח</Button></div>
+                                                            <div className="w-full flex justify-center"><Button onClick={() => { setTarekhKlaleNbhar(hodesh?.tarekh) }} color="primary" variant='light' size="sm">פתח</Button></div>
                                                             <div className="w-full text-center">{format(hodesh?.tarekh, 'MM-yyyy')}</div>
                                                             <div className="w-full text-center">{hodesh?.shem}</div>
                                                         </div>
