@@ -50,14 +50,19 @@ export const ShaotAobedHdbsa = React.forwardRef((props, ref) => {
         return format(new Date(0, 0, 0, hours, minutes), 'HH:mm');
     };
 
+    function timeToDecimal(time) {
+        const [hours, minutes] = time.split(":").map(Number);
+        return hours + (minutes / 60);
+      }
+
     const GetSkhomKolHshaot = () => {
         let sum = 0;
         for (let index = 0; index < shaot.length; index++) {
             if(shaot[index].knesa && shaot[index].yetseah){
-                sum += parseFloat(calculateTimeDifference(shaot[index].knesa, shaot[index].yetseah));
+                sum += parseFloat(timeToDecimal(calculateTimeDifference(shaot[index].knesa, shaot[index].yetseah)));
             }
         }
-        return sum;
+        return sum.toFixed(2);
     }
 
 
@@ -158,7 +163,7 @@ export const ShaotAobedHdbsa = React.forwardRef((props, ref) => {
                                     <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.knesa && shaa?.yetseah && calculateTimeDifference(shaa?.knesa, shaa?.yetseah)}</td>
                                     <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.yetseah}</td>
                                     <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.knesa}</td>
-                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.headrot}</td>
+                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.headrot || shaa.knesa && shaa.yetseah && 'נוכח'}</td>
                                     <td className={`"px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.tarekh}</td>
                                     <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.tarekh && GetTarekhShem(format(flipDate(shaa?.tarekh), 'EEEE'))}</td>
                                     <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{index + 1}</td>

@@ -9,11 +9,11 @@ import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../FireBase/firebase";
 import { Kbala } from "../Page Components/kbala";
 import { useReactToPrint } from "react-to-print";
-import ModalLohShaotAobdem from "../Modals/ModalLohShaotAobdem";
-import ModalHosfatAobed from "../Modals/ModalHosfatAobed";
+import ModalLohShaotAobdem from "./ModalLohShaotAobdem";
+import ModalHosfatAobed from "./ModalHosfatAobed";
 import { useRouter } from "next/navigation";
 import ContactContext from "../auth/ContactContext";
-import ModalBrtemNosfemAobed from '../Modals/ModalBrtemNosfemAobed';
+import ModalBrtemNosfemAobed from './ModalBrtemNosfemAobed';
 export default function ModalKsfem({ disable, show, brtemMhtgatHotsaa, lkhot, sbkem, aobdem }) {
 
 

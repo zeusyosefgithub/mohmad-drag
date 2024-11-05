@@ -6,7 +6,7 @@ import { doc, getDoc, runTransaction, setDoc, collection, addDoc, updateDoc } fr
 import GetDocs from "../FireBase/getDocs";
 
 
-export default function ModalAddCustomer({ disable, show, counter, lkhot,brtem }) {
+export default function ModalAddCustomer({ disable, show, counter, lkhot,brtem,LkohHdash }) {
 
     const [loading, setLoading] = useState(false);
     const [customerName, setCustomerName] = useState('');
@@ -77,6 +77,7 @@ export default function ModalAddCustomer({ disable, show, counter, lkhot,brtem }
             console.log(e);
         }
         setLoading(false);
+        LkohHdash(true,customerName);
         ResetAll();
         disable();
     }

@@ -61,6 +61,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
     // ---------------------------------------------------------------------------------------- lkoh
     const [brtemLkoh, setBrtemLkoh] = useState(null);
     const [lkohHdash, setLkohHdash] = useState(false);
+    const [lkohForAdd,setLkohForAdd] = useState('');
     const [customerName, setCustomerName] = useState('');
     const [customerCity, setCustomerCity] = useState('');
     const [customerPhone, setCustomerPhone] = useState('');
@@ -172,6 +173,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
     }
 
     const ResetAll = () => {
+        setLkohHdash(false);
+        setMherKlaleAhre(0);
         setHaraKlalet('');
         setHaraBnmet('');
         setMsbarTshlomem(0);
@@ -656,6 +659,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
     const saveValues = async () => {
         setLoading(true);
         const Props = {
+            lkohHdash : lkohHdash || false,
+            newCustomer : {customerName : customerName || '',customerCity : customerCity || '',customerPhone : customerPhone || '',msbarMezahehm : msbarMezahehm || ''},
             haraBnmet,
             haraKlalet,
             mkdema,
@@ -779,14 +784,17 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
         }
         if (yetsorKeam?.msbar) {
             try {
+                console.log(customerName);
                 updateDoc(doc(firestore, 'tfaol', yetsorKeam?.id), {
+                    msbarAdefot,
+                    lkohHdash : lkohHdash || false,
+                    newCustomer : {customerName : customerName || '',customerCity : customerCity || '',customerPhone : customerPhone || '',msbarMezahehm : msbarMezahehm || ''},
                     haraBnmet,
                     haraKlalet,
                     msbarTshlomem,
                     mkdema,
                     shemTokhnet,
                     tarekhAsbka,
-                    msbarAdefot,
                     tnaeTshlom,
                     mherKlale: parseFloat(mherKlale),
                     shlavNokhhe,
@@ -1035,6 +1043,11 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             setTnaeTshlom(yetsorKeam.tnaeTshlom);
             setMsbarAdefot(yetsorKeam.msbarAdefot);
             setShemTokhnet(yetsorKeam.shemTokhnet);
+            setCustomerCity(yetsorKeam?.newCustomer?.customerCity);
+            setCustomerName(yetsorKeam?.newCustomer?.customerName);
+            setCustomerPhone(yetsorKeam?.newCustomer?.customerPhone);
+            setMsbarMezahehm(yetsorKeam?.newCustomer?.msbarMezahehm);
+            setLkohHdash(yetsorKeam.lkohHdash);
         }
     }, [yetsorKeam]);
 
@@ -1111,6 +1124,17 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
             setZmanThelaE({ shaa: format(new Date(), 'HH:mm'), tarekh: format(new Date(), 'dd-MM-yyyy') });
         }
     }, [shlavNokhhe]);
+
+
+    useEffect(() => {
+        if(lkohForAdd){
+            for (let index = 0; index < lkhot.length; index++) {
+                if(lkhot[index].name === lkohForAdd){
+                    setBrtemLkoh(lkhot[index]);
+                }
+            }
+        }
+    },[lkohHdash]);
 
 
     const GetMotionTitels = (titel) => {
@@ -1205,7 +1229,13 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                         <ModalYetsorTokhnet resetBro={(val1, val2) => RemoveMotsaremBro(val1, val2)} reset={(val) => ResetMotsaremLhANDRe(val)} addBro={(val) => UpdateMotsaremBroLhANDRe(val)} add={(val) => UpdateMotsaremLhANDRe(val)} mlae={mlae} setMotsaremLhatseg={(value) => setMotsaremLhatseg(value)} show={showModalTokhnetYetsor} disable={() => setShowModalTokhnetYetsor(false)} />
                     </TokhnetContext.Provider>
                     <ModalBerotMotsrem GetError={(val) => setErrorMotsaremRglem(val)} shlav={getNextLetter(shlavNokhhe)} category={category} mlae={mlae} setMotsaremRglem={(value) => setMotsaremRglem(value)} setMotsaremBrofelem={(value) => setMotsaremBrofelem(value)} motsaremLhatseg={motsaremLhatseg} motsaremBrofelem={motsaremBrofelem} motsaremRglem={motsaremRglem} show={showModalBerotMotsrem} disable={() => setShowModalBerotMotsrem(false)} />
-                    <ModalAddCustomer brtem={{
+                    <ModalAddCustomer LkohHdash={(val1,val2) => {
+                        if(val1){
+                            setLkohHdash(false);
+                            setLkohForAdd(val2);
+                            ResetCustomer();
+                        }
+                    }} brtem={{
                         customerName,
                         customerCity,
                         customerPhone,
@@ -1275,7 +1305,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                         <div className="w-1/3 h-full pr-3 pl-3">
                             <Card className="w-full h-full">
                                 <CardBody>
-
                                     <div className="bg-gray-200 rounded-lg p-1">
                                         <div className="text-2xl font-bold text-center h-[50px] items-center flex justify-center text-gray-800">תמחיר</div>
                                     </div>
@@ -1994,6 +2023,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, drag, lkohTfaol, 
                                 setLoading(true);
                                 await deleteDoc(doc(firestore, 'tfaol', yetsorKeam?.id));
                                 setLoading(false);
+                                ResetAll();
                                 disable();
                             }}>
                                 מחיקה
