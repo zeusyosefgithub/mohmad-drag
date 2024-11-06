@@ -389,6 +389,7 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
         return false;
     }
 
+
     const IsChangedToSaveTokhnet = () => {
         let count = 0;
         for (let index = 0; index < motsaremBrofelem.length; index++) {
@@ -638,6 +639,15 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
                                                 setLoading(false);
                                             }} variant="flat" color="danger" size="sm">
                                                 מחיקה
+                                            </Button>
+                                            <Button onClick={async() => {
+                                                setLoading(true);
+                                                await updateDoc(doc(firestore,'TokhnetYetsorAgla',selectedTokh?.id),{
+
+                                                });
+                                                setLoading(false);
+                                            }} className="ml-4" variant="flat" color="primary" size="sm">
+                                                עדכון
                                             </Button>
                                         </div>
                                     )
