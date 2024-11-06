@@ -5,7 +5,7 @@ import { IoMdClose } from "react-icons/io";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import GetDocs from "../FireBase/getDocs";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import TokhnetContext from "../auth/TokhnetContext";
 import ModalYetsorTokhnet from "./ModalYetsorTokhnet";
 import ModalBerotMotsrem from "./ModalBerotMotsrem";
@@ -632,7 +632,11 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
                                     :
                                     (
                                         <div className="w-full flex mb-3 pr-[15px] justify-end">
-                                            <Button variant="flat" color="danger" size="sm">
+                                            <Button onClick={async() => {
+                                                setLoading(true);
+                                                await deleteDoc(doc(firestore,'TokhnetYetsorAgla',selectedTokh?.id));
+                                                setLoading(false);
+                                            }} variant="flat" color="danger" size="sm">
                                                 מחיקה
                                             </Button>
                                         </div>

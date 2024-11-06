@@ -207,7 +207,6 @@ export default function ModalBerotMotsrem({ show, disable, motsaremLhatseg, shla
             remez: item.remez,
             message: '',
         }));
-
         setMotsaremRglem(resetMotsaremRglem);
     };
 

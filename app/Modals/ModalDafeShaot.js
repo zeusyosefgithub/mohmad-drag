@@ -180,10 +180,10 @@ export default function ModalDafeShaot({ disable, show,counter,aobdem }) {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <Button size="lg" color="warning" variant="flat" onClick={disable}>
+                        <Button color="warning" variant="flat" onClick={disable}>
                             סגור
                         </Button>
-                        <Button isLoading={loading} isDisabled={!hodeshYdne || !aobed} size="lg" color="primary" variant="flat" onClick={totsaotHodeshAobed}>
+                        <Button isLoading={loading} isDisabled={!hodeshYdne || !aobed} color="primary" variant="flat" onClick={totsaotHodeshAobed}>
                             אישור
                         </Button>
                     </ModalFooter>

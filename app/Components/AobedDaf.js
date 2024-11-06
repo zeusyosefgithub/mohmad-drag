@@ -27,7 +27,17 @@ export default function aobedDaf({ aobed }) {
 
 
 
-    const aglotC = useGetDataByCondition('tfaol', 'sogBaola', '==', 'C');
+    const aglotC = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'C').sort((a, b) => {
+        if (a.msbarAdefot !== b.msbarAdefot) {
+          return a.msbarAdefot - b.msbarAdefot;
+        }
+        const dateA = new Date(a.tarekhAsbka);
+        const dateB = new Date(b.tarekhAsbka);
+        if (dateA.getTime() !== dateB.getTime()) {
+          return dateA - dateB;
+        }
+        return a.msbar - b.msbar;
+      });
 
 
 

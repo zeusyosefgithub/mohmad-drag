@@ -303,7 +303,8 @@ export default function ModalAobedYetsor({ show, disable, agla,aobed }) {
                                                     shaa : format(new Date(),'HH:mm'),
                                                     tarekh : format(new Date(),'dd-MM-yyyy')
                                                 },
-                                            ]
+                                            ],
+                                            shlavYetsor : true
                                         });
                                         setLoading(false);
                                     }} size="sm">
