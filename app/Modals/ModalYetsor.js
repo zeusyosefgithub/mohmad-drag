@@ -1447,7 +1447,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                         customerPhone,
                         msbarMezahehm
                     }} lkhot={lkhot} counter={counterLkhot} show={showModalAddCustomer} disable={() => setShowModalAddCustomer(false)} />
-                    <div className="w-[1200px] absolute h-[900px] hidden overflow-auto bg-white z-50 border-2 border-black"><MtsavemPage tokhnet={{
+                    <div className="w-[1200px] absolute h-[900px] hidden overflow-auto bg-white z-50 border-2 border-black">
+                        <MtsavemPage tokhnet={{
                         sogAglaBS,
                         aorkh,
                         rohav,

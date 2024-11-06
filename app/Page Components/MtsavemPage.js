@@ -263,6 +263,7 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                             'מספר צירים',
                             {
                                 val: 'Radio',
+                                chooises:['1','2'],
                                 getVal: tokhnet?.msbarTsrem,
                             },
                             {
