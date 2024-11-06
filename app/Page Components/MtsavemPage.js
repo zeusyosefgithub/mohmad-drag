@@ -767,7 +767,7 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                     <TableBody>
                         {
                             motsarem.motsaremBrofelem.map((motsar, index) => (
-                                checkAemRemezMataem(motsar?.remez) && motsar.shem && motsar.kmot && <TableRow key={index}>
+                                motsar.shem && motsar.kmot &&  <TableRow key={index}>
                                     <TableCell className="text-right">{parseFloat(motsar.kmot * GetBrtemMotsarMlae(motsar?.remez, motsar?.shem).alot).toFixed(2)}</TableCell>
                                     <TableCell className="text-right">{motsar.kmot || '0'}</TableCell>
                                     <TableCell className="text-right">{motsar.shem || 'אין'}</TableCell>
