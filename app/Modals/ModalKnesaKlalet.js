@@ -47,6 +47,7 @@ export default function ModalKnesaKlalet({ disable, show, type, aobed, knesa, yo
     };
 
     const HosafatKnesa = async () => {
+        console.log(12212);
         setLoading(true);
         await addDoc(collection(firestore, 'shaotAboda'), {
             msbar: counter?.count,
@@ -72,6 +73,7 @@ export default function ModalKnesaKlalet({ disable, show, type, aobed, knesa, yo
     }
 
     const AdconKnesa = async () => {
+        console.log(122129999);
         setLoading(true);
         await updateDoc(doc(firestore, 'shaotAboda', knesaHdsha.id), {
             knesa: knesaHdsha.knesa,

@@ -144,6 +144,9 @@ export const ShaotAobedHdbsa = React.forwardRef((props, ref) => {
                 </div>
             </div>
             <div className="mt-14">
+                {
+                    console.log(shaot)
+                }
                 <table className="w-full">
                     <thead>
                         <tr>

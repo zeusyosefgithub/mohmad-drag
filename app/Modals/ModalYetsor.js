@@ -265,6 +265,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         setValueProgress(0);
         setValueProgressdd(false);
         setValueMtsavD(false);
+        setTokhnet(null);
     }
 
     const contextValue = {
@@ -1776,7 +1777,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                                 closeOnSelect={true}
                                                                                 disallowEmptySelection
                                                                                 selectionMode="single"
-                                                                                onSelectionChange={(val) => {setShemTokhnet(val.currentKey);resetAllTokhnetYdnet();}}
+                                                                                onSelectionChange={(val) => {setShemTokhnet(val.currentKey);setTokhnet(null);resetAllTokhnetYdnet();}}
                                                                             >
                                                                                 <DropdownItem key='תוכנית ידנית'>תוכנית ידנית</DropdownItem>
                                                                                 {Tokhneot?.map((option) => (
@@ -2016,7 +2017,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                                 closeOnSelect={true}
                                                                                 disallowEmptySelection
                                                                                 selectionMode="single"
-                                                                                onSelectionChange={(val) => {setShemTokhnet(val.currentKey);resetAllTokhnetYdnet();}}
+                                                                                onSelectionChange={(val) => {setShemTokhnet(val.currentKey);setTokhnet(null);resetAllTokhnetYdnet();}}
                                                                             >
                                                                                 <DropdownItem key='תוכנית ידנית'>תוכנית ידנית</DropdownItem>
                                                                                 {Tokhneot?.map((option) => (
@@ -2271,7 +2272,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                                 closeOnSelect={true}
                                                                                 disallowEmptySelection
                                                                                 selectionMode="single"
-                                                                                onSelectionChange={(val) => {setShemTokhnet(val.currentKey);resetAllTokhnetYdnet();}}
+                                                                                onSelectionChange={(val) => {setShemTokhnet(val.currentKey);setTokhnet(null);resetAllTokhnetYdnet();}}
                                                                             >
                                                                                 <DropdownItem key='תוכנית ידנית'>תוכנית ידנית</DropdownItem>
                                                                                 {Tokhneot?.map((option) => (

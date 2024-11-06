@@ -443,6 +443,7 @@ export default function Aobdem() {
     // }
 
     const GetReshematShaotAobdem = (Yom, newArrayWithouRpeat) => {
+
         let newArray = [];
         if (bdekatYomInKnestKlale(Yom?.tarekh) && btehotYom.includes(Yom?.tarekh)) {
             let arrayAobdemAbdo = [];
