@@ -34,14 +34,14 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
     const [motsaremBrofelem, setMotsaremBrofelem] = useState([]);
     const [motsaremLhatseg, setMotsaremLhatseg] = useState([]);
 
-    const [sogAglaBS, setSogAglaBS] = useState('פתוחה');
+    const [sogAglaBS, setSogAglaBS] = useState('');
     const [aorkh, setAorkh] = useState(0);
     const [rohav, setRohav] = useState(0);
     const [retsba, setRetsba] = useState('בחר');
-    const [msbarTsrem, setMsbarTsrem] = useState('1');
+    const [msbarTsrem, setMsbarTsrem] = useState('');
     const [AemBlamem, setAemBlamem] = useState(false);
     const [brofelTfesa, setBrofelTfesa] = useState('בחר');
-    const [tsmgem, setTsmegem] = useState('פנימיים');
+    const [tsmgem, setTsmegem] = useState('');
     const [tsmgSber, setTsmegSber] = useState(false);
     const [msgeretThtonah, setTMsgeretThtonah] = useState('בחר');
     const [hlokaThtonah, setTHlokaThtonah] = useState('בחר');
@@ -56,7 +56,7 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
     const [msbarBroSheldaBnemetReshon, setMsbarBroSheldaBnemetReshon] = useState(0);
     const [helekShneSheldaBnemet, sethelekShneSheldaBnemet] = useState('בחר');
     const [msbarBroSheldaBnemetShne, setMsbarBroSheldaBnemetShne] = useState(0);
-    const [dalet, setDalet] = useState('רגיל');
+    const [dalet, setDalet] = useState('');
     const [msgertRmbaDalet, setMsgertRmbaDalet] = useState('בחר');
     const [msgertRmbaDaletAorkh, setMsgertRmbaDaletAorkh] = useState(0);
     const [hlokatRmbaDalet, setHlokatRmbaDalet] = useState('בחר');
@@ -210,16 +210,21 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
     const UpdateMotsaremLhANDRe = (motsaremToUpdate) => {
         const updatedMotsarem = motsaremRglem.map((motsar) => {
             const matchingItem = motsaremToUpdate?.find(
-                (update) => update.remez === motsar.remez
+                (update) => update?.remez === motsar?.remez
             );
             return matchingItem
                 ? { ...motsar, kmot: matchingItem.val }
                 : motsar;
         });
+        console.log(updatedMotsarem[19]);
         setMotsaremRglem(updatedMotsarem);
         const remezValues = motsaremToUpdate?.map((item) => item.remez);
         setMotsaremLhatseg((prevArray) => [...prevArray, ...remezValues]);
     };
+
+    useEffect(() => {
+        console.log(motsaremRglem[19]);
+    },[motsaremRglem]);
 
     const ResetMotsaremLhANDRe = (motsaremToReset) => {
         const updatedMotsaremRglem = motsaremRglem.map((item) => {
@@ -332,18 +337,22 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
     }
 
     useEffect(() => {
-        updateMotsaremLhatseg(Htsgot?.yetsor || [], []);
-    }, [sogAskaa, Htsgot]);
+        if(selectedTokh?.shem === 'חדשה'){
+            updateMotsaremLhatseg(Htsgot?.yetsor || []);
+        }
+    }, [sogAskaa, Htsgot,selectedTokh]);
+
+
 
     const CheckInputTokhnetYetsorChanges = () => {
-        if (sogAglaBS !== 'פתוחה' ||
+        if (sogAglaBS !== '' ||
             aorkh !== 0 ||
             rohav !== 0 ||
             retsba !== 'בחר' ||
-            msbarTsrem !== '1' ||
+            msbarTsrem !== '' ||
             AemBlamem !== false ||
             brofelTfesa !== 'בחר' ||
-            tsmgem !== 'פנימיים' ||
+            tsmgem !== '' ||
             tsmgSber !== false ||
             msgeretThtonah !== 'בחר' ||
             hlokaThtonah !== 'בחר' ||
@@ -358,7 +367,7 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
             msbarBroSheldaBnemetReshon !== 0 ||
             helekShneSheldaBnemet !== 'בחר' ||
             msbarBroSheldaBnemetShne !== 0 ||
-            dalet !== 'רגיל' ||
+            dalet !== '' ||
             msgertRmbaDalet !== 'בחר' ||
             msgertRmbaDaletAorkh !== 0 ||
             hlokatRmbaDalet !== 'בחר' ||
@@ -409,15 +418,17 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
     }
 
     const ResetAll = () => {
+        setSelectedTokh(null);
+        setSelectedTokhToSave(null);
         setShemTokhnet('');
-        setSogAglaBS('פתוחה');
+        setSogAglaBS('');
         setAorkh(0);
         setRohav(0);
         setRetsba('בחר');
-        setMsbarTsrem('1');
+        setMsbarTsrem('');
         setAemBlamem(false);
         setBrofelTfesa('בחר');
-        setTsmegem('פנימיים');
+        setTsmegem('');
         setTsmegSber(false);
         setTMsgeretThtonah('בחר');
         setTHlokaThtonah('בחר');
@@ -432,14 +443,14 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
         setMsbarBroSheldaBnemetReshon(0);
         sethelekShneSheldaBnemet('בחר');
         setMsbarBroSheldaBnemetShne(0);
-        setDalet('רגיל');
+        setDalet('');
         setMsgertRmbaDalet('בחר');
         setMsgertRmbaDaletAorkh(0);
         setHlokatRmbaDalet('בחר');
         setHlokatRmbaDaletBro(0);
         setHlokatRmbaDaletTvah(0);
         setToseftVnel(false);
-        setSolam('רק קדמי');
+        setSolam('ללא');
         setMsgertSolam('בחר');
         setGobahSolam(0);
         setHlokatSolam('בחר');
@@ -468,65 +479,171 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
         }));
         setMotsaremRglem(GetSortedMotsaremRglem(initialMafenemMotsarem));
         setMotsaremBrofelem([]);
-        updateMotsaremLhatseg(Htsgot?.yetsor || [], []);
+        setMotsaremLhatseg([]);
     }
 
     useEffect(() => {
         if (selectedTokh && selectedTokh?.shem !== 'חדשה') {
-            setSogAglaBS(selectedTokh.sogAglaBS);
-            setAorkh(selectedTokh.aorkh);
-            setRohav(selectedTokh.rohav);
-            setRetsba(selectedTokh.retsba);
-            setMsbarTsrem(selectedTokh.msbarTsrem);
-            setAemBlamem(selectedTokh.AemBlamem);
-            setBrofelTfesa(selectedTokh.brofelTfesa);
-            setTsmegem(selectedTokh.tsmgem);
-            setTsmegSber(selectedTokh.tsmgSber);
-            setTMsgeretThtonah(selectedTokh.msgeretThtonah);
-            setTHlokaThtonah(selectedTokh.hlokaThtonah);
-            setTvahHlokaThtona(selectedTokh.tvahHlokaThtona);
-            setMsbarBrofHlokaThotona(selectedTokh.msbarBrofHlokaThotona);
-            setYetsol(selectedTokh.yetsol);
-            setAorkhBroYetsol(selectedTokh.aorkhBroYetsol);
-            setSheldaHetsonet(selectedTokh.sheldaHetsonet);
-            setTvahSheldaBnemet(selectedTokh.tvahSheldaBnemet);
-            setMsbarBroSheldaBnemet(selectedTokh.msbarBroSheldaBnemet);
-            setHelekReshonSheldaBnemet(selectedTokh.helekReshonSheldaBnemet);
-            setMsbarBroSheldaBnemetReshon(selectedTokh.msbarBroSheldaBnemetReshon);
-            sethelekShneSheldaBnemet(selectedTokh.helekShneSheldaBnemet);
-            setMsbarBroSheldaBnemetShne(selectedTokh.msbarBroSheldaBnemetShne);
-            setDalet(selectedTokh.dalet);
-            setMsgertRmbaDalet(selectedTokh.msgertRmbaDalet);
-            setMsgertRmbaDaletAorkh(selectedTokh.msgertRmbaDaletAorkh);
-            setHlokatRmbaDalet(selectedTokh.hlokatRmbaDalet);
-            setHlokatRmbaDaletBro(selectedTokh.hlokatRmbaDaletBro);
-            setHlokatRmbaDaletTvah(selectedTokh.hlokatRmbaDaletTvah);
-            setToseftVnel(selectedTokh.tosefetVnel);
-            setToseftVnelBrof(selectedTokh.toseftVnelBro);
-            setSolam(selectedTokh.solam);
-            setMsgertSolam(selectedTokh.msgertSolam);
-            setGobahSolam(selectedTokh.gobahSolam);
-            setHlokatSolam(selectedTokh.hlokatSolam);
-            setTvahAofkeSolam(selectedTokh.tvahAofkeSolam);
-            setMsbarBroAofkeSolam(selectedTokh.msbarBroAofkeSolam);
-            setTvahAnkheSolam(selectedTokh.tvahAnkheSolam);
-            setMsbarBroAnkheSolam(selectedTokh.msbarBroAnkheSolam);
-            setDaletAleon(selectedTokh.daletAleon);
-            setTosefetReshet(selectedTokh.toseftReshet);
-            setVnel(selectedTokh.vnel);
-            setMsgertVnel(selectedTokh.msgertVnel);
-            setGobahVnel(selectedTokh.gobahVnel);
-            setTvahAofkeVnel(selectedTokh.tvahAofkeVnel);
-            setMsbarBroAofkeVnel(selectedTokh.msbarBroAofkeVnel);
-            setTvahAnkheVnel(selectedTokh.tvahAnkheVnel);
-            setMsbarBroAnkheVnel(selectedTokh.msbarBroAnkheVnel);
-            setTosfot(selectedTokh.tosfot);
-            setMotsaremBrofelem(selectedTokh.motsaremBrofelem);
-            setMotsaremRglem(selectedTokh.motsaremRglem);
-            setMotsaremLhatseg(selectedTokh.motsaremLhatseg);
+            setSogAglaBS(selectedTokh?.sogAglaBS);
+            setAorkh(selectedTokh?.aorkh);
+            setRohav(selectedTokh?.rohav);
+            setRetsba(selectedTokh?.retsba);
+            setMsbarTsrem(selectedTokh?.msbarTsrem);
+            setAemBlamem(selectedTokh?.AemBlamem);
+            setBrofelTfesa(selectedTokh?.brofelTfesa);
+            setTsmegem(selectedTokh?.tsmgem);
+            setTsmegSber(selectedTokh?.tsmgSber);
+            setTMsgeretThtonah(selectedTokh?.msgeretThtonah);
+            setTHlokaThtonah(selectedTokh?.hlokaThtonah);
+            setTvahHlokaThtona(selectedTokh?.tvahHlokaThtona);
+            setMsbarBrofHlokaThotona(selectedTokh?.msbarBrofHlokaThotona);
+            setYetsol(selectedTokh?.yetsol);
+            setAorkhBroYetsol(selectedTokh?.aorkhBroYetsol);
+            setSheldaHetsonet(selectedTokh?.sheldaHetsonet);
+            setTvahSheldaBnemet(selectedTokh?.tvahSheldaBnemet);
+            setMsbarBroSheldaBnemet(selectedTokh?.msbarBroSheldaBnemet);
+            setHelekReshonSheldaBnemet(selectedTokh?.helekReshonSheldaBnemet);
+            setMsbarBroSheldaBnemetReshon(selectedTokh?.msbarBroSheldaBnemetReshon);
+            sethelekShneSheldaBnemet(selectedTokh?.helekShneSheldaBnemet);
+            setMsbarBroSheldaBnemetShne(selectedTokh?.msbarBroSheldaBnemetShne);
+            setDalet(selectedTokh?.dalet);
+            setMsgertRmbaDalet(selectedTokh?.msgertRmbaDalet);
+            setMsgertRmbaDaletAorkh(selectedTokh?.msgertRmbaDaletAorkh);
+            setHlokatRmbaDalet(selectedTokh?.hlokatRmbaDalet);
+            setHlokatRmbaDaletBro(selectedTokh?.hlokatRmbaDaletBro);
+            setHlokatRmbaDaletTvah(selectedTokh?.hlokatRmbaDaletTvah);
+            setToseftVnel(selectedTokh?.tosefetVnel);
+            setToseftVnelBrof(selectedTokh?.toseftVnelBro);
+            setSolam(selectedTokh?.solam);
+            setMsgertSolam(selectedTokh?.msgertSolam);
+            setGobahSolam(selectedTokh?.gobahSolam);
+            setHlokatSolam(selectedTokh?.hlokatSolam);
+            setTvahAofkeSolam(selectedTokh?.tvahAofkeSolam);
+            setMsbarBroAofkeSolam(selectedTokh?.msbarBroAofkeSolam);
+            setTvahAnkheSolam(selectedTokh?.tvahAnkheSolam);
+            setMsbarBroAnkheSolam(selectedTokh?.msbarBroAnkheSolam);
+            setDaletAleon(selectedTokh?.daletAleon);
+            setTosefetReshet(selectedTokh?.toseftReshet);
+            setVnel(selectedTokh?.vnel);
+            setMsgertVnel(selectedTokh?.msgertVnel);
+            setGobahVnel(selectedTokh?.gobahVnel);
+            setTvahAofkeVnel(selectedTokh?.tvahAofkeVnel);
+            setMsbarBroAofkeVnel(selectedTokh?.msbarBroAofkeVnel);
+            setTvahAnkheVnel(selectedTokh?.tvahAnkheVnel);
+            setMsbarBroAnkheVnel(selectedTokh?.msbarBroAnkheVnel);
+            setTosfot(selectedTokh?.tosfot);
+            setMotsaremBrofelem(selectedTokh?.motsaremBrofelem);
+            setMotsaremRglem(selectedTokh?.motsaremRglem);
+            setMotsaremLhatseg(selectedTokh?.motsaremLhatseg);
         }
     }, [selectedTokh]);
 
+
+    function sortByLetters(arr) {
+        return arr?.sort((a, b) => {
+            const letterA = a.replace(/\d/g, ''); // Extract letters from a
+            const letterB = b.replace(/\d/g, ''); // Extract letters from b
+            const numberA = parseInt(a.replace(/\D/g, '')); // Extract numbers from a
+            const numberB = parseInt(b.replace(/\D/g, '')); // Extract numbers from b
+
+            // First, compare by letters
+            if (letterA === letterB) {
+                // If letters are the same, compare by numbers
+                return numberA - numberB;
+            }
+            return letterA.localeCompare(letterB);
+        });
+    }
+
+    const checkAefshrotAedcot = () => {
+        let res = true;
+        if (motsaremBrofelem.length !== selectedTokh?.motsaremBrofelem.length ||
+            motsaremLhatseg.length !== selectedTokh?.motsaremLhatseg.length ||
+            motsaremRglem.length !== selectedTokh?.motsaremRglem.length ||
+            tosfot.length !== selectedTokh?.tosfot.length
+        ) {
+            res = false;
+        }
+        for (let index = 0; index < motsaremBrofelem.length; index++) {
+            if (motsaremBrofelem[index].kmot !== selectedTokh?.motsaremBrofelem[index]?.kmot ||
+                motsaremBrofelem[index].shem !== selectedTokh?.motsaremBrofelem[index]?.shem
+            ) {
+                res = false;
+            }
+        }
+        const newmotsaremLhatseg = sortByLetters(motsaremLhatseg);
+        const newselectedTokhmotsaremLhatseg = sortByLetters(selectedTokh?.motsaremLhatseg);
+        if(newmotsaremLhatseg && newselectedTokhmotsaremLhatseg && newmotsaremLhatseg.length && newselectedTokhmotsaremLhatseg.length){
+            for (let index = 0; index < newmotsaremLhatseg?.length; index++) {
+                if (newmotsaremLhatseg[index] !== newselectedTokhmotsaremLhatseg[index]) {
+                    res = false;
+                }
+            }
+        }
+        for (let index = 0; index < motsaremRglem.length; index++) {
+            if (motsaremRglem[index].kmot !== selectedTokh?.motsaremRglem[index]?.kmot ||
+                motsaremRglem[index].shem !== selectedTokh?.motsaremRglem[index]?.shem
+            ) {
+                res = false;
+            }
+        }
+        for (let index = 0; index < tosfot.length; index++) {
+            if (tosfot[index].val !== selectedTokh?.tosfot[index]?.val) {
+                res = false;
+            }
+        }
+        if (AemBlamem !== selectedTokh?.AemBlamem ||
+            aorkh !== selectedTokh?.aorkh ||
+            aorkhBroYetsol !== selectedTokh?.aorkhBroYetsol ||
+            brofelTfesa !== selectedTokh?.brofelTfesa ||
+            dalet !== selectedTokh?.dalet ||
+            daletAleon !== selectedTokh?.daletAleon ||
+            gobahSolam !== selectedTokh?.gobahSolam ||
+            gobahVnel !== selectedTokh?.gobahVnel ||
+            helekReshonSheldaBnemet !== selectedTokh?.helekReshonSheldaBnemet ||
+            helekShneSheldaBnemet !== selectedTokh?.helekShneSheldaBnemet ||
+            hlokaThtonah !== selectedTokh?.hlokaThtonah ||
+            hlokatRmbaDalet !== selectedTokh?.hlokatRmbaDalet ||
+            hlokatRmbaDaletBro !== selectedTokh?.hlokatRmbaDaletBro ||
+            hlokatRmbaDaletTvah !== selectedTokh?.hlokatRmbaDaletTvah ||
+            hlokatSolam !== selectedTokh?.hlokatSolam ||
+            msbarBroAnkheSolam !== selectedTokh?.msbarBroAnkheSolam ||
+            msbarBroAnkheVnel !== selectedTokh?.msbarBroAnkheVnel ||
+            msbarBroAofkeSolam !== selectedTokh?.msbarBroAofkeSolam ||
+            msbarBroAofkeVnel !== selectedTokh?.msbarBroAofkeVnel ||
+            msbarBroSheldaBnemet !== selectedTokh?.msbarBroSheldaBnemet ||
+            msbarBroSheldaBnemetReshon !== selectedTokh?.msbarBroSheldaBnemetReshon ||
+            msbarBroSheldaBnemetShne !== selectedTokh?.msbarBroSheldaBnemetShne ||
+            msbarBrofHlokaThotona !== selectedTokh?.msbarBrofHlokaThotona ||
+            msbarTsrem !== selectedTokh?.msbarTsrem ||
+            msgeretThtonah !== selectedTokh?.msgeretThtonah ||
+            msgertRmbaDalet !== selectedTokh?.msgertRmbaDalet ||
+            msgertRmbaDaletAorkh !== selectedTokh?.msgertRmbaDaletAorkh ||
+            msgertSolam !== selectedTokh?.msgertSolam ||
+            msgertVnel !== selectedTokh?.msgertVnel ||
+            retsba !== selectedTokh?.retsba ||
+            rohav !== selectedTokh?.rohav ||
+            sheldaHetsonet !== selectedTokh?.sheldaHetsonet ||
+            sogAglaBS !== selectedTokh?.sogAglaBS ||
+            solam !== selectedTokh?.solam ||
+            tosefetVnel !== selectedTokh?.tosefetVnel ||
+            toseftReshet !== selectedTokh?.toseftReshet ||
+            toseftVnelBro !== selectedTokh?.toseftVnelBro ||
+            tsmgSber !== selectedTokh?.tsmgSber ||
+            tsmgem !== selectedTokh?.tsmgem ||
+            tvahAnkheSolam !== selectedTokh?.tvahAnkheSolam ||
+            tvahAnkheVnel !== selectedTokh?.tvahAnkheVnel ||
+            tvahAofkeSolam !== selectedTokh?.tvahAofkeSolam ||
+            tvahAofkeVnel !== selectedTokh?.tvahAofkeVnel ||
+            tvahHlokaThtona !== selectedTokh?.tvahHlokaThtona ||
+            tvahSheldaBnemet !== selectedTokh?.tvahSheldaBnemet ||
+            vnel !== selectedTokh?.vnel ||
+            yetsol !== selectedTokh?.yetsol) {
+                res = false;
+        }
+        return res;
+    }
+    
 
     return (
         <>
@@ -537,7 +654,7 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
                     </ModalHeader>
                     <ModalBody className="h-full overflow-auto flex relative">
                         <TokhnetContext.Provider value={contextValue}>
-                            <ModalYetsorTokhnet resetBro={(val1, val2) => RemoveMotsaremBro(val1, val2)} reset={(val) => ResetMotsaremLhANDRe(val)} addBro={(val) => UpdateMotsaremBroLhANDRe(val)} add={(val) => UpdateMotsaremLhANDRe(val)} mlae={mlae} setMotsaremLhatseg={(value) => setMotsaremLhatseg(value)} show={showModalTokhnetYetsor} disable={() => setShowModalTokhnetYetsor(false)} />
+                            <ModalYetsorTokhnet yetsorKeam={selectedTokh} motsaremLhatseg={motsaremLhatseg} resetBro={(val1, val2) => RemoveMotsaremBro(val1, val2)} reset={(val) => ResetMotsaremLhANDRe(val)} addBro={(val) => UpdateMotsaremBroLhANDRe(val)} add={(val) => UpdateMotsaremLhANDRe(val)} mlae={mlae} setMotsaremLhatseg={(value) => setMotsaremLhatseg(value)} show={showModalTokhnetYetsor} disable={() => setShowModalTokhnetYetsor(false)} />
                         </TokhnetContext.Provider>
                         <ModalBerotMotsrem Tokhnet shlav={'A'} category={category} mlae={mlae} setMotsaremRglem={(value) => setMotsaremRglem(value)} setMotsaremBrofelem={(value) => setMotsaremBrofelem(value)} motsaremLhatseg={motsaremLhatseg} motsaremBrofelem={motsaremBrofelem} motsaremRglem={motsaremRglem} show={showModalBerotMotsrem} disable={() => setShowModalBerotMotsrem(false)} />
                         <ModalMessage Aeshor={(val) => {
@@ -565,7 +682,7 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
                                     </div>
                                     <button
                                         onClick={() => {
-                                            if (selectedTokh.shem === 'חדשה') {
+                                            if (selectedTokh?.shem === 'חדשה') {
                                                 if (IsChangedToSaveTokhnet()) {
                                                     setSelectedTokhToSave(null);
                                                     setShowModalMessage(true);
@@ -640,10 +757,60 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
                                             }} variant="flat" color="danger" size="sm">
                                                 מחיקה
                                             </Button>
-                                            <Button onClick={async() => {
+                                            <Button isDisabled={checkAefshrotAedcot()} onClick={async() => {
                                                 setLoading(true);
                                                 await updateDoc(doc(firestore,'TokhnetYetsorAgla',selectedTokh?.id),{
-
+                                                    AemBlamem,
+                                                    aorkh,
+                                                    aorkhBroYetsol,
+                                                    brofelTfesa,
+                                                    dalet,
+                                                    daletAleon,
+                                                    gobahSolam,
+                                                    gobahVnel,
+                                                    helekReshonSheldaBnemet,
+                                                    helekShneSheldaBnemet,
+                                                    hlokaThtonah,
+                                                    hlokatRmbaDalet,
+                                                    hlokatRmbaDaletBro,
+                                                    hlokatRmbaDaletTvah,
+                                                    hlokatSolam,
+                                                    msbarBroAnkheSolam,
+                                                    msbarBroAnkheVnel,
+                                                    msbarBroAofkeSolam,
+                                                    msbarBroAofkeVnel,
+                                                    msbarBroSheldaBnemet,
+                                                    msbarBroSheldaBnemetReshon,
+                                                    msbarBroSheldaBnemetShne,
+                                                    msbarBrofHlokaThotona,
+                                                    msbarTsrem,
+                                                    msgeretThtonah,
+                                                    msgertRmbaDalet,
+                                                    msgertRmbaDaletAorkh,
+                                                    msgertSolam,
+                                                    msgertVnel,
+                                                    retsba,
+                                                    rohav,
+                                                    sheldaHetsonet,
+                                                    sogAglaBS,
+                                                    solam,
+                                                    tosefetVnel,
+                                                    toseftReshet,
+                                                    toseftVnelBro,
+                                                    tsmgSber,
+                                                    tsmgem,
+                                                    tvahAnkheSolam,
+                                                    tvahAnkheVnel,
+                                                    tvahAofkeSolam,
+                                                    tvahAofkeVnel,
+                                                    tvahHlokaThtona,
+                                                    tvahSheldaBnemet,
+                                                    vnel,
+                                                    yetsol,
+                                                    motsaremBrofelem,
+                                                    motsaremLhatseg,
+                                                    motsaremRglem,
+                                                    tosfot
                                                 });
                                                 setLoading(false);
                                             }} className="ml-4" variant="flat" color="primary" size="sm">
@@ -657,7 +824,7 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
                             <div className="flex w-full flex-wrap justify-end">
                                 <TokhneotCard
                                     openDrawer={() => {
-                                        if (selectedTokh?.shem && selectedTokh.shem === 'חדשה') {
+                                        if (selectedTokh?.shem && selectedTokh?.shem === 'חדשה') {
                                             if (IsChangedToSaveTokhnet()) {
                                                 setSelectedTokhToSave(null);
                                                 setShowModalMessage(true);
@@ -695,7 +862,7 @@ export default function ModalReshematTokhneot({ show, disable, Tokhneot, mlae, c
                                     Tokhneot.map((tokh, index) => (
                                         <TokhneotCard
                                             openDrawer={() => {
-                                                if (selectedTokh?.shem && selectedTokh.shem === tokh.shem) {
+                                                if (selectedTokh?.shem && selectedTokh?.shem === tokh.shem) {
                                                     toggleDrawer();
                                                     setSelectedTokh(null);
                                                 }

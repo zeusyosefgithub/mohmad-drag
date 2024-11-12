@@ -131,9 +131,7 @@ const ProductCard = ({ motsarem, index, mlae, change, reset, src, add, remove,sh
             </>
         );
     };
-
-
-
+    
     return (
         <Card className={`m-5 overflow-hidden border ${GetBorderColor()}`}>
             <CardBody className=' overflow-hidden'>
@@ -156,14 +154,12 @@ const ProductCard = ({ motsarem, index, mlae, change, reset, src, add, remove,sh
                                 :
                                 <div className="mr-1 ml-1 w-full text-center bg-primary-100 rounded-full font-bold text-gray">{currentIndex + 1}</div>
                         }
-                        <div className="mr-1 ml-1 w-full text-center flex justify-center"><GoPlusCircle onClick={() => { add(product?.remez); nextProduct(); }} className="min-h-[22px] min-w-[22px] rounded-full cursor-pointer hover:text-primary" /></div>
+                        <div className="mr-1 ml-1 w-full text-center flex justify-center"><GoPlusCircle onClick={() => { add(product?.remez,true);nextProduct();}} className="min-h-[22px] min-w-[22px] rounded-full cursor-pointer hover:text-primary" /></div>
                     </div>
-
                     <div className="inline-block hover:animate-move-arrows cursor-pointer">
                         <IoIosArrowForward onClick={() => nextProduct()} className="text-4xl transform scale-x-[-1] hover:text-primary" />
                     </div>
                 </div>
-
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={product?.id}

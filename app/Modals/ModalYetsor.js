@@ -7,7 +7,7 @@ import { MdKeyboardArrowDown, MdMoreHoriz } from "react-icons/md";
 import ModalYetsorTokhnet from "./ModalYetsorTokhnet";
 import ModalBerotMotsrem from "./ModalBerotMotsrem";
 import { AiOutlineFundProjectionScreen } from "react-icons/ai";
-import { format } from "date-fns";
+import { addDays, format, isFriday, parse } from "date-fns";
 import { TbPlayerTrackNextFilled } from "react-icons/tb";
 import { IoSettings } from "react-icons/io5";
 import { GrCertificate } from "react-icons/gr";
@@ -51,6 +51,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
     // ---------------------------------------------------------------------------------------- aglot Lkoh
 
     // ---------------------------------------------------------- aglot Lkoh -- (functions)
+    const [locationYetsorAgla,setLocationYetsorAgla] = useState('');
     const componentRefTwo = useRef();
     const [aosek, setAosek] = useState('');
     const metadata = GetDocs('metadata');
@@ -93,6 +94,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
     const [mkdema, setMkdema] = useState(0);
     const [haraKlalet, setHaraKlalet] = useState('');
     const [haraBnmet, setHaraBnmet] = useState('');
+    const [thslomAher,setTshlomAher] = useState('');
+    const [ymeAskem,setYmeAskem] = useState(0);
 
     // ---------------------------------------------------------- thlekhem -- (functions)
 
@@ -118,14 +121,14 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
 
 
     // ---------------------------------------------------------------------------------------------- Tokhnet
-    const [sogAglaBS, setSogAglaBS] = useState('פתוחה');
+    const [sogAglaBS, setSogAglaBS] = useState('');
     const [aorkh, setAorkh] = useState(0);
     const [rohav, setRohav] = useState(0);
     const [retsba, setRetsba] = useState('בחר');
-    const [msbarTsrem, setMsbarTsrem] = useState('1');
+    const [msbarTsrem, setMsbarTsrem] = useState('');
     const [AemBlamem, setAemBlamem] = useState(false);
     const [brofelTfesa, setBrofelTfesa] = useState('בחר');
-    const [tsmgem, setTsmegem] = useState('פנימיים');
+    const [tsmgem, setTsmegem] = useState('');
     const [tsmgSber, setTsmegSber] = useState(false);
     const [msgeretThtonah, setTMsgeretThtonah] = useState('בחר');
     const [hlokaThtonah, setTHlokaThtonah] = useState('בחר');
@@ -140,7 +143,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
     const [msbarBroSheldaBnemetReshon, setMsbarBroSheldaBnemetReshon] = useState(0);
     const [helekShneSheldaBnemet, sethelekShneSheldaBnemet] = useState('בחר');
     const [msbarBroSheldaBnemetShne, setMsbarBroSheldaBnemetShne] = useState(0);
-    const [dalet, setDalet] = useState('רגיל');
+    const [dalet, setDalet] = useState('');
     const [msgertRmbaDalet, setMsgertRmbaDalet] = useState('בחר');
     const [msgertRmbaDaletAorkh, setMsgertRmbaDaletAorkh] = useState(0);
     const [hlokatRmbaDalet, setHlokatRmbaDalet] = useState('בחר');
@@ -209,14 +212,14 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         setZmanThelaC({ shaa: '', tarekh: '' });
         setZmanThelaD({ shaa: '', tarekh: '' });
         setZmanThelaE({ shaa: '', tarekh: '' });
-        setSogAglaBS('פתוחה');
+        setSogAglaBS('');
         setAorkh(0);
         setRohav(0);
         setRetsba('בחר');
-        setMsbarTsrem('1');
+        setMsbarTsrem('');
         setAemBlamem(false);
         setBrofelTfesa('בחר');
-        setTsmegem('פנימיים');
+        setTsmegem('');
         setTsmegSber(false);
         setTMsgeretThtonah('בחר');
         setTHlokaThtonah('בחר');
@@ -231,14 +234,14 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         setMsbarBroSheldaBnemetReshon(0);
         sethelekShneSheldaBnemet('בחר');
         setMsbarBroSheldaBnemetShne(0);
-        setDalet('רגיל');
+        setDalet('');
         setMsgertRmbaDalet('בחר');
         setMsgertRmbaDaletAorkh(0);
         setHlokatRmbaDalet('בחר');
         setHlokatRmbaDaletBro(0);
         setHlokatRmbaDaletTvah(0);
         setToseftVnel(false);
-        setSolam('רק קדמי');
+        setSolam('ללא');
         setMsgertSolam('בחר');
         setGobahSolam(0);
         setHlokatSolam('בחר');
@@ -266,6 +269,9 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         setValueProgressdd(false);
         setValueMtsavD(false);
         setTokhnet(null);
+        setTshlomAher('');
+        setLocationYetsorAgla('');
+        setYmeAskem(0);
     }
 
     const contextValue = {
@@ -322,7 +328,18 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
     const hdbsatMtsavem = useReactToPrint({
         pageStyle: `@page {
             size: A4;
-            margin: 5px;
+            margin: 20px;
+        }
+       @media print {
+            /* Add extra space to the table header to simulate a top margin on new pages */
+            thead {
+                display: table-header-group; /* Ensure thead repeats on each page */
+                margin-top: 20px;
+                padding-top: 20px; /* Add padding to create extra space on new pages */
+            }
+            tbody tr {
+                page-break-inside: avoid; /* Prevent rows from breaking across pages */
+            }
         }`,
         content: () => PrintRef.current,
     });
@@ -527,7 +544,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
             setZmanThelaD({ shaa: format(new Date(), 'HH:mm'), tarekh: format(new Date(), 'dd-MM-yyyy') });
         }
         setErrorMotsaremRglem(false);
-        hdbsatMtsavem();
         setShlavNokhhe(GetShlav());
     }
 
@@ -636,8 +652,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         );
     }
 
-    //
-
     const ResetMotsaremLhANDRe = (motsaremToReset) => {
         const updatedMotsaremRglem = motsaremRglem.map((item) => {
             if (motsaremToReset.includes(item.remez)) {
@@ -676,6 +690,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
     const saveValues = async (res) => {
         setLoading(true);
         const Props = {
+            ymeAskem,
+            thslomAher,
             shlavYetsor : false,
             htsaaNdbas : true,
             locationYetsor,
@@ -806,6 +822,9 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         if (yetsorKeam?.msbar) {
             try {
                 updateDoc(doc(firestore, 'tfaol', yetsorKeam?.id), {
+                    ymeAskem,
+                    thslomAher,
+                    locationYetsor,
                     mherKlaleAhre,
                     msbarAdefot,
                     lkohHdash: lkohHdash || false,
@@ -1073,8 +1092,15 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
             setMsbarMezahehm(yetsorKeam?.newCustomer?.msbarMezahehm);
             setLkohHdash(yetsorKeam.lkohHdash);
             setMherKlaleAhre(yetsorKeam.mherKlaleAhre);
+            setLocationYetsorAgla(yetsorKeam?.locationYetsor);
+            setTshlomAher(yetsorKeam?.thslomAher);
+            setYmeAskem(yetsorKeam?.ymeAskem);
         }
     }, [yetsorKeam]);
+
+    useEffect(() => {
+        setLocationYetsorAgla(locationYetsor);
+    },[locationYetsor])
 
     useEffect(() => {
         if (tokhnet) {
@@ -1268,14 +1294,14 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
             message: '',
         }));
         setMotsaremRglem(resetMotsaremRglem);
-        setSogAglaBS('פתוחה');
+        setSogAglaBS('');
         setAorkh(0);
         setRohav(0);
         setRetsba('בחר');
-        setMsbarTsrem('1');
+        setMsbarTsrem('');
         setAemBlamem(false);
         setBrofelTfesa('בחר');
-        setTsmegem('פנימיים');
+        setTsmegem('');
         setTsmegSber(false);
         setTMsgeretThtonah('בחר');
         setTHlokaThtonah('בחר');
@@ -1290,14 +1316,14 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         setMsbarBroSheldaBnemetReshon(0);
         sethelekShneSheldaBnemet('בחר');
         setMsbarBroSheldaBnemetShne(0);
-        setDalet('רגיל');
+        setDalet('');
         setMsgertRmbaDalet('בחר');
         setMsgertRmbaDaletAorkh(0);
         setHlokatRmbaDalet('בחר');
         setHlokatRmbaDaletBro(0);
         setHlokatRmbaDaletTvah(0);
         setToseftVnel(false);
-        setSolam('רק קדמי');
+        setSolam('ללא');
         setMsgertSolam('בחר');
         setGobahSolam(0);
         setHlokatSolam('בחר');
@@ -1322,6 +1348,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
     const toggleDrawer = (newOpen) => () => {
         setOpen(newOpen);
     };
+    
 
     const DrawerList = (
         <Box sx={{ width: 300 }} role="presentation" onClick={toggleDrawer(false)}>
@@ -1409,6 +1436,59 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         </Box>
     );
 
+
+    const addBusinessDaysSkippingFridays = (startDate, days) => {
+        let currentDate = startDate;
+        let businessDaysAdded = 0;
+        while (businessDaysAdded < days) {
+          currentDate = addDays(currentDate, 1);
+          if (!isFriday(currentDate)) {
+            businessDaysAdded++;
+          }
+        }
+    
+        return currentDate;
+      };
+    
+      const calculateBusinessDaysExcludingFridays = (startDate, endDate) => {
+        let currentDate = startDate;
+        let businessDaysCount = 0;
+        while (currentDate < endDate) {
+          currentDate = addDays(currentDate, 1);
+          if (!isFriday(currentDate)) {
+            businessDaysCount++;
+          }
+        }
+        return businessDaysCount;
+      };
+
+    // Handle change in ymeAskem input
+    const handleYmeAskemChange = (value) => {
+        setYmeAskem(value);
+        if (value) {
+            const newDate = addBusinessDaysSkippingFridays(new Date(), parseInt(value, 10));
+            setTarekhAsbka(format(newDate, 'yyyy-MM-dd'));
+        }
+        else{
+            setTarekhAsbka('');
+        }
+    };
+
+    // Handle change in tarekhAsbka input
+    const handleTarekhAsbkaChange = (value) => {
+        setTarekhAsbka(value);
+        if (value) {
+            const targetDate = parse(value, 'yyyy-MM-dd', new Date());
+            const businessDays = calculateBusinessDaysExcludingFridays(new Date(), targetDate);
+            setYmeAskem(businessDays.toString());
+        }
+        else {
+            setYmeAskem(0);
+        }
+    };
+
+
+
     return (
         <Modal placement="center" className="test-fontt select-none" backdrop={"blur"} size="full" isOpen={show} onClose={() => { setShowModalMessage(true); }}>
             <ModalContent className="w-full h-screen bg-white flex flex-col">
@@ -1430,7 +1510,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                         }
                     }} message={'האם אתה בטוח שאתה רוצה לסגור את הדף, הפרטיים שהזנו לא ישמרו'} show={showModalMessage} disable={() => setShowModalMessage(false)} />
                     <TokhnetContext.Provider value={contextValue}>
-                        <ModalYetsorTokhnet resetBro={(val1, val2) => RemoveMotsaremBro(val1, val2)} reset={(val) => ResetMotsaremLhANDRe(val)} addBro={(val) => UpdateMotsaremBroLhANDRe(val)} add={(val) => UpdateMotsaremLhANDRe(val)} mlae={mlae} setMotsaremLhatseg={(value) => setMotsaremLhatseg(value)} show={showModalTokhnetYetsor} disable={() => setShowModalTokhnetYetsor(false)} />
+                        <ModalYetsorTokhnet yetsorKeam={yetsorKeam} resetBro={(val1, val2) => RemoveMotsaremBro(val1, val2)} reset={(val) => ResetMotsaremLhANDRe(val)} addBro={(val) => UpdateMotsaremBroLhANDRe(val)} add={(val) => UpdateMotsaremLhANDRe(val)} mlae={mlae} setMotsaremLhatseg={(value) => setMotsaremLhatseg(value)} show={showModalTokhnetYetsor} disable={() => setShowModalTokhnetYetsor(false)} />
                     </TokhnetContext.Provider>
                     <ModalBerotMotsrem GetError={(val) => setErrorMotsaremRglem(val)} shlav={getNextLetter(shlavNokhhe)} category={category} mlae={mlae} setMotsaremRglem={(value) => setMotsaremRglem(value)} setMotsaremBrofelem={(value) => setMotsaremBrofelem(value)} motsaremLhatseg={motsaremLhatseg} motsaremBrofelem={motsaremBrofelem} motsaremRglem={motsaremRglem} show={showModalBerotMotsrem} disable={() => setShowModalBerotMotsrem(false)} />
                     <ModalAddCustomer LkohHdash={(val1, val2) => {
@@ -1497,7 +1577,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                         tosfot
                     }} brtemKlalem={{
                         snef: yetsorKeam?.locationYetsor || locationYetsor,
-                        msbarAglaHzmna: yetsorKeam?.msbar || counter?.count - 1,
+                        msbarAglaHzmna: yetsorKeam?.msbar || counter?.count,
                         shemlkoh: brtemLkoh?.name || customerName,
                         tarekhAsbka,
                         mherKlale,
@@ -1505,7 +1585,11 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                         mkdema,
                         msbarTshlomem,
                         tnaeTshlom,
-                            haraKlalet,
+                        haraKlalet,
+                        ymeAskem,
+                        thslomAher,
+                        yetera : parseFloat(mherKlaleAhre - mkdema).toFixed(2),
+
                         }} mlae={mlae} motsarem={{ motsaremRglem, motsaremBrofelem, motsaremLhatseg }} mtsav={GetShlavemInHebrow(shlavNokhhe,true)} ref={PrintRef} /></div>
                     {
                         yetsorKeam?.msbar && <ModalMtsavYetsor res={{
@@ -1566,7 +1650,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                         </div>
                         <div className="w-full md:w-3/4 h-full pl-3 pr-3">
                             <Card dir="rtl" className="w-full h-full">
-                                <CardBody>
+                                <CardBody className="h-full">
                                     <div className="bg-gray-200 rounded-lg p-1">
                                         <div className="flex">
                                             {GetShlavemInHebrow(shlavNokhhe) === 'שלב הזמנה' && GetMotionTitels('שלב הזמנה')}
@@ -1581,8 +1665,14 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="w-full flex-grow p-4 overflow-auto">
-                                        <div className="w-full p-10">
+                                    <div className="w-full h-full flex-grow p-4 overflow-auto">
+                                        <div className="w-full h-full">
+
+
+
+
+
+
                                             {(shlavNokhhe === 'A') &&
                                                 <AnimatePresence mode="wait">
                                                     <motion.div
@@ -1601,7 +1691,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                         סניף :
                                                                     </div>
                                                                     <div className="mr-1">
-                                                                        {yetsorKeam?.locationYetsor || locationYetsor}
+                                                                        {locationYetsorAgla || locationYetsor}
                                                                     </div>
                                                                 </div>
                                                                 <div className="mr-2 ml-2">|</div>
@@ -1620,8 +1710,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                             <div className="mr-2 border-r-2 pr-2">
                                                                 <Dropdown dir="rtl" className="select-none">
                                                                     <DropdownTrigger>
-                                                                        <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="lg">
-                                                                            <MdKeyboardArrowDown className="text-xl" />{tnaeTshlom || 'אמצעי תשלום'}
+                                                                        <Button className="" dir="ltr" color="primary" variant='flat' size="lg">
+                                                                            <MdKeyboardArrowDown className="text-xl" />{locationYetsorAgla || 'אמצעי תשלום'}
                                                                         </Button>
                                                                     </DropdownTrigger>
                                                                     <DropdownMenu
@@ -1630,8 +1720,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                         closeOnSelect={true}
                                                                         disallowEmptySelection
                                                                         selectionMode='single'
-                                                                        selectedKeys={locationYetsor}
-                                                                        onSelectionChange={(val) => setTnaeTshlom(val.currentKey)}
+                                                                        selectedKeys={locationYetsorAgla}
+                                                                        onSelectionChange={(val) => setLocationYetsorAgla(val.currentKey)}
                                                                     >
                                                                         <DropdownItem key={'עארה'}>{'עארה'}</DropdownItem>
                                                                         <DropdownItem key={'מעלה אפריים'}>{'מעלה אפריים'}</DropdownItem>
@@ -1740,13 +1830,14 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                             <div className="w-full flex items-center">
                                                                 <FaShekelSign className="text-xl text-primary" />
                                                                 <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                    <Input label={`סכום (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val); setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[180px]" />
-                                                                    <Input label={`סכום (כולל מע"מ)`} isReadOnly={yetsorKeam?.mherMkheraAhre} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val); setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[180px]" />
-                                                                    <Input label={`מקדימה`} isReadOnly={yetsorKeam?.mkdema} size="sm" type="number" value={mkdema || ''} onValueChange={(val) => setMkdema(val)} color="primary" className="mr-3 max-w-[180px]" />
-                                                                    <Input label={`מספר תשלומים`} isReadOnly={yetsorKeam?.msbarTshlomem} size="sm" type="number" value={msbarTshlomem || ''} onValueChange={(val) => setMsbarTshlomem(val)} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Input label={`סכום (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val); setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[150px]" />
+                                                                    <Input label={`סכום (כולל מע"מ)`} isReadOnly={yetsorKeam?.mherMkheraAhre} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val); setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[150px]" />
+                                                                    <Input label={`מקדימה`} isReadOnly={yetsorKeam?.mkdema} size="sm" type="number" value={mkdema || ''} onValueChange={(val) => setMkdema(val)} color="primary" className="mr-3 max-w-[150px]" />
+                                                                    <Input label={`יתרה לתשלום`} isReadOnly size="sm" value={parseFloat(mherKlaleAhre - mkdema).toFixed(2) || ''} onValueChange={(val) => setMkdema(val)} color="primary" className="mr-3 max-w-[150px]" />
+                                                                    <Input label={`מספר תשלומים`} isReadOnly={yetsorKeam?.msbarTshlomem} size="sm" type="number" value={msbarTshlomem || ''} onValueChange={(val) => setMsbarTshlomem(val)} color="primary" className="mr-3 max-w-[150px]" />
                                                                     <Dropdown dir="rtl" className="select-none">
                                                                         <DropdownTrigger>
-                                                                            <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="lg">
+                                                                            <Button className="mr-3 max-w-[150px]" dir="ltr" color="primary"  variant='flat' size="lg">
                                                                                 <MdKeyboardArrowDown className="text-xl" />{tnaeTshlom || 'אמצעי תשלום'}
                                                                             </Button>
                                                                         </DropdownTrigger>
@@ -1766,6 +1857,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                             <DropdownItem key={'אחר'}>{'אחר'}</DropdownItem>
                                                                         </DropdownMenu>
                                                                     </Dropdown>
+                                                                    {tnaeTshlom === 'אחר' && <Input label={`תשלום אחר`} size="sm" type="text" value={thslomAher || ''} onValueChange={(val) => setTshlomAher(val)} color="primary" className="mr-3 max-w-[150px]" />}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1773,8 +1865,9 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                             <div className="w-full flex items-center">
                                                                 <PiClockBold className="text-xl text-primary" />
                                                                 <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                    <Input className="max-w-[150px] " value={tarekhAsbka || format(new Date(), 'dd-MM-yyyy')} onValueChange={(value) => setTarekhAsbka(value)} color="primary" variant="flat" type='date' size="sm" label="תאריך אספקה" />
-                                                                    <div className="mr-2 ml-3 w-[150px]">
+                                                                    <Input className="max-w-[150px]" value={ymeAskem || ''} onValueChange={(value) => {handleYmeAskemChange(value);}} color="primary" variant="flat" type='number' size="sm" label="ימי עסקים" />
+                                                                    <Input className="max-w-[150px] mr-3" value={tarekhAsbka || format(new Date(), 'dd-MM-yyyy')} onValueChange={(value) => {handleTarekhAsbkaChange(value);}} color="primary" variant="flat" type='date' size="sm" label="תאריך אספקה" />
+                                                                    <div className="mr-3 ml-3 w-[150px]">
                                                                         מספר עדיפות
                                                                     </div>
                                                                     <Pagination page={msbarAdefot} onChange={setMsbarAdefot} className="w-full" total={5} initialPage={1} />
@@ -1857,7 +1950,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                         exit={{ opacity: 0, x: -100 }}
                                                         transition={{ duration: 0.5 }}
                                                     >
-                                                        <div className="w-full flex items-center pb-3 border-b-1">
+                                                         <div className="w-full flex items-center pb-3 border-b-1">
                                                             <RiFileList3Fill className="text-xl text-primary" />
                                                             <div className="mr-2 border-r-2 pr-2 flex items-center font-black text-black">
                                                                 <div className="flex items-center">
@@ -1865,7 +1958,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                         סניף :
                                                                     </div>
                                                                     <div className="mr-1">
-                                                                        {yetsorKeam?.locationYetsor || locationYetsor}
+                                                                        {locationYetsorAgla || locationYetsor}
                                                                     </div>
                                                                 </div>
                                                                 <div className="mr-2 ml-2">|</div>
@@ -1877,6 +1970,30 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                         {yetsorKeam?.msbar || counter?.count}
                                                                     </div>
                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="w-full flex items-center pb-3 pt-3 border-b-1">
+                                                            <FaLocationDot className="text-xl text-primary" />
+                                                            <div className="mr-2 border-r-2 pr-2">
+                                                                <Dropdown dir="rtl" className="select-none">
+                                                                    <DropdownTrigger>
+                                                                        <Button className="" dir="ltr" color="primary" variant='flat' size="lg">
+                                                                            <MdKeyboardArrowDown className="text-xl" />{locationYetsorAgla || 'אמצעי תשלום'}
+                                                                        </Button>
+                                                                    </DropdownTrigger>
+                                                                    <DropdownMenu
+                                                                        aria-label="Multiple selection example"
+                                                                        variant="flat"
+                                                                        closeOnSelect={true}
+                                                                        disallowEmptySelection
+                                                                        selectionMode='single'
+                                                                        selectedKeys={locationYetsorAgla}
+                                                                        onSelectionChange={(val) => setLocationYetsorAgla(val.currentKey)}
+                                                                    >
+                                                                        <DropdownItem key={'עארה'}>{'עארה'}</DropdownItem>
+                                                                        <DropdownItem key={'מעלה אפריים'}>{'מעלה אפריים'}</DropdownItem>
+                                                                    </DropdownMenu>
+                                                                </Dropdown>
                                                             </div>
                                                         </div>
                                                         <div className="w-full flex items-center pb-3 pt-3 border-b-1">
@@ -1980,13 +2097,14 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                             <div className="w-full flex items-center">
                                                                 <FaShekelSign className="text-xl text-primary" />
                                                                 <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                    <Input label={`סכום (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val); setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[180px]" />
-                                                                    <Input label={`סכום (כולל מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val); setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[180px]" />
-                                                                    <Input label={`מקדימה`} isReadOnly={yetsorKeam?.mkdema} size="sm" type="number" value={mkdema || ''} onValueChange={(val) => setMkdema(val)} color="primary" className="mr-3 max-w-[180px]" />
-                                                                    <Input label={`מספר תשלומים`} isReadOnly={yetsorKeam?.msbarTshlomem} size="sm" type="number" value={msbarTshlomem || ''} onValueChange={(val) => setMsbarTshlomem(val)} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Input label={`סכום (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val); setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[150px]" />
+                                                                    <Input label={`סכום (כולל מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val); setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[150px]" />
+                                                                    <Input label={`מקדימה`} isReadOnly={yetsorKeam?.mkdema} size="sm" type="number" value={mkdema || ''} onValueChange={(val) => setMkdema(val)} color="primary" className="mr-3 max-w-[150px]" />
+                                                                    <Input label={`יתרה לתשלום`} isReadOnly size="sm" value={parseFloat(mherKlaleAhre - mkdema).toFixed(2) || ''} onValueChange={(val) => setMkdema(val)} color="primary" className="mr-3 max-w-[150px]" />
+                                                                    <Input label={`מספר תשלומים`} isReadOnly={yetsorKeam?.msbarTshlomem} size="sm" type="number" value={msbarTshlomem || ''} onValueChange={(val) => setMsbarTshlomem(val)} color="primary" className="mr-3 max-w-[150px]" />
                                                                     <Dropdown dir="rtl" className="select-none">
                                                                         <DropdownTrigger>
-                                                                            <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="lg">
+                                                                            <Button className="mr-3 max-w-[150px]" dir="ltr" color="primary" variant='flat' size="lg">
                                                                                 <MdKeyboardArrowDown className="text-xl" />{tnaeTshlom || 'אמצעי תשלום'}
                                                                             </Button>
                                                                         </DropdownTrigger>
@@ -2006,6 +2124,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                             <DropdownItem key={'אחר'}>{'אחר'}</DropdownItem>
                                                                         </DropdownMenu>
                                                                     </Dropdown>
+                                                                    {tnaeTshlom === 'אחר' && <Input label={`תשלום אחר`} size="sm" type="text" value={thslomAher || ''} onValueChange={(val) => setTshlomAher(val)} color="primary" className="mr-3 max-w-[150px]" />}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -2013,7 +2132,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                             <div className="w-full flex items-center">
                                                                 <PiClockBold className="text-xl text-primary" />
                                                                 <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                    <Input className="max-w-[150px] " value={tarekhAsbka || format(new Date(), 'dd-MM-yyyy')} onValueChange={(value) => setTarekhAsbka(value)} color="primary" variant="flat" type='date' size="sm" label="תאריך אספקה" />
+                                                                <Input className="max-w-[150px]" value={ymeAskem || ''} onValueChange={(value) => {handleYmeAskemChange(value);}} color="primary" variant="flat" type='number' size="sm" label="ימי עסקים" />
+                                                                <Input className="max-w-[150px] mr-3" value={tarekhAsbka || format(new Date(), 'dd-MM-yyyy')} onValueChange={(value) => {handleTarekhAsbkaChange(value);}} color="primary" variant="flat" type='date' size="sm" label="תאריך אספקה" />
                                                                     <div className="mr-2 ml-3 w-[150px]">
                                                                         מספר עדיפות
                                                                     </div>
@@ -2112,7 +2232,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                         exit={{ opacity: 0, x: -100 }}
                                                         transition={{ duration: 0.5 }}
                                                     >
-                                                        <div className="w-full flex items-center pb-3 border-b-1">
+                                                         <div className="w-full flex items-center pb-3 border-b-1">
                                                             <RiFileList3Fill className="text-xl text-primary" />
                                                             <div className="mr-2 border-r-2 pr-2 flex items-center font-black text-black">
                                                                 <div className="flex items-center">
@@ -2120,7 +2240,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                         סניף :
                                                                     </div>
                                                                     <div className="mr-1">
-                                                                        {yetsorKeam?.locationYetsor || locationYetsor}
+                                                                        {locationYetsorAgla || locationYetsor}
                                                                     </div>
                                                                 </div>
                                                                 <div className="mr-2 ml-2">|</div>
@@ -2235,13 +2355,14 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                             <div className="w-full flex items-center">
                                                                 <FaShekelSign className="text-xl text-primary" />
                                                                 <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                    <Input label={`סכום (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val); setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[180px]" />
-                                                                    <Input label={`סכום (כולל מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val); setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[180px]" />
-                                                                    <Input label={`מקדימה`} isReadOnly={yetsorKeam?.mkdema} size="sm" type="number" value={mkdema || ''} onValueChange={(val) => setMkdema(val)} color="primary" className="mr-3 max-w-[180px]" />
-                                                                    <Input label={`מספר תשלומים`} isReadOnly={yetsorKeam?.msbarTshlomem} size="sm" type="number" value={msbarTshlomem || ''} onValueChange={(val) => setMsbarTshlomem(val)} color="primary" className="mr-3 max-w-[180px]" />
+                                                                    <Input label={`סכום (לפני מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlale || ''} onValueChange={(val) => { setMherKlale(val); setMherKlaleAhre(parseFloat(parseFloat(val * 1.17).toFixed(2))) }} color="primary" className="max-w-[150px]" />
+                                                                    <Input label={`סכום (כולל מע"מ)`} isReadOnly={yetsorKeam?.mherMkhera} size="sm" type="number" value={mherKlaleAhre || ''} onValueChange={(val) => { setMherKlaleAhre(val); setMherKlale(parseFloat(parseFloat(val / 1.17).toFixed(2))); }} color="primary" className="mr-3 max-w-[150px]" />
+                                                                    <Input label={`מקדימה`} isReadOnly={yetsorKeam?.mkdema} size="sm" type="number" value={mkdema || ''} onValueChange={(val) => setMkdema(val)} color="primary" className="mr-3 max-w-[150px]" />
+                                                                    <Input label={`יתרה לתשלום`} isReadOnly size="sm" value={parseFloat(mherKlaleAhre - mkdema).toFixed(2) || ''} onValueChange={(val) => setMkdema(val)} color="primary" className="mr-3 max-w-[150px]" />
+                                                                    <Input label={`מספר תשלומים`} isReadOnly={yetsorKeam?.msbarTshlomem} size="sm" type="number" value={msbarTshlomem || ''} onValueChange={(val) => setMsbarTshlomem(val)} color="primary" className="mr-3 max-w-[150px]" />
                                                                     <Dropdown dir="rtl" className="select-none">
                                                                         <DropdownTrigger>
-                                                                            <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="lg">
+                                                                            <Button className="mr-3 max-w-[150px]" dir="ltr" color="primary" variant='flat' size="lg">
                                                                                 <MdKeyboardArrowDown className="text-xl" />{tnaeTshlom || 'אמצעי תשלום'}
                                                                             </Button>
                                                                         </DropdownTrigger>
@@ -2261,6 +2382,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                             <DropdownItem key={'אחר'}>{'אחר'}</DropdownItem>
                                                                         </DropdownMenu>
                                                                     </Dropdown>
+                                                                    {tnaeTshlom === 'אחר' && <Input label={`תשלום אחר`} size="sm" type="text" value={thslomAher || ''} onValueChange={(val) => setTshlomAher(val)} color="primary" className="mr-3 max-w-[150px]" />}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -2268,7 +2390,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                             <div className="w-full flex items-center">
                                                                 <PiClockBold className="text-xl text-primary" />
                                                                 <div className="w-full flex items-center mr-2 border-r-2 pr-2">
-                                                                    <Input className="max-w-[150px] " value={tarekhAsbka || format(new Date(), 'dd-MM-yyyy')} onValueChange={(value) => setTarekhAsbka(value)} color="primary" variant="flat" type='date' size="sm" label="תאריך אספקה" />
+                                                                <Input className="max-w-[150px]" value={ymeAskem || ''} onValueChange={(value) => {handleYmeAskemChange(value);}} color="primary" variant="flat" type='number' size="sm" label="ימי עסקים" />
+                                                                <Input className="max-w-[150px] mr-3" value={tarekhAsbka || format(new Date(), 'dd-MM-yyyy')} onValueChange={(value) => {handleTarekhAsbkaChange(value);}} color="primary" variant="flat" type='date' size="sm" label="תאריך אספקה" />
                                                                     <div className="mr-2 ml-3 w-[150px]">
                                                                         מספר עדיפות
                                                                     </div>
@@ -2386,40 +2509,39 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
 
                                             {
                                                 (shlavNokhhe === 'D') &&
-                                                <AnimatePresence mode="wait">
-                                                    <motion.div
-                                                        key="D"
-                                                        initial={{ opacity: 0, x: 100 }}
-                                                        animate={{ opacity: 1, x: 0 }}
+                                                <div className="h-full flex justify-center items-center">
+                                                    <AnimatePresence mode="wait">
+                                                        <motion.div
+                                                            key="D"
+                                                            initial={{ opacity: 0, x: 100 }}
+                                                            animate={{ opacity: 1, x: 0 }}
                                                             exit={{ opacity: 0, x: -100 }}
                                                             transition={{ duration: 0.5 }}
                                                         >
-                                                            <div className="flex justify-center">
-                                                                <div className="">
-                                                                    <div className="flex justify-center w-full items-center">
+                                                            <div className="">
+                                                                <div className="flex justify-center w-full items-center">
                                                                     <Image
                                                                         src={'https://cdn-icons-png.flaticon.com/512/5610/5610944.png'}
                                                                         className="w-[120px] h-[120px]"
                                                                         width={120}
                                                                         height={120}
                                                                     />
-                                                                    </div>
-                                                                    <div className="w-full text-center mt-8 mb-8 font-bold text-success text-xl">
-                                                                        תהליך ייצור עגלה הסתיים בהצלחה!!!
-                                                                    </div>
-                                                                    <Progress
-                                                                        aria-label="Downloading..."
-                                                                        size="md"
-                                                                        value={valueProgress}
-                                                                        color="success"
-                                                                        showValueLabel={true}
-                                                                        className="max-w-md m-auto"
-                                                                    />
                                                                 </div>
-
+                                                                <div className="w-full text-center mt-8 mb-8 font-bold text-success text-xl">
+                                                                    תהליך ייצור עגלה הסתיים בהצלחה!!!
+                                                                </div>
+                                                                <Progress
+                                                                    aria-label="Downloading..."
+                                                                    size="md"
+                                                                    value={valueProgress}
+                                                                    color="success"
+                                                                    showValueLabel={true}
+                                                                    className="max-w-md m-auto"
+                                                                />
                                                             </div>
                                                         </motion.div>
                                                     </AnimatePresence>
+                                                </div>
                                             }
 
 
@@ -2531,10 +2653,10 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                 {
                     shlavNokhhe !== 'D' &&
                     <ModalFooter className="border-t-2">
-                        <div>
+                        <div className="flex items-center">
                             {
                                 yetsorKeam?.id && ((shlavNokhhe === 'A') || (shlavNokhhe === 'B')) &&
-                                <Button size="sm" color="danger" isLoading={loading} variant="flat" onClick={async () => {
+                                <Button size="sm" color="danger" className="mr-2" isLoading={loading} variant="flat" onClick={async () => {
                                     setLoading(true);
                                     await deleteDoc(doc(firestore, 'tfaol', yetsorKeam?.id));
                                     setLoading(false);
@@ -2544,6 +2666,9 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                     מחיקה
                                 </Button>
                             }
+                            <Button onClick={hdbsatMtsavem} variant='flat' size="sm" color='primary'>
+                                הדפסת דף {GetShlavemInHebrow(shlavNokhhe,true)}
+                            </Button>
                         </div>
                         <div className="w-full flex justify-end">
                             <Button color='warning' variant='flat' size="sm" className="mr-2" onClick={() => setShowModalMessage(true)}>סגור</Button>

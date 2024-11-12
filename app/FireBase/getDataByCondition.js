@@ -31,6 +31,22 @@ export const useGetDataByConditionTwo = (myCollection, value1, value2, value3,va
             setList(snap.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         });
         return () => unsubscribe();
+    }, [myCollection, value1, value2, value3,value4,value5,value6]);
+
+    return list;
+};
+
+
+export const useGetDataByConditionArray = (myCollection, value1, value2, value3) => {
+    const [list, setList] = useState([]);
+    const colle = collection(firestore, myCollection);
+    const condition1 = where(value1, value2, value3);
+    useEffect(() => {
+        const q = query(colle, condition1);
+        const unsubscribe = onSnapshot(q, (snap) => {
+            setList(snap.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        });
+        return () => unsubscribe();
     }, [myCollection, value1, value2, value3]);
 
     return list;

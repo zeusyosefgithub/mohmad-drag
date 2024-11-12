@@ -91,7 +91,7 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
 
     const GetTypeElement = (value, insider) => {
         if (value?.val === 'Input') {
-            return <Input isReadOnly type="number" size={insider === null ? 'xs' : 'sm'} variant='underlined' className={`pr-2 pl-2 ${value.getVal && 'text-primary'}`} color={value.getVal ? 'primary' : 'default'} value={value.getVal || ''} label={value.chooises} />
+            return <Input isReadOnly type="number" size={insider === null ? 'xs' : 'sm'} variant='underlined' className={`pr-2 pl-2 ${value.getVal && 'text-primary'}`} color={value.getVal ? 'primary' : 'default'} value={value.getVal || ''} label={value.chooises} labelPlacement={value.getVal && 'outside-left'}/>
         }
         else if (value?.val === 'Radio') {
             return <RadioGroup
@@ -183,8 +183,9 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                         <div className="flex items-center"><div className="w-[200px]">סכום (לפני מע"מ) :</div><div className="mr-1">{brtem?.mherKlale || ''}</div></div>
                         <div className="flex items-center"><div className="w-[200px]">סכום (כולל מע"מ) :</div><div className="mr-1">{brtem?.mherKlaleAhre || ''}</div></div>
                         <div className="flex items-center"><div className="w-[200px]">מקדימה :</div><div className="mr-1">{brtem?.mkdema || ''}</div></div>
+                        <div className="flex items-center"><div className="w-[200px]">יתרה לתשלום :</div><div className="mr-1">{brtem?.yetera || ''}</div></div>
                         <div className="flex items-center"><div className="w-[200px]">מספר תשלומים :</div><div className="mr-1">{brtem?.msbarTshlomem || ''}</div></div>
-                        <div className="flex items-center"><div className="w-[200px]">אמצעי תשלום :</div><div className="mr-1">{brtem?.tnaeTshlom || ''}</div></div>
+                        <div className="flex items-center"><div className="w-[200px]">אמצעי תשלום :</div><div className="mr-1">{brtem?.tnaeTshlom === 'אחר' ? brtem?.thslomAher : brtem?.tnaeTshlom || ''}</div></div>
                     </div>
                 </div>
                 {
@@ -300,7 +301,7 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                             'צמיגים',
                             {
                                 val: 'Radio',
-                                chooises: ['פנימיים', 'חצוניים'],
+                                chooises: ['חצוניים','פנימיים'],
                                 getVal: tokhnet?.tsmgem,
                             },
                             {
@@ -311,7 +312,10 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                         )
                     }
                     {
-                        GetRow(
+                        console.log(tokhnet?.tsmgem )
+                    }
+                    {
+                        tokhnet?.tsmgem === 'פנימיים' && GetRow(
                             '5.1',
                             null,
                             {
@@ -326,25 +330,10 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                         )
                     }
                     {
-                        GetRow(
+                        tokhnet?.tsmgem === 'פנימיים' && GetRow(
                             '5.2',
                             null,
-                            {
-                                val: 'Image',
-                                chooises: rep57,
-                            },
-                            'חלוקה תחתונה',
-                            {
-                                val: 'DropDown',
-                                getVal: tokhnet?.hlokaThtonah,
-                            },
-                        )
-                    }
-                    {
-                        GetRow(
                             '',
-                            null,
-                            '5.2.1',
                             {
                                 val: 'Input',
                                 chooises: `טווח בס"מ`,
@@ -357,6 +346,22 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                             },
                         )
                     }
+                    {
+                        tokhnet?.tsmgem === 'פנימיים' && GetRow(
+                            '5.3',
+                            null,
+                            {
+                                val: 'Image',
+                                chooises: rep57,
+                            },
+                            'חלוקה תחתונה',
+                            {
+                                val: 'DropDown',
+                                getVal: tokhnet?.hlokaThtonah,
+                            },
+                        )
+                    }
+                    
                     <div className={`w-full border-t-1 mt-1 mb-1`}></div>
                     {
                         GetRow(
@@ -503,23 +508,7 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                                 tokhnet?.dalet === 'רמפה' && GetRow(
                                     '9.2',
                                     null,
-                                    {
-                                        val: 'Image',
-                                        chooises: rep57,
-                                    },
-                                    'חלוקת רמפה',
-                                    {
-                                        val: 'DropDown',
-                                        getVal: tokhnet?.hlokatRmbaDalet,
-                                    },
-
-                                )
-                            }
-                            {
-                                tokhnet?.dalet === 'רמפה' && GetRow(
                                     '',
-                                    null,
-                                    '9.2.1',
                                     {
                                         val: 'Input',
                                         chooises: `טווח בס"מ`,
@@ -535,6 +524,22 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                             {
                                 tokhnet?.dalet === 'רמפה' && GetRow(
                                     '9.3',
+                                    null,
+                                    {
+                                        val: 'Image',
+                                        chooises: rep57,
+                                    },
+                                    'חלוקת רמפה',
+                                    {
+                                        val: 'DropDown',
+                                        getVal: tokhnet?.hlokatRmbaDalet,
+                                    },
+
+                                )
+                            }  
+                            {
+                                tokhnet?.dalet === 'רמפה' && GetRow(
+                                    '9.4',
                                     null,
                                     {
                                         val: 'Image',
@@ -594,22 +599,7 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                                 tokhnet?.solam !== 'ללא' && GetRow(
                                     '10.2',
                                     null,
-                                    {
-                                        val: 'Image',
-                                        chooises: rep57,
-                                    },
-                                    'חלוקת סולם',
-                                    {
-                                        val: 'DropDown',
-                                        getVal: tokhnet?.hlokatSolam,
-                                    },
-                                )
-                            }
-                            {
-                                tokhnet?.solam !== 'ללא' && GetRow(
                                     '',
-                                    null,
-                                    '10.2.1',
                                     {
                                         val: 'Input',
                                         chooises: `טווח אופקי בס"מ`,
@@ -624,9 +614,9 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                             }
                             {
                                 tokhnet?.solam !== 'ללא' && GetRow(
-                                    '',
+                                    '10.3',
                                     null,
-                                    '10.2.2',
+                                    '',
                                     {
                                         val: 'Input',
                                         chooises: `טווח אנכי בס"מ`,
@@ -640,8 +630,23 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                                 )
                             }
                             {
+                                tokhnet?.solam !== 'ללא' && GetRow(
+                                    '10.4',
+                                    null,
+                                    {
+                                        val: 'Image',
+                                        chooises: rep57,
+                                    },
+                                    'חלוקת סולם',
+                                    {
+                                        val: 'DropDown',
+                                        getVal: tokhnet?.hlokatSolam,
+                                    },
+                                )
+                            }
+                            {
                                 tokhnet?.solam === 'הכל' && GetRow(
-                                    '10.3',
+                                    '10.5',
                                     null,
                                     '',
                                     'עם דלת עליון',
@@ -654,7 +659,7 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                             }
                             {
                                 tokhnet?.solam === 'הכל' && GetRow(
-                                    '10.4',
+                                    '10.6',
                                     null,
                                     '',
                                     'תוספת רשת',
@@ -755,39 +760,45 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                         </>
                     }
                 </div>
-                <div className="tracking-widest border-b-1 font-black mt-20">פירוט מוצרים</div>
-                <div className="mt-3 flex justify-center items-center">
-                    <Table dir="ltr" aria-label="Example static collection table" className="m-5">
-                        <TableHeader>
-                            <TableColumn className="text-right">מחיר</TableColumn>
-                            <TableColumn className="text-right">כמות</TableColumn>
-                            <TableColumn className="text-right">שם מוצר</TableColumn>
-                        <TableColumn className="text-right"></TableColumn>
-                    </TableHeader>
-                    <TableBody>
-                        {
-                            motsarem.motsaremBrofelem.map((motsar, index) => (
-                                motsar.shem && motsar.kmot &&  <TableRow key={index}>
-                                    <TableCell className="text-right">{parseFloat(motsar.kmot * GetBrtemMotsarMlae(motsar?.remez, motsar?.shem).alot).toFixed(2)}</TableCell>
-                                    <TableCell className="text-right">{motsar.kmot || '0'}</TableCell>
-                                    <TableCell className="text-right">{motsar.shem || 'אין'}</TableCell>
-                                    <TableCell className="text-right">{<Image className="w-[20px] h-[20px]" src={GetTmonatHelek(motsar.remez,GetBrtemMotsarMlae(motsar?.remez, motsar?.shem)?.msbar)}/>}</TableCell>
-                                </TableRow>
-                            ))
-                        }
-                        {
-                            motsarem.motsaremRglem.map((motsar, index) => (
-                                checkAemRemezMataem(motsar?.remez) && motsar.shem && motsar.kmot && <TableRow key={index}>
-                                    <TableCell className="text-right">{parseFloat(motsar.kmot * GetBrtemMotsarMlae(motsar?.remez, motsar?.shem).alot).toFixed(2)}</TableCell>
-                                    <TableCell className="text-right">{motsar.kmot || '0'}</TableCell>
-                                    <TableCell className="text-right">{motsar.shem || 'אין'}</TableCell>
-                                    <TableCell className="text-right">{<Image className="w-[20px] h-[20px]" src={GetTmonatHelek(motsar.remez,GetBrtemMotsarMlae(motsar?.remez, motsar?.shem)?.msbar)}/>}</TableCell>
-                                </TableRow>
-                            ))
-                        }
-                    </TableBody>
-                </Table>
-                </div>
+
+                {
+                    ((motsarem.motsaremBrofelem.length > 0) || (motsarem.motsaremRglem.length > 0)) &&
+                    <>
+                        <div className="tracking-widest border-b-1 font-black mt-20">פירוט מוצרים</div>
+                        <div className="mt-3 flex justify-center items-center">
+                            <Table dir="ltr" aria-label="Example static collection table" className="m-5">
+                                <TableHeader>
+                                    <TableColumn className="text-right">מחיר</TableColumn>
+                                    <TableColumn className="text-right">כמות</TableColumn>
+                                    <TableColumn className="text-right">שם מוצר</TableColumn>
+                                    <TableColumn className="text-right"></TableColumn>
+                                </TableHeader>
+                                <TableBody>
+                                    {
+                                        motsarem.motsaremBrofelem.map((motsar, index) => (
+                                            motsar.shem && motsar.kmot && <TableRow key={index}>
+                                                <TableCell className="text-right">{parseFloat(motsar.kmot * GetBrtemMotsarMlae(motsar?.remez, motsar?.shem).alot).toFixed(2)}</TableCell>
+                                                <TableCell className="text-right">{motsar.kmot || '0'}</TableCell>
+                                                <TableCell className="text-right">{motsar.shem || 'אין'}</TableCell>
+                                                <TableCell className="text-right">{<Image className="w-[20px] h-[20px]" src={GetTmonatHelek(motsar.remez, GetBrtemMotsarMlae(motsar?.remez, motsar?.shem)?.msbar)} />}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    }
+                                    {
+                                        motsarem.motsaremRglem.map((motsar, index) => (
+                                            checkAemRemezMataem(motsar?.remez) && motsar.shem && motsar.kmot && <TableRow key={index}>
+                                                <TableCell className="text-right">{parseFloat(motsar.kmot * GetBrtemMotsarMlae(motsar?.remez, motsar?.shem).alot).toFixed(2)}</TableCell>
+                                                <TableCell className="text-right">{motsar.kmot || '0'}</TableCell>
+                                                <TableCell className="text-right">{motsar.shem || 'אין'}</TableCell>
+                                                <TableCell className="text-right">{<Image className="w-[20px] h-[20px]" src={GetTmonatHelek(motsar.remez, GetBrtemMotsarMlae(motsar?.remez, motsar?.shem)?.msbar)} />}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    }
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </>
+                }
 
             </div>
         </div>
