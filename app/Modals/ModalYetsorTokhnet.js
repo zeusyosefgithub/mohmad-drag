@@ -255,7 +255,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
             return (rohav / 100);
         }
         else {
-            return null;
+            return rohav / 100;
         }
     }
 
@@ -892,13 +892,21 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                                 val: 'Input',
                                                 chooises: `טווח אופקי בס"מ`,
                                                 getVal: tvahAofkeSolam,
-                                                setVal: (val) => { setHlokatSolam('בחר');resetBro(hlokatSolam,(solam === 'רק קדמי') ? parseFloat((msbarBroAofkeSolam * (rohav / 100)) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : (solam === 'הכל') ? parseFloat((msbarBroAofkeSolam * (parseFloat((rohav / 100) * (daletAleon ? 2 : 0)) + ((aorkh / 100) * 2))) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : null);setTvahAofkeSolam(val); const reverseCalculatedValue = parseInt(Math.floor(((parseFloat((gobahSolam / 100)) - 0.4) / parseFloat(val)) - 1)); setMsbarBroAofkeSolam(reverseCalculatedValue); }
+                                                setVal: (val) => { setHlokatSolam('בחר');resetBro(hlokatSolam,(solam === 'רק קדמי') ? parseFloat((msbarBroAofkeSolam * (rohav / 100)) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : (solam === 'הכל') ? parseFloat((msbarBroAofkeSolam * (parseFloat((rohav / 100) * (daletAleon ? 2 : 0)) + ((aorkh / 100) * 2))) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : null);
+                                                    setTvahAofkeSolam(val);
+                                                    const reverseCalculatedValue = parseInt(Math.floor(((parseFloat((gobahSolam / 100)) - 0.4) / parseFloat(val / 100)) - 1));
+                                                    setMsbarBroAofkeSolam(Math.max(reverseCalculatedValue,0));
+                                                }
                                             },
                                             {
                                                 val: 'Input',
                                                 chooises: "מס פרופילים אופקי",
                                                 getVal: msbarBroAofkeSolam,
-                                                setVal: (val) => { setHlokatSolam('בחר');resetBro(hlokatSolam,(solam === 'רק קדמי') ? parseFloat((msbarBroAofkeSolam * (rohav / 100)) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : (solam === 'הכל') ? parseFloat((msbarBroAofkeSolam * (parseFloat((rohav / 100) * (daletAleon ? 2 : 0)) + ((aorkh / 100) * 2))) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : null);setMsbarBroAofkeSolam(val); const calculatedValue = parseFloat(((parseFloat((gobahSolam / 100)) - 0.4) / (parseFloat(val) + 1)).toFixed(2)); setTvahAofkeSolam(calculatedValue); }
+                                                setVal: (val) => { setHlokatSolam('בחר');resetBro(hlokatSolam,(solam === 'רק קדמי') ? parseFloat((msbarBroAofkeSolam * (rohav / 100)) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : (solam === 'הכל') ? parseFloat((msbarBroAofkeSolam * (parseFloat((rohav / 100) * (daletAleon ? 2 : 0)) + ((aorkh / 100) * 2))) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : null);
+                                                    setMsbarBroAofkeSolam(val); 
+                                                    const calculatedValue = parseFloat((((parseFloat((gobahSolam / 100)) - 0.4) / (parseFloat(val) + 1)) * 100).toFixed(2));
+                                                    setTvahAofkeSolam(Math.max(calculatedValue,0));
+                                                }
                                             },
                                         )
                                     }
@@ -915,7 +923,7 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                                     setTvahAnkheSolam(val);
                                                     setHlokatSolam('בחר');resetBro(hlokatSolam,(solam === 'רק קדמי') ? parseFloat((msbarBroAofkeSolam * (rohav / 100)) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : (solam === 'הכל') ? parseFloat((msbarBroAofkeSolam * (parseFloat((rohav / 100) * (daletAleon ? 2 : 0)) + ((aorkh / 100) * 2))) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : null);
                                                     if (solam === 'רק קדמי') {
-                                                        setMsbarBroAnkheSolam(parseInt(Math.floor(((parseFloat((rohav / 100))) / (parseFloat(val) / 100)) - 3)));
+                                                        setMsbarBroAnkheSolam(parseInt(Math.floor(((parseFloat((rohav / 100))) / (parseFloat(val) / 100)) - 1)));
                                                     }
                                                     else if (solam === 'הכל' && daletAleon) {
                                                         setMsbarBroAnkheSolam(parseInt((Math.floor((parseFloat((rohav / 100)) / (parseFloat(val) / 100)) - 1) * 2) + (Math.floor((((parseFloat((aorkh / 100)) / (parseFloat(val) / 100)) - 1))) * 2)));
@@ -929,7 +937,10 @@ export default function ModalYetsorTokhnet({ show, disable, setMotsaremLhatseg, 
                                                 val: 'Input',
                                                 chooises: "מס פרופילים אנכי",
                                                 getVal: msbarBroAnkheSolam,
-                                                setVal: (val) => { setHlokatSolam('בחר');resetBro(hlokatSolam,(solam === 'רק קדמי') ? parseFloat((msbarBroAofkeSolam * (rohav / 100)) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : (solam === 'הכל') ? parseFloat((msbarBroAofkeSolam * (parseFloat((rohav / 100) * (daletAleon ? 2 : 0)) + ((aorkh / 100) * 2))) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : null);setMsbarBroAnkheSolam(val); setTvahAnkheSolam(0); }
+                                                setVal: (val) => { setHlokatSolam('בחר');resetBro(hlokatSolam,(solam === 'רק קדמי') ? parseFloat((msbarBroAofkeSolam * (rohav / 100)) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : (solam === 'הכל') ? parseFloat((msbarBroAofkeSolam * (parseFloat((rohav / 100) * (daletAleon ? 2 : 0)) + ((aorkh / 100) * 2))) + (msbarBroAnkheSolam * ((gobahSolam / 100) - 0.4)).toFixed(1)) : null);
+                                                    setMsbarBroAnkheSolam(val); 
+                                                    setTvahAnkheSolam(0); 
+                                                }
                                             },
                                         )
                                     }

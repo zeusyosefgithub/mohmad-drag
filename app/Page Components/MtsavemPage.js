@@ -174,14 +174,14 @@ export const MtsavemPage = React.forwardRef((props, ref) => {
                 <div className="p-3 flex justify-around">
                     <div>
                         <div className="flex items-center"><div className="w-[130px]">סניף :</div><div className="mr-1">{brtem?.snef}</div></div>
-                        <div className="flex items-center"><div className="w-[130px]">מס הזמנה :</div><div className="mr-1">{brtem?.msbarAglaHzmna}</div></div>
+                        <div className="flex items-center"><div className="w-[130px]">מס עגלה :</div><div className="mr-1">{brtem?.msbarAglaHzmna}</div></div>
                         <div className="flex items-center"><div className="w-[130px]">שם לקוח :</div><div className="mr-1">{brtem?.shemlkoh}</div></div>
                         <div className="flex items-center"><div className="w-[130px]">תאריך הצעה :</div><div className="mr-1">{format(new Date(), 'dd-MM-yyyy')}</div></div>
                         <div className="flex items-center"><div className="w-[130px]">תאריך אספקה :</div><div className="mr-1">{brtem?.tarekhAsbka && flipDate(brtem?.tarekhAsbka)}</div></div>
                     </div>
                     <div>
-                        <div className="flex items-center"><div className="w-[200px]">סכום הזמנה (לפני מע"מ) :</div><div className="mr-1">{brtem?.mherKlale || ''}</div></div>
-                        <div className="flex items-center"><div className="w-[200px]">סכום הזמנה (אחרי מע"מ) :</div><div className="mr-1">{brtem?.mherKlaleAhre || ''}</div></div>
+                        <div className="flex items-center"><div className="w-[200px]">סכום (לפני מע"מ) :</div><div className="mr-1">{brtem?.mherKlale || ''}</div></div>
+                        <div className="flex items-center"><div className="w-[200px]">סכום (כולל מע"מ) :</div><div className="mr-1">{brtem?.mherKlaleAhre || ''}</div></div>
                         <div className="flex items-center"><div className="w-[200px]">מקדימה :</div><div className="mr-1">{brtem?.mkdema || ''}</div></div>
                         <div className="flex items-center"><div className="w-[200px]">מספר תשלומים :</div><div className="mr-1">{brtem?.msbarTshlomem || ''}</div></div>
                         <div className="flex items-center"><div className="w-[200px]">אמצעי תשלום :</div><div className="mr-1">{brtem?.tnaeTshlom || ''}</div></div>

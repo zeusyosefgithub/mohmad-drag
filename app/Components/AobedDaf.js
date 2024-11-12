@@ -1,12 +1,12 @@
 'use client';
 
-import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@nextui-org/react";
-import { differenceInMinutes, format, parseISO } from "date-fns";
+import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, Spinner } from "@nextui-org/react";
+import { differenceInMinutes, format, getDaysInMonth, parse, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import { Hearts } from "react-loader-spinner";
 import { useGetDataByCondition, useGetDataByConditionWithoutUseEffect, useGetDataByConditionWithoutUseEffectTwoQueres } from "../FireBase/getDataByCondition";
 import GetDocs from "../FireBase/getDocs";
-import { addDoc, collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "../FireBase/firebase";
 import { useAuth } from "../auth/authContext";
 import { BiSolidPurchaseTag } from "react-icons/bi";
@@ -16,32 +16,28 @@ import { MdHome } from "react-icons/md";
 import { GiHook } from "react-icons/gi";
 import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import ModalAobedYetsor from "../Modals/ModalAobedYetsor";
+import { AnimatePresence, motion } from "framer-motion";
+import { Alert } from "@mui/material";
 
 export default function aobedDaf({ aobed }) {
     const { signUp, signIn, signOutt, currentUser } = useAuth();
     const [loadingFitching, setLoadingFitching] = useState(true);
     const [loadingFitching1, setLoadingFitching1] = useState(true);
     const [loadingFitching2, setLoadingFitching2] = useState(true);
-    const [showModalAobedYetsor,setShowModalAobedYetsor] = useState(false);
-    const [agla,setAgla] = useState({});
-
-
+    const [showModalAobedYetsor, setShowModalAobedYetsor] = useState(false);
+    const [agla, setAgla] = useState({});
 
     const aglotC = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'C').sort((a, b) => {
         if (a.msbarAdefot !== b.msbarAdefot) {
-          return a.msbarAdefot - b.msbarAdefot;
+            return a.msbarAdefot - b.msbarAdefot;
         }
         const dateA = new Date(a.tarekhAsbka);
         const dateB = new Date(b.tarekhAsbka);
         if (dateA.getTime() !== dateB.getTime()) {
-          return dateA - dateB;
+            return dateA - dateB;
         }
         return a.msbar - b.msbar;
-      });
-
-
-
-
+    });
 
     const GetHodatAobed = () => {
         if (parseFloat(format(new Date(), 'HH')) < 12) {
@@ -83,33 +79,8 @@ export default function aobedDaf({ aobed }) {
     const [loading, setLoading] = useState(false);
     const currentDate = format(new Date(), 'dd-MM-yyyy');
     const [aobedNkhhe, setAobedNokhhe] = useState();
-    const [shaotHeomData, setShaotHeomData] = useState([]);
-    const [knesotHeom, setKnesotHeom] = useState([]);
-    const [knesotHeomBdeka, setKnesotHeomBdeka] = useState([]);
     const counter = GetDocs('metadata').find((count) => count.id === 'counterShaotAboda');
 
-    useEffect(() => {
-        if (aobedNkhhe && aobedNkhhe[0]?.msbar) {
-            const unsubscribe = useGetDataByConditionWithoutUseEffectTwoQueres(
-                'shaotAboda',
-                'tarekh',
-                '==',
-                currentDate,
-                'aobed',
-                '==',
-                aobedNkhhe[0]?.msbar,
-                result => {
-                    setShaotHeomData(result || []);
-                    setLoadingFitching(false);
-                }
-            );
-            return () => {
-                if (unsubscribe) {
-                    unsubscribe();
-                }
-            };
-        }
-    }, [aobedNkhhe]);
     useEffect(() => {
         if (aobed?.name) {
             const unsubscribe = useGetDataByConditionWithoutUseEffect(
@@ -118,7 +89,7 @@ export default function aobedDaf({ aobed }) {
                 '==',
                 aobed?.taodatZhot,
                 result => {
-                    setAobedNokhhe(result || []);
+                    setAobedNokhhe(...result || []);
                     setLoadingFitching1(false);
                 }
             );
@@ -129,53 +100,6 @@ export default function aobedDaf({ aobed }) {
             };
         }
     }, [aobed]);
-    useEffect(() => {
-        if (Array.isArray(shaotHeomData) && shaotHeomData.length > 0 && Array.isArray(aobedNkhhe) && aobedNkhhe.length > 0) {
-            const updatedKnesotHeom = aobedNkhhe?.map(knesa => {
-                const res = shaotHeomData.find(data => data.aobed === knesa.msbar);
-                if (res) {
-                    return {
-                        id: res.id,
-                        msbar: knesa.msbar,
-                        shem: knesa.shem,
-                        tfked: knesa.tfked,
-                        yetseah: res.yetseah,
-                        knesa: res.knesa,
-                        headrot: res.headrot
-                    };
-                }
-                return {
-                    id: '',
-                    msbar: knesa.msbar,
-                    shem: knesa.shem,
-                    tfked: knesa.tfked,
-                    yetseah: '',
-                    tarekh: format(new Date(), 'dd-MM-yyyy'),
-                    knesa: '',
-                    headrot: ''
-                };
-            });
-            setKnesotHeom(updatedKnesotHeom);
-            setKnesotHeomBdeka(updatedKnesotHeom);
-        }
-        else if (!shaotHeomData?.length) {
-            const updatedKnesotHeom = aobedNkhhe?.map(knesa => {
-                return {
-                    id: '',
-                    msbar: knesa.msbar,
-                    shem: knesa.shem,
-                    tfked: knesa.tfked,
-                    yetseah: '',
-                    tarekh: format(new Date(), 'dd-MM-yyyy'),
-                    knesa: '',
-                    headrot: ''
-                };
-            });
-            setKnesotHeom(updatedKnesotHeom);
-            setKnesotHeomBdeka(updatedKnesotHeom);
-        }
-        setLoadingFitching2(false);
-    }, [shaotHeomData, aobedNkhhe]);
 
     const handleTimeDiffrence = (yetseah, knesa) => {
         if (yetseah && knesa) {
@@ -194,53 +118,6 @@ export default function aobedDaf({ aobed }) {
         return null;
     };
 
-    const knesaa = async () => {
-        let count1 = 0;
-        let count2 = 0;
-        let count3 = 0;
-        if (!knesotHeom[0]?.knesa && !knesotHeom[0]?.headrot && !knesotHeom[0]?.yetseah) {
-            try {
-                await addDoc(collection(firestore, 'shaotAboda'), {
-                    msbar: counter?.count,
-                    tarekh: format(new Date(), 'dd-MM-yyyy'),
-                    knesa: format(new Date(), 'HH:mm'),
-                    yetseah: '',
-                    aobed: knesotHeom[0]?.msbar,
-                    headrot: '',
-                    hodesh: format(new Date(), 'MM-yyyy')
-                });
-                count1++;
-                count2 += handleTimeDiffrence(knesotHeom[0].yetseah, knesotHeom[0].knesa);
-                count3 += knesotHeom[0]?.tfked === 'A' ? (handleTimeDiffrence(knesotHeom[0].yetseah, knesotHeom[0].knesa)) : 0;
-            }
-            catch (e) {
-                console.log(e);
-            }
-        }
-        else {
-            console.log(2);
-            try {
-                await updateDoc(doc(firestore, 'shaotAboda', knesotHeom[0].id), {
-                    yetseah: format(new Date(), 'HH:mm'),
-                    headrot: 'נוכח'
-                });
-                count3 += knesotHeom[0]?.tfked === 'A' ? (counter.countShaotAbodaMunth === format(new Date(), 'MM-yyyy') ? (handleTimeDiffrence(knesotHeom[0].yetseah, knesotHeom[0].knesa) - handleTimeDiffrence(knesotHeomBdeka[0].yetseah, knesotHeomBdeka[0].knesa)) : (handleTimeDiffrence(knesotHeom[0].yetseah, knesotHeom[0].knesa) - handleTimeDiffrence(knesotHeomBdeka[0].yetseah, knesotHeomBdeka[0].knesa))) : 0;
-                count2 += counter.countShaotAbodaMunth === format(new Date(), 'MM-yyyy') ? (handleTimeDiffrence(knesotHeom[0].yetseah, knesotHeom[0].knesa) - handleTimeDiffrence(knesotHeomBdeka[0].yetseah, knesotHeomBdeka[0].knesa)) : (handleTimeDiffrence(knesotHeom[0].yetseah, knesotHeom[0].knesa) - handleTimeDiffrence(knesotHeomBdeka[0].yetseah, knesotHeomBdeka[0].knesa));
-            }
-            catch (e) {
-                console.log(e);
-            }
-        }
-        await updateDoc(doc(firestore, 'metadata', 'counterShaotAboda'), {
-            count: counter?.count + count1,
-            countShaotAbodaKodemet: counter.countShaotAbodaMunth !== format(new Date(), 'MM-yyyy') ? counter?.countShaotAboda : counter?.countShaotAbodaKodemet,
-            countShaotAboda: counter.countShaotAbodaMunth === format(new Date(), 'MM-yyyy') ? (counter.countShaotAboda + count2) : count2,
-            countShaotAbodaMunth: format(new Date(), 'MM-yyyy'),
-            countShaotAbodaYetsor: counter.countShaotAbodaMunth === format(new Date(), 'MM-yyyy') ? (counter.countShaotAbodaYetsor + count3) : count3,
-            countShaotAbodaYetsorKodem: counter.countShaotAbodaMunth !== format(new Date(), 'MM-yyyy') ? counter?.countShaotAbodaYetsor : counter?.countShaotAbodaYetsorKodem,
-        });
-        setLoading(false);
-    }
 
     const [page, setPage] = useState("דף הבית");
 
@@ -252,13 +129,13 @@ export default function aobedDaf({ aobed }) {
 
     function GetTmonaLfeSog(val) {
         if (val === 'ייצור') {
-          return <FaTrailer className="text-3xl text-primary" />;
+            return <FaTrailer className="text-3xl text-primary" />;
         }
         else if (val === 'הרכבת וו') {
-          return <GiHook className="text-3xl text-primary" />;
+            return <GiHook className="text-3xl text-primary" />;
         }
         else if (val === 'תיקון') {
-          return <HiOutlineWrenchScrewdriver className="text-3xl text-primary" />;
+            return <HiOutlineWrenchScrewdriver className="text-3xl text-primary" />;
         }
     }
 
@@ -266,24 +143,199 @@ export default function aobedDaf({ aobed }) {
 
     useEffect(() => {
         if (agla && agla?.id) {
-          const unsub = onSnapshot(doc(firestore, 'tfaol', agla?.id), (doc) => {
-            if (doc.exists()) {
-              setAgla({ ...doc.data(), id: doc.id });
-            }
-          });
-          return () => unsub();
+            const unsub = onSnapshot(doc(firestore, 'tfaol', agla?.id), (doc) => {
+                if (doc.exists()) {
+                    setAgla({ ...doc.data(), id: doc.id });
+                }
+            });
+            return () => unsub();
         }
-      }, [agla?.id]);
+    }, [agla?.id]);
 
 
+    const [knesotHhodesh, setKnesotHhodesh] = useState([]);
+    const [knesotHeom, setKnesotHeom] = useState([]);
+    const [knesotHeomBdeka, setKnesotHeomBdeka] = useState([]);
+    const [isThereKnesa, setIsThereKnesa] = useState(null);
+    const [isFullKnesa, setIsFullKnesa] = useState(null);
+    const [isKnesaMAdminAndAobed,setIsKnesaMAdminAndAobed] = useState(false);
+    const [typeHosfa, setTypeHosfa] = useState(null);
+    const [isReady, setIsReady] = useState(false);
+    const [showMessage, setShowMessage] = useState(false);
+    const [showAlertMessage, setShowAlertMessage] = useState('');
 
-    console.log(aglotC);
+    useEffect(() => {
+        const docRef = doc(firestore, "shaotAbodaa", format(new Date(), 'MM-yyyy'));
+        const unsubscribe = onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+                setKnesotHhodesh(docSnap.data().knesot);
+                const arrayKnesot = docSnap.data().knesot;
+                const today = format(new Date(), 'dd-MM-yyyy');
+                const todayKnesa = arrayKnesot.find((knesa) => knesa.yom === today);
+                if (todayKnesa?.knesot?.length) {
+                    setKnesotHeom(todayKnesa.knesot);
+                    setKnesotHeomBdeka(todayKnesa.knesot);
+                    const userEntries = todayKnesa.knesot.find(knesa => knesa.msbar === aobedNkhhe?.msbar);
+                    const fulled = (userEntries?.yetseah && userEntries?.knesa && userEntries?.headrot) ? true : false;
+                    const res = (userEntries?.yetseah || userEntries?.knesa || userEntries?.headrot) ? true : false;
+                    setIsKnesaMAdminAndAobed((!fulled && !res && userEntries?.msbar) ? true : false);
+                    setIsThereKnesa(res);
+                    setIsFullKnesa(fulled);
+                    setTypeHosfa('update');
+                } else {
+                    setIsThereKnesa(false);
+                    setIsFullKnesa(false);
+                    setTypeHosfa('newOb');
+                }
+            } else {
+                setIsThereKnesa(false);
+                setIsFullKnesa(false);
+                setTypeHosfa('new');
+            }
+        });
+        const delayTimeout = setTimeout(() => {
+            setIsReady(true);
+        }, 500);
+        return () => {
+            clearTimeout(delayTimeout);
+            unsubscribe();
+        };
+    }, [aobedNkhhe, currentDate, currentUser, aobed]);
 
 
-    return (
+    const getReplacedData = () => {
+        const today = format(new Date(), 'dd-MM-yyyy');
+        const currentTime = format(new Date(), 'HH:mm');
+        const todayItem = knesotHhodesh.find(item => item.yom === today);
+        if (todayItem.knesot.length) {
+            if (isThereKnesa || isKnesaMAdminAndAobed) {
+                return todayItem.knesot.map(knesa => (
+                    knesa.msbar === aobedNkhhe?.msbar
+                        ? { headrot: '', knesa: currentTime, msbar: knesa.msbar, shem: knesa.shem, yetseah: '' }
+                        : knesa
+                ));
+            }
+            else {
+                let newArray = [...(todayItem?.knesot || [])];
+                newArray.push({
+                    headrot: '',
+                    knesa: currentTime,
+                    msbar: aobedNkhhe.msbar,
+                    shem: aobedNkhhe.shem,
+                    yetseah: ''
+                });
+                return newArray;
+            }
+        }
+        return [{
+            headrot: '',
+            knesa: currentTime,
+            msbar: aobedNkhhe?.msbar,
+            shem: aobedNkhhe?.shem,
+            yetseah: ''
+        }];
+    };
+
+    const getReplacedDataFull = () => {
+        const today = format(new Date(), 'dd-MM-yyyy');
+        const currentTime = format(new Date(), 'HH:mm');
+        const todayItem = knesotHhodesh.find(item => item.yom === today);
+        if (todayItem.knesot.length) {
+            return todayItem.knesot.map(knesa => (
+                knesa.msbar === aobedNkhhe?.msbar
+                    ? { headrot: 'נוכח', knesa: knesa.knesa, msbar: knesa.msbar, shem: knesa.shem, yetseah: currentTime }
+                    : knesa
+            ));
+        }
+    };
+
+    const GetListKnesotMunth = () => {
+        let newArray = [];
+        let AadHkhshav = parseInt(getDaysInMonth(format(new Date(), 'yyyy-MM')));
+        for (let index = 0; index < AadHkhshav; index++) {
+            let day = `${(index + 1) < 10 ? ('0' + (index + 1)) : (index + 1)}-${format(new Date(), 'MM-yyyy')}`;
+            if (day === format(new Date(), 'dd-MM-yyyy')) {
+                newArray.push({
+                    yom: day,
+                    knesot: knesotHeom
+                });
+            }
+            else {
+                newArray.push({
+                    yom: day,
+                    knesot: []
+                });
+            }
+        }
+        return newArray;
+    }
+
+    const knesaFunc = async () => {
+        setLoading(true);
+        console.log(typeHosfa);
+        if (typeHosfa === 'update' || typeHosfa === 'newOb') {
+            const updatedData = knesotHhodesh.map(item =>
+                item.yom === format(new Date(), 'dd-MM-yyyy')
+                    ? { ...item, knesot: getReplacedData() }
+                    : item
+            );
+            await updateDoc(
+                doc(
+                    firestore,
+                    'shaotAbodaa',
+                    format(new Date(), 'MM-yyyy')
+                ),
+                { knesot: updatedData }
+            );
+        }
+        else if (sogBaolaKnesot === 'new') {
+            const docRef = doc(firestore, "shaotAbodaa", format(new Date(), 'MM-yyyy'));
+            await setDoc(docRef, {
+                knesot: GetListKnesotMunth()
+            });
+        }
+        setLoading(false);
+        setShowMessage(true);
+        setShowAlertMessage('עדכון כניסה התבצע בהצלחה.');
+        setTimeout(() => {
+            setShowMessage(false);
+        }, 1300);
+    }
+
+    const yetsaFunc = async () => {
+        setLoading(true);
+        const updatedData = knesotHhodesh.map(item =>
+            item.yom === format(new Date(), 'dd-MM-yyyy')
+                ? { ...item, knesot: getReplacedDataFull() }
+                : item
+        );
+        await updateDoc(
+            doc(
+                firestore,
+                'shaotAbodaa',
+                format(new Date(), 'MM-yyyy')
+            ),
+            { knesot: updatedData }
+        );
+        setLoading(false);
+        setShowMessage(true);
+        setShowAlertMessage('עדכון יצאה התבצע בהצלחה.');
+        setTimeout(() => {
+            setShowMessage(false);
+        }, 1300);
+    }
+
+    return !isReady ? <Spinner className="absolute left-0 right-0 bottom-0 top-0" /> : (
         <>
-            <Navbar dir="rtl" className="fixed">
-                <NavbarContent onClick={() => setIsMenuOpen(true)}>
+            <div className="fixed right-1/2 transform translate-x-1/2 z-30 mt-32">
+                <div className={`w-[300px] md:w-[800px] transition-all duration-500 ease-in-out flex justify-center ${showMessage ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+                    <Alert className="max-w-[600px] w-full" dir="rtl" severity='success'>
+                        <div className="mr-2">{showAlertMessage}</div>
+                    </Alert>
+                </div>
+            </div>
+            <Navbar dir="rtl" className="fixed z-50">
+                <NavbarContent className="z-50" onClick={() => setIsMenuOpen(true)}>
                     <NavbarMenuToggle
                         onClick={() => setIsMenuOpen(true)}
                         aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -294,7 +346,7 @@ export default function aobedDaf({ aobed }) {
                     </NavbarBrand>
                 </NavbarContent>
 
-                <NavbarContent className="hidden sm:flex gap-4" justify="center">
+                <NavbarContent className="hidden z-50 sm:flex gap-4" justify="center">
                     <NavbarItem>
                         <Button variant="light" color="primary" className="text-lg" onClick={() => setPage("דף הבית")}>דף הבית<MdHome className="text-3xl text-primary-400" /></Button>
                     </NavbarItem>
@@ -334,16 +386,80 @@ export default function aobedDaf({ aobed }) {
             </Navbar>
             {
                 page === "דף הבית" &&
+                // <div className="h-screen flex justify-center items-center">
+                //     <Card dir="rtl" className="w-[450px] m-5">
+                //         <CardHeader>
+                //             <div className="w-full">
+                //                 <div className="text-xl text-primary mt-2 flex justify-around font-bold items-center">
+                //                     <div>היי {aobed.name}</div>
+                //                 </div>
+                //             </div>
+                //         </CardHeader>
+                //         <Divider />
+                //         <CardBody>
+                //             <div>
+                //                 <div className="w-full text-[10px]">
+                //                     <div className="flex items-center w-full ">
+                //                         <div className="w-[50px] text-right">שעה </div>
+                //                         <div className="">{format(new Date(), 'HH:mm')}</div>
+                //                     </div>
+                //                     <div className="flex items-center w-full mt-2">
+                //                         <div className="w-[50px] text-right">יום </div>
+                //                         <div className="">{GetTarekhShem(format(new Date(), 'EEEE'))}</div>
+                //                     </div>
+                //                     <div className="flex items-center w-full mt-2">
+                //                         <div className="w-[50px] text-right">תאריך </div>
+                //                         <div className="">{format(new Date(), 'dd-MM-yyyy')}</div>
+                //                     </div>
+                //                 </div>
+                //                 <Divider className="mt-5" />
+                //                 <div className="w-full justify-around flex items-center mt-2">
+                //                     <div>
+                //                         {GetHodatAobed()}
+                //                     </div>
+                //                     <Hearts
+                //                         height="80"
+                //                         width="80"
+                //                         color="#ef4444"
+                //                         ariaLabel="hearts-loading"
+                //                         wrapperStyle={{}}
+                //                         wrapperClass=""
+                //                         visible={true}
+                //                     />
+                //                 </div>
+                //             </div>
+                //         </CardBody>
+                //         <Divider />
+                //         <CardFooter>
+                //             {
+                //                 (knesotHeom) &&
+                //                 <div className="w-full ">
+                //                     {
+                //                         (knesotHeom[0]?.knesa && !knesotHeom[0]?.yetseah) ?
+                //                             <Button isLoading={loading} className="w-full mt-2 mb-2" color='danger' variant="flat" onClick={knesaa}>יצאה</Button>
+                //                             : (!knesotHeom[0]?.knesa && !knesotHeom[0]?.yetseah) ?
+                //                                 <Button isLoading={loading} className="w-full mt-2 mb-2" color='success' variant="flat" onClick={knesaa}>כניסה</Button>
+                //                                 :
+                //                                 <div className="text-success text-center">
+                //                                     המשך יום נעים {aobed.name}
+                //                                 </div>
+                //                     }
+                //                 </div>
+                //             }
+                //         </CardFooter>
+                //     </Card>
+
+
+                // </div>
                 <div className="h-screen flex justify-center items-center">
                     <Card dir="rtl" className="w-[450px] m-5">
-                        <CardHeader>
+                        <CardHeader className="border-b-1">
                             <div className="w-full">
                                 <div className="text-xl text-primary mt-2 flex justify-around font-bold items-center">
                                     <div>היי {aobed.name}</div>
                                 </div>
                             </div>
                         </CardHeader>
-                        <Divider />
                         <CardBody>
                             <div>
                                 <div className="w-full text-[10px]">
@@ -377,23 +493,57 @@ export default function aobedDaf({ aobed }) {
                                 </div>
                             </div>
                         </CardBody>
-                        <Divider />
-                        <CardFooter>
-                            {
-                                (knesotHeom) &&
-                                <div className="w-full ">
-                                    {
-                                        (knesotHeom[0]?.knesa && !knesotHeom[0]?.yetseah) ?
-                                            <Button isLoading={loading} className="w-full mt-2 mb-2" color='danger' variant="flat" onClick={knesaa}>יצאה</Button>
-                                            : (!knesotHeom[0]?.knesa && !knesotHeom[0]?.yetseah) ?
-                                                <Button isLoading={loading} className="w-full mt-2 mb-2" color='success' variant="flat" onClick={knesaa}>כניסה</Button>
-                                                :
-                                                <div className="text-success text-center">
+                        <CardFooter className="border-t-1">
+                            <div className="w-full">
+                                {
+                                    !isThereKnesa && !isFullKnesa && (
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key="1"
+                                                initial={{ opacity: 0, x: 100 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0, x: -100 }}
+                                                transition={{ duration: 0.9 }}
+                                            >
+                                                <Button isLoading={loading} className="w-full" color="primary" onClick={knesaFunc} variant="flat">כניסה</Button>
+                                            </motion.div>
+
+                                        </AnimatePresence>
+                                    )
+                                }
+                                {
+                                    isThereKnesa && !isFullKnesa && !isKnesaMAdminAndAobed && (
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key="2"
+                                                initial={{ opacity: 0, x: 100 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0, x: -100 }}
+                                                transition={{ duration: 0.9 }}
+                                            >
+                                                <Button isLoading={loading} className="w-full" onClick={yetsaFunc} variant="flat" color="danger">יצאה</Button>
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    )
+                                }
+                                {
+                                    isThereKnesa && isFullKnesa && (
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key="2"
+                                                initial={{ opacity: 0, x: 100 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0, x: -100 }}
+                                                transition={{ duration: 0.9 }}
+                                            >
+                                                <div className="w-full h-[40px] text-success flex items-center justify-center">
                                                     המשך יום נעים {aobed.name}
                                                 </div>
-                                    }
-                                </div>
-                            }
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    )
+                                }
+                            </div>
                         </CardFooter>
                     </Card>
 
@@ -403,7 +553,7 @@ export default function aobedDaf({ aobed }) {
             {
                 page === "תוכנית עבודה" &&
                 <div className="h-screen flex justify-center items-center">
-                    <ModalAobedYetsor aobed={aobed} agla={agla} show={showModalAobedYetsor} disable={() => setShowModalAobedYetsor(false)}/>
+                    <ModalAobedYetsor aobed={aobed} agla={agla} show={showModalAobedYetsor} disable={() => setShowModalAobedYetsor(false)} />
                     <div className="absolute top-20 w-full p-5">
                         <Card dir="rtl" className="p-5">
                             <CardHeader>
@@ -431,7 +581,7 @@ export default function aobedDaf({ aobed }) {
                                             {
                                                 aglotC.map((agla, index) => {
                                                     return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                        <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalAobedYetsor(true);setAgla(agla);  }}>פתח</Button></td>
+                                                        <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalAobedYetsor(true); setAgla(agla); }}>פתח</Button></td>
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
                                                         {/* <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]"></td> */}
                                                         {/* <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]"></td> */}

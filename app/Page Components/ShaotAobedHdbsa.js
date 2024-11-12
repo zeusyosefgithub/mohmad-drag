@@ -1,4 +1,4 @@
-import { Divider } from "@nextui-org/react";
+import { Divider, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { differenceInMinutes, format, parseISO } from "date-fns";
 import React from "react";
 import { FaWaze } from "react-icons/fa";
@@ -144,46 +144,41 @@ export const ShaotAobedHdbsa = React.forwardRef((props, ref) => {
                 </div>
             </div>
             <div className="mt-14">
-                {
-                    console.log(shaot)
-                }
-                <table className="w-full">
-                    <thead>
-                        <tr>
-                            <th className="border-b-1">סכום שעות</th>
-                            <th className="border-b-1">יצאה</th>
-                            <th className="border-b-1">כניסה</th>
-                            <th className="border-b-1">היעדרות</th>
-                            <th className="border-b-1">תאריך</th>
-                            <th className="border-b-1">יום</th>
-                            <th className="border-b-1">מס'</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <Table>
+                    <TableHeader>
+                        <TableColumn className="text-right text-sm border-b-2">סכום שעות</TableColumn>
+                        <TableColumn className="text-right text-sm border-b-2">יצאה</TableColumn>
+                        <TableColumn className="text-right text-sm border-b-2">כניסה</TableColumn>
+                        <TableColumn className="text-right text-sm border-b-2">היעדרות</TableColumn>
+                        <TableColumn className="text-right text-sm border-b-2">תאריך</TableColumn>
+                        <TableColumn className="text-right text-sm border-b-2">יום</TableColumn>
+                        <TableColumn className="text-right text-sm border-b-2">מס'</TableColumn>
+                    </TableHeader>
+                    <TableBody>
                         {
                             shaot?.map((shaa, index) => {
-                                return <tr className="border-b-1 text-danger">
-                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.knesa && shaa?.yetseah && parseFloat(timeToDecimal(calculateTimeDifference(shaot[index].knesa, shaot[index].yetseah))).toFixed(2)}</td>
-                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.yetseah}</td>
-                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.knesa}</td>
-                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.headrot || shaa.knesa && shaa.yetseah && 'נוכח'}</td>
-                                    <td className={`"px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.tarekh}</td>
-                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{shaa?.tarekh && GetTarekhShem(format(flipDate(shaa?.tarekh), 'EEEE'))}</td>
-                                    <td className={`px-4 py-3 text-center text-[12px] ${shaa.knesa && shaa.yetseah ? 'text-gray-700' : shaa.knesa || shaa.yetseah ? 'text-danger' : 'text-gray-700'} dark:text-gray-300`}>{index + 1}</td>
-                                </tr>
+                                return <TableRow>
+                                    <TableCell className={`text-right border-b-1 ${shaa.knesa && !shaa.yetseah ? 'text-danger' : ''}`}>{shaa?.knesa && shaa?.yetseah && parseFloat(timeToDecimal(calculateTimeDifference(shaa?.knesa, shaa?.yetseah))).toFixed(2)}</TableCell>
+                                    <TableCell className={`text-right border-b-1 ${shaa.knesa && !shaa.yetseah ? 'text-danger' : ''}`}>{shaa?.yetseah}</TableCell>
+                                    <TableCell className={`text-right border-b-1 ${shaa.knesa && !shaa.yetseah ? 'text-danger' : ''}`}>{shaa?.knesa}</TableCell>
+                                    <TableCell className={`text-right border-b-1 ${shaa.knesa && !shaa.yetseah ? 'text-danger' : ''}`}>{shaa?.headrot || ((shaa.knesa && shaa.yetseah) ? 'נוכח' : '')}</TableCell>
+                                    <TableCell className={`text-right border-b-1 ${shaa.knesa && !shaa.yetseah ? 'text-danger' : ''}`}>{shaa.yom}</TableCell>
+                                    <TableCell className={`text-right border-b-1 ${shaa.knesa && !shaa.yetseah ? 'text-danger' : ''}`}>{GetTarekhShem(format(flipDate(shaa?.yom), 'EEEE'))}</TableCell>
+                                    <TableCell className={`text-right border-b-1 ${shaa.knesa && !shaa.yetseah ? 'text-danger' : ''}`}>{index + 1}</TableCell>
+                                </TableRow>
                             })
                         }
-                        <tr className="border-b-1">
-                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300">{GetSkhomKolHshaot()}</td>
-                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"></td>
-                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"></td>
-                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"></td>
-                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"></td>
-                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"></td>
-                            <td className="px-4 py-3 text-center text-[12px] text-gray-700 dark:text-gray-300"></td>
-                        </tr>
-                    </tbody>
-                </table>
+                        <TableRow>
+                            <TableCell className="text-right">{GetSkhomKolHshaot()}</TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </div>
         </div>
     )

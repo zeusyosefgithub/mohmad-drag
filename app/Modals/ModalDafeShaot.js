@@ -2,7 +2,7 @@
 import { Button, Modal, Input, ModalBody, ModalContent, ModalFooter, ModalHeader, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Divider, Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { useEffect, useRef, useState } from "react";
 import { firestore } from "../FireBase/firebase";
-import { doc, getDoc, runTransaction, setDoc, collection, addDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, runTransaction, setDoc, collection, addDoc, updateDoc, onSnapshot } from "firebase/firestore";
 import GetDocs from "../FireBase/getDocs";
 import { differenceInMinutes, format, getDaysInMonth, parse, parseISO, subMonths } from "date-fns";
 import { useGetDataByConditionWithoutUseEffect, useGetDataByConditionWithoutUseEffectTwoQueres } from "../FireBase/getDataByCondition";
@@ -61,17 +61,8 @@ export default function ModalDafeShaot({ disable, show,counter,aobdem }) {
         }
     }
 
-    const GetYmem = (hodesh) => {
-        let newArray = [];
-        let AadHkhshav = parseInt(getDaysInMonth(parse(hodesh,'MM-yyyy',new Date())));
-        for (let index = 0; index < AadHkhshav; index++) {
-            newArray.push(`${index < 9 ? ('0' + (index + 1)) : index + 1}-${hodesh}`);
-        }
-        return newArray;
-    }
-
     const totsaotHodeshAobed = () => {
-        setLoading(true);
+        setLoading(true); // Start loading
         try {
             const formattedDate = hodeshYdne ? format(hodeshYdne, 'MM-yyyy') : null;
             if (!formattedDate) {
@@ -79,46 +70,90 @@ export default function ModalDafeShaot({ disable, show,counter,aobdem }) {
                 setLoading(false);
                 return;
             }
-            const unsubscribe = useGetDataByConditionWithoutUseEffectTwoQueres(
-                'shaotAboda',
-                'hodesh',
-                '==',
-                formattedDate,
-                'aobed',
-                '==',
-                parseInt(aobed),
-                result => {
-                    if (result.length && result[0]?.hodesh) {
-                        let Ymem = GetYmem(result[0]?.hodesh);
-                        let sortedArray = (result || []).sort((a, b) => {
-                            const dateA = parse(a.tarekh || '', 'dd-MM-yyyy', new Date());
-                            const dateB = parse(b.tarekh || '', 'dd-MM-yyyy', new Date());
-                            return dateA - dateB;
+            const docRef = doc(firestore, "shaotAbodaa", formattedDate);
+            const unsubscribe = onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists() && brtemAobed?.shem) {
+                    const arrayKnesot = docSnap.data().knesot;
+                    if (arrayKnesot && arrayKnesot.length) {
+                        const newArray = arrayKnesot.map((entry) => {
+                            const aobedObject = entry.knesot.find(item => item.msbar === parseInt(aobed));
+                            return {
+                                yom: entry.yom,
+                                msbar: aobed,
+                                shem: brtemAobed?.shem,
+                                knesa: aobedObject?.knesa || '',
+                                yetseah: aobedObject?.yetseah || '',
+                                headrot: aobedObject?.headrot || ''
+                            };
                         });
-                        let workingDates = sortedArray.map(item => item.tarekh).filter(Boolean);
-                        let missingDates = Ymem.filter(date => !workingDates.includes(date));
-                        missingDates.forEach((miss,index) => (
-                            sortedArray.push({
-                                tarekh : miss,
-                                headrot : 'חופשה'
-                            })
-                        ));
-                        sortedArray.sort((a, b) => {
-                            const dateA = parse(a.tarekh, 'dd-MM-yyyy', new Date());
-                            const dateB = parse(b.tarekh, 'dd-MM-yyyy', new Date());
-                            return dateA - dateB;
-                        });
-                        setShaotAobedSave(sortedArray);
+                        console.log(newArray);
+                        setShaotAobedSave(newArray);
+                    } else {
+                        console.warn("No knesot found for the month.");
                     }
-                    setLoading(false);
+                } else {
+                    console.warn("Document does not exist for the specified month.");
                 }
-            );
-        }
-        catch (e) {
-            console.log(e);
-            setLoading(false);
+                setLoading(false); // Stop loading once data is fetched
+            });
+    
+            return () => unsubscribe(); // Clean up the listener on unmount
+        } catch (e) {
+            console.error("Error fetching data:", e);
+            setLoading(false); // Stop loading in case of error
         }
     }
+
+
+    // const totsaotHodeshAobed = () => {
+    //     setLoading(true);
+    //     try {
+    //         const formattedDate = hodeshYdne ? format(hodeshYdne, 'MM-yyyy') : null;
+    //         if (!formattedDate) {
+    //             console.warn("Invalid date for hodeshYdne");
+    //             setLoading(false);
+    //             return;
+    //         }
+    //         const unsubscribe = useGetDataByConditionWithoutUseEffectTwoQueres(
+    //             'shaotAboda',
+    //             'hodesh',
+    //             '==',
+    //             formattedDate,
+    //             'aobed',
+    //             '==',
+    //             parseInt(aobed),
+    //             result => {
+    //                 if (result.length && result[0]?.hodesh) {
+    //                     let Ymem = GetYmem(result[0]?.hodesh);
+    //                     let sortedArray = (result || []).sort((a, b) => {
+    //                         const dateA = parse(a.tarekh || '', 'dd-MM-yyyy', new Date());
+    //                         const dateB = parse(b.tarekh || '', 'dd-MM-yyyy', new Date());
+    //                         return dateA - dateB;
+    //                     });
+    //                     let workingDates = sortedArray.map(item => item.tarekh).filter(Boolean);
+    //                     let missingDates = Ymem.filter(date => !workingDates.includes(date));
+    //                     missingDates.forEach((miss,index) => (
+    //                         sortedArray.push({
+    //                             tarekh : miss,
+    //                             headrot : 'חופשה'
+    //                         })
+    //                     ));
+    //                     sortedArray.sort((a, b) => {
+    //                         const dateA = parse(a.tarekh, 'dd-MM-yyyy', new Date());
+    //                         const dateB = parse(b.tarekh, 'dd-MM-yyyy', new Date());
+    //                         return dateA - dateB;
+    //                     });
+    //                     setShaotAobedSave(sortedArray);
+    //                 }
+    //                 setLoading(false);
+    //             }
+    //         );
+    //     }
+    //     catch (e) {
+    //         console.log(e);
+    //         setLoading(false);
+    //     }
+    // }
 
     useEffect(() => {
         if (shaotAobedSave.length) {
@@ -126,11 +161,22 @@ export default function ModalDafeShaot({ disable, show,counter,aobdem }) {
         }
     }, [shaotAobedSave]);
 
-    
+
     const hdbsatShaotAobed = useReactToPrint({
         pageStyle: `@page {
             size: A4;
-            margin: 0;
+            margin: 20px;
+        }
+       @media print {
+            /* Add extra space to the table header to simulate a top margin on new pages */
+            thead {
+                display: table-header-group; /* Ensure thead repeats on each page */
+                margin-top: 20px;
+                padding-top: 20px; /* Add padding to create extra space on new pages */
+            }
+            tbody tr {
+                page-break-inside: avoid; /* Prevent rows from breaking across pages */
+            }
         }`,
         content: () => componentRef.current,
     });

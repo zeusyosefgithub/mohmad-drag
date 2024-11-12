@@ -76,11 +76,11 @@ export default function CheckAuth({ children }) {
                             <ContactContext.Provider value={{ contactName, setContactName, customerSet, setCustomerSet,isNehol, setIsNehol,aobedAuth }}>
                                 {
                                     bdekatTafked()?.tfked && (bdekatTafked()?.tfked === 'admin') || (bdekatTafked()?.tfked === 'nehol') ?
-                                    <div>
-                                        <div>
+                                    <div className="flex flex-col h-screen">
+                                        <div className=" sticky top-0 z-50">
                                             <NavBar />
                                         </div>
-                                        <div className='mt-10'>
+                                        <div className='p-8 h-full'>
                                             {children}
                                         </div>
                                     </div>

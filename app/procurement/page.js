@@ -14,9 +14,9 @@ import ModalAddProductCategory from '../Modals/ModalAddProductCategory';
 import { useGetDataByCondition, useGetDataByConditionWithoutUseEffect, useGetDataByConditionWithoutUseEffectWithTwo, useGetDataByLimit } from '../FireBase/getDataByCondition';
 import { addDoc, collection, count, deleteDoc, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { firestore } from '../FireBase/firebase';
-import { differenceInDays, format, formatDistanceToNow,isValid, parse } from 'date-fns';
+import { differenceInDays, format, formatDistanceToNow, isValid, parse } from 'date-fns';
 import ModalShowBerotAska from '../Modals/ModalShowBerotAska';
-import Image from 'next/image'; 
+import Image from 'next/image';
 import { GetTmonatHelek } from '../page';
 import ContactContext from '../auth/ContactContext';
 import ModalMtsavMlae from '../Modals/ModalMtsavMlae';
@@ -42,7 +42,7 @@ import ModalAdconBret from '../Modals/ModalAdconBret';
 export default function Procurement() {
 
 
-    
+
 
     const aglotB = useGetDataByCondition('tfaol', 'sogBaola', '==', 'B');
 
@@ -72,7 +72,7 @@ export default function Procurement() {
     const GetMotsaremBalem = () => {
         let newArrray = [];
         for (let index = 0; index < mlae.length; index++) {
-            if(mlae[index].active){
+            if (mlae[index].active) {
                 newArrray.push(mlae[index]);
             }
         }
@@ -82,13 +82,13 @@ export default function Procurement() {
 
     const activeMlae = GetMotsaremBalem();
 
-    function adconMhekatMotsar(val1,val2){
+    function adconMhekatMotsar(val1, val2) {
         let newArray = [];
         let newArrayMotsarem = [];
         for (let index = 0; index < category.length; index++) {
-            if(val2 === category[index].id){
+            if (val2 === category[index].id) {
                 for (let index1 = 0; index1 < category[index]?.motsarem?.length; index1++) {
-                    if(category[index]?.motsarem[index1].sog === val1){
+                    if (category[index]?.motsarem[index1].sog === val1) {
                         newArrayMotsarem.push({
                             dlbak: 0,
                             mededa: category[index]?.motsarem[index1].mededa - 1,
@@ -96,13 +96,13 @@ export default function Procurement() {
                             sog: category[index]?.motsarem[index1].sog,
                         });
                     }
-                    else{
+                    else {
                         newArrayMotsarem.push(category[index]?.motsarem[index1]);
-                    } 
+                    }
                 }
-                newArray.push({...category[index],motsarem : newArrayMotsarem});
+                newArray.push({ ...category[index], motsarem: newArrayMotsarem });
             }
-            else{
+            else {
                 newArray.push(category[index]);
             }
         }
@@ -115,7 +115,7 @@ export default function Procurement() {
         const kmot = motsarMlae?.find(item => item.shem === shem)?.kmot || 0;
         const hozman = motsarMlae?.find(item => item.shem === shem)?.hozman || 0;
         const id = motsarMlae?.find(item => item.shem === shem)?.id || 0;
-        return { arrayResualt: motsarMlae, alot, kmot,hozman,id };
+        return { arrayResualt: motsarMlae, alot, kmot, hozman, id };
     }, [mlae]);
 
     function sumByRemez(arr) {
@@ -126,7 +126,7 @@ export default function Procurement() {
                 existingItem.kmot += item.kmot;
             } else {
                 console.log(item);
-                result.push({ kmot: item.kmot, remez: item.remez,shem : item.shem});
+                result.push({ kmot: item.kmot, remez: item.remez, shem: item.shem });
             }
         });
         return result;
@@ -135,42 +135,42 @@ export default function Procurement() {
         return parseFloat(num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')).toFixed(2);
     };
 
-    const GetKmotMtaema = (mededa,val,msbar) => {
-        if(mededa === 'Y'){
+    const GetKmotMtaema = (mededa, val, msbar) => {
+        if (mededa === 'Y') {
             return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'יח</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
         }
-        if(mededa === 'M'){
+        if (mededa === 'M') {
             return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'מ</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
         }
-        if(mededa === 'MS'){
+        if (mededa === 'MS') {
             return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>מ"ר</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
         }
-        if(mededa === 'L'){
+        if (mededa === 'L') {
             return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'ל</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
         }
-        if(mededa === 'MM'){
-            return ;
+        if (mededa === 'MM') {
+            return;
         }
-        if(mededa === 'K'){
-            if(msbar === 'G400'){
+        if (mededa === 'K') {
+            if (msbar === 'G400') {
                 return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>ק"ג</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
             }
-            else{
+            else {
                 return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>ק"ג</div><div className='text-4xl'>∞</div></div>;
             }
         }
-        
+
     }
 
     const GetMotsarMededa = (val) => {
         console.log(val);
         for (let index = 0; index < category.length; index++) {
             for (let index1 = 0; index1 < category[index].motsarem.length; index1++) {
-                if(category[index].motsarem[index1].sog === val){
+                if (category[index].motsarem[index1].sog === val) {
                     console.log(123);
                     return category[index].motsarem[index1].mededa;
                 }
-            } 
+            }
         }
     }
 
@@ -190,14 +190,14 @@ export default function Procurement() {
             console.log(reduced[index]);
             newArray2.push(<>
                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200 text-xs"><Switch 
-                        isSelected={GetBrtemMotsarMlae(reduced[index].remez,reduced[index].shem).hozman} onValueChange={async(val) => {
-                            await updateDoc(doc(firestore,'mlae',GetBrtemMotsarMlae(reduced[index].remez,reduced[index].shem).id),{
-                                hozman : val
+                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200 text-xs"><Switch
+                        isSelected={GetBrtemMotsarMlae(reduced[index].remez, reduced[index].shem).hozman} onValueChange={async (val) => {
+                            await updateDoc(doc(firestore, 'mlae', GetBrtemMotsarMlae(reduced[index].remez, reduced[index].shem).id), {
+                                hozman: val
                             })
-                        }} defaultValue={GetBrtemMotsarMlae(reduced[index].remez,reduced[index].shem).hozman} value={GetBrtemMotsarMlae(reduced[index].remez,reduced[index].shem).hozman}>
-                        </Switch></td>
-                    <td className="px-4 py-3 text-center text-danger-500 dark:text-gray-200 text-xs">{GetKmotMtaema(GetMotsarMededa(reduced[index].remez),reduced[index].kmot - GetBrtemMotsarMlae(reduced[index].remez,reduced[index].shem).kmot)}</td>
+                        }} defaultValue={GetBrtemMotsarMlae(reduced[index].remez, reduced[index].shem).hozman} value={GetBrtemMotsarMlae(reduced[index].remez, reduced[index].shem).hozman}>
+                    </Switch></td>
+                    <td className="px-4 py-3 text-center text-danger-500 dark:text-gray-200 text-xs">{GetKmotMtaema(GetMotsarMededa(reduced[index].remez), reduced[index].kmot - GetBrtemMotsarMlae(reduced[index].remez, reduced[index].shem).kmot)}</td>
                     <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200 text-xs">{reduced[index].shem}</td>
                     <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200 text-xs"><div className="group relative">
                         <Image src={GetTmonatHelek(reduced[index].remez)} className="h-[50px] w-[50px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
@@ -210,49 +210,49 @@ export default function Procurement() {
     }
 
     const GetTmonatHelekCategory = (val) => {
-        if(val === 'חלקים גדולים'){
+        if (val === 'חלקים גדולים') {
             return rep86;
         }
-        if(val === 'מתכות'){
+        if (val === 'מתכות') {
             return rep84;
         }
-        if(val === 'חלקים קטנים'){
+        if (val === 'חלקים קטנים') {
             return rep87;
         }
-        if(val === 'צבעים'){
+        if (val === 'צבעים') {
             return rep88;
         }
-        if(val === 'מדביקות'){
+        if (val === 'מדביקות') {
             return rep90;
         }
-        if(val === 'אורות וחשמל'){
+        if (val === 'אורות וחשמל') {
             return rep85;
         }
-        if(val === 'חומרי עזר'){
+        if (val === 'חומרי עזר') {
             return rep89;
         }
-        if(val === 'פסולת'){
+        if (val === 'פסולת') {
             return rep55;
         }
-        if(val === 'ווי גרירה'){
+        if (val === 'ווי גרירה') {
             return rep23;
         }
-        if(val === 'מוצרים אחרים'){
+        if (val === 'מוצרים אחרים') {
             return rep83;
         }
-        if(val === 'עגלות'){
+        if (val === 'עגלות') {
             return rep6;
         }
     }
 
-    const [showModalAdconBret,setShowModalAdconBret] = useState(false);
+    const [showModalAdconBret, setShowModalAdconBret] = useState(false);
     return (
-        <div className=''>
+        <div className='h-full'>
             {<ModalMessage Aeshor={async (val) => {
                 if (val) {
                     setLoading(true);
-                    await updateDoc(doc(firestore, 'mlae', motsarMhekaItem.id),{
-                        active : false
+                    await updateDoc(doc(firestore, 'mlae', motsarMhekaItem.id), {
+                        active: false
                     });
                     await updateDoc(doc(firestore, 'category', motsarMhekaCat.id), {
                         dlbak: motsarMhekaCat?.dlbak - 1,
@@ -261,21 +261,21 @@ export default function Procurement() {
                     setLoading(false);
                 }
             }} message={motsarMhekaItem?.kmot > 0 ? `אסור למחוק המוצר ${motsarMhekaItem?.shem} ויש כמות במלאי!!` : `האם אתה בטוח למחוק המוצר ${motsarMhekaItem?.shem} מהמלאי!!`} motsar={motsarMhekaItem} show={hodatMhekatMotsar} disable={() => setHodatMhekatMotsar(false)} />}
-            <ModalAdconBret motsarem={mlae} motsar={motsarMhekaItem} categoryMotsar={motsarMhekaCat} show={showModalAdconBret} disable={() => setShowModalAdconBret(false)}/>
+            <ModalAdconBret motsarem={mlae} motsar={motsarMhekaItem} categoryMotsar={motsarMhekaCat} show={showModalAdconBret} disable={() => setShowModalAdconBret(false)} />
             {<ModalZmanAbodaMotsar category={category} show={showModalZmanAbodaMotsar} disable={() => setShowModalZmanAbodaMotsar(false)} />}
             {<ModalMtsavMlae activeMlae={activeMlae} category={category} mlae={mlae} show={showModalMtsavMlae} disable={() => setShowModalMtsavMlae(false)} />}
             {<ModalAddProductCategory mlae={mlae} category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
             {loading && <Spinner className='absolute top-0 left-0 bottom-0 right-0' />}
 
-            <div className='flex items-center justify-around flex-wrap'>
-                <div className="w-full max-w-[400px] mr-5 ml-5 mb-5">
-                    <div className="flex justify-around">
-                        <div className="w-full mx-auto border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
+            <div className='flex items-center justify-around flex-wrap lg:flex-nowrap h-full'>
+                <div className="w-1/3 h-full">
+                    <div className="flex justify-around h-full">
+                        <div className="w-full h-full mx-auto border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
                             <div className="bg-gradient-to-r from-white to-warning-500 tracking-widest text-black font-extrabold text-base p-1 mb-3 text-center rounded-lg shadow-2xl transform transition-transform hover:scale-105">
                                 מוצרים חסרים
                             </div>
                             {
-                                <div className="overflow-x-auto h-[630px]">
+                                <div className="overflow-x-auto h-full">
                                     <table className="w-full table-auto border-collapse">
                                         <thead>
                                             <tr className="bg-gray-100 dark:bg-gray-800">
@@ -296,100 +296,94 @@ export default function Procurement() {
                         </div>
                     </div>
                 </div>
-                <div className='w-full mr-5 ml-5 max-w-[1190px] mb-5'>
-                    <div className='flex w-full'>
-                        <div className='bg-white rounded-l-2xl shadow-2xl w-full'>
-                            <div className='text-center text-2xl p-4 flex justify-around'>
-                                <Button onClick={() => setShowModalZmanAbodaMotsar(true)}>זמני עבודה</Button>
-                                
-                                <Button onClick={() => setShowModalMtsavMlae(true)}>ספירת מלאי</Button>
-                                <div className='text-primary font-extrabold'>מלאי</div>
-                            </div>
-                            <Divider className='mb-5' />
-                            <div className='p-5 h-[600px] overflow-auto'>
-                                {
-                                    category.map((cat, index) => {
-                                        return <>
-                                            <div key={index} ref={categoryRefs.current[index]} className='bg-white rounded-lg p-2'>
-                                                <div className='flex justify-between items-center'>
-                                                    <div className='flex items-center w-[200px]'>
-                                                        <Button size='sm' onClick={() => { setShowModalAddProductCategory(true); setCategoryData(cat) }} className='mr-3'><FaPlus className='text-xl' />מוצר חדש</Button>
-                                                    </div>
-                                                    <div className='text-base'>
-                                                    {
-                                                        cat.dlbak > 0 ? 
+                <div className='w-full h-full flex mr-5 ml-5 max-w-[1190px]'>
+
+                    <div className='rounded-l-2xl shadow-2xl w-full h-full flex flex-col bg-white'>
+                        <div className='text-center text-2xl flex justify-around p-[19px] items-center'>
+                            <Button onClick={() => setShowModalZmanAbodaMotsar(true)}>זמני עבודה</Button>
+                            <Button onClick={() => setShowModalMtsavMlae(true)}>ספירת מלאי</Button>
+                            <div className='text-primary font-extrabold'>מלאי</div>
+                        </div>
+                        <Divider className='mb-5' />
+                        <div className='p-5 overflow-auto h-full'>
+                            {
+                                category.map((cat, index) => {
+                                    return <div key={index} ref={categoryRefs.current[index]} className='bg-white rounded-lg p-2'>
+                                        <div className='flex justify-between items-center'>
+                                            <div className='flex items-center w-[200px]'>
+                                                <Button size='sm' onClick={() => { setShowModalAddProductCategory(true); setCategoryData(cat) }} className='mr-3'><FaPlus className='text-xl' />מוצר חדש</Button>
+                                            </div>
+                                            <div className='text-base'>
+                                                {
+                                                    cat.dlbak > 0 ?
                                                         <div>מוצרים {cat.dlbak}</div>
                                                         :
                                                         <div className='text-danger'>אין מוצרים כרגע</div>
-                                                    }
-                                                    </div>
-                                                    <div className='flex justify-end items-center w-[200px]'>
-                                                        <div className='mr-3 text-base'>{cat.shem}</div>
-                                                        <div className="group relative">
-                                                            <Image src={GetTmonatHelekCategory(cat?.shem)} className="rounded-full h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-slate-400 group-hover:translate-x-[-220%]" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className='mt-5'>
-                                                    <table className="w-full table-auto border-collapse">
-                                                        <thead>
-                                                            <tr className="bg-gray-500 dark:bg-gray-800 top-[-22px] sticky z-30">
-                                                            <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-white to-gray-50 text-sm"></th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-50 to-gray-50 text-sm"></th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-50 to-gray-100 text-sm">זמן הספקה</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-100 to-gray-200 text-sm">עלות ממוצע</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-200 to-gray-300 text-sm">סה"כ עלות</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-300 to-gray-400 text-sm w-[100px]">כמות</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-400 to-gray-500 text-sm">מדף</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-500 to-gray-600 text-sm w-[200px]">שם פריט</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-600 to-gray-700 text-sm">מק"ט</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black bg-gradient-to-r from-gray-700 to-gray-800 text-sm"></th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {cat?.motsarem?.map((motsar, index1) => (
-                                                                mlae.map((item, index) => {
-                                                                    return (item.categoryMotsar === motsar.sog) && (item.active) && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaTrash onClick={() => { setHodatMhekatMotsar(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-danger text-lg cursor-pointer' /></td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaEdit onClick={() => { setShowModalAdconBret(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-primary text-lg cursor-pointer' /></td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.zmanHsbaka}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{item.alotLeheda}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{parseFloat(item.alot).toFixed(2)}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{GetKmotMtaema(item.mededa,item.kmot,item.msbar)}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbarMdaf}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><div dir='rtl'>{item.shem}</div></td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbar}</td>
-                                                                        <td>
-                                                                            <div className="group relative">
-                                                                                <Image src={GetTmonatHelek(item.categoryMotsar,item?.msbar)} className="h-[50px] w-[50px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                })
-                                                            ))}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <Divider className='mt-5' />
+                                                }
                                             </div>
-                                        </>
-                                    })
-                                }
-                            </div>
-                            <div className='p-2'></div>
-                        </div>
-                        <div className='min-w-[180px] rounded-r-2xl p-1 m-auto bg-white pt-[12px] pb-[12px]'>
-                            {
-                                category.map((cat, index) => {
-                                    return <div className='text-center text-[15px]'>
-                                        <Button onClick={() => categoryRefs.current[index]?.current?.scrollIntoView({ behavior: 'smooth' })} color='primary' variant='faded' className='w-[100px]'>{cat?.shem}</Button>
-                                        {
-                                            index !== (category.length - 1) && <Divider className='mt-[12px] mb-[12px]' />
-                                        }
+                                            <div className='flex justify-end items-center w-[200px]'>
+                                                <div className='mr-3 text-base'>{cat.shem}</div>
+                                                <div className="group relative">
+                                                    <Image src={GetTmonatHelekCategory(cat?.shem)} className="rounded-full h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-slate-400 group-hover:translate-x-[-220%]" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <table className="w-full table-auto border-collapse">
+                                            <thead>
+                                                <tr className="bg-gray-100 dark:bg-gray-800 top-[-22px] sticky z-30">
+                                                    <th className="px-4 py-3 text-right font-bolder text-black text-sm"></th>
+                                                    <th className="px-4 py-3 text-right font-bolder text-black text-sm"></th>
+                                                    <th className="px-4 py-3 text-right font-bolder text-black text-sm">זמן הספקה</th>
+                                                    <th className="px-4 py-3 text-right font-bolder text-black text-sm">עלות ממוצע</th>
+                                                    <th className="px-4 py-3 text-right font-bolder text-black text-sm">סה"כ עלות</th>
+                                                    <th className="px-4 py-3 text-right font-bolder text-black text-sm w-[100px]">כמות</th>
+                                                    <th className="px-4 py-3 text-right font-bolder text-black text-sm">מדף</th>
+                                                    <th className="px-4 py-3 text-right font-bolder text-black text-sm w-[200px]">שם פריט</th>
+                                                    <th className="px-4 py-3 text-right font-bolder text-black text-sm">מק"ט</th>
+                                                    <th className="px-4 py-3 text-right font-bolder text-black text-sm"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {cat?.motsarem?.map((motsar, index1) => (
+                                                    mlae.map((item, index) => {
+                                                        return (item.categoryMotsar === motsar.sog) && (item.active) && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaTrash onClick={() => { setHodatMhekatMotsar(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-danger text-lg cursor-pointer' /></td>
+                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaEdit onClick={() => { setShowModalAdconBret(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-primary text-lg cursor-pointer' /></td>
+                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.zmanHsbaka}</td>
+                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{item.alotLeheda}</td>
+                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{parseFloat(item.alot).toFixed(2)}</td>
+                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{GetKmotMtaema(item.mededa, item.kmot, item.msbar)}</td>
+                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbarMdaf}</td>
+                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><div dir='rtl'>{item.shem}</div></td>
+                                                            <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbar}</td>
+                                                            <td>
+                                                                <div className="group relative">
+                                                                    <Image src={GetTmonatHelek(item.categoryMotsar, item?.msbar)} className="h-[50px] w-[50px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    })
+                                                ))}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 })
                             }
                         </div>
+                    </div>
+                    <div className='min-w-[180px] h-full rounded-r-2xl p-1 bg-white flex flex-col '>
+                        {
+                            category.map((cat, index) => {
+                                return <>
+                                    <div className='text-center text-[15px] m-auto'>
+                                        <Button onClick={() => categoryRefs.current[index]?.current?.scrollIntoView({ behavior: 'smooth' })} color='primary' variant='faded' className='w-[100px]'>{cat?.shem}</Button>
+                                    </div>
+                                    {
+                                        index !== (category.length - 1) && <Divider className='mt-[12px] mb-[12px]' />
+                                    }
+                                </>
+                            })
+                        }
                     </div>
                 </div>
 

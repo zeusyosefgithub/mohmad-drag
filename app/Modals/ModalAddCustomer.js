@@ -47,8 +47,7 @@ export default function ModalAddCustomer({ disable, show, counter, lkhot,brtem,L
         setErrorPhone('');
         if (!customerName) return setErrorMessageShem('אין נתונים!');;
         if (!customerPhone) return setErrorPhone('אין נתונים!');
-        if (!customerId) return setErrorMessageTaodatZehot('אין נתונים!');
-        if (checkAemLkohKeam()) {
+        if (customerId && checkAemLkohKeam()) {
             setErrorMessageTaodatZehot('ת.ז הלקוח כבר קיימת !!');
             return;
         }
