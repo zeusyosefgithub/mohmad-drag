@@ -1711,7 +1711,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                 <Dropdown dir="rtl" className="select-none">
                                                                     <DropdownTrigger>
                                                                         <Button className="" dir="ltr" color="primary" variant='flat' size="lg">
-                                                                            <MdKeyboardArrowDown className="text-xl" />{locationYetsorAgla || 'אמצעי תשלום'}
+                                                                            <MdKeyboardArrowDown className="text-xl" />{locationYetsorAgla || 'סניף ייצור'}
                                                                         </Button>
                                                                     </DropdownTrigger>
                                                                     <DropdownMenu
