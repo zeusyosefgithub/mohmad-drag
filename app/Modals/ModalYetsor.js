@@ -961,9 +961,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         }
         (!yetsorKeam?.msbar) && await updateDoc(doc(firestore, 'metadata', 'counterTfaol'), { count: counter?.count + 1 });
         setLoading(false);
-        if(shlavNokhhe === 'A' && !yetsorKeam?.htsaaNdbas){
-            hdbsatMtsavem();
-        }
         !res && ResetAll();
         !res && disable();
     }
