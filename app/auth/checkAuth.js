@@ -21,6 +21,7 @@ export default function CheckAuth({ children }) {
     const router = useRouter();
     const [contactName, setContactName] = useState(null);
     const [customerSet, setCustomerSet] = useState(null);
+    const [tfaol,setTfaol] = useState(null);
     const [isNehol, setIsNehol] = useState(null);
     const [aobedAuth, setaobedAuth] = useState(null);
     const [admins,setAdmins] = useState([]);
@@ -73,14 +74,14 @@ export default function CheckAuth({ children }) {
                     :
                     !loading && currentUser ?
                         <div>
-                            <ContactContext.Provider value={{ contactName, setContactName, customerSet, setCustomerSet,isNehol, setIsNehol,aobedAuth }}>
+                            <ContactContext.Provider value={{ contactName, setContactName, customerSet, setCustomerSet,isNehol, setIsNehol,aobedAuth,tfaol,setTfaol }}>
                                 {
                                     bdekatTafked()?.tfked && (bdekatTafked()?.tfked === 'admin') || (bdekatTafked()?.tfked === 'nehol') ?
                                     <div className="flex flex-col h-screen">
                                         <div className=" sticky top-0 z-50">
                                             <NavBar />
                                         </div>
-                                        <div className='p-8 h-full'>
+                                        <div className='p-8 h-full z-10'>
                                             {children}
                                         </div>
                                     </div>

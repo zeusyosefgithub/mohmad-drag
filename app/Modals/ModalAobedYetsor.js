@@ -37,6 +37,11 @@ export default function ModalAobedYetsor({ show, disable, agla,aobed }) {
 
 
     const [loading,setLoading] = useState(false);
+    const [loading1,setLoading1] = useState(false);
+    const [loading2,setLoading2] = useState(false);
+    const [loading3,setLoading3] = useState(false);
+    const [loading4,setLoading4] = useState(false);
+    const [loading5,setLoading5] = useState(false);
 
 
 
@@ -48,9 +53,6 @@ export default function ModalAobedYetsor({ show, disable, agla,aobed }) {
                     מצב עגלה
                 </ModalHeader>
                 <ModalBody className="border-b-2">
-                    {
-                        loading && <Spinner className="absolute left-0 right-0 bottom-0 top-0 z-50"/>
-                    }
                     <div dir="rtl" className="mb-3">
                         <Card className="w-full">
                             <CardBody>
@@ -58,23 +60,42 @@ export default function ModalAobedYetsor({ show, disable, agla,aobed }) {
                                     <div className="text-base text-right flex items-center">
                                         <GrPlan className="ml-2 text-xl text-primary" />תכנון
                                     </div>
-                                    <Button isLoading={loading} variant={mtsavYetsor[0]?.res ? "light" : 'solid'} className="w-[80px]" isDisabled={mtsavYetsor[0]?.res} onClick={async() => {
+                                    <Button isLoading={loading} variant='flat' className="w-[80px]" isDisabled={mtsavYetsor[1]?.res} onClick={async() => {
                                         setLoading(true);
-                                        await updateDoc(doc(firestore,'tfaol',agla.id),{
-                                            mtsavYetsor : [
-                                                {
-                                                    maoshar : aobed?.name,
-                                                    res : true,
-                                                    shaa : format(new Date(),'HH:mm'),
-                                                    tarekh : format(new Date(),'dd-MM-yyyy')
-                                                },
-                                                mtsavYetsor[1],
-                                                mtsavYetsor[2],
-                                                mtsavYetsor[3],
-                                                mtsavYetsor[4],
-                                                mtsavYetsor[5]
-                                            ]
-                                        });
+                                        if(mtsavYetsor[0]?.res){
+                                            await updateDoc(doc(firestore,'tfaol',agla.id),{
+                                                mtsavYetsor : [
+                                                    {
+                                                        maoshar : '',
+                                                        res : false,
+                                                        shaa : '',
+                                                        tarekh : ''
+                                                    },
+                                                    mtsavYetsor[1],
+                                                    mtsavYetsor[2],
+                                                    mtsavYetsor[3],
+                                                    mtsavYetsor[4],
+                                                    mtsavYetsor[5]
+                                                ]
+                                            });
+                                        }
+                                        else{
+                                            await updateDoc(doc(firestore,'tfaol',agla.id),{
+                                                mtsavYetsor : [
+                                                    {
+                                                        maoshar : aobed?.name,
+                                                        res : true,
+                                                        shaa : format(new Date(),'HH:mm'),
+                                                        tarekh : format(new Date(),'dd-MM-yyyy')
+                                                    },
+                                                    mtsavYetsor[1],
+                                                    mtsavYetsor[2],
+                                                    mtsavYetsor[3],
+                                                    mtsavYetsor[4],
+                                                    mtsavYetsor[5]
+                                                ]
+                                            });
+                                        }
                                         setLoading(false);
                                     }} size="sm">
                                         {
@@ -104,24 +125,45 @@ export default function ModalAobedYetsor({ show, disable, agla,aobed }) {
                                     <div className="text-base text-right flex items-center">
                                         <PiTreeStructureFill className="ml-2 text-xl text-primary" />שלדה
                                     </div>
-                                    <Button isLoading={loading} variant={mtsavYetsor[1]?.res ? "light" : 'solid'} className="w-[80px]" isDisabled={mtsavYetsor[1]?.res || !mtsavYetsor[0]?.res} onClick={async() => {
-                                        setLoading(true);
-                                        await updateDoc(doc(firestore,'tfaol',agla.id),{
-                                            mtsavYetsor : [
-                                                mtsavYetsor[0],
-                                                {
-                                                    maoshar : aobed?.name,
-                                                    res : true,
-                                                    shaa : format(new Date(),'HH:mm'),
-                                                    tarekh : format(new Date(),'dd-MM-yyyy')
-                                                },
-                                                mtsavYetsor[2],
-                                                mtsavYetsor[3],
-                                                mtsavYetsor[4],
-                                                mtsavYetsor[5]
-                                            ]
-                                        });
-                                        setLoading(false);
+                                    <Button isLoading={loading1} variant='flat' className="w-[80px]" isDisabled={!mtsavYetsor[0]?.res || mtsavYetsor[2]?.res} onClick={async () => {
+                                        setLoading1(true);
+                                        if (mtsavYetsor[1]?.res) {
+                                            await updateDoc(doc(firestore, 'tfaol', agla.id), {
+                                                mtsavYetsor: [
+                                                    mtsavYetsor[0],
+                                                    {
+                                                        maoshar: '',
+                                                        res: false,
+                                                        shaa: '',
+                                                        tarekh: ''
+                                                    },
+                                                    mtsavYetsor[2],
+                                                    mtsavYetsor[3],
+                                                    mtsavYetsor[4],
+                                                    mtsavYetsor[5]
+                                                ]
+                                            });
+
+                                        }
+                                        else {
+                                            await updateDoc(doc(firestore, 'tfaol', agla.id), {
+                                                mtsavYetsor: [
+                                                    mtsavYetsor[0],
+                                                    {
+                                                        maoshar: aobed?.name,
+                                                        res: true,
+                                                        shaa: format(new Date(), 'HH:mm'),
+                                                        tarekh: format(new Date(), 'dd-MM-yyyy')
+                                                    },
+                                                    mtsavYetsor[2],
+                                                    mtsavYetsor[3],
+                                                    mtsavYetsor[4],
+                                                    mtsavYetsor[5]
+                                                ]
+                                            });
+                                        }
+
+                                        setLoading1(false);
                                     }} size="sm">
                                         {
                                             mtsavYetsor[1]?.res ? <div className="flex items-center text-success">מוכן<FaCheckCircle className='text-success text-xl mr-1' /></div> : 'סימון'
@@ -150,24 +192,43 @@ export default function ModalAobedYetsor({ show, disable, agla,aobed }) {
                                     <div className="text-base text-right flex items-center">
                                         <HiOutlineViewGridAdd className="ml-2 text-xl text-primary" />השלמה
                                     </div>
-                                    <Button isLoading={loading} variant={mtsavYetsor[2]?.res ? "light" : 'solid'} className="w-[80px]" isDisabled={mtsavYetsor[2]?.res || !mtsavYetsor[1]?.res} onClick={async() => {
-                                        setLoading(true);
-                                        await updateDoc(doc(firestore,'tfaol',agla.id),{
-                                            mtsavYetsor : [
-                                                mtsavYetsor[0],
-                                                mtsavYetsor[1],
-                                                {
-                                                    maoshar : aobed?.name,
-                                                    res : true,
-                                                    shaa : format(new Date(),'HH:mm'),
-                                                    tarekh : format(new Date(),'dd-MM-yyyy')
-                                                },
-                                                mtsavYetsor[3],
-                                                mtsavYetsor[4],
-                                                mtsavYetsor[5]
-                                            ]
-                                        });
-                                        setLoading(false);
+                                    <Button isLoading={loading2} variant='flat' className="w-[80px]" isDisabled={!mtsavYetsor[1]?.res || mtsavYetsor[3]?.res} onClick={async () => {
+                                        setLoading2(true);
+                                        if (mtsavYetsor[2]?.res) {
+                                            await updateDoc(doc(firestore, 'tfaol', agla.id), {
+                                                mtsavYetsor: [
+                                                    mtsavYetsor[0],
+                                                    mtsavYetsor[1],
+                                                    {
+                                                        maoshar: '',
+                                                        res: false,
+                                                        shaa: '',
+                                                        tarekh: ''
+                                                    },
+                                                    mtsavYetsor[3],
+                                                    mtsavYetsor[4],
+                                                    mtsavYetsor[5]
+                                                ]
+                                            });
+                                        }
+                                        else {
+                                            await updateDoc(doc(firestore, 'tfaol', agla.id), {
+                                                mtsavYetsor: [
+                                                    mtsavYetsor[0],
+                                                    mtsavYetsor[1],
+                                                    {
+                                                        maoshar: aobed?.name,
+                                                        res: true,
+                                                        shaa: format(new Date(), 'HH:mm'),
+                                                        tarekh: format(new Date(), 'dd-MM-yyyy')
+                                                    },
+                                                    mtsavYetsor[3],
+                                                    mtsavYetsor[4],
+                                                    mtsavYetsor[5]
+                                                ]
+                                            });
+                                        }
+                                        setLoading2(false);
                                     }} size="sm">
                                         {
                                             mtsavYetsor[2]?.res ? <div className="flex items-center text-success">מוכן<FaCheckCircle className='text-success text-xl mr-1' /></div> : 'סימון'
@@ -196,24 +257,43 @@ export default function ModalAobedYetsor({ show, disable, agla,aobed }) {
                                     <div className="text-base text-right flex items-center">
                                         <GiPaintBucket className="ml-2 text-xl text-primary" />צבע
                                     </div>
-                                    <Button isLoading={loading} variant={mtsavYetsor[3]?.res ? "light" : 'solid'} className="w-[80px]" isDisabled={mtsavYetsor[3]?.res || !mtsavYetsor[2]?.res} onClick={async() => {
-                                        setLoading(true);
-                                        await updateDoc(doc(firestore,'tfaol',agla.id),{
-                                            mtsavYetsor : [
-                                                mtsavYetsor[0],
-                                                mtsavYetsor[1],
-                                                mtsavYetsor[2],
-                                                {
-                                                    maoshar : aobed?.name,
-                                                    res : true,
-                                                    shaa : format(new Date(),'HH:mm'),
-                                                    tarekh : format(new Date(),'dd-MM-yyyy')
-                                                },
-                                                mtsavYetsor[4],
-                                                mtsavYetsor[5]
-                                            ]
-                                        });
-                                        setLoading(false);
+                                    <Button isLoading={loading3} variant='flat' className="w-[80px]" isDisabled={!mtsavYetsor[2]?.res || mtsavYetsor[4]?.res} onClick={async () => {
+                                        setLoading3(true);
+                                        if (mtsavYetsor[3]?.res) {
+                                            await updateDoc(doc(firestore, 'tfaol', agla.id), {
+                                                mtsavYetsor: [
+                                                    mtsavYetsor[0],
+                                                    mtsavYetsor[1],
+                                                    mtsavYetsor[2],
+                                                    {
+                                                        maoshar: '',
+                                                        res: false,
+                                                        shaa: '',
+                                                        tarekh: ''
+                                                    },
+                                                    mtsavYetsor[4],
+                                                    mtsavYetsor[5]
+                                                ]
+                                            });
+                                        }
+                                        else {
+                                            await updateDoc(doc(firestore, 'tfaol', agla.id), {
+                                                mtsavYetsor: [
+                                                    mtsavYetsor[0],
+                                                    mtsavYetsor[1],
+                                                    mtsavYetsor[2],
+                                                    {
+                                                        maoshar: aobed?.name,
+                                                        res: true,
+                                                        shaa: format(new Date(), 'HH:mm'),
+                                                        tarekh: format(new Date(), 'dd-MM-yyyy')
+                                                    },
+                                                    mtsavYetsor[4],
+                                                    mtsavYetsor[5]
+                                                ]
+                                            });
+                                        }
+                                        setLoading3(false);
                                     }} size="sm">
                                         {
                                             mtsavYetsor[3]?.res ? <div className="flex items-center text-success">מוכן<FaCheckCircle className='text-success text-xl mr-1' /></div> : 'סימון'
@@ -242,24 +322,43 @@ export default function ModalAobedYetsor({ show, disable, agla,aobed }) {
                                     <div className="text-base text-right flex items-center">
                                         <MdOutlineElectricalServices className="ml-2 text-xl text-primary" />חשמל
                                     </div>
-                                    <Button isLoading={loading} variant={mtsavYetsor[4]?.res ? "light" : 'solid'} className="w-[80px]" isDisabled={mtsavYetsor[4]?.res || !mtsavYetsor[3]?.res} onClick={async() => {
-                                        setLoading(true);
-                                        await updateDoc(doc(firestore,'tfaol',agla.id),{
-                                            mtsavYetsor : [
-                                                mtsavYetsor[0],
-                                                mtsavYetsor[1],
-                                                mtsavYetsor[2],
-                                                mtsavYetsor[3],
-                                                {
-                                                    maoshar : aobed?.name,
-                                                    res : true,
-                                                    shaa : format(new Date(),'HH:mm'),
-                                                    tarekh : format(new Date(),'dd-MM-yyyy')
-                                                },
-                                                mtsavYetsor[5]
-                                            ]
-                                        });
-                                        setLoading(false);
+                                    <Button isLoading={loading4} variant='flat' className="w-[80px]" isDisabled={!mtsavYetsor[3]?.res || mtsavYetsor[5]?.res} onClick={async () => {
+                                        setLoading4(true);
+                                        if (mtsavYetsor[4]?.res) {
+                                            await updateDoc(doc(firestore, 'tfaol', agla.id), {
+                                                mtsavYetsor: [
+                                                    mtsavYetsor[0],
+                                                    mtsavYetsor[1],
+                                                    mtsavYetsor[2],
+                                                    mtsavYetsor[3],
+                                                    {
+                                                        maoshar: '',
+                                                        res: false,
+                                                        shaa: '',
+                                                        tarekh: ''
+                                                    },
+                                                    mtsavYetsor[5]
+                                                ]
+                                            });
+                                        }
+                                        else {
+                                            await updateDoc(doc(firestore, 'tfaol', agla.id), {
+                                                mtsavYetsor: [
+                                                    mtsavYetsor[0],
+                                                    mtsavYetsor[1],
+                                                    mtsavYetsor[2],
+                                                    mtsavYetsor[3],
+                                                    {
+                                                        maoshar: aobed?.name,
+                                                        res: true,
+                                                        shaa: format(new Date(), 'HH:mm'),
+                                                        tarekh: format(new Date(), 'dd-MM-yyyy')
+                                                    },
+                                                    mtsavYetsor[5]
+                                                ]
+                                            });
+                                        }
+                                        setLoading4(false);
                                     }} size="sm">
                                         {
                                             mtsavYetsor[4]?.res ? <div className="flex items-center text-success">מוכן<FaCheckCircle className='text-success text-xl mr-1' /></div> : 'סימון'
@@ -288,25 +387,45 @@ export default function ModalAobedYetsor({ show, disable, agla,aobed }) {
                                     <div className="text-base text-right flex items-center">
                                         <FaSearch className="ml-2 text-xl text-primary" />בקרת איכות
                                     </div>
-                                    <Button isLoading={loading} variant={mtsavYetsor[5]?.res ? "light" : 'solid'} className="w-[80px]" isDisabled={mtsavYetsor[5]?.res || !mtsavYetsor[4]?.res} onClick={async() => {
-                                        setLoading(true);
-                                        await updateDoc(doc(firestore,'tfaol',agla.id),{
-                                            mtsavYetsor : [
-                                                mtsavYetsor[0],
-                                                mtsavYetsor[1],
-                                                mtsavYetsor[2],
-                                                mtsavYetsor[3],
-                                                mtsavYetsor[4],
-                                                {
-                                                    maoshar : aobed?.name,
-                                                    res : true,
-                                                    shaa : format(new Date(),'HH:mm'),
-                                                    tarekh : format(new Date(),'dd-MM-yyyy')
-                                                },
-                                            ],
-                                            shlavYetsor : true
-                                        });
-                                        setLoading(false);
+                                    <Button isLoading={loading5} variant='flat' className="w-[80px]" isDisabled={!mtsavYetsor[4]?.res} onClick={async () => {
+                                        setLoading5(true);
+                                        if (mtsavYetsor[5]?.res) {
+                                            await updateDoc(doc(firestore, 'tfaol', agla.id), {
+                                                mtsavYetsor: [
+                                                    mtsavYetsor[0],
+                                                    mtsavYetsor[1],
+                                                    mtsavYetsor[2],
+                                                    mtsavYetsor[3],
+                                                    mtsavYetsor[4],
+                                                    {
+                                                        maoshar: '',
+                                                        res: false,
+                                                        shaa: '',
+                                                        tarekh: ''
+                                                    },
+                                                ],
+                                                shlavYetsor: true
+                                            });
+                                        }
+                                        else {
+                                            await updateDoc(doc(firestore, 'tfaol', agla.id), {
+                                                mtsavYetsor: [
+                                                    mtsavYetsor[0],
+                                                    mtsavYetsor[1],
+                                                    mtsavYetsor[2],
+                                                    mtsavYetsor[3],
+                                                    mtsavYetsor[4],
+                                                    {
+                                                        maoshar: aobed?.name,
+                                                        res: true,
+                                                        shaa: format(new Date(), 'HH:mm'),
+                                                        tarekh: format(new Date(), 'dd-MM-yyyy')
+                                                    },
+                                                ],
+                                                shlavYetsor: true
+                                            });
+                                        }
+                                        setLoading5(false);
                                     }} size="sm">
                                         {
                                             mtsavYetsor[5]?.res ? <div className="flex items-center text-success">מוכן<FaCheckCircle className='text-success text-xl mr-1' /></div> : 'סימון'

@@ -15,6 +15,7 @@ export default function ModalHosfatAobed({ disable, show }) {
     const [tarefLeshaa,setTarefLeshaa] = useState(0);
     const [yeshov,setYeshov] = useState('');
     const [aer,setAer] = useState('');
+    const [snef,setSnef] = useState('');
 
     const [loading,setLoading] = useState(false);
     
@@ -23,6 +24,7 @@ export default function ModalHosfatAobed({ disable, show }) {
     const hosfatAobed = async() => {
         setLoading(true);
         await addDoc(collection(firestore,'aobdem'),{
+            snef,
             msbar: counter?.count,
             bensea: 0,
             betsoeem: 0,
@@ -49,6 +51,7 @@ export default function ModalHosfatAobed({ disable, show }) {
         setTarefLeshaa(0);
         setYeshov('');
         setAer('');
+        setSnef('');
         disable();
     }
 
@@ -66,6 +69,7 @@ export default function ModalHosfatAobed({ disable, show }) {
                             type="text"
                             value={shem}
                             onValueChange={(val) => setShem(val)}
+                            color={shem ? "primary" : 'default'}
                             />
                             <Input 
                             label="תעודת זהות"
@@ -74,6 +78,7 @@ export default function ModalHosfatAobed({ disable, show }) {
                             type="text"
                             value={taodatZhot}
                             onValueChange={(val) => setTaodatZhot(val)}
+                            color={taodatZhot ? "primary" : 'default'}
                             />
                             <Input 
                             label="נייד"
@@ -82,6 +87,7 @@ export default function ModalHosfatAobed({ disable, show }) {
                             type="text"
                             value={nead}
                             onValueChange={(val) => setNead(val)}
+                            color={nead ? "primary" : 'default'}
                             />
                             <Input 
                             label="תעריף לשעה"
@@ -90,30 +96,34 @@ export default function ModalHosfatAobed({ disable, show }) {
                             type="number"
                             value={tarefLeshaa || ""}
                             onValueChange={(val) => setTarefLeshaa(val)}
+                            color={tarefLeshaa ? "primary" : 'default'}
                             />
                             <Input 
                             label="ישוב"
-                            className="w-full max-w-[250px] mt-5"
-                            size="sm"
-                            type="text"
-                            value={yeshov}
-                            onValueChange={(val) => setYeshov(val)}
+                                className="w-full max-w-[250px] mt-5"
+                                size="sm"
+                                type="text"
+                                value={yeshov}
+                                onValueChange={(val) => setYeshov(val)}
+                                color={yeshov ? "primary" : 'default'}
                             />
-                            <Input 
-                            label="עיר"
-                            className="w-full max-w-[250px] mt-5 mb-5"
-                            size="sm"
-                            type="text"
-                            value={aer}
-                            onValueChange={(val) => setAer(val)}
+                            <Input
+                                label="עיר"
+                                className="w-full max-w-[250px] mt-5 mb-5"
+                                size="sm"
+                                type="text"
+                                value={aer}
+                                onValueChange={(val) => setAer(val)}
+                                color={aer ? "primary" : 'default'}
                             />
-                            <Dropdown dir="rtl">
+                            <div>
+                                <Dropdown dir="rtl">
                                     <DropdownTrigger>
                                         <Button
-                                            color="primary"
-                                            variant="bordered"
+                                            color={tfked ? "primary" : 'default'}
+                                            variant="flat"
                                             className="mb-5"
-                                            size="lg"
+                                            size="sm"
                                         >
                                             {tfked || 'תפקיד'}
                                         </Button>
@@ -130,14 +140,41 @@ export default function ModalHosfatAobed({ disable, show }) {
                                         <DropdownItem key="ייצור">ייצור</DropdownItem>
                                         <DropdownItem key="הנהלה">הנהלה</DropdownItem>
                                     </DropdownMenu>
-                            </Dropdown>
+                                </Dropdown>
+                            </div>
+                            <div>
+                                <Dropdown dir="rtl">
+                                    <DropdownTrigger>
+                                        <Button
+                                            color={snef ? "primary" : 'default'}
+                                            variant="flat"
+                                            className="mb-5"
+                                            size="sm"
+                                        >
+                                            {snef || 'סניף'}
+                                        </Button>
+                                    </DropdownTrigger>
+                                    <DropdownMenu
+                                        aria-label="Multiple selection example"
+                                        variant="flat"
+                                        closeOnSelect={true}
+                                        disallowEmptySelection
+                                        selectionMode="single"
+                                        selectedKeys={snef}
+                                        onSelectionChange={(val) => setSnef(val.currentKey)}
+                                    >
+                                        <DropdownItem key="עארה">עארה</DropdownItem>
+                                        <DropdownItem key="מעלה אפריים">מעלה אפריים</DropdownItem>
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </div>
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <Button size="lg" color="primary" onClick={ResetAll}>
+                        <Button variant="flat" size="sm" color='warning' onClick={ResetAll}>
                             סגור
                         </Button>
-                        <Button isLoading={loading} isDisabled={!shem || !tarefLeshaa || !tfked} size="lg" color="primary" onClick={hosfatAobed}>
+                        <Button variant="flat" size="sm" isLoading={loading} isDisabled={!shem || !tarefLeshaa || !tfked} color="primary" onClick={hosfatAobed}>
                             אישור
                         </Button>
                     </ModalFooter>

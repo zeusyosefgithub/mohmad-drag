@@ -1,5 +1,5 @@
 'use client';
-import { Autocomplete, AutocompleteItem, Avatar, Button, Pagination, Card, CardBody, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Radio, RadioGroup, Switch, Tooltip, DatePicker, Accordion, AccordionItem, Popover, PopoverTrigger, PopoverContent, Textarea, Progress } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Avatar, Button, Pagination, Card, CardBody, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Radio, RadioGroup, Switch, Tooltip, DatePicker, Accordion, AccordionItem, Popover, PopoverTrigger, PopoverContent, Textarea, Progress, Spinner } from "@nextui-org/react";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { FaBars, FaBeer, FaPlus, FaRegCheckSquare, FaUser } from "react-icons/fa";
 import GetDocs from "../FireBase/getDocs";
@@ -32,11 +32,14 @@ import { MtsavemPage } from "../Page Components/MtsavemPage";
 import { RiFileList3Fill } from "react-icons/ri";
 import Image from "next/image";
 import { FaLocationDot } from "react-icons/fa6";
+import ContactContext from "../auth/ContactContext";
+import { useRouter } from "next/navigation";
 
 export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, drag, yetsorKeam, category, lkhot, aglot, mlae, sogAskaa }) {
 
 
-
+    const { tfaol,setTfaol } = useContext(ContactContext);
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const PrintRef = useRef();
     // ---------------------------------------------------------------------------------------- hotsaot 
@@ -1484,13 +1487,61 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         }
     };
 
+    const GetTokhnetProps = () => {
+        if (yetsorKeam?.sogAskaa === 'ייצור' || sogAskaa === 'ייצור') {
+            return <div className="border-r-2 pr-2">
+                <div className="flex justify-start">
+                    <Dropdown dir="rtl">
+                        <DropdownTrigger>
+                            <Button dir="ltr" color="primary" variant='flat' size="lg">
+                                <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet}` : 'בחירת תוכנית'}
+                            </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                            aria-label="Multiple selection example"
+                            variant="flat"
+                            closeOnSelect={true}
+                            disallowEmptySelection
+                            selectionMode="single"
+                            onSelectionChange={(val) => { setShemTokhnet(val.currentKey); setTokhnet(null); resetAllTokhnetYdnet(); }}
+                        >
+                            <DropdownItem key='תוכנית ידנית'>תוכנית ידנית</DropdownItem>
+                            {Tokhneot?.map((option) => (
+                                <DropdownItem onClick={() => setTokhnet(option)} key={option.shem}>{option.shem}</DropdownItem>
+                            ))}
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
+                <div className="mt-3">
+                    <Button isDisabled={!shemTokhnet} className="ml-2" size='md' variant="flat" onClick={() => setShowModalTokhnetYetsor(true)} color='primary'>תוכנית ייצור</Button>
+                    <Button isDisabled={!shemTokhnet} className="mr-2 ml-2" size='md' variant="flat" onClick={() => setShowModalBerotMotsrem(true)} color="primary">פירוט מוצרים</Button>
+                </div>
+            </div>;
+        }
+        else if (yetsorKeam?.sogAskaa === 'הרכבת וו' || sogAskaa === 'הרכבת וו') {
+            return <div className="border-r-2 pr-2">
+                <Button className="ml-2" size='md' variant="flat" onClick={() => setShowModalTokhnetYetsor(true)} color='primary'>תוכנית הרכבת וו</Button>
+            </div>;
+        }
+        else if (yetsorKeam?.sogAskaa === 'תיקון' || sogAskaa === 'תיקון') {
+            return <div className="border-r-2 pr-2">
+                <Button className="ml-2" size='md' variant="flat" onClick={() => setShowModalTokhnetYetsor(true)} color='primary'>תוכנית תיקון</Button>
+            </div>;
+        }
+    }
+
+    const [loadingPage,setLoadingPage] = useState(false);
+
+
+
+    console.log(motsaremLhatseg);
 
 
     return (
         <Modal placement="center" className="test-fontt select-none" backdrop={"blur"} size="full" isOpen={show} onClose={() => { setShowModalMessage(true); }}>
             <ModalContent className="w-full h-screen bg-white flex flex-col">
-                <ModalHeader className="bg-white w-full border-b-2">
-                    <div className="text-2xl font-bold text-center text-gray-800 w-full bg-white">ייצור עגלה</div>
+                <ModalHeader className="bg-white w-full border-b-2 flex justify-center items-center">
+                    <div className="text-xl font-black p-2 text-center text-white w-fit bg-primary rounded-full">{yetsorKeam?.sogAskaa || sogAskaa}</div>
                 </ModalHeader>
                 <ModalBody className="flex-grow p-4 overflow-auto">
                     <div className=" absolute left-0 top-28 right-0 z-50">
@@ -1507,7 +1558,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                         }
                     }} message={'האם אתה בטוח שאתה רוצה לסגור את הדף, הפרטיים שהזנו לא ישמרו'} show={showModalMessage} disable={() => setShowModalMessage(false)} />
                     <TokhnetContext.Provider value={contextValue}>
-                        <ModalYetsorTokhnet yetsorKeam={yetsorKeam} resetBro={(val1, val2) => RemoveMotsaremBro(val1, val2)} reset={(val) => ResetMotsaremLhANDRe(val)} addBro={(val) => UpdateMotsaremBroLhANDRe(val)} add={(val) => UpdateMotsaremLhANDRe(val)} mlae={mlae} setMotsaremLhatseg={(value) => setMotsaremLhatseg(value)} show={showModalTokhnetYetsor} disable={() => setShowModalTokhnetYetsor(false)} />
+                        <ModalYetsorTokhnet category={category} motsaremLhatseg={motsaremLhatseg} shlav={getNextLetter(shlavNokhhe)} motsaremRglem={motsaremRglem} sogAskaa={sogAskaa} setMotsaremRglem={(value) => setMotsaremRglem(value)} yetsorKeam={yetsorKeam} resetBro={(val1, val2) => RemoveMotsaremBro(val1, val2)} reset={(val) => ResetMotsaremLhANDRe(val)} addBro={(val) => UpdateMotsaremBroLhANDRe(val)} add={(val) => UpdateMotsaremLhANDRe(val)} mlae={mlae} setMotsaremLhatseg={(value) => setMotsaremLhatseg(value)} show={showModalTokhnetYetsor} disable={() => setShowModalTokhnetYetsor(false)} />
                     </TokhnetContext.Provider>
                     <ModalBerotMotsrem GetError={(val) => setErrorMotsaremRglem(val)} shlav={getNextLetter(shlavNokhhe)} category={category} mlae={mlae} setMotsaremRglem={(value) => setMotsaremRglem(value)} setMotsaremBrofelem={(value) => setMotsaremBrofelem(value)} motsaremLhatseg={motsaremLhatseg} motsaremBrofelem={motsaremBrofelem} motsaremRglem={motsaremRglem} show={showModalBerotMotsrem} disable={() => setShowModalBerotMotsrem(false)} />
                     <ModalAddCustomer LkohHdash={(val1, val2) => {
@@ -1598,6 +1649,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                             f: yetsorKeam?.mtsavYetsor[5] || null,
                         }} show={showModalMtsavYetsor} disable={() => setShowModalMtsavYetsor(false)} />
                     }
+                    {loadingPage && <Spinner className="absolute top-0 bottom-0 left-0 right-0 z-50"/>}
                     
                     <div className="w-full h-full flex flex-col md:flex-row">
                         <div className="w-full md:w-1/4 h-full pr-3 pl-3 hidden md:block">
@@ -1876,34 +1928,9 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                 <div>
                                                                     <AiOutlineFundProjectionScreen className="text-xl text-primary ml-2" />
                                                                 </div>
-                                                                <div className="border-r-2 pr-2">
-                                                                    <div className="flex justify-start">
-                                                                        <Dropdown dir="rtl">
-                                                                            <DropdownTrigger>
-                                                                                <Button dir="ltr" color="primary" variant='flat' size="lg">
-                                                                                    <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet}` : 'בחירת תוכנית'}
-                                                                                </Button>
-                                                                            </DropdownTrigger>
-                                                                            <DropdownMenu
-                                                                                aria-label="Multiple selection example"
-                                                                                variant="flat"
-                                                                                closeOnSelect={true}
-                                                                                disallowEmptySelection
-                                                                                selectionMode="single"
-                                                                                onSelectionChange={(val) => {setShemTokhnet(val.currentKey);setTokhnet(null);resetAllTokhnetYdnet();}}
-                                                                            >
-                                                                                <DropdownItem key='תוכנית ידנית'>תוכנית ידנית</DropdownItem>
-                                                                                {Tokhneot?.map((option) => (
-                                                                                    <DropdownItem onClick={() => setTokhnet(option)} key={option.shem}>{option.shem}</DropdownItem>
-                                                                                ))}
-                                                                            </DropdownMenu>
-                                                                        </Dropdown>
-                                                                    </div>
-                                                                    <div className="mt-3">
-                                                                        <Button isDisabled={!shemTokhnet} className="ml-2" size='md' variant="flat" onClick={() => setShowModalTokhnetYetsor(true)} color='primary'>תוכנית ייצור</Button>
-                                                                        <Button isDisabled={!shemTokhnet} className="mr-2 ml-2" size='md' variant="flat" onClick={() => setShowModalBerotMotsrem(true)} color="primary">פירוט מוצרים</Button>
-                                                                    </div>
-                                                                </div>
+                                                                {
+                                                                    GetTokhnetProps()
+                                                                }
                                                             </div>
                                                         </div>
                                                         <div className="pt-3 pb-3">
@@ -2143,49 +2170,9 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                 <div>
                                                                     <AiOutlineFundProjectionScreen className="text-xl text-primary ml-2" />
                                                                 </div>
-                                                                <div className="border-r-2 pr-2">
-                                                                    <div className="flex justify-start">
-                                                                        <Dropdown dir="rtl">
-                                                                            <DropdownTrigger>
-                                                                                <Button dir="ltr" color="primary" variant='flat' size="lg">
-                                                                                    <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet}` : 'בחירת תוכנית'}
-                                                                                </Button>
-                                                                            </DropdownTrigger>
-                                                                            <DropdownMenu
-                                                                                aria-label="Multiple selection example"
-                                                                                variant="flat"
-                                                                                closeOnSelect={true}
-                                                                                disallowEmptySelection
-                                                                                selectionMode="single"
-                                                                                onSelectionChange={(val) => {setShemTokhnet(val.currentKey);setTokhnet(null);resetAllTokhnetYdnet();}}
-                                                                            >
-                                                                                <DropdownItem key='תוכנית ידנית'>תוכנית ידנית</DropdownItem>
-                                                                                {Tokhneot?.map((option) => (
-                                                                                    <DropdownItem onClick={() => setTokhnet(option)} key={option.shem}>{option.shem}</DropdownItem>
-                                                                                ))}
-                                                                            </DropdownMenu>
-                                                                        </Dropdown>
-                                                                    </div>
-                                                                    <div className="mt-3 flex items-center">
-                                                                        <div>
-                                                                            <Button isDisabled={!shemTokhnet} className="ml-2" size='md' variant="flat" onClick={() => setShowModalTokhnetYetsor(true)} color='primary'>תוכנית ייצור</Button>
-                                                                        </div>
-                                                                        <div className="relative">
-                                                                            {
-                                                                                errorMotsaremRglem && <Tooltip
-                                                                                    content={<div className='text-danger text-xs'>כמות מוצרים חורגת</div>}
-                                                                                    placement="top"
-                                                                                    trigger="hover"
-                                                                                    className="z-50 border-1 border-danger"
-                                                                                    showArrow={true}
-                                                                                >
-                                                                                    <div className=" absolute top-[-10px] left-0 z-50"><MdError className="text-2xl text-danger" /></div>
-                                                                                </Tooltip>
-                                                                            }
-                                                                            <Button isDisabled={!shemTokhnet} className="mr-2 ml-2" size='md' variant="flat" onClick={() => setShowModalBerotMotsrem(true)} color="primary">פירוט מוצרים</Button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                                {
+                                                                    GetTokhnetProps()
+                                                                }
                                                             </div>
                                                         </div>
                                                         <div className="pt-3 pb-3">
@@ -2401,34 +2388,9 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                 <div>
                                                                     <AiOutlineFundProjectionScreen className="text-xl text-primary ml-2" />
                                                                 </div>
-                                                                <div className="border-r-2 pr-2">
-                                                                    <div className="flex justify-start">
-                                                                        <Dropdown dir="rtl">
-                                                                            <DropdownTrigger>
-                                                                                <Button dir="ltr" color="primary" variant='flat' size="lg">
-                                                                                    <MdKeyboardArrowDown className="text-xl" />{shemTokhnet ? `${shemTokhnet}` : 'בחירת תוכנית'}
-                                                                                </Button>
-                                                                            </DropdownTrigger>
-                                                                            <DropdownMenu
-                                                                                aria-label="Multiple selection example"
-                                                                                variant="flat"
-                                                                                closeOnSelect={true}
-                                                                                disallowEmptySelection
-                                                                                selectionMode="single"
-                                                                                onSelectionChange={(val) => {setShemTokhnet(val.currentKey);setTokhnet(null);resetAllTokhnetYdnet();}}
-                                                                            >
-                                                                                <DropdownItem key='תוכנית ידנית'>תוכנית ידנית</DropdownItem>
-                                                                                {Tokhneot?.map((option) => (
-                                                                                    <DropdownItem onClick={() => setTokhnet(option)} key={option.shem}>{option.shem}</DropdownItem>
-                                                                                ))}
-                                                                            </DropdownMenu>
-                                                                        </Dropdown>
-                                                                    </div>
-                                                                    <div className="mt-3">
-                                                                        <Button isDisabled={!shemTokhnet} className="ml-2" size='md' variant="flat" onClick={() => setShowModalTokhnetYetsor(true)} color='primary'>תוכנית ייצור</Button>
-                                                                        <Button isDisabled={!shemTokhnet} className="mr-2 ml-2" size='md' variant="flat" onClick={() => setShowModalBerotMotsrem(true)} color="primary">פירוט מוצרים</Button>
-                                                                    </div>
-                                                                </div>
+                                                                {
+                                                                    GetTokhnetProps()
+                                                                }
                                                             </div>
                                                         </div>
                                                         <div className="border-b-1 pt-3 pb-3">
@@ -2439,7 +2401,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div className="pt-3 pb-3">
+                                                        <div className="pt-3 pb-3 border-b-1">
                                                             <div className="w-full flex items-center">
                                                                 <div>
                                                                     <GrCertificate className="text-xl text-primary ml-2" />
@@ -2447,26 +2409,27 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                 <div className="border-r-2 pr-2">
                                                                     <div className="w-full flex">
                                                                         {
-                                                                            yetsorKeam?.msbarAgla ?
-                                                                            <Input isReadOnly value={yetsorKeam?.msbarAgla} color="primary" size="sm" className="max-w-[200px]" />
+                                                                            yetsorKeam?.drag?.dragnum ?
+                                                                            <Input isReadOnly value={yetsorKeam?.drag?.dragnum} color="primary" size="sm" className="max-w-[200px]" />
                                                                             :
-                                                                                <Autocomplete
-                                                                                    label="מספר עגלה"
-                                                                                    className="max-w-[200px]"
-                                                                                    size="sm"
-                                                                                    color="primary"
-                                                                                    onSelectionChange={setMsbarAgla}
-                                                                                    onInputChange={(val) => { setMsbarAgla(val); }}
-                                                                                >
-                                                                                    {
-                                                                                        aglot?.map((aglaaaaa, index) => (
-                                                                                            (!aglaaaaa?.active) && <AutocompleteItem className='text-right' key={aglaaaaa?.licenseid} value={aglaaaaa?.licenseid}>
-                                                                                                {aglaaaaa?.licenseid}
-                                                                                            </AutocompleteItem>
-                                                                                        ))
-                                                                                    }
-
-                                                                                </Autocomplete>
+                                                                            <div className="flex items-center">
+                                                                                <Input isReadOnly value={'חסר רישיון עגלה'} color="danger" size="sm" className="max-w-[200px]" />
+                                                                                <Button onClick={() => {
+                                                                                    setLoadingPage(true);
+                                                                                    router.push('/activion');
+                                                                                    setTfaol({
+                                                                                        msbar : yetsorKeam?.msbar,
+                                                                                        newCustomer : {
+                                                                                            customerName,
+                                                                                            customerPhone,
+                                                                                            customerCity,
+                                                                                            msbarMezahehm,
+                                                                                        },
+                                                                                        brtemLkoh
+                                                                                    });
+                                                                                    
+                                                                                }} className="mr-3" size="sm" color="primary" variant="flat">להמשיך תהליך</Button>
+                                                                            </div>
                                                                         }
                                                                     </div>
                                                                 </div>

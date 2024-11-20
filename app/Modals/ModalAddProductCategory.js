@@ -1,5 +1,5 @@
 'use client';
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@nextui-org/react";
+import { Button, Card, CardBody, Checkbox, CheckboxGroup, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@nextui-org/react";
 import { firestore } from "../FireBase/firebase";
 import { addDoc, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import GetDocs from "../FireBase/getDocs";
@@ -157,6 +157,19 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                             <Input errorMessage={errorMessage} type="text" value={sog} onValueChange={(val) => setSog(val)} className="mt-5 max-w-[150px]" label="שם פריט" />
                             <Input type="number" value={mherThlte} onValueChange={(val) => setMherThlte(val)} className="mt-5 max-w-[150px]" label="מחיר תחלתי" />
                             <Input type="number" value={zmanAsbka} onValueChange={(val) => setZmanAsbka(val)} className="mt-5 mb-5 max-w-[150px]" label="זמן הספקה בימים" />
+                            <CheckboxGroup
+                                label="Select cities"
+                                defaultValue={["buenos-aires", "london"]}
+                            >
+                                <Checkbox value="buenos-aires">
+                                    <Card>
+                                        <CardBody>
+                                            12
+                                        </CardBody>
+                                    </Card>
+                                </Checkbox>
+                                <Checkbox value="sydney">Sydney</Checkbox>
+                            </CheckboxGroup>
                         </div>
                     </ModalBody>
                     <ModalFooter>

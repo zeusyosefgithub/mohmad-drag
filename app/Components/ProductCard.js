@@ -133,7 +133,7 @@ const ProductCard = ({ motsarem, index, mlae, change, reset, src, add, remove,sh
     };
     
     return (
-        <Card className={`m-5 overflow-hidden border ${GetBorderColor()}`}>
+        <Card className={`m-5 overflow-hidden border h-fit ${GetBorderColor()}`}>
             <CardBody className=' overflow-hidden'>
                 <div className="border-b flex w-full justify-between items-center pb-2 mb-2">
                     <div className="inline-block hover:animate-move-arrows cursor-pointer">

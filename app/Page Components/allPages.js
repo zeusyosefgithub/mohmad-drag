@@ -7,6 +7,7 @@ import ImageOne from "./imageOne";
 import ImageTwo from "./imageTwo";
 import { format } from "date-fns";
 import ImageSix from "./imageSix";
+import { FaCheck } from "react-icons/fa";
 
 export const AllPages = React.forwardRef((props, ref) => {
     return (
@@ -29,90 +30,16 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     <th className="border-1 border-[#a1a1aa] pr-5 pl-5">לא נמצא</th>
                                     <th className="border-1 border-[#a1a1aa] pr-10 pl-10">הערות</th>
                                 </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">הסכם מכירה / טופס הזמנה</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">צילום חשבונית רכישה של הנגרר</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">הוראת רישום בתוקף</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">תעודות / אישורים נלווים מחוררים בלבד</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">תעודת ביטוח חובה</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">תעדות זהות רוכש / ייפוי כוח</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">טופס טסט ראשוני של הנגר במכון הרישוי (בקשה לרישום רכב)</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">נספח בקשה לרישום רכב כולל תוצאות שקילה</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">העתק מרישיון הרכב הזמני והקבוע כפי שנמסר לבעל הרכב</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">נספח לרישיון הרכב במידה ונדרש</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">אישור וטופס בדיקה פרטני</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">צילום נגרר ומספר שלדה עם מספר רישוי</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">רשומון יבוא במקרה של יבואן</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
-                                <tr>
-                                    <th className="border-1 border-[#a1a1aa] text-right pr-2">רישיון ייצור בתוקף</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                    <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
-                                </tr>
+                                {
+                                    props?.documents?.map((doc, index) => (
+                                        <tr>
+                                            <th className="border-1 border-[#a1a1aa] text-right pr-2">{doc}</th>
+                                            <th className="border-1 border-[#a1a1aa]">{props?.data?.drag?.checks?.includes(index) && <div className="flex items-center justify-center"><FaCheck /></div>}</th>
+                                            <th className="border-1 border-[#a1a1aa]">{!props?.data?.drag?.checks?.includes(index) && '-'}</th>
+                                            <th className="border-1 border-[#a1a1aa]">&nbsp;</th>
+                                        </tr>
+                                    ))
+                                }
                             </tbody>
                         </table>
                     </div>
@@ -187,7 +114,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     </div>
                                     <div className="border-1 border-[#e4e4e7] mt-1 mb-1" />
                                     <div className="p-1 pb-2">
-                                        {props?.data?.cus?.name}
+                                        {props?.data?.brtemLkoh?.name || props?.data?.newCustomer?.customerName}
                                     </div>
                                 </th>
                                 <th colSpan={2} className="w-1/2 border-1 border-[#a1a1aa]">
@@ -234,7 +161,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     </div>
                                     <div className="border-1 border-[#e4e4e7] mt-1 mb-1" />
                                     <div className="p-1 pb-2">
-                                        {props?.data?.cus?.name}
+                                        {props?.data?.brtemLkoh?.name || props?.data?.newCustomer?.customerName}
                                     </div>
                                 </th>
                             </tr>
@@ -312,7 +239,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                     {props?.data?.drag?.daterecord}
                 </div>
                 <div className="absoulte_date_page_four1">
-                    {props?.data?.cus?.name}
+                    {props?.data?.brtemLkoh?.name || props?.data?.newCustomer?.customerName}
                 </div>
                 <div className="flex justify-start mt-3">
                     ______________________________ : תאריך
@@ -430,14 +357,14 @@ export const AllPages = React.forwardRef((props, ref) => {
                     <div className="flex justify-around">
                         <div>
                             <div className="absoulte_date_page_four3">
-                                {props?.data?.cus?.name}
+                                {props?.data?.brtemLkoh?.name || props?.data?.newCustomer?.customerName}
                             </div>
                             <div>_________________________</div>
                             <div className="flex justify-center">שם בעל הרכב/מנכ"ל החברה</div>
                         </div>
                         <div>
                             <div className="absoulte_date_page_four4">
-                                {props?.data?.cus?.cusid}
+                                {props?.data?.brtemLkoh?.cusid}
                             </div>
                             <div>_________________________</div>
                             <div className="flex justify-center">ת.ז.</div>
@@ -851,10 +778,10 @@ export const AllPages = React.forwardRef((props, ref) => {
 12
                 </div>
                 <div className="Shem_Hmnhel_Hmektsoae flex w-[150px]">
-                    {props?.data?.cus?.name} {props?.data?.cus?.lastname}
+                    {props?.data?.brtemLkoh?.name || props?.data?.newCustomer?.customerName} {props?.data?.brtemLkoh?.lastname}
                 </div>
                 <div className="Taodat_Zhot">
-                    {props?.data?.cus?.cusid}
+                    {props?.data?.brtemLkoh?.cusid}
                 </div>
                 <div className="skhommm">
                     {props?.data?.drag?.skhom}

@@ -81,6 +81,7 @@ import rep109 from '../images/rep109.png';
 import rep110 from '../images/rep110.png';
 import rep111 from '../images/rep111.jpg';
 import rep112 from '../images/rep112.jpg';
+import hook from '../images/hook.svg';
 
 import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { GiHook } from "react-icons/gi";
@@ -489,21 +490,21 @@ export default function Home() {
     }
   }, [tfaolAgla?.id]);
 
-  const GetColorMsbarAdefot = (val) => {
+  const GetColorMsbarAdefot = (val,val1) => {
     if (val === 1) {
-      return 'text-danger';
+      return val1 ? 'text-danger' : 'text-danger';
     }
     else if (val === 2) {
-      return 'text-[#f97316]';
+      return val1 ? 'text-[#f97316]' : 'text-[#f97316]';
     }
     else if (val === 3) {
-      return 'text-[#facc15]';
+      return val1 ? 'text-[#facc15]' : 'text-[#facc15]';
     }
     else if (val === 4) {
-      return 'text-[#a3e635]';
+      return val1 ? 'text-[#a3e635]' : 'text-[#a3e635]';
     }
     else {
-      return 'text-[#34d399]';
+      return val1 ? 'text-[#34d399]' : 'text-[#34d399]';
     }
   }
 
@@ -517,7 +518,7 @@ export default function Home() {
       }
     }
     else if (val === 'הרכבת וו') {
-      return <GiHook className={`text-3xl ${GetColorMsbarAdefot(val1)}`} />;
+      return <Image className={`text-3xl ${GetColorMsbarAdefot(val1,true)}`} src={hook} width={26} height={26}/>;
     }
     else if (val === 'תיקון') {
       return <HiOutlineWrenchScrewdriver className={`text-3xl ${GetColorMsbarAdefot(val1)}`} />;

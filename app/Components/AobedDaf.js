@@ -4,7 +4,7 @@ import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input, Navbar,
 import { differenceInMinutes, format, getDaysInMonth, parse, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import { Hearts } from "react-loader-spinner";
-import { useGetDataByCondition, useGetDataByConditionWithoutUseEffect, useGetDataByConditionWithoutUseEffectTwoQueres } from "../FireBase/getDataByCondition";
+import { useGetDataByCondition, useGetDataByConditionTwo, useGetDataByConditionWithoutUseEffect, useGetDataByConditionWithoutUseEffectTwoQueres } from "../FireBase/getDataByCondition";
 import GetDocs from "../FireBase/getDocs";
 import { addDoc, collection, doc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "../FireBase/firebase";
@@ -26,10 +26,29 @@ export default function aobedDaf({ aobed }) {
     const [loadingFitching2, setLoadingFitching2] = useState(true);
     const [showModalAobedYetsor, setShowModalAobedYetsor] = useState(false);
     const [agla, setAgla] = useState({});
+    const [aobedNkhhe, setAobedNokhhe] = useState();
+    const [aglotC,setAglotC] = useState([]);
 
-    const aglotC = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'C').sort((a, b) => {
-        return a.msbar - b.msbar;
-    });
+    useEffect(() => {
+        const unsubscribe = useGetDataByConditionWithoutUseEffectTwoQueres(
+            'tfaol',
+            'shlavNokhhe',
+            '==',
+            'C',
+            'locationYetsor',
+            '==',
+            aobedNkhhe?.snef || '',
+            result => {
+                if (result.length) {
+                    const sortedResult = result.sort((a, b) => a.msbar - b.msbar);
+                    setAglotC(sortedResult);
+                } else {
+                    setAglotC([]);
+                }
+            }
+        );
+        return () => unsubscribe();
+    }, [aobedNkhhe?.snef]);
 
     const GetHodatAobed = () => {
         if (parseFloat(format(new Date(), 'HH')) < 12) {
@@ -70,8 +89,9 @@ export default function aobedDaf({ aobed }) {
 
     const [loading, setLoading] = useState(false);
     const currentDate = format(new Date(), 'dd-MM-yyyy');
-    const [aobedNkhhe, setAobedNokhhe] = useState();
     const counter = GetDocs('metadata').find((count) => count.id === 'counterShaotAboda');
+
+    console.log(aobedNkhhe);
 
     useEffect(() => {
         if (aobed?.name) {
@@ -378,71 +398,6 @@ export default function aobedDaf({ aobed }) {
             </Navbar>
             {
                 page === "דף הבית" &&
-                // <div className="h-screen flex justify-center items-center">
-                //     <Card dir="rtl" className="w-[450px] m-5">
-                //         <CardHeader>
-                //             <div className="w-full">
-                //                 <div className="text-xl text-primary mt-2 flex justify-around font-bold items-center">
-                //                     <div>היי {aobed.name}</div>
-                //                 </div>
-                //             </div>
-                //         </CardHeader>
-                //         <Divider />
-                //         <CardBody>
-                //             <div>
-                //                 <div className="w-full text-[10px]">
-                //                     <div className="flex items-center w-full ">
-                //                         <div className="w-[50px] text-right">שעה </div>
-                //                         <div className="">{format(new Date(), 'HH:mm')}</div>
-                //                     </div>
-                //                     <div className="flex items-center w-full mt-2">
-                //                         <div className="w-[50px] text-right">יום </div>
-                //                         <div className="">{GetTarekhShem(format(new Date(), 'EEEE'))}</div>
-                //                     </div>
-                //                     <div className="flex items-center w-full mt-2">
-                //                         <div className="w-[50px] text-right">תאריך </div>
-                //                         <div className="">{format(new Date(), 'dd-MM-yyyy')}</div>
-                //                     </div>
-                //                 </div>
-                //                 <Divider className="mt-5" />
-                //                 <div className="w-full justify-around flex items-center mt-2">
-                //                     <div>
-                //                         {GetHodatAobed()}
-                //                     </div>
-                //                     <Hearts
-                //                         height="80"
-                //                         width="80"
-                //                         color="#ef4444"
-                //                         ariaLabel="hearts-loading"
-                //                         wrapperStyle={{}}
-                //                         wrapperClass=""
-                //                         visible={true}
-                //                     />
-                //                 </div>
-                //             </div>
-                //         </CardBody>
-                //         <Divider />
-                //         <CardFooter>
-                //             {
-                //                 (knesotHeom) &&
-                //                 <div className="w-full ">
-                //                     {
-                //                         (knesotHeom[0]?.knesa && !knesotHeom[0]?.yetseah) ?
-                //                             <Button isLoading={loading} className="w-full mt-2 mb-2" color='danger' variant="flat" onClick={knesaa}>יצאה</Button>
-                //                             : (!knesotHeom[0]?.knesa && !knesotHeom[0]?.yetseah) ?
-                //                                 <Button isLoading={loading} className="w-full mt-2 mb-2" color='success' variant="flat" onClick={knesaa}>כניסה</Button>
-                //                                 :
-                //                                 <div className="text-success text-center">
-                //                                     המשך יום נעים {aobed.name}
-                //                                 </div>
-                //                     }
-                //                 </div>
-                //             }
-                //         </CardFooter>
-                //     </Card>
-
-
-                // </div>
                 <div className="h-screen flex justify-center items-center">
                     <Card dir="rtl" className="w-[450px] m-5">
                         <CardHeader className="border-b-1">
@@ -561,10 +516,6 @@ export default function aobedDaf({ aobed }) {
                                             <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
                                                 <th className="px-4 py-2 text-center  font-extrabold text-black text-[10px]"></th>
                                                 <th className="px-4 py-2 text-center  font-extrabold text-black text-[10px]">שם לקוח</th>
-                                                {/* <th className="px-4 py-2 text-center  font-extrabold text-black text-[10px]">תאריך אספקה</th> */}
-                                                {/* <th className="px-4 py-2 text-center  font-extrabold text-black text-[10px]">זמן עבר</th> */}
-                                                {/* <th className="px-4 py-2 text-center  font-extrabold text-black text-[10px]">שעת תחילה</th> */}
-                                                {/* <th className="px-4 py-2 text-center  font-extrabold text-black text-[10px]">תאריך תחילה</th> */}
                                                 <th className="px-4 py-2 text-center  font-extrabold text-black text-[10px]">מספר פעולה</th>
                                                 <th className="px-4 py-2 text-center  font-medium text-black text-[10px] w-30"></th>
                                             </tr>
@@ -574,11 +525,7 @@ export default function aobedDaf({ aobed }) {
                                                 aglotC.map((agla, index) => {
                                                     return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalAobedYetsor(true); setAgla(agla); }}>פתח</Button></td>
-                                                        <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.shemLkoh}</td>
-                                                        {/* <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]"></td> */}
-                                                        {/* <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]"></td> */}
-                                                        {/* <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]"></td> */}
-                                                        {/* <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]"></td> */}
+                                                        <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh?.name || agla.newCustomer?.customerName}</td>
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.msbar}</td>
                                                         <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{GetTmonaLfeSog(agla.sogAska)}</td>
                                                     </tr>

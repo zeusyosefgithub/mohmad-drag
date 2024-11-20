@@ -531,10 +531,17 @@ export default function Aobdem() {
                                         !tarekhKlaleNbhar && GetHodshem()?.map((hodesh, index) => {
                                             return <div key={hodesh?.tarekh} className="flex items-center mt-1 mb-1 p-1 border-b-1">
                                                 <div className="w-full flex justify-center"><Button variant='flat' onClick={() => { setTarekhKlaleNbhar(hodesh?.tarekh) }} color={format(parse(hodesh?.tarekh, 'yyyy-MM', new Date()), 'MM-yyyy') === format(new Date(), 'MM-yyyy') ? 'primary' : 'default'} size="sm">פתח</Button></div>
-                                                <div className={`w-full text-center ${format(parse(hodesh?.tarekh, 'yyyy-MM', new Date()), 'MM-yyyy') === format(new Date(), 'MM-yyyy') ? 'text-primary' : ''}`}>{format(hodesh?.tarekh, 'MM-yyyy')}</div>
+                                                <div className={`w-full text-center min-w-[100px] ${format(parse(hodesh?.tarekh, 'yyyy-MM', new Date()), 'MM-yyyy') === format(new Date(), 'MM-yyyy') ? 'text-primary' : ''}`}>
+                                                    <div className='flex items-center justify-end'>
+                                                        {
+                                                            format(parse(hodesh?.tarekh, 'yyyy-MM', new Date()), 'MM-yyyy') === format(new Date(), 'MM-yyyy') &&
+                                                            <div className="mr-10 p-1 rounded-full bg-primary text-white text-xs font-semibold">תאריך נוכחי</div>
+                                                        }
+                                                        {format(hodesh?.tarekh, 'MM-yyyy')}
+                                                    </div>
+                                                </div>
                                                 <div className={`w-full text-center ${format(parse(hodesh?.tarekh, 'yyyy-MM', new Date()), 'MM-yyyy') === format(new Date(), 'MM-yyyy') ? 'text-primary' : ''}`}>{hodesh?.shem}</div>
                                             </div>
-
                                         })
                                     }
                                     {
@@ -581,9 +588,13 @@ export default function Aobdem() {
                                                                 key={Yom?.tarekh}
                                                                 textValue={Yom?.tarekh}
                                                                 title={
-                                                                    <div className="w-full flex items-center">
+                                                                    <div className={`w-full flex items-center ${Yom?.tarekh === format(new Date(), 'dd-MM-yyyy') ? 'text-primary' : ""}`}>
                                                                         <div className="w-full max-w-[100px]">{Yom?.shem}</div>
                                                                         <div>{Yom?.tarekh}</div>
+                                                                        {
+                                                                            Yom?.tarekh === format(new Date(), 'dd-MM-yyyy') &&
+                                                                            <div className="mr-10 p-1 rounded-full bg-primary text-white text-xs font-semibold">תאריך נוכחי</div>
+                                                                        }
                                                                     </div>
                                                                 }
                                                             >

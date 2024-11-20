@@ -31,14 +31,14 @@ export default function NavBar() {
             <NavbarContent>
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-                    className="sm:hidden"
+                    className="lg:hidden"
                 />
                 <NavbarBrand>
                     <div className="font-bold text-inherit"></div>
                 </NavbarBrand>
             </NavbarContent>
 
-            <NavbarContent className="hidden sm:flex gap-4" justify="center">
+            <NavbarContent className="hidden lg:flex gap-4" justify="center">
                 <NavbarItem>
                     <Link color="foreground" href="/procurement">
                         <Button variant="light" color="primary" className="text-lg">מלאי<BiSolidPurchaseTag className="text-2xl text-green-400" /></Button>
@@ -67,7 +67,6 @@ export default function NavBar() {
                         <Button variant="light" color="primary" className="text-lg">משרד תחבורה<IoNewspaperSharp className="text-2xl text-gray-600" /></Button>
                     </Link>
                 </NavbarItem>
-                <Button variant="light" color="primary" className="text-lg pr-8"><div>התראות</div><div className="absolute top-0 right-0 text-[17px] bg-primary-500 text-white w-[27px] rounded-full font-extrabold"><div className="">1</div></div><FaBell className="text-2xl text-blue-700" /></Button>
             </NavbarContent>
             <NavbarContent justify="end">
                 <NavbarItem>
@@ -141,3 +140,7 @@ export default function NavBar() {
         // </Navbar>
     )
 }
+
+
+
+

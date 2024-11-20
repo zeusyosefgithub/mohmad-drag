@@ -18,7 +18,7 @@ export default function ModalBheratMlae({ disable, show, Bhera }) {
                 <>
                     <ModalHeader className="shadow-2xl flex justify-center border-b-2">בחר סניף ייצור</ModalHeader>
                     <ModalBody className="shadow-2xl bg-white">
-                        <div dir="rtl" className="flex items-center justify-around">
+                        <div dir="rtl" className="flex items-center justify-around flex-wrap">
                             <div onClick={() => { disable(); Bhera('עארה'); }} className="m-4 rounded-2xl">
                                 <Card className={`cursor-pointer hover:bg-primary-100`}>
                                     <CardHeader dir="rtl" className="pb-0 pt-2 px-4 flex justify-center">
