@@ -152,54 +152,54 @@ export default function Activion() {
         }
         setLoading(true);
         const drag = {
-            authorizedweight: authorizedweight,
-            bodymodel: bodymodel,
-            bodytype: bodytype,
-            categore: categore,
-            chassisnum: chassisnum,
-            closedate: closedate,
-            closetime: closetime,
-            color: color,
-            daterecord: currentdate,
-            device: device,
-            distributionloads: distributionloads,
-            dragnum: dragnum,
-            foundation: foundation,
-            height: height,
-            heightloading: heightloading,
-            idwight: GetIdWight(),
-            installer: installer,
-            kinddrag: kinddrag,
-            labid: labid,
-            labreport: labreport,
-            lengthhatch: lengthhatch,
-            licenseid: licenseid,
-            long: long,
-            skhom: skhom,
-            model: model,
-            opendate: opendate,
-            opentime: opentime,
-            rearextension: rearextension,
-            reviewerid: reviewerid,
-            safetyreview: safetyreview,
-            selfweightaxles: selfweightaxles,
-            sizeloading: sizeloading,
-            space: space,
-            totalselfweight: totalselfweight,
-            undercarriage: undercarriage,
-            wight: wight,
-            masTaodatABTebos: masTaodatABTebos,
-            tableokefTaodatABTebos: tableokefTaodatABTebos,
-            masVTokefResheonYatsran: masVTokefResheonYatsran,
-            masAeshorYatsran: masAeshorYatsran,
-            masGlglemSrnem: masGlglemSrnem,
-            medatTsmgem: medatTsmgem,
-            sheshAehad: sheshAehad,
-            sheshShtaeem: sheshShtaeem,
-            sheshShlosh: sheshShlosh,
-            sheshArbaa,
-            sheshHamesh,
-            checks
+            authorizedweight: authorizedweight || '',
+            bodymodel: bodymodel || '',
+            bodytype: bodytype || '',
+            categore: categore || '',
+            chassisnum: chassisnum || '',
+            closedate: closedate || '',
+            closetime: closetime || '',
+            color: color || '',
+            daterecord: currentdate || '',
+            device: device || '',
+            distributionloads: distributionloads || '',
+            dragnum: dragnum || '',
+            foundation: foundation || '',
+            height: height || '',
+            heightloading: heightloading || '',
+            idwight: GetIdWight() || '',
+            installer: installer || '',
+            kinddrag: kinddrag || '',
+            labid: labid || '',
+            labreport: labreport || '',
+            lengthhatch: lengthhatch || '',
+            licenseid: licenseid || '',
+            long: long || '',
+            skhom: skhom || '',
+            model: model || '',
+            opendate: opendate || '',
+            opentime: opentime || '',
+            rearextension: rearextension || '',
+            reviewerid: reviewerid || '',
+            safetyreview: safetyreview || '',
+            selfweightaxles: selfweightaxles || '',
+            sizeloading: sizeloading || '',
+            space: space || '',
+            totalselfweight: totalselfweight || '',
+            undercarriage: undercarriage || '',
+            wight: wight || '',
+            masTaodatABTebos: masTaodatABTebos || '',
+            tableokefTaodatABTebos: tableokefTaodatABTebos || '',
+            masVTokefResheonYatsran: masVTokefResheonYatsran || '',
+            masAeshorYatsran: masAeshorYatsran || '',
+            masGlglemSrnem: masGlglemSrnem || '',
+            medatTsmgem: medatTsmgem || '',
+            sheshAehad: sheshAehad || '',
+            sheshShtaeem: sheshShtaeem || '',
+            sheshShlosh: sheshShlosh || '',
+            sheshArbaa: sheshArbaa || '',
+            sheshHamesh: sheshHamesh || '',
+            checks : checks || []
         }
         try {
             await updateDoc(doc(firestore, "tfaol", chossedAgla?.id), {
@@ -350,6 +350,7 @@ export default function Activion() {
                 : [...prevChecks, index]                 // Add index if it doesn't exist
         );
     };
+    
 
     const documents = [
         "הסכם מכירה / טופס הזמנה",
@@ -702,7 +703,7 @@ export default function Activion() {
                                                     }
                                                     else {
                                                         setChoosedAgla(agla);
-                                                        setChecks(agla?.drag?.checks);
+                                                        setChecks(agla?.drag?.checks || []);
                                                         setAllProps(agla?.drag);
                                                     }
                                                 }} className="" size="sm" variant="flat" color={agla?.msbar === chossedAgla?.msbar ? 'primary' : 'default'}>בחר</Button></TableCell>
