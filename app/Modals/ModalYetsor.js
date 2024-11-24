@@ -418,7 +418,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         if ((brtemLkoh?.id || customerName) && shemTokhnet) {
             res = 'A';
         }
-        if ((brtemLkoh?.id || customerName) && tnaeTshlom && shemTokhnet && mherKlale && mherKlaleAhre && mkdema && msbarTshlomem && BdekatMotsarem()) {
+        if ((brtemLkoh?.id || customerName) && tnaeTshlom && shemTokhnet && mherKlale && mherKlaleAhre && BdekatMotsarem()) {
             res = 'B';
         }
         if ((brtemLkoh?.id || customerName) && tnaeTshlom && shemTokhnet && mherKlale && mherKlaleAhre && mkdema && msbarTshlomem && BdekatMotsarem() && tarekhAsbka) {
@@ -533,7 +533,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                 updateMotsaremRglemYredatMlae();
             }
         }
-        if (getNextLetter(shlavNokhhe) === 'B' && (!brtemLkoh?.id && !customerName) || !tnaeTshlom || !shemTokhnet || !mherKlale || !mherKlaleAhre || !mkdema || !msbarTshlomem || !BdekatMotsarem()) {
+        if (getNextLetter(shlavNokhhe) === 'B' && (!brtemLkoh?.id && !customerName) || !tnaeTshlom || !shemTokhnet || !mherKlale || !mherKlaleAhre || !BdekatMotsarem()) {
             setShowAlertMessage('חסר פרטיים לשלב הבא.');
             setShowAlertType('warning');
             setShowAlert(true);

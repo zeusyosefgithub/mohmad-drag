@@ -23,6 +23,8 @@ export default function ModalAddCustomer({ disable, show, counter, lkhot,brtem,L
     const [errorMessageTaodatZehot, setErrorMessageTaodatZehot] = useState('');
     const [errorPhone, setErrorPhone] = useState('');
 
+
+
     const checkAemLkohKeam = () => {
         for (let index = 0; index < lkhot.length; index++) {
             if (lkhot[index].cusid === customerId) {

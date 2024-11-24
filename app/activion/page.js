@@ -8,7 +8,7 @@ import { MdOutlineArrowBack } from "react-icons/md";
 import { IoIosArrowBack, IoIosArrowForward, IoMdAdd } from "react-icons/io";
 import GetDocs from "../FireBase/getDocs";
 import { AllPages } from "../Page Components/allPages";
-import { addDoc, collection, count, doc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, count, doc, onSnapshot, updateDoc, where } from "firebase/firestore";
 import { firestore } from "../FireBase/firebase";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { differenceInDays, format, parse } from "date-fns";
@@ -203,7 +203,8 @@ export default function Activion() {
         }
         try {
             await updateDoc(doc(firestore, "tfaol", chossedAgla?.id), {
-                drag: drag
+                drag: drag,
+                brtemLkoh : checkAemLkohKeam() ? GetCurrentLkoh() : brtemLkoh
             });
         }
         catch (e) {
@@ -211,6 +212,26 @@ export default function Activion() {
         }
         setLoading(false);
         handlePrint();
+    }
+
+    const GetCurrentLkoh = () => {
+        console.log(1);
+        for (let index = 0; index < lkhot.length; index++) {
+            if (lkhot[index].name === chossedAgla?.newCustomer?.customerName) {
+                console.log(lkhot[index]);
+                return lkhot[index];
+            }
+        }
+    }
+
+    const checkAemLkohKeam = () => {
+        console.log(1);
+        for (let index = 0; index < lkhot.length; index++) {
+            if (lkhot[index].name === chossedAgla?.newCustomer?.customerName) {
+                return true;
+            }
+        }
+        return false;
     }
 
     const resetAllProps = () => {
@@ -372,20 +393,51 @@ export default function Activion() {
         if (tfaol?.msbar) {
             setChoosedAgla(tfaol);
         }
-    }, [tfaol])
-    //
+    }, [tfaol]);
+
+
+    const [lkohHdash, setLkohHdash] = useState(false);
+    const [lkohForAdd, setLkohForAdd] = useState('');
+    const [brtemLkoh, setBrtemLkoh] = useState(null);
+
+
+    useEffect(() => {
+        if (lkohForAdd) {
+            for (let index = 0; index < lkhot.length; index++) {
+                if (lkhot[index].name === lkohForAdd) {
+                    setBrtemLkoh(lkhot[index]);
+                }
+            }
+        }
+    }, [lkohHdash]);
+
+
+
+    useEffect(() => {
+        if (chossedAgla && chossedAgla.id) {
+            const unsub = onSnapshot(doc(firestore, 'tfaol', chossedAgla.id), (doc) => {
+                if (doc.exists()) {
+                    setChoosedAgla({ ...doc.data(), id: doc.id });
+                    setChecks(doc.data()?.drag?.checks || []);
+                    setAllProps(doc.data()?.drag);
+                }
+            });
+            return () => unsub();
+        }
+    }, [chossedAgla?.id]);
+
     return (
         <div className="hebrow_font mb-20 h-full w-full">
-            <ModalAddCustomer LkohHdash={(val1, val2) => {
+            <ModalAddCustomer LkohHdash={async(val1, val2) => {
                 if (val1) {
-                    setLkohHdash(false);
+                    setLkohHdash(val1);
                     setLkohForAdd(val2);
                 }
             }} brtem={{
                 customerName: chossedAgla?.newCustomer?.customerName,
                 customerCity: chossedAgla?.newCustomer?.customerCity,
                 customerPhone: chossedAgla?.newCustomer?.customerPhone,
-                msbarMezahehm: ''
+                msbarMezahehm: chossedAgla?.newCustomer?.msbarMezahehm
             }} lkhot={lkhot} counter={counter} show={showModalAddCustomer} disable={() => setShowModalAddCustomer(false)} />
             <Modal placement="center" className="test-fontt" backdrop={"blur"} size="3xl" isOpen={showModalAddDrag} onClose={() => setShowModalAddDrag(false)}>
                 <ModalContent>
@@ -592,7 +644,7 @@ export default function Activion() {
                                                 <div className="mr-2 border-r-2 pr-2 flex items-center">
                                                     <Input isReadOnly value={chossedAgla?.brtemLkoh?.name || chossedAgla?.newCustomer?.customerName || 'שם לקוח'} color="primary" size="sm" className="max-w-[200px]" />
                                                     {
-                                                        chossedAgla?.newCustomer?.customerName &&
+                                                        chossedAgla?.newCustomer?.customerName && !chossedAgla?.brtemLkoh?.id &&
                                                         <Button onClick={() => { setShowModalAddCustomer(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
                                                             <MdMoreHoriz className="text-3xl" />
                                                         </Button>
@@ -601,7 +653,7 @@ export default function Activion() {
                                             </div>
                                             <div>
                                                 {
-                                                    chossedAgla?.brtemLkoh?.name || chossedAgla?.newCustomer?.customerName ?
+                                                    chossedAgla?.brtemLkoh?.name ?
                                                         <FaRegCircleCheck className="text-3xl text-success" />
                                                         :
                                                         <VscError className="text-3xl text-danger" />
@@ -614,7 +666,7 @@ export default function Activion() {
                                                 <div className="mr-2 border-r-2 pr-2 flex items-center">
                                                     <Input isReadOnly value={chossedAgla?.msbar || 'מספר עגלה'} color="primary" size="sm" className="max-w-[200px]" />
                                                     {
-                                                        chossedAgla?.msbar && !chossedAgla?.drag?.dragnum &&
+                                                        chossedAgla?.msbar &&
                                                         <Button onClick={() => { setShowModalAddDrag(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
                                                             <MdMoreHoriz className="text-3xl" />
                                                         </Button>
@@ -706,7 +758,7 @@ export default function Activion() {
                                                         setChecks(agla?.drag?.checks || []);
                                                         setAllProps(agla?.drag);
                                                     }
-                                                }} className="" size="sm" variant="flat" color={agla?.msbar === chossedAgla?.msbar ? 'primary' : 'default'}>בחר</Button></TableCell>
+                                                }} className="" size="sm" variant="flat" color={agla?.msbar === chossedAgla?.msbar ? 'danger' : 'default'}>{agla?.msbar === chossedAgla?.msbar ? 'דחות' : 'בחר'}</Button></TableCell>
                                                 <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla?.drag?.dragnum ? <div className="text-success">קיים</div> : <div className="text-danger">לא קיים</div>}</TableCell>
                                                 <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{GetShlavemInHebrow(agla.shlavNokhhe)}</TableCell>
                                                 <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla.brtemLkoh?.name || agla.newCustomer.customerName}</TableCell>
