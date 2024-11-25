@@ -3,6 +3,7 @@ import { collection, getDocs, limit, onSnapshot, orderBy, query, where } from "f
 import { firestore } from "./firebase";
 
 export const useGetDataByCondition = (myCollection, value1, value2, value3) => {
+    console.log(12335);
     const [list, setList] = useState([]);
     const colle = collection(firestore, myCollection);
     const condition = where(value1, value2, value3);
@@ -36,24 +37,8 @@ export const useGetDataByConditionTwo = (myCollection, value1, value2, value3,va
     return list;
 };
 
-
-export const useGetDataByConditionArray = (myCollection, value1, value2, value3) => {
-    const [list, setList] = useState([]);
-    const colle = collection(firestore, myCollection);
-    const condition1 = where(value1, value2, value3);
-    useEffect(() => {
-        const q = query(colle, condition1);
-        const unsubscribe = onSnapshot(q, (snap) => {
-            setList(snap.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        });
-        return () => unsubscribe();
-    }, [myCollection, value1, value2, value3]);
-
-    return list;
-};
-
-
 export const useGetDataByConditionWithoutUseEffect = (myCollection, field, operator, value, callback) => {
+    console.log(12335);
     const q = query(collection(firestore, myCollection), where(field, operator, value));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const documents = [];

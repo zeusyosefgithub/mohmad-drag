@@ -697,7 +697,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
             thslomAher,
             shlavYetsor : false,
             htsaaNdbas : true,
-            locationYetsor,
+            locationYetsorAgla,
             mherKlaleAhre,
             lkohHdash: lkohHdash || false,
             newCustomer: { customerName: customerName || '', customerCity: customerCity || '', customerPhone: customerPhone || '', msbarMezahehm: msbarMezahehm || '' },
@@ -827,7 +827,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                 updateDoc(doc(firestore, 'tfaol', yetsorKeam?.id), {
                     ymeAskem,
                     thslomAher,
-                    locationYetsor,
+                    locationYetsorAgla,
                     mherKlaleAhre,
                     msbarAdefot,
                     lkohHdash: lkohHdash || false,
@@ -1092,7 +1092,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
             setMsbarMezahehm(yetsorKeam?.newCustomer?.msbarMezahehm);
             setLkohHdash(yetsorKeam.lkohHdash);
             setMherKlaleAhre(yetsorKeam.mherKlaleAhre);
-            setLocationYetsorAgla(yetsorKeam?.locationYetsor);
+            setLocationYetsorAgla(yetsorKeam?.locationYetsorAgla);
             setTshlomAher(yetsorKeam?.thslomAher);
             setYmeAskem(yetsorKeam?.ymeAskem);
         }
@@ -1100,7 +1100,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
 
     useEffect(() => {
         setLocationYetsorAgla(locationYetsor);
-    },[locationYetsor])
+    },[locationYetsor]);
 
     useEffect(() => {
         if (tokhnet) {
@@ -2002,7 +2002,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                 <Dropdown dir="rtl" className="select-none">
                                                                     <DropdownTrigger>
                                                                         <Button className="" dir="ltr" color="primary" variant='flat' size="lg">
-                                                                            <MdKeyboardArrowDown className="text-xl" />{locationYetsorAgla || 'אמצעי תשלום'}
+                                                                            <MdKeyboardArrowDown className="text-xl" />{locationYetsorAgla || 'סניף ייצור'}
                                                                         </Button>
                                                                     </DropdownTrigger>
                                                                     <DropdownMenu

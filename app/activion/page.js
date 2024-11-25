@@ -14,7 +14,7 @@ import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { differenceInDays, format, parse } from "date-fns";
 import { FaCheck, FaTrailer, FaUser, FaUserEdit } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
-import { useGetDataByConditionArray } from "../FireBase/getDataByCondition";
+import { useGetDataByCondition, useGetDataByConditionWithoutUseEffect } from "../FireBase/getDataByCondition";
 import { GiHook } from "react-icons/gi";
 import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { FaLocationDot, FaRegCircleCheck } from "react-icons/fa6";
@@ -113,7 +113,42 @@ export default function Activion() {
     const lkhot = GetDocs('customers');
     const aglot = GetDocs('drags');
     const [loading, setLoading] = useState(false);
-    const aglotYetsor = useGetDataByConditionArray('tfaol', 'shlavNokhhe', 'in', ['B', 'C', 'D']);
+
+    const aglotB = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'B').sort((a, b) => {
+        if (a.msbarAdefot !== b.msbarAdefot) {
+            return a.msbarAdefot - b.msbarAdefot;
+        }
+        const dateA = new Date(a.tarekhAsbka);
+        const dateB = new Date(b.tarekhAsbka);
+        if (dateA.getTime() !== dateB.getTime()) {
+            return dateA - dateB;
+        }
+        return a.msbar - b.msbar;
+    });
+    const aglotC = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'C').sort((a, b) => {
+        if (a.msbarAdefot !== b.msbarAdefot) {
+            return a.msbarAdefot - b.msbarAdefot;
+        }
+        const dateA = new Date(a.tarekhAsbka);
+        const dateB = new Date(b.tarekhAsbka);
+        if (dateA.getTime() !== dateB.getTime()) {
+            return dateA - dateB;
+        }
+        return a.msbar - b.msbar;
+    });
+    const aglotD = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'D').sort((a, b) => {
+        if (a.msbarAdefot !== b.msbarAdefot) {
+            return a.msbarAdefot - b.msbarAdefot;
+        }
+        const dateA = new Date(a.tarekhAsbka);
+        const dateB = new Date(b.tarekhAsbka);
+        if (dateA.getTime() !== dateB.getTime()) {
+            return dateA - dateB;
+        }
+        return a.msbar - b.msbar;
+    });
+
+    const aglotYetsor = [...aglotB, ...aglotC, ...aglotD];
 
     const [chossedAgla, setChoosedAgla] = useState({});
     const [showModalAddCustomer, setShowModalAddCustomer] = useState(false);
