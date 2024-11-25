@@ -345,17 +345,17 @@ export default function Aobdem() {
         return false;
     }
 
-    const [showInfo, setShowInfo] = useState(false);
+    const [showInfo, setShowInfo] = useState(true);
 
-    useEffect(() => {
-        if (isNehol) {
-            router.push('/');
-            setShowInfo(false);
-        }
-        else {
-            setShowInfo(true);
-        }
-    }, [isNehol]);
+    // useEffect(() => {
+    //     if (isNehol) {
+    //         router.push('/');
+    //         setShowInfo(false);
+    //     }
+    //     else {
+    //         setShowInfo(true);
+    //     }
+    // }, [isNehol]);
 
     const [showModalAddKnesot, setShowModalAddKnesot] = useState(false);
     const [yomAddKnesa, setYomAddKnesa] = useState('');

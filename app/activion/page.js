@@ -460,7 +460,7 @@ export default function Activion() {
     }, [chossedAgla?.id]);
 
     return (
-        <div className="hebrow_font mb-20 h-full w-full">
+        <div className="hebrow_font mb-20 h-full w-full select-none">
             <div className="fixed right-1/2 transform translate-x-1/2 z-50">
                 <div className={`w-[800px] transition-all duration-500 ease-in-out flex justify-center ${showAlert ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
                     <Alert className="max-w-[600px] w-full" dir="rtl" severity='error'>

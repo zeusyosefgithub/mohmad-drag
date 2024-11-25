@@ -10,6 +10,7 @@ import { IoNewspaperSharp } from "react-icons/io5";
 import { FaBell } from "react-icons/fa";
 import { GrUserWorker } from "react-icons/gr";
 import ContactContext from "../auth/ContactContext";
+import { CgProfile } from "react-icons/cg";
 
 
 export default function NavBar() {
@@ -39,6 +40,14 @@ export default function NavBar() {
             </NavbarContent>
 
             <NavbarContent className="hidden lg:flex gap-4" justify="center">
+                {
+                    isNehol &&
+                    <NavbarItem>
+                        <Link color="foreground" href="/Profile">
+                            <Button variant="light" color="primary" className="text-lg">דף אישי<CgProfile className="text-2xl text-primary-400" /></Button>
+                        </Link>
+                    </NavbarItem>
+                }
                 <NavbarItem>
                     <Link color="foreground" href="/procurement">
                         <Button variant="light" color="primary" className="text-lg">מלאי<BiSolidPurchaseTag className="text-2xl text-green-400" /></Button>
@@ -54,14 +63,11 @@ export default function NavBar() {
                         <Button variant="light" color="primary" className="text-lg">ניהול<FcManager className="text-[26px]" /></Button>
                     </Link>
                 </NavbarItem>
-                {
-                    !isNehol &&
-                    <NavbarItem>
-                        <Link color="foreground" href="/aobdem">
-                            <Button variant="light" color="primary" className="text-lg">עובדים<GrUserWorker className="text-2xl text-black" /></Button>
-                        </Link>
-                    </NavbarItem>
-                }
+                <NavbarItem>
+                    <Link color="foreground" href="/aobdem">
+                        <Button variant="light" color="primary" className="text-lg">עובדים<GrUserWorker className="text-2xl text-black" /></Button>
+                    </Link>
+                </NavbarItem>
                 <NavbarItem>
                     <Link color="foreground" href="/activion">
                         <Button variant="light" color="primary" className="text-lg">רישוי<IoNewspaperSharp className="text-2xl text-gray-600" /></Button>
