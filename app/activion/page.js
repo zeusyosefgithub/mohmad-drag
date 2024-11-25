@@ -22,6 +22,7 @@ import { VscError } from "react-icons/vsc";
 import ModalAddCustomer from "../Modals/ModalAddCustomer";
 import { FiFilePlus } from "react-icons/fi";
 import ContactContext from "../auth/ContactContext";
+import { Alert } from "@mui/material";
 
 export default function Activion() {
 
@@ -154,6 +155,8 @@ export default function Activion() {
     const [showModalAddCustomer, setShowModalAddCustomer] = useState(false);
     const [showModalAddDrag, setShowModalAddDrag] = useState(false);
     const [checks, setChecks] = useState([]);
+    const [showAlert, setShowAlert] = useState(false);
+    const [showAlertMessage, setShowAlertMessage] = useState('');
 
     const GetIdWight = () => {
         const newDate = new Date();
@@ -179,10 +182,22 @@ export default function Activion() {
     }
 
     const addNewDrag = async () => {
-        console.log(23523);
+        setShowAlertMessage('');
         setErrorMessageMsbarAgla('');
+        if (!checkAemLkohKeam() && !chossedAgla?.brtemLkoh?.id) {
+            setShowAlertMessage('משהו לא תקין בלקוח או שהוא לא נוסף!');
+            setShowAlert(true);
+            setTimeout(() => {
+                setShowAlert(false);
+            }, 2500);
+            return;
+        }
         if (checkAemAglaKeamt()) {
-            console.log(1);
+            setShowAlertMessage('משהו לא תקין בפרטים העגלה!');
+            setShowAlert(true);
+            setTimeout(() => {
+                setShowAlert(false);
+            }, 2500);
             return;
         }
         setLoading(true);
@@ -239,7 +254,7 @@ export default function Activion() {
         try {
             await updateDoc(doc(firestore, "tfaol", chossedAgla?.id), {
                 drag: drag,
-                brtemLkoh : checkAemLkohKeam() ? GetCurrentLkoh() : brtemLkoh
+                brtemLkoh : GetCurrentLkoh()
             });
         }
         catch (e) {
@@ -463,6 +478,13 @@ export default function Activion() {
 
     return (
         <div className="hebrow_font mb-20 h-full w-full">
+            <div className="fixed right-1/2 transform translate-x-1/2 z-50">
+                <div className={`w-[800px] transition-all duration-500 ease-in-out flex justify-center ${showAlert ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+                    <Alert className="max-w-[600px] w-full" dir="rtl" severity='error'>
+                        <div className="mr-2">{showAlertMessage}</div>
+                    </Alert>
+                </div>
+            </div>
             <ModalAddCustomer LkohHdash={async(val1, val2) => {
                 if (val1) {
                     setLkohHdash(val1);
