@@ -18,7 +18,7 @@ export default function NavBar() {
     const { signUp, signIn, signOutt, currentUser } = useAuth();
     const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol } = useContext(ContactContext);
     const menuItems = [
-        "משרד תחבורה ",
+        "רישוי ",
         "עובדים",
         "ניהול",
         "יצור",
@@ -64,7 +64,7 @@ export default function NavBar() {
                 }
                 <NavbarItem>
                     <Link color="foreground" href="/activion">
-                        <Button variant="light" color="primary" className="text-lg">משרד תחבורה<IoNewspaperSharp className="text-2xl text-gray-600" /></Button>
+                        <Button variant="light" color="primary" className="text-lg">רישוי<IoNewspaperSharp className="text-2xl text-gray-600" /></Button>
                     </Link>
                 </NavbarItem>
             </NavbarContent>

@@ -115,14 +115,14 @@ export default function Activion() {
     const aglot = GetDocs('drags');
     const [loading, setLoading] = useState(false);
 
+    // מוכן 
+    // מספר עגלה
     const sortingFunction = (a, b) => {
-        if (a.msbarAdefot !== b.msbarAdefot) {
-            return a.msbarAdefot - b.msbarAdefot;
+        if (a?.drag?.dragnum && !b?.drag?.dragnum) {
+            return -1; 
         }
-        const dateA = new Date(a.tarekhAsbka);
-        const dateB = new Date(b.tarekhAsbka);
-        if (dateA.getTime() !== dateB.getTime()) {
-            return dateA - dateB;
+        if (!a?.drag?.dragnum && b?.drag?.dragnum) {
+            return 1;
         }
         return a.msbar - b.msbar;
     };
@@ -799,12 +799,12 @@ export default function Activion() {
                                                         setAllProps(agla?.drag);
                                                     }
                                                 }} className="" size="sm" variant="flat" color={agla?.msbar === chossedAgla?.msbar ? 'danger' : 'default'}>{agla?.msbar === chossedAgla?.msbar ? 'דחות' : 'בחר'}</Button></TableCell>
-                                                <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla?.drag?.dragnum ? <div className="text-success">קיים</div> : <div className="text-danger">לא קיים</div>}</TableCell>
+                                                <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla?.drag?.dragnum ? <div className="text-success">מוכן</div> : <div className="text-danger">לא מוכן</div>}</TableCell>
                                                 <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{GetShlavemInHebrow(agla.shlavNokhhe)}</TableCell>
                                                 <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla.brtemLkoh?.name || agla.newCustomer.customerName}</TableCell>
                                                 <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla.msbar}</TableCell>
-                                                <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}><div className="flex items-center justify-end"><div className="mr-1">{agla.locationYetsor === 'עארה' ? '(עארה)' : '(מעלה אפריים)'}</div><div>{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</div></div></TableCell>
-                                                <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}><div className="flex justify-center items-center">{GetTmonaLfeSog(agla.sogAskaa, agla.msbarAdefot, agla.locationYetsor)}</div></TableCell>
+                                                <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}><div className="flex items-center justify-end"><div className="mr-1">{agla.locationYetsorAgla === 'עארה' ? '(עארה)' : '(מעלה אפריים)'}</div><div>{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</div></div></TableCell>
+                                                <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}><div className="flex justify-center items-center">{GetTmonaLfeSog(agla.sogAskaa, agla.msbarAdefot, agla.locationYetsorAgla)}</div></TableCell>
                                             </TableRow>
                                         })
                                     }
