@@ -81,7 +81,7 @@ export default function CheckAuth({ children }) {
                                         <div className=" sticky top-0 z-50">
                                             <NavBar />
                                         </div>
-                                        <div className='p-8 h-full z-10'>
+                                        <div className='p-3 h-full z-10'>
                                             {children}
                                         </div>
                                     </div>

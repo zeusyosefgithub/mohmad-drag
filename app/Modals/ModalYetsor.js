@@ -824,8 +824,10 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         }
         if (yetsorKeam?.msbar) {
             try {
+                console.log(124124);
                 updateDoc(doc(firestore, 'tfaol', yetsorKeam?.id), {
                     ymeAskem,
+                    brtemLkoh,
                     thslomAher,
                     locationYetsorAgla,
                     mherKlaleAhre,

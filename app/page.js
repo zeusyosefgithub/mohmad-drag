@@ -602,7 +602,7 @@ export default function Home() {
   const [showModalYetsor, setShowModalYetsor] = useState(false);
   const [showModalReshematTokhneot, setShowModalReshematTokhneot] = useState(false);
   const [sogAskaYetsorTokhnet, setSogAskaYetsorTokhnet] = useState('');
-  const [locationYetsor, setLocationYetsor] = useState('');
+  const [locationYetsorAgla, setlocationYetsorAgla] = useState('');
 
   return (
     <div className="h-full">
@@ -617,10 +617,10 @@ export default function Home() {
       <ModalTokhnetYetsor category={category} mlae={mlae} show={showModalCreateTokhnetYetsor} disable={() => setShowModalCreateTokhnetYetsor(false)} />
       {loading && <Spinner className="absolute top-0 bottom-0 right-0 left-0" />}
       <ModalBheratMlae Bhera={(val) => {
-        setLocationYetsor(val);
+        setlocationYetsorAgla(val);
         setShowModalYetsor(true);
       }} show={showModalBheratMlae} disable={() => setShowModalBheratMlae(false)} />
-      <ModalYetsor locationYetsor={locationYetsor} drag={drag} yetsorKeam={tfaolAgla} lkohTfaol={lkoh} Tokhneot={Tokhneot} sogAskaa={sogAska} mlae={mlae} aglot={aglot} lkhot={lkhot} category={category} show={showModalYetsor} disable={() => { setShowModalYetsor(false); setSogAska(''); setTfaolAgla(null); }} />
+      <ModalYetsor locationYetsorAgla={locationYetsorAgla} drag={drag} yetsorKeam={tfaolAgla} lkohTfaol={lkoh} Tokhneot={Tokhneot} sogAskaa={sogAska} mlae={mlae} aglot={aglot} lkhot={lkhot} category={category} show={showModalYetsor} disable={() => { setShowModalYetsor(false); setSogAska(''); setTfaolAgla(null); }} />
       <ModalReshematTokhneot sogAskaa={sogAskaYetsorTokhnet} category={category} mlae={mlae} Tokhneot={Tokhneot} show={showModalReshematTokhneot} disable={() => { setShowModalReshematTokhneot(false); setSogAskaYetsorTokhnet(''); }} />
       <div dir="rtl" className="flex h-full bg-white shadow-2xl rounded-2xl">
         <aside className="w-64 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-r-3xl">
@@ -885,8 +885,8 @@ export default function Home() {
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaA.tarekh}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla.brtemLkoh?.name || agla.newCustomer.customerName}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-1">{agla.locationYetsor === 'עארה' ? '(עארה)' : '(מעלה אפריים)'}</div><div>{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</div></div></td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAskaa, agla.msbarAdefot, agla.locationYetsor)}</td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-1">{agla.locationYetsorAgla === 'עארה' ? '(עארה)' : '(מעלה אפריים)'}</div><div>{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</div></div></td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAskaa, agla.msbarAdefot, agla.locationYetsorAgla)}</td>
                               </tr>
                             })
                           }
@@ -930,7 +930,7 @@ export default function Home() {
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaB.tarekh}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla?.brtemLkoh?.name || agla?.newCustomer?.customerName}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-1">{agla.locationYetsor === 'עארה' ? '(עארה)' : '(מעלה אפריים)'}</div><div>{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</div></div></td>                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAskaa, agla.msbarAdefot, agla.locationYetsor)}</td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-1">{agla.locationYetsorAgla === 'עארה' ? '(עארה)' : '(מעלה אפריים)'}</div><div>{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</div></div></td>                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAskaa, agla.msbarAdefot, agla.locationYetsorAgla)}</td>
                               </tr>
                             })
                           }
@@ -1056,8 +1056,8 @@ export default function Home() {
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaC.tarekh}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla?.brtemLkoh?.name || agla?.newCustomer?.customerName}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-1">{agla.locationYetsor === 'עארה' ? '(עארה)' : '(מעלה אפריים)'}</div><div>{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</div></div></td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAskaa, agla.msbarAdefot, agla.locationYetsor)}</td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-1">{agla.locationYetsorAgla === 'עארה' ? '(עארה)' : '(מעלה אפריים)'}</div><div>{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</div></div></td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAskaa, agla.msbarAdefot, agla.locationYetsorAgla)}</td>
                               </tr>
                             })
                           }
@@ -1099,8 +1099,8 @@ export default function Home() {
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaD.tarekh}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-[10px]">{agla?.brtemLkoh?.name || agla?.newCustomer?.customerName}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.msbar}</td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-1">{agla.locationYetsor === 'עארה' ? '(עארה)' : '(מעלה אפריים)'}</div><div>{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</div></div></td>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAskaa, agla.msbarAdefot, agla.locationYetsor)}</td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center"><div className="mr-1">{agla.locationYetsorAgla === 'עארה' ? '(עארה)' : '(מעלה אפריים)'}</div><div>{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</div></div></td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{GetTmonaLfeSog(agla.sogAskaa, agla.msbarAdefot, agla.locationYetsorAgla)}</td>
                               </tr>
                             })
                           }

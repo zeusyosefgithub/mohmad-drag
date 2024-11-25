@@ -115,7 +115,7 @@ export default function Activion() {
     const aglot = GetDocs('drags');
     const [loading, setLoading] = useState(false);
 
-    const aglotB = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'B').sort((a, b) => {
+    const sortingFunction = (a, b) => {
         if (a.msbarAdefot !== b.msbarAdefot) {
             return a.msbarAdefot - b.msbarAdefot;
         }
@@ -125,31 +125,14 @@ export default function Activion() {
             return dateA - dateB;
         }
         return a.msbar - b.msbar;
-    });
-    const aglotC = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'C').sort((a, b) => {
-        if (a.msbarAdefot !== b.msbarAdefot) {
-            return a.msbarAdefot - b.msbarAdefot;
-        }
-        const dateA = new Date(a.tarekhAsbka);
-        const dateB = new Date(b.tarekhAsbka);
-        if (dateA.getTime() !== dateB.getTime()) {
-            return dateA - dateB;
-        }
-        return a.msbar - b.msbar;
-    });
-    const aglotD = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'D').sort((a, b) => {
-        if (a.msbarAdefot !== b.msbarAdefot) {
-            return a.msbarAdefot - b.msbarAdefot;
-        }
-        const dateA = new Date(a.tarekhAsbka);
-        const dateB = new Date(b.tarekhAsbka);
-        if (dateA.getTime() !== dateB.getTime()) {
-            return dateA - dateB;
-        }
-        return a.msbar - b.msbar;
-    });
+    };
 
-    const aglotYetsor = [...aglotB, ...aglotC, ...aglotD];
+    const aglotB = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'B').sort(sortingFunction);
+    const aglotC = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'C').sort(sortingFunction);
+    const aglotD = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'D').sort(sortingFunction);
+
+    const aglotYetsor = [...aglotB, ...aglotC, ...aglotD].sort(sortingFunction);
+
 
     const [chossedAgla, setChoosedAgla] = useState({});
     const [showModalAddCustomer, setShowModalAddCustomer] = useState(false);
@@ -501,7 +484,7 @@ export default function Activion() {
                     <>
                         <ModalHeader className="shadow-2xl flex justify-center border-b-2 bg-white">פרטים משרד תחבורה</ModalHeader>
                         <ModalBody className="shadow-2xl bg-white">
-                            <div className="m-5">
+                            <div className="">
                                 <div className="overflow-hidden select-none">
                                     {
                                         showDrag &&
@@ -681,7 +664,7 @@ export default function Activion() {
                 </ModalContent>
             </Modal>
             <div className="h-full flex flex-wrap 2xl:flex-nowrap items-center w-full">
-                <Card className="w-full h-full mr-5">
+                <Card className="w-full h-full m-2 hidden 2xl:block">
                     <CardBody className="w-full h-full">
                         <AnimatePresence mode="wait">
                             <motion.div
@@ -787,7 +770,7 @@ export default function Activion() {
                         </AnimatePresence>
                     </CardBody>
                 </Card>
-                <Card className="h-full w-full ml-5">
+                <Card className="h-full w-full m-2">
                     <CardBody>
                         <div className="h-full flex justify-start items-center gap-[100px] flex-col p-5 overflow-auto">                           
                             <Table aria-labelledby="123" aria-label="1123" className="">
