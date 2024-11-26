@@ -6,7 +6,7 @@ import { doc, getDoc, runTransaction, setDoc, collection, addDoc, updateDoc } fr
 import GetDocs from "../FireBase/getDocs";
 
 
-export default function ModalAddCustomer({ disable, show, counter, lkhot, brtem, LkohHdash, adcon, lkohId, brtemLkohKeam }) {
+export default function ModalAddCustomer({ disable, show, counter, lkhot, brtem, LkohHdash, adcon, lkohId, brtemLkohKeam, aglaId }) {
 
     const [loading, setLoading] = useState(false);
     const [customerName, setCustomerName] = useState('');
@@ -96,6 +96,21 @@ export default function ModalAddCustomer({ disable, show, counter, lkhot, brtem,
                     postal: customerPostal,
                     street: customerStreet,
                 });
+                await updateDoc(doc(firestore, 'tfaol', aglaId), {
+                    brtemLkoh: {
+                        id: brtemLkohKeam?.id,
+                        idnum: brtemLkohKeam?.idnum,
+                        yetera: brtemLkohKeam?.yetera,
+                        city: customerCity,
+                        cusid: customerId,
+                        houseid: customerHouseId,
+                        lastname: customerLastName,
+                        name: customerName,
+                        phone: customerPhone,
+                        postal: customerPostal,
+                        street: customerStreet,
+                    }
+                })
             }
             catch (e) {
                 console.log(e);

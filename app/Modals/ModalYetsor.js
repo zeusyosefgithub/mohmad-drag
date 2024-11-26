@@ -89,7 +89,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
     const [shlavNokhhe, setShlavNokhhe] = useState('A');
     const [tarekhAsbka, setTarekhAsbka] = useState('');
     const [seomYetsor, setSeomYetsor] = useState(false);
-    const [msbarAgla, setMsbarAgla] = useState('');
     const [mherKlale, setMherKlale] = useState(0);
     const [mherKlaleAhre, setMherKlaleAhre] = useState(0);
     const [tnaeTshlom, setTnaeTshlom] = useState('');
@@ -197,7 +196,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         setShlavNokhhe('A');
         setTarekhAsbka('');
         setSeomYetsor(false);
-        setMsbarAgla('');
         setMherKlale(0);
         const initialMafenemMotsarem = Remzem.map((remez, index) => ({
             yredatMlae: 0,
@@ -715,7 +713,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
             sogAskaa,
             msbar: counter?.count,
             mherKlale: parseFloat(mherKlale),
-            msbarAgla,
+            msbarAgla : yetsorKeam?.drag?.dragnum || '',
             brtemLkoh,
             shlavNokhhe,
             tarekh: format(new Date(), 'dd-MM-yyyy'),
@@ -846,7 +844,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                     mherKlale: parseFloat(mherKlale),
                     shlavNokhhe,
                     sogAglaBS,
-                    msbarAgla,
+                    msbarAgla : yetsorKeam?.drag?.dragnum || '',
                     seomYetsor,
                     zmanThelaA,
                     zmanThelaB,
@@ -1028,7 +1026,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
             setHkhnsotHomreGlem(yetsorKeam.hkhnsotHomreGlem);
             setBrtemLkoh(yetsorKeam.brtemLkoh);
             setTarekhAsbka(yetsorKeam.tarekhAsbka);
-            setMsbarAgla(yetsorKeam.msbarAgla);
             setMherKlale(yetsorKeam.mherKlale);
             setMotsaremRglem(yetsorKeam.motsaremRglem);
             setMotsaremBrofelem(yetsorKeam.motsaremBrofelem);

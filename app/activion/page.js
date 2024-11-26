@@ -476,7 +476,7 @@ export default function Activion() {
                 customerCity: chossedAgla?.newCustomer?.customerCity,
                 customerPhone: chossedAgla?.newCustomer?.customerPhone,
                 msbarMezahehm: chossedAgla?.newCustomer?.msbarMezahehm
-            }} brtemLkohKeam={chossedAgla?.brtemLkoh} lkhot={lkhot} lkohId={chossedAgla?.brtemLkoh?.id} adcon={showModalAddCustomerAdcon} counter={counter} show={showModalAddCustomer} disable={() => {setShowModalAddCustomer(false);setShowModalAddCustomerAdcon(false);}} />
+            }} brtemLkohKeam={chossedAgla?.brtemLkoh} aglaId={chossedAgla?.id} lkhot={lkhot} lkohId={chossedAgla?.brtemLkoh?.id} adcon={showModalAddCustomerAdcon} counter={counter} show={showModalAddCustomer} disable={() => {setShowModalAddCustomer(false);setShowModalAddCustomerAdcon(false);}} />
             <Modal placement="center" className="test-fontt" backdrop={"blur"} size="3xl" isOpen={showModalAddDrag} onClose={() => setShowModalAddDrag(false)}>
                 <ModalContent>
                     <>
