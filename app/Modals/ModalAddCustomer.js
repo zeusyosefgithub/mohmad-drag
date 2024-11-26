@@ -6,7 +6,7 @@ import { doc, getDoc, runTransaction, setDoc, collection, addDoc, updateDoc } fr
 import GetDocs from "../FireBase/getDocs";
 
 
-export default function ModalAddCustomer({ disable, show, counter, lkhot,brtem,LkohHdash }) {
+export default function ModalAddCustomer({ disable, show, counter, lkhot, brtem, LkohHdash, adcon, lkohId, brtemLkohKeam }) {
 
     const [loading, setLoading] = useState(false);
     const [customerName, setCustomerName] = useState('');
@@ -27,8 +27,15 @@ export default function ModalAddCustomer({ disable, show, counter, lkhot,brtem,L
 
     const checkAemLkohKeam = () => {
         for (let index = 0; index < lkhot.length; index++) {
-            if (lkhot[index].cusid === customerId) {
-                return true;
+            if (adcon) {
+                if (lkhot[index].cusid === customerId && brtemLkohKeam?.id !== lkhot[index].id) {
+                    return true;
+                }
+            }
+            else {
+                if (lkhot[index].cusid === customerId) {
+                    return true;
+                }
             }
         }
         return false;
@@ -36,8 +43,15 @@ export default function ModalAddCustomer({ disable, show, counter, lkhot,brtem,L
 
     const checkAemLkohKeam2 = () => {
         for (let index = 0; index < lkhot.length; index++) {
-            if (lkhot[index].name === customerName) {
-                return true;
+            if (adcon) {
+                if ((lkhot[index].name + ' ' + lkhot[index].lastname) === (customerName + ' ' + customerLastName) && (lkhot[index].id !== brtemLkohKeam?.id)) {
+                    return true;
+                }
+            }
+            else {
+                if ((lkhot[index].name + ' ' + lkhot[index].lastname) === (customerName + ' ' + customerLastName)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -48,7 +62,6 @@ export default function ModalAddCustomer({ disable, show, counter, lkhot,brtem,L
         setErrorMessageTaodatZehot('');
         setErrorPhone('');
         if (!customerName) return setErrorMessageShem('אין נתונים!');;
-        if (!customerPhone) return setErrorPhone('אין נתונים!');
         if (customerId && checkAemLkohKeam()) {
             setErrorMessageTaodatZehot('ת.ז הלקוח כבר קיימת !!');
             return;
@@ -70,15 +83,35 @@ export default function ModalAddCustomer({ disable, show, counter, lkhot,brtem,L
             street: customerStreet,
             yetera: 0,
         }
-        try {
-            await addDoc(collection(firestore, "customers"), customer);
-            await updateDoc(doc(firestore, 'metadata', 'counterLkhot'), { count: counter?.count + 1 });
+        if (adcon) {
+            try {
+                await updateDoc(doc(firestore, 'customers', lkohId), {
+                    city: customerCity,
+                    cusid: customerId,
+                    houseid: customerHouseId,
+                    idnum: counter?.count,
+                    lastname: customerLastName,
+                    name: customerName,
+                    phone: customerPhone,
+                    postal: customerPostal,
+                    street: customerStreet,
+                });
+            }
+            catch (e) {
+                console.log(e);
+            }
         }
-        catch (e) {
-            console.log(e);
+        else {
+            try {
+                await addDoc(collection(firestore, "customers"), customer);
+                await updateDoc(doc(firestore, 'metadata', 'counterLkhot'), { count: counter?.count + 1 });
+            }
+            catch (e) {
+                console.log(e);
+            }
         }
         setLoading(false);
-        LkohHdash(true,customerName);
+        LkohHdash(true, customerName + ' ' + customerLastName);
         ResetAll();
         disable();
     }
@@ -98,11 +131,24 @@ export default function ModalAddCustomer({ disable, show, counter, lkhot,brtem,L
     }
 
     useEffect(() => {
-        setCustomerName(brtem?.customerName);
-        setCustomerPhone(brtem?.customerPhone);
-        setCustomerCity(brtem?.customerCity);
-        setMsbarMezahehm(brtem?.msbarMezahehm);
-    },[brtem])
+        if (adcon) {
+            setCustomerName(brtemLkohKeam?.name);
+            setCustomerLastName(brtemLkohKeam?.lastname);
+            setCustomerId(brtemLkohKeam?.cusid);
+            setCustomerHouseId(brtemLkohKeam?.houseid);
+            setCustomerCity(brtemLkohKeam?.city);
+            setCustomerPhone(brtemLkohKeam?.phone);
+            setCustomerPostal(brtemLkohKeam?.postal);
+            setCustomerStreet(brtemLkohKeam?.street);
+        }
+        else {
+            setCustomerName(brtem?.customerName);
+            setCustomerLastName(brtem?.customerLastName);
+            setCustomerPhone(brtem?.customerPhone);
+            setCustomerCity(brtem?.customerCity);
+            setMsbarMezahehm(brtem?.msbarMezahehm);
+        }
+    }, [brtem])
 
     return (
         <Modal placement="center" className="test-fontt sizeForModals" backdrop={"blur"} size="xl" isOpen={show} onClose={() => { ResetAll(); disable(); }}>
@@ -111,7 +157,7 @@ export default function ModalAddCustomer({ disable, show, counter, lkhot,brtem,L
                     <ModalHeader className="shadow-2xl flex justify-center">הוספת לקוח חדש</ModalHeader>
                     <ModalBody className="shadow-2xl">
                         <div dir="rtl">
-                            <Input errorMessage={errorMessageShem} className="mt-3 mb-3" color="primary" value={customerName} size="sm" onValueChange={(value) => { setCustomerName(value) }} type="text" label="שם לקוח" />
+                            <Input errorMessage={errorMessageShem} className="mt-3 mb-3" color="primary" value={customerName} size="sm" onValueChange={(value) => { setCustomerName(value) }} type="text" label="שם פרטי" />
                             <Input color="primary" value={customerLastName} className="mt-3 mb-3" size="sm" onValueChange={(value) => { setCustomerLastName(value) }} type="text" label="שם משפחה" />
                             <Input color="primary" value={msbarMezahehm} className="mt-3 mb-3" size="sm" onValueChange={(value) => { setMsbarMezahehm(value) }} type="text" label="מספר מזהה" />
                             <Input errorMessage={errorPhone} color="primary" value={customerPhone} className="mt-3 mb-3" size="sm" onValueChange={(value) => { setCustomerPhone(value) }} type="number" label="מס טלפון" />
@@ -129,7 +175,7 @@ export default function ModalAddCustomer({ disable, show, counter, lkhot,brtem,L
                         <Button isLoading={loading} size="sm" variant="flat" color="primary" onClick={async () => {
                             hosfatLkoh();
                         }}>
-                            הוספה
+                            {adcon ? 'עדכון' : 'הוספה'}
                         </Button>
                     </ModalFooter>
                 </>

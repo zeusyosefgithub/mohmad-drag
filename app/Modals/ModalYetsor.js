@@ -69,6 +69,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
     const [lkohHdash, setLkohHdash] = useState(false);
     const [lkohForAdd, setLkohForAdd] = useState('');
     const [customerName, setCustomerName] = useState('');
+    const [customerLastName, setCustomerLastName] = useState('');
     const [customerCity, setCustomerCity] = useState('');
     const [customerPhone, setCustomerPhone] = useState('');
     const [msbarMezahehm, setMsbarMezahehm] = useState('');
@@ -175,6 +176,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
 
     const ResetCustomer = () => {
         setCustomerName('');
+        setCustomerLastName('');
         setCustomerCity('');
         setCustomerPhone('');
         setMsbarMezahehm('');
@@ -265,6 +267,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         setTnaeTshlom('');
         setMsbarAdefot(5);
         setCustomerName('');
+        setCustomerLastName('');
         setCustomerCity('');
         setCustomerPhone('');
         setMsbarMezahehm('');
@@ -424,7 +427,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         if ((brtemLkoh?.id || customerName) && tnaeTshlom && shemTokhnet && mherKlale && mherKlaleAhre && mkdema && msbarTshlomem && BdekatMotsarem() && tarekhAsbka) {
             res = 'C';
         }
-        if ((brtemLkoh?.id || customerName) && tnaeTshlom && shemTokhnet && mherKlale && mherKlaleAhre && mkdema && msbarTshlomem && BdekatMotsarem() && tarekhAsbka && msbarAgla && yetsorKeam?.shlavYetsor) {
+        if ((brtemLkoh?.id || customerName) && tnaeTshlom && shemTokhnet && mherKlale && mherKlaleAhre && mkdema && msbarTshlomem && BdekatMotsarem() && tarekhAsbka && yetsorKeam?.drag?.dragnum && yetsorKeam?.shlavYetsor) {
             res = 'D';
         }
         if (false) {
@@ -468,8 +471,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         setMotsaremRglem(updatedMotsarem);
     };
 
-
-
     const UpdateInventory = async () => {
         try {
             const batch = writeBatch(firestore);
@@ -492,13 +493,14 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         setMotsaremRglem((prevMotsaremRglem) =>
             prevMotsaremRglem.map((item) => ({
                 ...item,
-                yredatMlae: item.kmot, // Set yredatMlae to kmot value
+                yredatMlae: item.kmot, 
             }))
         );
     };
 
     const Next = async () => {
         if (shlavNokhhe === shlav()) {
+            console.log(124124);
             if (getNextLetter(shlavNokhhe) === 'D' && !yetsorKeam?.shlavYetsor) {
                 setShowAlertMessage('חייב להשלים שלבי ייצור מצד העובדים!!');
                 setShowAlertType('warning');
@@ -700,7 +702,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
             locationYetsorAgla,
             mherKlaleAhre,
             lkohHdash: lkohHdash || false,
-            newCustomer: { customerName: customerName || '', customerCity: customerCity || '', customerPhone: customerPhone || '', msbarMezahehm: msbarMezahehm || '' },
+            newCustomer: { customerName: customerName || '',customerLastName : customerLastName || '', customerCity: customerCity || '', customerPhone: customerPhone || '', msbarMezahehm: msbarMezahehm || '' },
             haraBnmet,
             haraKlalet,
             mkdema,
@@ -833,7 +835,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                     mherKlaleAhre,
                     msbarAdefot,
                     lkohHdash: lkohHdash || false,
-                    newCustomer: { customerName: customerName || '', customerCity: customerCity || '', customerPhone: customerPhone || '', msbarMezahehm: msbarMezahehm || '' },
+                    newCustomer: { customerName: customerName || '',customerLastName : customerLastName || '', customerCity: customerCity || '', customerPhone: customerPhone || '', msbarMezahehm: msbarMezahehm || '' },
                     haraBnmet,
                     haraKlalet,
                     msbarTshlomem,
@@ -1090,6 +1092,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
             setShemTokhnet(yetsorKeam.shemTokhnet);
             setCustomerCity(yetsorKeam?.newCustomer?.customerCity);
             setCustomerName(yetsorKeam?.newCustomer?.customerName);
+            setCustomerLastName(yetsorKeam?.newCustomer?.customerLastName);
             setCustomerPhone(yetsorKeam?.newCustomer?.customerPhone);
             setMsbarMezahehm(yetsorKeam?.newCustomer?.msbarMezahehm);
             setLkohHdash(yetsorKeam.lkohHdash);
@@ -1176,7 +1179,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
     useEffect(() => {
         if (lkohForAdd) {
             for (let index = 0; index < lkhot.length; index++) {
-                if (lkhot[index].name === lkohForAdd) {
+                if ((lkhot[index].name + ' ' + lkhot[index].lastname) === lkohForAdd) {
                     setBrtemLkoh(lkhot[index]);
                 }
             }
@@ -1571,6 +1574,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                         }
                     }} brtem={{
                         customerName,
+                        customerLastName,
                         customerCity,
                         customerPhone,
                         msbarMezahehm
@@ -1628,7 +1632,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                     }} brtemKlalem={{
                         snef: yetsorKeam?.locationYetsor || locationYetsor,
                         msbarAglaHzmna: yetsorKeam?.msbar || counter?.count,
-                        shemlkoh: brtemLkoh?.name || customerName,
+                        shemlkoh: brtemLkoh?.name ? (brtemLkoh?.name + '' + brtemLkoh?.lastname) : (customerName + '' + customerLastName),
                         tarekhAsbka,
                         mherKlale,
                         mherKlaleAhre,
@@ -1800,7 +1804,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                                 transition={{ duration: 0.5 }}
                                                                             >
                                                                                 <div className="mr-2 flex items-center">
-                                                                                    <Input value={customerName} onValueChange={(val) => setCustomerName(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="שם לקוח" />
+                                                                                    <Input value={customerName} onValueChange={(val) => setCustomerName(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="שם פרטי" />
+                                                                                    <Input value={customerLastName} onValueChange={(val) => setCustomerLastName(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="שם משפחה" />
                                                                                     <Input value={msbarMezahehm} onValueChange={(val) => setMsbarMezahehm(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מספר מזהה" />
                                                                                     <Input value={customerPhone} onValueChange={(val) => setCustomerPhone(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מס טלפון" />
                                                                                     <Input value={customerCity} onValueChange={(val) => setCustomerCity(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="ישוב" />
@@ -2042,7 +2047,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                                 transition={{ duration: 0.5 }}
                                                                             >
                                                                                 <div className="mr-2 flex items-center">
-                                                                                    <Input value={customerName} onValueChange={(val) => setCustomerName(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="שם לקוח" />
+                                                                                    <Input value={customerName} onValueChange={(val) => setCustomerName(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="שם פרטי" />
+                                                                                    <Input value={customerLastName} onValueChange={(val) => setCustomerLastName(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="שם משפחה" />
                                                                                     <Input value={msbarMezahehm} onValueChange={(val) => setMsbarMezahehm(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מספר מזהה" />
                                                                                     <Input value={customerPhone} onValueChange={(val) => setCustomerPhone(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מס טלפון" />
                                                                                     <Input value={customerCity} onValueChange={(val) => setCustomerCity(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="ישוב" />
@@ -2260,7 +2266,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                                                                                 transition={{ duration: 0.5 }}
                                                                             >
                                                                                 <div className="mr-2 flex items-center">
-                                                                                    <Input value={customerName} onValueChange={(val) => setCustomerName(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="שם לקוח" />
+                                                                                    <Input value={customerName} onValueChange={(val) => setCustomerName(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="שם פרטי" />
+                                                                                    <Input value={customerLastName} onValueChange={(val) => setCustomerLastName(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="שם משפחה" />
                                                                                     <Input value={msbarMezahehm} onValueChange={(val) => setMsbarMezahehm(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מספר מזהה" />
                                                                                     <Input value={customerPhone} onValueChange={(val) => setCustomerPhone(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="מס טלפון" />
                                                                                     <Input value={customerCity} onValueChange={(val) => setCustomerCity(val)} size="sm" className="max-w-[150px] mr-2 ml-2" color="primary" variant="flat" label="ישוב" />

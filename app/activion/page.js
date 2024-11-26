@@ -136,6 +136,7 @@ export default function Activion() {
 
     const [chossedAgla, setChoosedAgla] = useState({});
     const [showModalAddCustomer, setShowModalAddCustomer] = useState(false);
+    const [showModalAddCustomerAdcon, setShowModalAddCustomerAdcon] = useState(false);
     const [showModalAddDrag, setShowModalAddDrag] = useState(false);
     const [checks, setChecks] = useState([]);
     const [showAlert, setShowAlert] = useState(false);
@@ -248,19 +249,16 @@ export default function Activion() {
     }
 
     const GetCurrentLkoh = () => {
-        console.log(1);
         for (let index = 0; index < lkhot.length; index++) {
-            if (lkhot[index].name === chossedAgla?.newCustomer?.customerName) {
-                console.log(lkhot[index]);
+            if ((lkhot[index].name + ' ' + lkhot[index].lastname) === (chossedAgla?.newCustomer?.customerName + ' ' + chossedAgla?.newCustomer?.customerLastName)) {
                 return lkhot[index];
             }
         }
     }
 
     const checkAemLkohKeam = () => {
-        console.log(1);
         for (let index = 0; index < lkhot.length; index++) {
-            if (lkhot[index].name === chossedAgla?.newCustomer?.customerName) {
+            if ((lkhot[index].name + ' ' + lkhot[index].lastname) === (chossedAgla?.newCustomer?.customerName + ' ' + chossedAgla?.newCustomer?.customerLastName)) {
                 return true;
             }
         }
@@ -437,7 +435,7 @@ export default function Activion() {
     useEffect(() => {
         if (lkohForAdd) {
             for (let index = 0; index < lkhot.length; index++) {
-                if (lkhot[index].name === lkohForAdd) {
+                if ((lkhot[index].name + ' ' + lkhot[index].lastname) === lkohForAdd) {
                     setBrtemLkoh(lkhot[index]);
                 }
             }
@@ -478,7 +476,7 @@ export default function Activion() {
                 customerCity: chossedAgla?.newCustomer?.customerCity,
                 customerPhone: chossedAgla?.newCustomer?.customerPhone,
                 msbarMezahehm: chossedAgla?.newCustomer?.msbarMezahehm
-            }} lkhot={lkhot} counter={counter} show={showModalAddCustomer} disable={() => setShowModalAddCustomer(false)} />
+            }} brtemLkohKeam={chossedAgla?.brtemLkoh} lkhot={lkhot} lkohId={chossedAgla?.brtemLkoh?.id} adcon={showModalAddCustomerAdcon} counter={counter} show={showModalAddCustomer} disable={() => {setShowModalAddCustomer(false);setShowModalAddCustomerAdcon(false);}} />
             <Modal placement="center" className="test-fontt" backdrop={"blur"} size="3xl" isOpen={showModalAddDrag} onClose={() => setShowModalAddDrag(false)}>
                 <ModalContent>
                     <>
@@ -686,6 +684,12 @@ export default function Activion() {
                                                     {
                                                         chossedAgla?.newCustomer?.customerName && !chossedAgla?.brtemLkoh?.id &&
                                                         <Button onClick={() => { setShowModalAddCustomer(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
+                                                            <MdMoreHoriz className="text-3xl" />
+                                                        </Button>
+                                                    }
+                                                    {
+                                                        chossedAgla?.brtemLkoh?.id &&
+                                                        <Button onClick={() => { setShowModalAddCustomer(true);setShowModalAddCustomerAdcon(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
                                                             <MdMoreHoriz className="text-3xl" />
                                                         </Button>
                                                     }
