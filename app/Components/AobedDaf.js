@@ -35,7 +35,7 @@ export default function aobedDaf({ aobed }) {
             'shlavNokhhe',
             '==',
             'C',
-            'locationYetsor',
+            'locationYetsorAgla',
             '==',
             aobedNkhhe?.snef || '',
             result => {
