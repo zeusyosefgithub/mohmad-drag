@@ -19,13 +19,48 @@ export default function NavBar() {
     const { signUp, signIn, signOutt, currentUser } = useAuth();
     const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol } = useContext(ContactContext);
     const menuItems = [
-        "רישוי ",
+        "רישוי",
         "עובדים",
         "ניהול",
         "יצור",
-        "מכירות",
         "מלאי",
     ];
+
+    const GetItemHerf = (item) => {
+        if (item === 'רישוי') {
+            return '/activion';
+        }
+        else if (item === 'עובדים') {
+            return '/aobdem';
+        }
+        else if (item === 'ניהול') {
+            return '/management';
+        }
+        else if (item === 'יצור') {
+            return '/';
+        }
+        else if (item === 'מלאי') {
+            return '/procurement';
+        }
+    }
+
+    const GetIconItem = (item) => {
+        if (item === 'רישוי') {
+            return <IoNewspaperSharp className="text-2xl text-gray-600" />;
+        }
+        else if (item === 'עובדים') {
+            return <GrUserWorker className="text-2xl text-black" />;
+        }
+        else if (item === 'ניהול') {
+            return <FcManager className="text-[26px]" />;
+        }
+        else if (item === 'יצור') {
+            return <MdAddChart className="text-2xl text-danger-400" />;
+        }
+        else if (item === 'מלאי') {
+            return <BiSolidPurchaseTag className="text-2xl text-green-400" />;
+        }
+    }
 
     return (
         <Navbar className="" dir="rtl" onMenuOpenChange={setIsMenuOpen}>
@@ -85,14 +120,12 @@ export default function NavBar() {
                 {menuItems.map((item, index) => (
                     <NavbarMenuItem key={`${item}-${index}`}>
                         <Link
-                            color={
-                                index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
-                            }
-                            className="w-full"
-                            href="#"
+                            className="w-full text-right border-b-1 p-1"
+                            dir="rtl"
+                            href={GetItemHerf(item)}
                             size="lg"
                         >
-                            {item}
+                            <div className="w-full flex justify-between items-center">{item}{GetIconItem(item)}</div>
                         </Link>
                     </NavbarMenuItem>
                 ))}

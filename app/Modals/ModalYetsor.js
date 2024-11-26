@@ -37,8 +37,9 @@ import { useRouter } from "next/navigation";
 
 export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, drag, yetsorKeam, category, lkhot, aglot, mlae, sogAskaa }) {
 
-
-    const { tfaol,setTfaol } = useContext(ContactContext);
+    
+    const [showInfo, setShowInfo] = useState(true);
+    const { tfaol,setTfaol,isNehol } = useContext(ContactContext);
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const PrintRef = useRef();
@@ -1643,7 +1644,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
 
                         }} mlae={mlae} motsarem={{ motsaremRglem, motsaremBrofelem, motsaremLhatseg }} mtsav={GetShlavemInHebrow(shlavNokhhe,true)} ref={PrintRef} /></div>
                     {
-                        yetsorKeam?.msbar && <ModalMtsavYetsor res={{
+                        yetsorKeam?.msbar && <ModalMtsavYetsor agla={{id : yetsorKeam?.id,mtsavYetsor : yetsorKeam?.mtsavYetsor}} isNehol={isNehol} res={{
                             a: yetsorKeam?.mtsavYetsor[0] || null,
                             b: yetsorKeam?.mtsavYetsor[1] || null,
                             c: yetsorKeam?.mtsavYetsor[2] || null,

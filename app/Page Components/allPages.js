@@ -241,6 +241,9 @@ export const AllPages = React.forwardRef((props, ref) => {
                 <div className="absoulte_date_page_four1">
                     {props?.data?.brtemLkoh?.name || props?.data?.newCustomer?.customerName}
                 </div>
+                <div className=" absolute ml-[55px] mt-[66px]">
+                                מוחמד כבהה
+                </div>
                 <div className="flex justify-start mt-3">
                     ______________________________ : תאריך
                 </div>
@@ -264,7 +267,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                     </div>
                     <div className="flex">
                         <div className="absoulte_date_page_four5">
-                            {props?.data?.drag?.prodction}
+                            נגררי עירון
                         </div>
                         <div>
                             תוצר : _______________________

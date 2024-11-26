@@ -32,6 +32,9 @@ module.exports = {
       animation: {
         'move-arrows': 'moveLeft 0.7s ease-in-out infinite',
       },
+      screens: {
+        xs: '480px', // Custom breakpoint for smaller screens
+      },
     },
   },
   variants: {

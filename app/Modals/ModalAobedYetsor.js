@@ -22,20 +22,6 @@ export default function ModalAobedYetsor({ show, disable, agla,aobed }) {
         console.log(123);
     }, [agla?.mtsavYetsor]);
 
-    useEffect(() => {
-        console.log(agla?.mtsavYetsor);
-    }, [agla]);
-
-
-    useEffect(() => {
-        console.log(agla);
-    }, [agla])
-
-    console.log();
-
-    console.log(mtsavYetsor);
-
-
     const [loading,setLoading] = useState(false);
     const [loading1,setLoading1] = useState(false);
     const [loading2,setLoading2] = useState(false);

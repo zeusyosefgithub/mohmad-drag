@@ -119,7 +119,7 @@ export default function Activion() {
     // מספר עגלה
     const sortingFunction = (a, b) => {
         if (a?.drag?.dragnum && !b?.drag?.dragnum) {
-            return -1; 
+            return -1;
         }
         if (!a?.drag?.dragnum && b?.drag?.dragnum) {
             return 1;
@@ -233,13 +233,20 @@ export default function Activion() {
             sheshShlosh: sheshShlosh || '',
             sheshArbaa: sheshArbaa || '',
             sheshHamesh: sheshHamesh || '',
-            checks : checks || []
+            checks: checks || []
         }
         try {
-            await updateDoc(doc(firestore, "tfaol", chossedAgla?.id), {
-                drag: drag,
-                brtemLkoh : GetCurrentLkoh()
-            });
+            if (chossedAgla?.brtemLkoh?.id) {
+                await updateDoc(doc(firestore, "tfaol", chossedAgla?.id), {
+                    drag: drag,
+                });
+            }
+            else {
+                await updateDoc(doc(firestore, "tfaol", chossedAgla?.id), {
+                    drag: drag,
+                    brtemLkoh: GetCurrentLkoh()
+                });
+            }
         }
         catch (e) {
             console.log(e);
@@ -402,7 +409,7 @@ export default function Activion() {
                 : [...prevChecks, index]                 // Add index if it doesn't exist
         );
     };
-    
+
 
     const documents = [
         "הסכם מכירה / טופס הזמנה",
@@ -466,7 +473,7 @@ export default function Activion() {
                     </Alert>
                 </div>
             </div>
-            <ModalAddCustomer LkohHdash={async(val1, val2) => {
+            <ModalAddCustomer LkohHdash={async (val1, val2) => {
                 if (val1) {
                     setLkohHdash(val1);
                     setLkohForAdd(val2);
@@ -476,43 +483,42 @@ export default function Activion() {
                 customerCity: chossedAgla?.newCustomer?.customerCity,
                 customerPhone: chossedAgla?.newCustomer?.customerPhone,
                 msbarMezahehm: chossedAgla?.newCustomer?.msbarMezahehm
-            }} brtemLkohKeam={chossedAgla?.brtemLkoh} aglaId={chossedAgla?.id} lkhot={lkhot} lkohId={chossedAgla?.brtemLkoh?.id} adcon={showModalAddCustomerAdcon} counter={counter} show={showModalAddCustomer} disable={() => {setShowModalAddCustomer(false);setShowModalAddCustomerAdcon(false);}} />
+            }} brtemLkohKeam={chossedAgla?.brtemLkoh} aglaId={chossedAgla?.id} lkhot={lkhot} lkohId={chossedAgla?.brtemLkoh?.id} adcon={showModalAddCustomerAdcon} counter={counter} show={showModalAddCustomer} disable={() => { setShowModalAddCustomer(false); setShowModalAddCustomerAdcon(false); }} />
             <Modal placement="center" className="test-fontt" backdrop={"blur"} size="3xl" isOpen={showModalAddDrag} onClose={() => setShowModalAddDrag(false)}>
                 <ModalContent>
                     <>
                         <ModalHeader className="shadow-2xl flex justify-center border-b-2 bg-white">פרטים משרד תחבורה</ModalHeader>
-                        <ModalBody className="shadow-2xl bg-white">
-                            <div className="">
-                                <div className="overflow-hidden select-none">
+                        <ModalBody className="shadow-2xl bg-white h-full overflow-auto">
+                            <div className="h-full">
+                                <div className="overflow-hidden select-none h-full">
                                     {
                                         showDrag &&
                                         <AnimatePresence mode="wait">
                                             <motion.div
+                                                className="h-full"
                                                 initial={{ opacity: 0, x: 100 }}
                                                 animate={{ opacity: 1, x: 0 }}
                                                 exit={{ opacity: 0, x: -100 }}
                                                 transition={{ duration: 0.5 }}
                                             >
-                                                <div>
-                                                    <div dir="rtl" className="">
-                                                        <div className="flex justify-around">
-                                                            <div className="w-1/3">
-                                                                <Input color="primary" value={licenseid} size="sm" onValueChange={(value) => { setLicenseid(value) }} type="number" label="מספר רישוי" />
+                                                <div className="h-full">
+                                                    <div dir="rtl" className="h-full">
+                                                        <div className="flex items-start overflow-auto h-full">
+                                                            <div className="w-full m-2">
+                                                                <Input color="primary" value={licenseid} className="" size="sm" onValueChange={(value) => { setLicenseid(value) }} type="number" label="מספר רישוי" />
                                                                 <Input color="primary" value={chassisnum} className="mt-10" size="sm" onValueChange={(value) => { setChassisnum(value) }} type="text" label="מספר שלדה" />
                                                                 <Input color="primary" value={model} className="mt-10" size="sm" onValueChange={(value) => { setModel(value) }} type="text" label="קוד דגם" />
                                                                 <Input color="primary" value={masTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setMasTaodatABTebos(value) }} type="text" label="מס' תעודת אב טיפוס" />
                                                                 <Input color="primary" value={bodytype} className="mt-10" size="sm" onValueChange={(value) => { setBodytype(value) }} type="text" label="סוג מרכב" />
                                                             </div>
-                                                            <div className="m-10" />
-                                                            <div className="w-1/3">
+                                                            <div className="w-full m-2">
                                                                 <Input color="primary" value={long} size="sm" onValueChange={(value) => { setLong(value) }} type="text" label="אורך כללי" />
                                                                 <Input color="primary" value={space} className="mt-10" size="sm" onValueChange={(value) => { setSpace(value) }} type="text" label="רוחב כללי" />
                                                                 <Input color="primary" value={height} className="mt-10" size="sm" onValueChange={(value) => { setHeight(value) }} type="text" label="גובה כללי" />
                                                                 <Input color="primary" value={masVTokefResheonYatsran} className="mt-10" size="sm" onValueChange={(value) => { setMasVTokefResheonYatsran(value) }} type="text" label="מס' ותוקף רישיון יצרן" />
                                                                 <Input color="primary" value={categore} size="sm" className="mt-10" onValueChange={(value) => { setCategore(value) }} type="text" label="קטגוריה" />
                                                             </div>
-                                                            <div className="m-10" />
-                                                            <div className="w-1/3">
+                                                            <div className="w-full m-2">
                                                                 <Input color="primary" value={color} size="sm" onValueChange={(value) => { setColor(value) }} type="text" label="צבע" />
                                                                 <Input color="primary" value={kinddrag} className="mt-10" size="sm" onValueChange={(value) => { setKinddrag(value) }} type="text" label="סוג הרכב" />
                                                                 <Input color="primary" value={tableokefTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setTokefTaodatABTebos(value) }} type="text" label="תוקף תעודת אב טיפוס" />
@@ -527,31 +533,30 @@ export default function Activion() {
                                         showDragTwo &&
                                         <AnimatePresence mode="wait">
                                             <motion.div
+                                                className="h-full"
                                                 initial={{ opacity: 0, x: 100 }}
                                                 animate={{ opacity: 1, x: 0 }}
                                                 exit={{ opacity: 0, x: -100 }}
                                                 transition={{ duration: 0.5 }}
                                             >
-                                                <div>
-                                                    <div dir="rtl" className="">
-                                                        <div className="flex justify-around">
-                                                            <div className="w-1/3">
+                                                <div className="h-full">
+                                                    <div dir="rtl" className="h-full">
+                                                        <div className="flex items-start overflow-auto h-full">
+                                                            <div className="w-full m-2">
                                                                 <Input color="primary" value={rearextension} size="sm" onValueChange={(value) => { setRearextension(value) }} type="text" label="שלוחה אחורית" />
                                                                 <Input color="primary" value={lengthhatch} className="mt-10" size="sm" onValueChange={(value) => { setLengthhatch(value) }} type="text" label="אורך יצול" />
                                                                 <Input color="primary" value={heightloading} className="mt-10" size="sm" onValueChange={(value) => { setHeightloading(value) }} type="text" label="גובה משטח העמסה" />
                                                                 <Input color="primary" value={sizeloading} className="mt-10" size="sm" onValueChange={(value) => { setSizeloading(value) }} type="text" label="גובה משטח העמסה (מר)" />
                                                                 <Input color="primary" value={masAeshorYatsran} className="mt-10" size="sm" onValueChange={(value) => { setMasAeshorYatsran(value) }} type="text" label="מס' אישור יצרן" />
                                                             </div>
-                                                            <div className="m-10" />
-                                                            <div className="w-1/3">
+                                                            <div className="w-full m-2">
                                                                 <Input color="primary" value={bodymodel} size="sm" onValueChange={(value) => { setBodymodel(value) }} type="text" label="דגם מרכב" />
                                                                 <Input color="primary" value={undercarriage} className="mt-10" size="sm" onValueChange={(value) => { setUndercarriage(value) }} type="text" label="מסד מרכב" />
                                                                 <Input color="primary" value={selfweightaxles} className="mt-10" size="sm" onValueChange={(value) => { setSelfweightaxles(value) }} type="text" label="משקל עצמי על הסרנים" />
                                                                 <Input color="primary" value={totalselfweight} className="mt-10" size="sm" onValueChange={(value) => { setTotalselfweight(value) }} type="text" label="משקל עצמי כולל" />
                                                                 <Input color="primary" value={masGlglemSrnem} className="mt-10" size="sm" onValueChange={(value) => { setMasGlglemSrnem(value) }} type="text" label="מס' גלגלים / סרנים" />
                                                             </div>
-                                                            <div className="m-10" />
-                                                            <div className="w-1/3">
+                                                            <div className="w-full m-2">
                                                                 <Input color="primary" value={authorizedweight} size="sm" onValueChange={(value) => { setAuthorizedweight(value) }} type="text" label="משקל מורשה" />
                                                                 <Input color="primary" value={distributionloads} className="mt-10" size="sm" onValueChange={(value) => { setDistributionloads(value) }} type="text" label="חלוקת העומסים" />
                                                                 <Input color="primary" value={device} className="mt-10" size="sm" onValueChange={(value) => { setDevice(value) }} type="text" label="התקן" />
@@ -567,23 +572,23 @@ export default function Activion() {
                                     {
                                         showDragThree && <AnimatePresence mode="wait">
                                             <motion.div
+                                                className="h-full"
                                                 initial={{ opacity: 0, x: 100 }}
                                                 animate={{ opacity: 1, x: 0 }}
                                                 exit={{ opacity: 0, x: -100 }}
                                                 transition={{ duration: 0.5 }}
                                             >
-                                                <div>
-                                                    <div dir="rtl" className="">
-                                                        <div className="flex justify-around">
-                                                            <div className="w-1/3">
+                                                <div className="h-full">
+                                                    <div dir="rtl" className="h-full">
+                                                        <div className="flex items-start overflow-auto h-full">
+                                                            <div className="w-full m-2">
                                                                 <Input color="primary" value={foundation} size="sm" onValueChange={(value) => { setFoundation(value) }} type="text" label="מסד" />
                                                                 <Input color="primary" value={safetyreview} className="mt-10" size="sm" onValueChange={(value) => { setSafetyreview(value) }} type="text" label="תסקיר בטיחות" />
                                                                 <Input color="primary" value={reviewerid} className="mt-10" size="sm" onValueChange={(value) => { setReviewerid(value) }} type="number" label="זהות סוקר" />
                                                                 <Input color="primary" value={labreport} className="mt-10" size="sm" onValueChange={(value) => { setLabreport(value) }} type="text" label="דוח מעבדה" />
                                                                 <Input color="primary" value={labid} size="sm" className="mt-10" onValueChange={(value) => { setLabid(value) }} type="number" label="זהות מעבדה" />
                                                             </div>
-                                                            <div className="m-10" />
-                                                            <div className="w-1/3">
+                                                            <div className="w-full m-2">
                                                                 <Input color="primary" value={sheshAehad} size="sm" className="" onValueChange={(value) => { setSheshAehad(value) }} type="number" label="6.1" />
                                                                 <Input color="primary" value={sheshShtaeem} size="sm" className="mt-10" onValueChange={(value) => { setSheshShtaeem(value) }} type="number" label="6.2" />
                                                                 <Input color="primary" value={sheshShlosh} size="sm" className="mt-10" onValueChange={(value) => { setSheshShlosh(value) }} type="number" label="6.3" />
@@ -600,22 +605,22 @@ export default function Activion() {
                                         showDragFour &&
                                         <AnimatePresence mode="wait">
                                             <motion.div
+                                                className="h-full"
                                                 initial={{ opacity: 0, x: 100 }}
                                                 animate={{ opacity: 1, x: 0 }}
                                                 exit={{ opacity: 0, x: -100 }}
                                                 transition={{ duration: 0.5 }}
                                             >
-                                                <div>
-                                                    <div dir="rtl" className="">
-                                                        <div className="flex justify-around">
-                                                            <div className="w-1/3">
+                                                <div className="h-full">
+                                                    <div dir="rtl" className="h-full">
+                                                        <div className="flex items-start overflow-auto h-full">
+                                                            <div className="w-full m-2">
                                                                 <Input color="primary" value={opendate} size="sm" onValueChange={(value) => { setOpendate(value) }} type="text" label="תאריך כניסה" />
                                                                 <Input color="primary" value={closedate} className="mt-10" size="sm" onValueChange={(value) => { setClosedate(value) }} type="text" label="תאריך יציאה" />
                                                                 <Input color="primary" value={opentime} className="mt-10" size="sm" onValueChange={(value) => { setOpentime(value) }} type="text" label="שעה כניסה" />
                                                                 <Input color="primary" value={closetime} className="mt-10" size="sm" onValueChange={(value) => { setClosetime(value) }} type="text" label="שעה יציאה" />
                                                             </div>
-                                                            <div className="m-10" />
-                                                            <div className="w-1/3">
+                                                            <div className="w-full m-2">
                                                                 <Input color="primary" value={wight} size="sm" onValueChange={(value) => { setWight(value) }} type="text" label="משקל" />
                                                                 <Input errorMessage={errorMessageMsbarAgla} color="primary" value={dragnum} className="mt-10" size="sm" onValueChange={(value) => { setDragnum(value) }} type="number" label="מספר גרור" />
                                                                 <Input color="primary" value={skhom || ''} className="mt-10" size="sm" onValueChange={(value) => { setSkhom(value) }} type="number" label="סכום אגרה" />
@@ -662,6 +667,128 @@ export default function Activion() {
                 </ModalContent>
             </Modal>
             <div className="h-full flex flex-wrap 2xl:flex-nowrap items-center w-full">
+                <Card className={`${chossedAgla?.msbar ? 'opacity-100 translate-y-0 z-30' : 'opacity-0 translate-y-4'} transition-all duration-1000 ease-in-out w-full h-full 2xl:hidden  fixed top-[64px] left-0 bottom-0 right-0 rounded-none`}>
+                    <CardBody className="w-full h-full">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                className="h-full w-full"
+                                initial={{ opacity: 0, x: 100 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -100 }}
+                                transition={{ duration: 0.5 }}
+                            >
+                                <div className="w-full h-full flex flex-col">
+                                    <div className="h-full overflow-auto" dir="ltr">
+                                        <div className="border-b-1 flex w-full justify-center items-center text-xl pb-3 sticky top-0 bg-white z-40">
+                                            פרטי עגלה
+                                        </div>
+                                        <div dir="rtl" className="flex flex-col h-full">
+                                            <div className="w-full flex items-center pb-3 pt-3 border-b-1">
+                                                <div className="w-full flex items-center">
+                                                    <FaUser className="text-xl text-primary" />
+                                                    <div className="mr-2 border-r-2 pr-2 flex items-center">
+                                                        <Input isReadOnly value={chossedAgla?.brtemLkoh?.name || chossedAgla?.newCustomer?.customerName || 'שם לקוח'} color="primary" size="sm" className="max-w-[200px]" />
+                                                        {
+                                                            chossedAgla?.newCustomer?.customerName && !chossedAgla?.brtemLkoh?.id &&
+                                                            <Button onClick={() => { setShowModalAddCustomer(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
+                                                                <MdMoreHoriz className="text-3xl" />
+                                                            </Button>
+                                                        }
+                                                        {
+                                                            chossedAgla?.brtemLkoh?.id &&
+                                                            <Button onClick={() => { setShowModalAddCustomer(true); setShowModalAddCustomerAdcon(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
+                                                                <MdMoreHoriz className="text-3xl" />
+                                                            </Button>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    {
+                                                        chossedAgla?.brtemLkoh?.name ?
+                                                            <FaRegCircleCheck className="text-3xl text-success" />
+                                                            :
+                                                            <VscError className="text-3xl text-danger" />
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div className="w-full flex items-center pb-3 pt-3 border-b-1">
+                                                <div className="w-full flex items-center">
+                                                    <FaTrailer className="text-xl text-primary" />
+                                                    <div className="mr-2 border-r-2 pr-2 flex items-center">
+                                                        <Input isReadOnly value={chossedAgla?.msbar || 'מספר עגלה'} color="primary" size="sm" className="max-w-[200px]" />
+                                                        {
+                                                            chossedAgla?.msbar &&
+                                                            <Button onClick={() => { setShowModalAddDrag(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
+                                                                <MdMoreHoriz className="text-3xl" />
+                                                            </Button>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    {
+                                                        chossedAgla?.drag?.dragnum || dragnum ?
+                                                            <FaRegCircleCheck className="text-3xl text-success" />
+                                                            :
+                                                            <VscError className="text-3xl text-danger" />
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div className="w-full flex items-center pb-3 pt-3 border-b-1">
+                                                <div className="w-full flex items-center">
+                                                    <FiFilePlus className="text-xl text-primary" />
+                                                    <div className="mr-2 border-r-2 pr-2 flex items-center w-full">
+                                                        <Table aria-labelledby="12ef3" aria-label="11233" dir="ltr" className="w-full ml-3">
+                                                            <TableHeader>
+                                                                <TableColumn className="text-right"></TableColumn>
+                                                                <TableColumn className="text-right"></TableColumn>
+                                                            </TableHeader>
+                                                            <TableBody>
+                                                                {documents.map((doc, index) => (
+                                                                    <TableRow key={index}>
+                                                                        <TableCell className="text-right">
+                                                                            <Button
+                                                                                size='sm'
+                                                                                variant='flat'
+                                                                                onClick={() => handleToggleCheck(index)}
+                                                                            >
+                                                                                {checks?.includes(index) ? <FaCheck /> : '-'}
+                                                                            </Button>
+                                                                        </TableCell>
+                                                                        <TableCell className="text-right text-[11px] sm:text-base">{doc}</TableCell>
+                                                                    </TableRow>
+                                                                ))}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    {
+                                                        chossedAgla?.drag?.dragnum || dragnum ?
+                                                            <FaRegCircleCheck className="text-3xl text-success" />
+                                                            :
+                                                            <VscError className="text-3xl text-danger" />
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="border-t-1 mb-[64px] pt-2 pr-2 flex justify-end">
+                                        <Button onClick={() => {
+                                            setChoosedAgla(null);
+                                            setChecks([]);
+                                            resetAllProps();
+                                        }} className="mr-2 ml-2" size="sm" variant="flat" color="warning">
+                                            סגור
+                                        </Button>
+                                        <Button onClick={addNewDrag} isDisabled={!chossedAgla?.msbar} color="primary" variant="flat" size="sm">
+                                            שמירה
+                                        </Button>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
+                    </CardBody>
+                </Card>
                 <Card className="w-full h-full m-2 hidden 2xl:block">
                     <CardBody className="w-full h-full">
                         <AnimatePresence mode="wait">
@@ -689,7 +816,7 @@ export default function Activion() {
                                                     }
                                                     {
                                                         chossedAgla?.brtemLkoh?.id &&
-                                                        <Button onClick={() => { setShowModalAddCustomer(true);setShowModalAddCustomerAdcon(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
+                                                        <Button onClick={() => { setShowModalAddCustomer(true); setShowModalAddCustomerAdcon(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
                                                             <MdMoreHoriz className="text-3xl" />
                                                         </Button>
                                                     }
@@ -774,49 +901,45 @@ export default function Activion() {
                         </AnimatePresence>
                     </CardBody>
                 </Card>
-                <Card className="h-full w-full m-2">
-                    <CardBody>
-                        <div className="h-full flex justify-start items-center gap-[100px] flex-col p-5 overflow-auto">                           
-                            <Table aria-labelledby="123" aria-label="1123" className="">
-                                <TableHeader>
-                                    <TableColumn className="text-right"></TableColumn>
-                                    <TableColumn className="text-right">מצב רישוי</TableColumn>
-                                    <TableColumn className="text-right">שלב</TableColumn>
-                                    <TableColumn className="text-right">שם לקוח</TableColumn>
-                                    <TableColumn className="text-right">מספר פעולה</TableColumn>
-                                    <TableColumn className="text-right">סוג פעולה</TableColumn>
-                                    <TableColumn className="text-right"></TableColumn>
-                                </TableHeader>
-                                <TableBody>
-                                    {
-                                        aglotYetsor.map((agla, index) => {
-                                            return <TableRow key={index} >
-                                                <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}><Button onClick={() => {
-                                                    if (agla?.msbar === chossedAgla?.msbar) {
-                                                        setChoosedAgla(null);
-                                                        setChecks([]);
-                                                        resetAllProps();
-                                                    }
-                                                    else {
-                                                        setChoosedAgla(agla);
-                                                        setChecks(agla?.drag?.checks || []);
-                                                        setAllProps(agla?.drag);
-                                                    }
-                                                }} className="" size="sm" variant="flat" color={agla?.msbar === chossedAgla?.msbar ? 'danger' : 'default'}>{agla?.msbar === chossedAgla?.msbar ? 'דחות' : 'בחר'}</Button></TableCell>
-                                                <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla?.drag?.dragnum ? <div className="text-success">מוכן</div> : <div className="text-danger">לא מוכן</div>}</TableCell>
-                                                <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{GetShlavemInHebrow(agla.shlavNokhhe)}</TableCell>
-                                                <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla.brtemLkoh?.name || agla.newCustomer.customerName}</TableCell>
-                                                <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla.msbar}</TableCell>
-                                                <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}><div className="flex items-center justify-end"><div className="mr-1">{agla.locationYetsorAgla === 'עארה' ? '(עארה)' : '(מעלה אפריים)'}</div><div>{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</div></div></TableCell>
-                                                <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}><div className="flex justify-center items-center">{GetTmonaLfeSog(agla.sogAskaa, agla.msbarAdefot, agla.locationYetsorAgla)}</div></TableCell>
-                                            </TableRow>
-                                        })
-                                    }
-                                </TableBody>
-                            </Table>
-                        </div>
-                    </CardBody>
-                </Card>
+                <div className="h-full w-full m-0 sm:m-2">
+                    <Table aria-labelledby="123" aria-label="1123" className="w-full h-full">
+                        <TableHeader>
+                            <TableColumn className="text-right text-[10px] lg:text-sm"></TableColumn>
+                            <TableColumn className="text-right text-[10px] lg:text-sm">מצב רישוי</TableColumn>
+                            <TableColumn className="text-right text-[10px] lg:text-sm hidden sm:table-cell">שלב</TableColumn>
+                            <TableColumn className="text-right text-[10px] lg:text-sm">שם לקוח</TableColumn>
+                            <TableColumn className="text-right text-[10px] lg:text-sm">מספר פעולה</TableColumn>
+                            <TableColumn className="text-right text-[10px] lg:text-sm hidden xs:table-cell">סוג פעולה</TableColumn>
+                            <TableColumn className="text-right text-[10px] lg:text-sm hidden sm:table-cell"></TableColumn>
+                        </TableHeader>
+                        <TableBody>
+                            {
+                                aglotYetsor.map((agla, index) => {
+                                    return <TableRow key={index} >
+                                        <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}><Button onClick={() => {
+                                            if (agla?.msbar === chossedAgla?.msbar) {
+                                                setChoosedAgla(null);
+                                                setChecks([]);
+                                                resetAllProps();
+                                            }
+                                            else {
+                                                setChoosedAgla(agla);
+                                                setChecks(agla?.drag?.checks || []);
+                                                setAllProps(agla?.drag);
+                                            }
+                                        }} className="" size="sm" variant="flat" color={agla?.msbar === chossedAgla?.msbar ? 'danger' : 'default'}>{agla?.msbar === chossedAgla?.msbar ? 'דחות' : 'בחר'}</Button></TableCell>
+                                        <TableCell className={`text-right text-[10px] lg:text-sm ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla?.drag?.dragnum ? <div className="text-success">מוכן</div> : <div className="text-danger">לא מוכן</div>}</TableCell>
+                                        <TableCell className={`text-right text-[10px] lg:text-sm hidden sm:table-cell ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{GetShlavemInHebrow(agla.shlavNokhhe)}</TableCell>
+                                        <TableCell className={`text-right text-[10px] lg:text-sm ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla.brtemLkoh?.name || agla.newCustomer.customerName}</TableCell>
+                                        <TableCell className={`text-right text-[10px] lg:text-sm ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla.msbar}</TableCell>
+                                        <TableCell className={`text-right text-[10px] lg:text-sm hidden xs:table-cell ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}><div className="flex items-center justify-end"><div className="mr-1">{agla.locationYetsorAgla === 'עארה' ? '(עארה)' : '(מעלה אפריים)'}</div><div>{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</div></div></TableCell>
+                                        <TableCell className={`text-right text-[10px] lg:text-sm hidden sm:table-cell ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}><div className="flex justify-center items-center">{GetTmonaLfeSog(agla.sogAskaa, agla.msbarAdefot, agla.locationYetsorAgla)}</div></TableCell>
+                                    </TableRow>
+                                })
+                            }
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
             <div className="hidden">
                 <AllPages data={chossedAgla} documents={documents} ref={componentRefOne} />
