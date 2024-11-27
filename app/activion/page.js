@@ -9,7 +9,7 @@ import { IoIosArrowBack, IoIosArrowForward, IoMdAdd } from "react-icons/io";
 import GetDocs from "../FireBase/getDocs";
 import { AllPages } from "../Page Components/allPages";
 import { addDoc, collection, count, doc, onSnapshot, updateDoc, where } from "firebase/firestore";
-import { firestore } from "../FireBase/firebase";
+import { firestore, storagee } from "../FireBase/firebase";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { differenceInDays, format, parse } from "date-fns";
 import { FaCheck, FaTrailer, FaUser, FaUserEdit } from "react-icons/fa";
@@ -23,6 +23,9 @@ import ModalAddCustomer from "../Modals/ModalAddCustomer";
 import { FiFilePlus } from "react-icons/fi";
 import ContactContext from "../auth/ContactContext";
 import { Alert } from "@mui/material";
+import { FiUpload } from "react-icons/fi";
+import ModalUploadFile from "../Modals/ModalUploadFile";
+import { getMetadata, ref } from "firebase/storage";
 
 export default function Activion() {
 
@@ -307,6 +310,17 @@ export default function Activion() {
         setClosetime('');
         setWight('');
         setDragnum('');
+        setMasTaodatABTebos('');
+        setMasVTokefResheonYatsran('');
+        setTokefTaodatABTebos('');
+        setMasAeshorYatsran('');
+        setMasGlglemSrnem('');
+        setMedatTsmgem('');
+        setSheshAehad(0);
+        setSheshShtaeem(0);
+        setSheshShlosh(0);
+        setSheshArbaa(0);
+        setSheshHamesh(0);
     }
 
     const setAllProps = (agla) => {
@@ -344,6 +358,17 @@ export default function Activion() {
         setClosetime(agla?.closetime);
         setWight(agla?.wight);
         setDragnum(agla?.dragnum);
+        setMasTaodatABTebos(agla?.masTaodatABTebos);
+        setMasVTokefResheonYatsran(agla?.masVTokefResheonYatsran);
+        setTokefTaodatABTebos(agla?.tableokefTaodatABTebos);
+        setMasAeshorYatsran(agla?.masAeshorYatsran);
+        setMasGlglemSrnem(agla?.masGlglemSrnem);
+        setMedatTsmgem(agla?.medatTsmgem);
+        setSheshAehad(agla?.sheshAehad);
+        setSheshShtaeem(agla?.sheshShtaeem);
+        setSheshShlosh(agla?.sheshShlosh);
+        setSheshArbaa(agla?.sheshArbaa);
+        setSheshHamesh(agla?.sheshHamesh);
     }
 
     const GetColorMsbarAdefot = (val) => {
@@ -437,6 +462,9 @@ export default function Activion() {
     const [lkohHdash, setLkohHdash] = useState(false);
     const [lkohForAdd, setLkohForAdd] = useState('');
     const [brtemLkoh, setBrtemLkoh] = useState(null);
+    const [showModalUploadFile,setShowModalUploadFile] = useState(false);
+    const [showModalUploadFileIndex,setShowModalUploadFileIndex] = useState(false);
+    const [fileExists, setFileExists] = useState({});
 
 
     useEffect(() => {
@@ -464,6 +492,7 @@ export default function Activion() {
         }
     }, [chossedAgla?.id]);
 
+
     return (
         <div className="hebrow_font mb-20 h-full w-full select-none">
             <div className="fixed right-1/2 transform translate-x-1/2 z-50">
@@ -473,6 +502,7 @@ export default function Activion() {
                     </Alert>
                 </div>
             </div>
+            <ModalUploadFile aglaID={chossedAgla?.id} existsFiles={chossedAgla?.existsFiles} dragnum={chossedAgla?.drag?.dragnum} index={showModalUploadFileIndex} show={showModalUploadFile} disable={() => setShowModalUploadFile(false)}/>
             <ModalAddCustomer LkohHdash={async (val1, val2) => {
                 if (val1) {
                     setLkohHdash(val1);
@@ -866,13 +896,17 @@ export default function Activion() {
                                                             {documents.map((doc, index) => (
                                                                 <TableRow key={index}>
                                                                     <TableCell className="text-right">
-                                                                        <Button
-                                                                            size='sm'
-                                                                            variant='flat'
-                                                                            onClick={() => handleToggleCheck(index)}
-                                                                        >
-                                                                            {checks?.includes(index) ? <FaCheck /> : '-'}
-                                                                        </Button>
+                                                                        <div className="flex items-center">
+                                                                            <Button
+                                                                                size='sm'
+                                                                                variant='flat'
+                                                                                color={checks?.includes(index) ? 'success' : 'default'}
+                                                                                onClick={() => handleToggleCheck(index)}
+                                                                            >
+                                                                                {checks?.includes(index) ? <FaCheck/> : '-'}
+                                                                            </Button>
+                                                                            <Button size="sm" className="ml-2" variant="flat" color={chossedAgla?.existsFiles?.includes(index) ? 'success' : 'default'} onClick={() => {setShowModalUploadFile(true);setShowModalUploadFileIndex(index)}}><FiUpload className="text-base"/></Button>
+                                                                        </div>
                                                                     </TableCell>
                                                                     <TableCell className="text-right">{doc}</TableCell>
                                                                 </TableRow>

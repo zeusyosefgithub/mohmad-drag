@@ -821,7 +821,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
             msbarBroAnkheVnel,
             motsaremRglem,
             motsaremBrofelem,
-            motsaremLhatseg
+            motsaremLhatseg,
+            existsFiles : []
         }
         if (yetsorKeam?.msbar) {
             try {
