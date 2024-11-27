@@ -462,8 +462,8 @@ export default function Activion() {
     const [lkohHdash, setLkohHdash] = useState(false);
     const [lkohForAdd, setLkohForAdd] = useState('');
     const [brtemLkoh, setBrtemLkoh] = useState(null);
-    const [showModalUploadFile,setShowModalUploadFile] = useState(false);
-    const [showModalUploadFileIndex,setShowModalUploadFileIndex] = useState(false);
+    const [showModalUploadFile, setShowModalUploadFile] = useState(false);
+    const [showModalUploadFileIndex, setShowModalUploadFileIndex] = useState(false);
     const [fileExists, setFileExists] = useState({});
 
 
@@ -502,7 +502,7 @@ export default function Activion() {
                     </Alert>
                 </div>
             </div>
-            <ModalUploadFile aglaID={chossedAgla?.id} existsFiles={chossedAgla?.existsFiles} dragnum={chossedAgla?.drag?.dragnum} index={showModalUploadFileIndex} show={showModalUploadFile} disable={() => setShowModalUploadFile(false)}/>
+            <ModalUploadFile aglaID={chossedAgla?.id} existsFiles={chossedAgla?.existsFiles} dragnum={chossedAgla?.drag?.dragnum} index={showModalUploadFileIndex} show={showModalUploadFile} disable={() => setShowModalUploadFile(false)} />
             <ModalAddCustomer LkohHdash={async (val1, val2) => {
                 if (val1) {
                     setLkohHdash(val1);
@@ -907,9 +907,9 @@ export default function Activion() {
                                                                                 color={checks?.includes(index) ? 'success' : 'default'}
                                                                                 onClick={() => handleToggleCheck(index)}
                                                                             >
-                                                                                {checks?.includes(index) ? <FaCheck/> : '-'}
+                                                                                {checks?.includes(index) ? <FaCheck /> : '-'}
                                                                             </Button>
-                                                                            <Button size="sm" className="ml-2" variant="flat" color={chossedAgla?.existsFiles?.includes(index) ? 'success' : 'default'} onClick={() => {setShowModalUploadFile(true);setShowModalUploadFileIndex(index)}}><FiUpload className="text-base"/></Button>
+                                                                            <Button size="sm" className="ml-2" variant="flat" color={chossedAgla?.existsFiles?.includes(index) ? 'success' : 'default'} onClick={() => { setShowModalUploadFile(true); setShowModalUploadFileIndex(index) }}><FiUpload className="text-base" /></Button>
                                                                         </div>
                                                                     </TableCell>
                                                                     <TableCell className="text-right">{doc}</TableCell>
