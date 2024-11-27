@@ -776,13 +776,17 @@ export default function Activion() {
                                                                 {documents.map((doc, index) => (
                                                                     <TableRow key={index}>
                                                                         <TableCell className="text-right">
-                                                                            <Button
-                                                                                size='sm'
-                                                                                variant='flat'
-                                                                                onClick={() => handleToggleCheck(index)}
-                                                                            >
-                                                                                {checks?.includes(index) ? <FaCheck /> : '-'}
-                                                                            </Button>
+                                                                            <div className="flex items-center">
+                                                                                <Button
+                                                                                    size='sm'
+                                                                                    variant='flat'
+                                                                                    color={checks?.includes(index) ? 'success' : 'default'}
+                                                                                    onClick={() => handleToggleCheck(index)}
+                                                                                >
+                                                                                    {checks?.includes(index) ? <FaCheck /> : '-'}
+                                                                                </Button>
+                                                                                <Button size="sm" className="ml-2" variant="flat" color={chossedAgla?.existsFiles?.includes(index) ? 'success' : 'default'} onClick={() => { setShowModalUploadFile(true); setShowModalUploadFileIndex(index) }}><FiUpload className="text-base" /></Button>
+                                                                            </div>
                                                                         </TableCell>
                                                                         <TableCell className="text-right text-[11px] sm:text-base">{doc}</TableCell>
                                                                     </TableRow>
