@@ -26,6 +26,7 @@ import { Alert } from "@mui/material";
 import { FiUpload } from "react-icons/fi";
 import ModalUploadFile from "../Modals/ModalUploadFile";
 import { getMetadata, ref } from "firebase/storage";
+import { BiArrowFromLeft, BiArrowFromRight } from "react-icons/bi";
 
 export default function Activion() {
 
@@ -452,6 +453,8 @@ export default function Activion() {
         "רשומון יבוא במקרה של יבואן",
     ];
 
+    const [buttonsDocuments,setButtonsDocuments] = useState([]);
+
     useEffect(() => {
         if (tfaol?.msbar) {
             setChoosedAgla(tfaol);
@@ -465,7 +468,7 @@ export default function Activion() {
     const [showModalUploadFile, setShowModalUploadFile] = useState(false);
     const [showModalUploadFileIndex, setShowModalUploadFileIndex] = useState(false);
     const [fileExists, setFileExists] = useState({});
-
+    const [showPropButtons,setShowPropButtons] = useState(false);
 
     useEffect(() => {
         if (lkohForAdd) {
@@ -493,6 +496,8 @@ export default function Activion() {
     }, [chossedAgla?.id]);
 
 
+
+
     return (
         <div className="hebrow_font mb-20 h-full w-full select-none">
             <div className="fixed right-1/2 transform translate-x-1/2 z-50">
@@ -502,7 +507,9 @@ export default function Activion() {
                     </Alert>
                 </div>
             </div>
-            <ModalUploadFile aglaID={chossedAgla?.id} existsFiles={chossedAgla?.existsFiles} dragnum={chossedAgla?.drag?.dragnum} index={showModalUploadFileIndex} show={showModalUploadFile} disable={() => setShowModalUploadFile(false)} />
+            <div className="">
+                <ModalUploadFile aglaID={chossedAgla?.id} existsFiles={chossedAgla?.existsFiles} dragnum={chossedAgla?.drag?.dragnum} index={showModalUploadFileIndex} show={showModalUploadFile} disable={() => setShowModalUploadFile(false)} />
+            </div>
             <ModalAddCustomer LkohHdash={async (val1, val2) => {
                 if (val1) {
                     setLkohHdash(val1);
@@ -716,23 +723,33 @@ export default function Activion() {
                                             <div className="w-full flex items-center pb-3 pt-3 border-b-1">
                                                 <div className="w-full flex items-center">
                                                     <FaUser className="text-xl text-primary" />
-                                                    <div className="mr-2 border-r-2 pr-2 flex items-center">
-                                                        <Input isReadOnly value={chossedAgla?.brtemLkoh?.name || chossedAgla?.newCustomer?.customerName || 'שם לקוח'} color="primary" size="sm" className="max-w-[200px]" />
-                                                        {
-                                                            chossedAgla?.newCustomer?.customerName && !chossedAgla?.brtemLkoh?.id &&
-                                                            <Button onClick={() => { setShowModalAddCustomer(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
-                                                                <MdMoreHoriz className="text-3xl" />
-                                                            </Button>
-                                                        }
-                                                        {
-                                                            chossedAgla?.brtemLkoh?.id &&
-                                                            <Button onClick={() => { setShowModalAddCustomer(true); setShowModalAddCustomerAdcon(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
-                                                                <MdMoreHoriz className="text-3xl" />
-                                                            </Button>
-                                                        }
+                                                    <div className="w-full">
+                                                        <div className="mr-2 border-r-2 pr-2 flex items-center justify-center border-b-1 pb-2 sm:hidden w-full">
+                                                            {
+                                                                chossedAgla?.brtemLkoh?.name ?
+                                                                    <FaRegCircleCheck className="text-3xl text-success" />
+                                                                    :
+                                                                    <VscError className="text-3xl text-danger" />
+                                                            }
+                                                        </div>
+                                                        <div className="mr-2 border-r-2 pr-2 flex items-center pt-2">
+                                                            <Input isReadOnly value={chossedAgla?.brtemLkoh?.name || chossedAgla?.newCustomer?.customerName || 'שם לקוח'} color="primary" size="sm" className="max-w-[200px]" />
+                                                            {
+                                                                chossedAgla?.newCustomer?.customerName && !chossedAgla?.brtemLkoh?.id &&
+                                                                <Button onClick={() => { setShowModalAddCustomer(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
+                                                                    <MdMoreHoriz className="text-3xl" />
+                                                                </Button>
+                                                            }
+                                                            {
+                                                                chossedAgla?.brtemLkoh?.id &&
+                                                                <Button onClick={() => { setShowModalAddCustomer(true); setShowModalAddCustomerAdcon(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
+                                                                    <MdMoreHoriz className="text-3xl" />
+                                                                </Button>
+                                                            }
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div>
+                                                <div className="hidden sm:block">
                                                     {
                                                         chossedAgla?.brtemLkoh?.name ?
                                                             <FaRegCircleCheck className="text-3xl text-success" />
@@ -744,17 +761,27 @@ export default function Activion() {
                                             <div className="w-full flex items-center pb-3 pt-3 border-b-1">
                                                 <div className="w-full flex items-center">
                                                     <FaTrailer className="text-xl text-primary" />
-                                                    <div className="mr-2 border-r-2 pr-2 flex items-center">
-                                                        <Input isReadOnly value={chossedAgla?.msbar || 'מספר עגלה'} color="primary" size="sm" className="max-w-[200px]" />
-                                                        {
-                                                            chossedAgla?.msbar &&
-                                                            <Button onClick={() => { setShowModalAddDrag(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
-                                                                <MdMoreHoriz className="text-3xl" />
-                                                            </Button>
-                                                        }
+                                                    <div className="w-full">
+                                                        <div className="mr-2 border-r-2 pr-2 flex justify-center items-center border-b-1 pb-2 sm:hidden w-full">
+                                                            {
+                                                                chossedAgla?.drag?.dragnum || dragnum ?
+                                                                    <FaRegCircleCheck className="text-3xl text-success" />
+                                                                    :
+                                                                    <VscError className="text-3xl text-danger" />
+                                                            }
+                                                        </div>
+                                                        <div className="mr-2 border-r-2 pr-2 flex items-center pt-2">
+                                                            <Input isReadOnly value={chossedAgla?.msbar || 'מספר עגלה'} color="primary" size="sm" className="max-w-[200px]" />
+                                                            {
+                                                                chossedAgla?.msbar &&
+                                                                <Button onClick={() => { setShowModalAddDrag(true); }} size="sm" color="primary" variant="flat" className="text-base rounded-full mr-2">
+                                                                    <MdMoreHoriz className="text-3xl" />
+                                                                </Button>
+                                                            }
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div>
+                                                <div className="hidden sm:block">
                                                     {
                                                         chossedAgla?.drag?.dragnum || dragnum ?
                                                             <FaRegCircleCheck className="text-3xl text-success" />
@@ -766,36 +793,76 @@ export default function Activion() {
                                             <div className="w-full flex items-center pb-3 pt-3 border-b-1">
                                                 <div className="w-full flex items-center">
                                                     <FiFilePlus className="text-xl text-primary" />
-                                                    <div className="mr-2 border-r-2 pr-2 flex items-center w-full">
-                                                        <Table aria-labelledby="12ef3" aria-label="11233" dir="ltr" className="w-full ml-3">
-                                                            <TableHeader>
-                                                                <TableColumn className="text-right"></TableColumn>
-                                                                <TableColumn className="text-right"></TableColumn>
-                                                            </TableHeader>
-                                                            <TableBody>
-                                                                {documents.map((doc, index) => (
-                                                                    <TableRow key={index}>
-                                                                        <TableCell className="text-right">
-                                                                            <div className="flex items-center">
-                                                                                <Button
-                                                                                    size='sm'
-                                                                                    variant='flat'
-                                                                                    color={checks?.includes(index) ? 'success' : 'default'}
-                                                                                    onClick={() => handleToggleCheck(index)}
-                                                                                >
-                                                                                    {checks?.includes(index) ? <FaCheck /> : '-'}
-                                                                                </Button>
-                                                                                <Button size="sm" className="ml-2" variant="flat" color={chossedAgla?.existsFiles?.includes(index) ? 'success' : 'default'} onClick={() => { setShowModalUploadFile(true); setShowModalUploadFileIndex(index) }}><FiUpload className="text-base" /></Button>
-                                                                            </div>
-                                                                        </TableCell>
-                                                                        <TableCell className="text-right text-[11px] sm:text-base">{doc}</TableCell>
-                                                                    </TableRow>
-                                                                ))}
-                                                            </TableBody>
-                                                        </Table>
+                                                    <div className="w-full">
+                                                        <div className="mr-2 border-r-2 pr-2 flex justify-center items-center w-full border-b-1 pb-2 sm:hidden">
+                                                            {
+                                                                chossedAgla?.drag?.dragnum || dragnum ?
+                                                                    <FaRegCircleCheck className="text-3xl text-success" />
+                                                                    :
+                                                                    <VscError className="text-3xl text-danger" />
+                                                            }
+                                                        </div>
+                                                        <div className="mr-2 border-r-2 pr-2 flex items-center w-full pt-2">
+                                                            <Table aria-labelledby="12ef3" aria-label="11233" dir="ltr" className="w-full ml-3">
+                                                                <TableHeader>
+                                                                    <TableColumn className="text-right w-fit"></TableColumn>
+                                                                    <TableColumn className="text-right w-full"></TableColumn>
+                                                                </TableHeader>
+                                                                <TableBody>
+                                                                    {documents.map((doc, index) => (
+                                                                        <TableRow key={index} className="border-b-1">
+                                                                            <TableCell className="text-right w-fit">
+                                                                                <div className="flex items-center w-fit">
+                                                                                    <div className="h-[35px]">
+
+                                                                                    </div>
+                                                                                    {
+                                                                                        <div className=" absolute bg-white z-20 overflow-x-hidden pr-3 border-r-1 rounded-r-full">
+                                                                                            <AnimatePresence mode="wait">
+                                                                                                {
+                                                                                                    buttonsDocuments.includes(index) &&
+                                                                                                    <motion.div
+                                                                                                    className="h-full w-full"
+                                                                                                    initial={{ opacity: 0, x: -100 }}
+                                                                                                    animate={{ opacity: 1, x: 0 }}
+                                                                                                    exit={{ opacity: 0, x: -100 }}
+                                                                                                    transition={{ duration: 0.5 }}
+                                                                                                >
+                                                                                                    <div className="flex items-center">
+                                                                                                        <Button
+                                                                                                            className={`sm:block}`}
+                                                                                                            size='sm'
+                                                                                                            variant='flat'
+                                                                                                            color={checks?.includes(index) ? 'success' : 'default'}
+                                                                                                            onClick={() => handleToggleCheck(index)}
+                                                                                                        >
+                                                                                                            {checks?.includes(index) ? <FaCheck /> : '-'}
+                                                                                                        </Button>
+                                                                                                        <Button size="sm" className={`ml-2 sm:block `} variant="flat" color={chossedAgla?.existsFiles?.includes(index) ? 'success' : 'default'} onClick={() => { setShowModalUploadFile(true); setShowModalUploadFileIndex(index) }}><FiUpload className="text-base" /></Button>
+                                                                                                        <BiArrowFromRight onClick={() => { setButtonsDocuments(prev => prev.filter(item => item !== index)); }} className="h-[35px] ml-2 text-primary rounded-full w-[18px]" />
+                                                                                                    </div>
+                                                                                                </motion.div>
+                                                                                                }
+                                                                                            </AnimatePresence>
+                                                                                        </div>
+                                                                                    }
+                                                                                    <div className="">
+                                                                                        {
+                                                                                            !buttonsDocuments.includes(index) &&
+                                                                                                <BiArrowFromLeft onClick={() => { setButtonsDocuments(prev => [...prev, index]) }} className="h-[35px] text-primary rounded-full w-[18px]" />
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                            </TableCell>
+                                                                            <TableCell className="text-right text-[11px] sm:text-base w-full">{doc}</TableCell>
+                                                                        </TableRow>
+                                                                    ))}
+                                                                </TableBody>
+                                                            </Table>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div>
+                                                <div className="hidden sm:block">
                                                     {
                                                         chossedAgla?.drag?.dragnum || dragnum ?
                                                             <FaRegCircleCheck className="text-3xl text-success" />
@@ -898,7 +965,7 @@ export default function Activion() {
                                                         </TableHeader>
                                                         <TableBody>
                                                             {documents.map((doc, index) => (
-                                                                <TableRow key={index}>
+                                                                <TableRow key={index} className="border-b-1">
                                                                     <TableCell className="text-right">
                                                                         <div className="flex items-center">
                                                                             <Button

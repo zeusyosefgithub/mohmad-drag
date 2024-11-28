@@ -94,13 +94,13 @@ export default function ModalUploadFile({ show, disable, dragnum, index, aglaID,
     return (
         <Modal
             placement="center"
-            className="test-fontt select-none"
+            className="test-fontt select-none fixed"
             backdrop={"blur"}
             size="3xl"
             isOpen={show}
             onClose={reset}
         >
-            <ModalContent className="h-full">
+            <ModalContent className="h-[90%]">
                 <ModalHeader className="flex justify-center border-b-2">
                     {
                         !existsFiles?.includes(index) ? 'העלאת קובצ' : 'הורדת קובץ'
