@@ -123,7 +123,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                     </div>
                                     <div className="border-1 border-[#e4e4e7] mt-1 mb-1" />
                                     <div className="p-1 pb-2">
-                                        {props?.data?.drag?.licenseid}
+                                        {props?.data?.drag?.dragnum}
                                     </div>
                                 </th>
                             </tr>
@@ -287,7 +287,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                             דגם : _______________________
                         </div>
                         <div className="absoulte_date_page_four7">
-                            {props?.data?.drag?.licenseid}
+                            {props?.data?.drag?.dragnum}
                         </div>
                         <div className="mr-2">
                             מספר רישוי : _______________________
@@ -434,7 +434,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                 <table className="w-full mb-2">
                                     <tbody>
                                         <tr>
-                                            <th className="border-1 border-black w-56">{props?.data?.drag?.bodymodel}</th>
+                                            <th className="border-1 border-black w-56">{props?.data?.drag?.model}</th>
                                             <th className="border-1 border-black w-56 text-right pr-2">דגם מרכב</th>
                                             <th className="border-1 border-black w-14">2.3</th>
                                         </tr>
@@ -454,7 +454,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                             <th className="border-1 border-black w-14">3.6</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag?.totalselfweight}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.wight}</th>
                                             <th className="border-1 border-black text-right pr-2">משקל עצמי כולל</th>
                                             <th className="border-1 border-black w-14">3.7</th>
                                         </tr>
@@ -524,7 +524,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                 <table className="w-full mb-2">
                                     <tbody>
                                         <tr>
-                                            <th className="border-1 border-black w-56">{props?.data?.drag?.licenseid}</th>
+                                            <th className="border-1 border-black w-56">{props?.data?.drag?.dragnum}</th>
                                             <th className="border-1 border-black w-56 text-right pr-2">מספר רישוי</th>
                                             <th className="border-1 border-black w-14">1.1</th>
                                         </tr>
@@ -574,7 +574,7 @@ export const AllPages = React.forwardRef((props, ref) => {
                                             <th className="border-1 border-black w-14">2.1</th>
                                         </tr>
                                         <tr>
-                                            <th className="border-1 border-black">{props?.data?.drag?.bodytype}</th>
+                                            <th className="border-1 border-black">{props?.data?.drag?.kinddrag}</th>
                                             <th className="border-1 border-black text-right pr-2">סוג מרכב</th>
                                             <th className="border-1 border-black w-14">2.2</th>
                                         </tr>

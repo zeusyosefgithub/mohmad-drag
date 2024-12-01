@@ -10,7 +10,6 @@ export default function ModalAdconBret({ disable, show, motsar, categoryMotsar,m
 
     const [shem, setShem] = useState('');
     const [mherThlte, setMherThlte] = useState('');
-    const [zmanAsbka, setZmanAsbka] = useState('');
     const [msbarMdaf,setMsbarMdaf] = useState('');
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -18,7 +17,6 @@ export default function ModalAdconBret({ disable, show, motsar, categoryMotsar,m
     useEffect(() => {
         setShem(motsar?.shem);
         setMherThlte(motsar?.alotLeheda);
-        setZmanAsbka(motsar?.zmanHsbaka);
         setMsbarMdaf(motsar?.msbarMdaf);
     }, [motsar]);
 
@@ -35,7 +33,6 @@ export default function ModalAdconBret({ disable, show, motsar, categoryMotsar,m
     const ResetAll = () => {
         setShem(motsar?.shem);
         setMherThlte(motsar?.alotLeheda);
-        setZmanAsbka(motsar?.zmanHsbaka);
         setMsbarMdaf(motsar?.msbarMdaf);
         disable();
     }
@@ -45,9 +42,6 @@ export default function ModalAdconBret({ disable, show, motsar, categoryMotsar,m
             return false;
         }
         if(mherThlte !== motsar?.alotLeheda){
-            return false;
-        }
-        if(zmanAsbka !== motsar?.zmanHsbaka){
             return false;
         }
         if(msbarMdaf !== motsar?.msbarMdaf){
@@ -66,8 +60,7 @@ export default function ModalAdconBret({ disable, show, motsar, categoryMotsar,m
                             <Avatar/>
                             <Input type="text" value={shem} onValueChange={(val) => setShem(val)} className="mt-5 max-w-[150px]" label="שם פריט" />
                             <Input type="text" value={msbarMdaf} onValueChange={(val) => setMsbarMdaf(val)} className="mt-5 max-w-[150px]" label="מספר מדף" />
-                            <Input type="number" value={mherThlte} onValueChange={(val) => setMherThlte(val)} className="mt-5 max-w-[150px]" label="מחיר תחלתי" />
-                            <Input type="number" value={zmanAsbka} onValueChange={(val) => setZmanAsbka(val)} className="mt-5 mb-5 max-w-[150px]" label="זמן הספקה בימים" />
+                            <Input type="number" value={mherThlte} onValueChange={(val) => setMherThlte(val)} className="mt-5 mb-5 max-w-[150px]" label="מחיר תחלתי" />
                         </div>
                     </ModalBody>
                     <ModalFooter>
@@ -82,7 +75,6 @@ export default function ModalAdconBret({ disable, show, motsar, categoryMotsar,m
                             await updateDoc(doc(firestore, 'mlae', motsar?.id), {
                                 shem: shem,
                                 alotLeheda: mherThlte,
-                                zmanHsbaka: zmanAsbka,
                                 msbarMdaf: msbarMdaf,
                                 alot: parseFloat(mherThlte) * parseFloat(motsar?.kmot)
                             });

@@ -393,7 +393,6 @@ export default function ModalYetsorTokhnet({ show, disable, sogAskaa, motsaremRg
         setTosfot([]);
     }
 
-
     useEffect(() => {
         if (msbarBroSheldaBnemet !== yetsorKeam?.msbarBroSheldaBnemet || msbarBroSheldaBnemetReshon !== yetsorKeam?.msbarBroSheldaBnemetReshon || msbarBroSheldaBnemetShne !== yetsorKeam?.msbarBroSheldaBnemetShne) {
             const reshon = Math.ceil(msbarBroSheldaBnemet / 2);
@@ -482,6 +481,8 @@ export default function ModalYetsorTokhnet({ show, disable, sogAskaa, motsaremRg
             }
         }
     };
+
+    console.log(sogAglaBS);
 
     const [categoryEntery,setCatgoryEntery] = useState('');
     const [motsaremCat,setMotsaremCat] = useState([]);

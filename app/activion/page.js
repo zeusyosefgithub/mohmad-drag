@@ -2,8 +2,8 @@
 import { useReactToPrint } from "react-to-print";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Button } from "@nextui-org/button";
-import { Card, CardBody, Input, Table, TableCell, TableColumn, TableHeader, TableBody, TableRow, Autocomplete, AutocompleteItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@nextui-org/react";
-import { MdMoreHoriz, MdOutlineArrowForward } from "react-icons/md";
+import { Card, CardBody, Input, Table, TableCell, TableColumn, TableHeader, TableBody, TableRow, Autocomplete, AutocompleteItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
+import { MdKeyboardArrowDown, MdMoreHoriz, MdOutlineArrowForward } from "react-icons/md";
 import { MdOutlineArrowBack } from "react-icons/md";
 import { IoIosArrowBack, IoIosArrowForward, IoMdAdd } from "react-icons/io";
 import GetDocs from "../FireBase/getDocs";
@@ -12,7 +12,7 @@ import { addDoc, collection, count, doc, onSnapshot, updateDoc, where } from "fi
 import { firestore, storagee } from "../FireBase/firebase";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { differenceInDays, format, parse } from "date-fns";
-import { FaCheck, FaTrailer, FaUser, FaUserEdit } from "react-icons/fa";
+import { FaCheck, FaSearch, FaTrailer, FaUser, FaUserEdit } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
 import { useGetDataByCondition, useGetDataByConditionWithoutUseEffect } from "../FireBase/getDataByCondition";
 import { GiHook } from "react-icons/gi";
@@ -58,13 +58,11 @@ export default function Activion() {
     const [skhom, setSkhom] = useState(0);
 
     const [showDrag, setShowDrag] = useState(true);
-    const [licenseid, setLicenseid] = useState(''); // מספר רישוי
     const [chassisnum, setChassisnum] = useState(''); // מספר שלדה
     const [model, setModel] = useState(''); // קוד דגם
     const [categore, setCategore] = useState(''); // קטגוריה
     const [color, setColor] = useState(''); // צבע
     const [kinddrag, setKinddrag] = useState(''); // סוג הרכב
-    const [bodytype, setBodytype] = useState(''); // סוג מרכב
     const [long, setLong] = useState(''); // אורך כללי
     const [space, setSpace] = useState('');  // רוחב כללי
     const [height, setHeight] = useState(''); // גובה כללי
@@ -74,10 +72,8 @@ export default function Activion() {
     const [lengthhatch, setLengthhatch] = useState(''); // אורך יצול
     const [heightloading, setHeightloading] = useState(''); // גובה משטח העמסה
     const [sizeloading, setSizeloading] = useState(''); // גובה משטח העמסה (מ"ר)
-    const [bodymodel, setBodymodel] = useState(''); // דגם מרכב
     const [undercarriage, setUndercarriage] = useState(''); // מס"ד מרכב
     const [selfweightaxles, setSelfweightaxles] = useState(''); // משקל עצמי על הסרנים
-    const [totalselfweight, setTotalselfweight] = useState(''); // משקל עצמי כולל
     const [authorizedweight, setAuthorizedweight] = useState(''); // משקל מורשה
     const [distributionloads, setDistributionloads] = useState(''); // חלוקת העומסים
     const [device, setDevice] = useState(''); // התקן
@@ -90,7 +86,6 @@ export default function Activion() {
     const [labreport, setLabreport] = useState(''); // דו"ח מעבדה
     const [labid, setLabid] = useState(''); // זהות מעבדה
 
-    const [showDragFour, setShowDragFour] = useState(false);
     const [opendate, setOpendate] = useState(''); // תאריך כניסה
     const [closedate, setClosedate] = useState(''); // תאריך יציאה
     const [opentime, setOpentime] = useState(''); // שעה כניסה
@@ -135,7 +130,8 @@ export default function Activion() {
     const aglotC = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'C').sort(sortingFunction);
     const aglotD = useGetDataByCondition('tfaol', 'shlavNokhhe', '==', 'D').sort(sortingFunction);
 
-    const aglotYetsor = [...aglotB, ...aglotC, ...aglotD].sort(sortingFunction);
+
+    const [aglotYetsor,setAglotYetsor] = useState([]);
 
 
     const [chossedAgla, setChoosedAgla] = useState({});
@@ -191,8 +187,6 @@ export default function Activion() {
         setLoading(true);
         const drag = {
             authorizedweight: authorizedweight || '',
-            bodymodel: bodymodel || '',
-            bodytype: bodytype || '',
             categore: categore || '',
             chassisnum: chassisnum || '',
             closedate: closedate || '',
@@ -211,7 +205,6 @@ export default function Activion() {
             labid: labid || '',
             labreport: labreport || '',
             lengthhatch: lengthhatch || '',
-            licenseid: licenseid || '',
             long: long || '',
             skhom: skhom || '',
             model: model || '',
@@ -223,7 +216,6 @@ export default function Activion() {
             selfweightaxles: selfweightaxles || '',
             sizeloading: sizeloading || '',
             space: space || '',
-            totalselfweight: totalselfweight || '',
             undercarriage: undercarriage || '',
             wight: wight || '',
             masTaodatABTebos: masTaodatABTebos || '',
@@ -277,13 +269,11 @@ export default function Activion() {
     }
 
     const resetAllProps = () => {
-        setLicenseid('');
         setChassisnum('');
         setModel('');
         setCategore('');
         setColor('');
         setKinddrag('');
-        setBodytype('');
         setLong('');
         setSpace('');
         setHeight('');
@@ -291,10 +281,8 @@ export default function Activion() {
         setLengthhatch('');
         setHeightloading('');
         setSizeloading('');
-        setBodymodel('');
         setUndercarriage('');
         setSelfweightaxles('');
-        setTotalselfweight('');
         setAuthorizedweight('');
         setDistributionloads('');
         setDevice('');
@@ -325,13 +313,11 @@ export default function Activion() {
     }
 
     const setAllProps = (agla) => {
-        setLicenseid(agla?.licenseid);
         setChassisnum(agla?.chassisnum);
         setModel(agla?.model);
         setCategore(agla?.categore);
         setColor(agla?.color);
         setKinddrag(agla?.kinddrag);
-        setBodytype(agla?.bodytype);
         setLong(agla?.long);
         setSpace(agla?.space);
         setHeight(agla?.height);
@@ -339,10 +325,8 @@ export default function Activion() {
         setLengthhatch(agla?.lengthhatch);
         setHeightloading(agla?.heightloading);
         setSizeloading(agla?.sizeloading);
-        setBodymodel(agla?.bodymodel);
         setUndercarriage(agla?.undercarriage);
         setSelfweightaxles(agla?.selfweightaxles);
-        setTotalselfweight(agla?.totalselfweight);
         setAuthorizedweight(agla?.authorizedweight);
         setDistributionloads(agla?.distributionloads);
         setDevice(agla?.device);
@@ -453,7 +437,7 @@ export default function Activion() {
         "רשומון יבוא במקרה של יבואן",
     ];
 
-    const [buttonsDocuments,setButtonsDocuments] = useState([]);
+    const [buttonsDocuments, setButtonsDocuments] = useState([]);
 
     useEffect(() => {
         if (tfaol?.msbar) {
@@ -468,7 +452,9 @@ export default function Activion() {
     const [showModalUploadFile, setShowModalUploadFile] = useState(false);
     const [showModalUploadFileIndex, setShowModalUploadFileIndex] = useState(false);
     const [fileExists, setFileExists] = useState({});
-    const [showPropButtons,setShowPropButtons] = useState(false);
+    const [showPropButtons, setShowPropButtons] = useState(false);
+    const [sort1,setSort1] = useState(['מוכן','לא מוכן']);
+    const [searchInput, setSearchInput] = useState('');
 
     useEffect(() => {
         if (lkohForAdd) {
@@ -479,8 +465,6 @@ export default function Activion() {
             }
         }
     }, [lkohHdash]);
-
-
 
     useEffect(() => {
         if (chossedAgla && chossedAgla.id) {
@@ -495,7 +479,20 @@ export default function Activion() {
         }
     }, [chossedAgla?.id]);
 
-
+    useEffect(() => {
+        const filterAndSort = (aglot) =>
+            aglot.filter(({ drag }) =>
+                ((drag?.dragnum && sort1?.includes('מוכן')) || 
+                (!drag?.dragnum && sort1?.includes('לא מוכן'))) &&
+                (!searchInput || (drag?.dragnum && drag.dragnum.toString().includes(searchInput)))
+            );
+        const combinedData = [
+            ...filterAndSort(aglotB),
+            ...filterAndSort(aglotC),
+            ...filterAndSort(aglotD),
+        ];
+        setAglotYetsor(combinedData.sort(sortingFunction));
+    }, [sort1, aglotB, aglotC, aglotD, searchInput]);
 
 
     return (
@@ -542,23 +539,43 @@ export default function Activion() {
                                                     <div dir="rtl" className="h-full">
                                                         <div className="flex items-start overflow-auto h-full">
                                                             <div className="w-full m-2">
-                                                                <Input color="primary" value={licenseid} className="" size="sm" onValueChange={(value) => { setLicenseid(value) }} type="number" label="מספר רישוי" />
-                                                                <Input color="primary" value={chassisnum} className="mt-10" size="sm" onValueChange={(value) => { setChassisnum(value) }} type="text" label="מספר שלדה" />
-                                                                <Input color="primary" value={model} className="mt-10" size="sm" onValueChange={(value) => { setModel(value) }} type="text" label="קוד דגם" />
+                                                                <Input color="primary" value={dragnum} className="" size="sm" onValueChange={(value) => { setDragnum(value) }} type="number" label="מספר רישוי" />
+                                                                <Input color="primary" value={chassisnum} className="mt-10" size="sm" onValueChange={(value) => { setChassisnum(value);setFoundation(value.substring(value.length - 3,value.length)) }} type="text" label="מספר שלדה" />
+                                                                <Input color="primary" value={model} className="mt-10" size="sm" onValueChange={(value) => { setModel(value) }} type="text" label="קוד דגם/דגם מרכב" />
                                                                 <Input color="primary" value={masTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setMasTaodatABTebos(value) }} type="text" label="מס' תעודת אב טיפוס" />
-                                                                <Input color="primary" value={bodytype} className="mt-10" size="sm" onValueChange={(value) => { setBodytype(value) }} type="text" label="סוג מרכב" />
+                                                                <Input color="primary" value={long} size="sm" className="mt-10" onValueChange={(value) => { setLong(value) }} type="text" label="אורך כללי" />
                                                             </div>
                                                             <div className="w-full m-2">
-                                                                <Input color="primary" value={long} size="sm" onValueChange={(value) => { setLong(value) }} type="text" label="אורך כללי" />
-                                                                <Input color="primary" value={space} className="mt-10" size="sm" onValueChange={(value) => { setSpace(value) }} type="text" label="רוחב כללי" />
+                                                                <Input color="primary" value={space} className="" size="sm" onValueChange={(value) => { setSpace(value) }} type="text" label="רוחב כללי" />
                                                                 <Input color="primary" value={height} className="mt-10" size="sm" onValueChange={(value) => { setHeight(value) }} type="text" label="גובה כללי" />
                                                                 <Input color="primary" value={masVTokefResheonYatsran} className="mt-10" size="sm" onValueChange={(value) => { setMasVTokefResheonYatsran(value) }} type="text" label="מס' ותוקף רישיון יצרן" />
-                                                                <Input color="primary" value={categore} size="sm" className="mt-10" onValueChange={(value) => { setCategore(value) }} type="text" label="קטגוריה" />
+                                                                <Dropdown dir="rtl" className="select-none">
+                                                                    <DropdownTrigger>
+                                                                        <Button className="mt-10 w-full" dir="ltr" color="primary" variant='flat' size="lg">
+                                                                            <MdKeyboardArrowDown className="text-xl" />{categore || 'קטגוריה'}
+                                                                        </Button>
+                                                                    </DropdownTrigger>
+                                                                    <DropdownMenu
+                                                                        aria-label="Multiple selection example"
+                                                                        variant="flat"
+                                                                        closeOnSelect={true}
+                                                                        disallowEmptySelection
+                                                                        selectionMode='single'
+                                                                        selectedKeys={categore}
+                                                                        onSelectionChange={(val) => setCategore(val.currentKey)}
+                                                                    >
+                                                                        <DropdownItem key={'01'}>{'01'}</DropdownItem>
+                                                                        <DropdownItem key={'02'}>{'02'}</DropdownItem>
+                                                                    </DropdownMenu>
+                                                                </Dropdown>
+                                                                <Input color="primary" value={color} size="sm" className="mt-10" onValueChange={(value) => { setColor(value) }} type="text" label="צבע" />
                                                             </div>
                                                             <div className="w-full m-2">
-                                                                <Input color="primary" value={color} size="sm" onValueChange={(value) => { setColor(value) }} type="text" label="צבע" />
-                                                                <Input color="primary" value={kinddrag} className="mt-10" size="sm" onValueChange={(value) => { setKinddrag(value) }} type="text" label="סוג הרכב" />
+                                                                <Input color="primary" value={kinddrag} className="" size="sm" onValueChange={(value) => { setKinddrag(value) }} defaultValue={chossedAgla?.sogAglaBS} type="text" label="סוג הרכב/סוג מרכב" />
                                                                 <Input color="primary" value={tableokefTaodatABTebos} className="mt-10" size="sm" onValueChange={(value) => { setTokefTaodatABTebos(value) }} type="text" label="תוקף תעודת אב טיפוס" />
+                                                                <Input color="primary" value={rearextension} size="sm" className="mt-10" onValueChange={(value) => { setRearextension(value) }} type="text" label="שלוחה אחורית" />
+                                                                <Input color="primary" value={lengthhatch} className="mt-10" size="sm" onValueChange={(value) => { setLengthhatch(value) }} type="text" label="אורך יצול" />
+                                                                <Input color="primary" value={heightloading} size="sm" className="mt-10" onValueChange={(value) => { setHeightloading(value) }} defaultValue={1000} type="number" label="גובה משטח העמסה" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -580,25 +597,25 @@ export default function Activion() {
                                                     <div dir="rtl" className="h-full">
                                                         <div className="flex items-start overflow-auto h-full">
                                                             <div className="w-full m-2">
-                                                                <Input color="primary" value={rearextension} size="sm" onValueChange={(value) => { setRearextension(value) }} type="text" label="שלוחה אחורית" />
-                                                                <Input color="primary" value={lengthhatch} className="mt-10" size="sm" onValueChange={(value) => { setLengthhatch(value) }} type="text" label="אורך יצול" />
-                                                                <Input color="primary" value={heightloading} className="mt-10" size="sm" onValueChange={(value) => { setHeightloading(value) }} type="text" label="גובה משטח העמסה" />
-                                                                <Input color="primary" value={sizeloading} className="mt-10" size="sm" onValueChange={(value) => { setSizeloading(value) }} type="text" label="גובה משטח העמסה (מר)" />
-                                                                <Input color="primary" value={masAeshorYatsran} className="mt-10" size="sm" onValueChange={(value) => { setMasAeshorYatsran(value) }} type="text" label="מס' אישור יצרן" />
-                                                            </div>
-                                                            <div className="w-full m-2">
-                                                                <Input color="primary" value={bodymodel} size="sm" onValueChange={(value) => { setBodymodel(value) }} type="text" label="דגם מרכב" />
+                                                                <Input color="primary" value={sizeloading} className="" size="sm" onValueChange={(value) => { setSizeloading(value) }} type="text" label="גובה משטח העמסה (מר)" />
+                                                                <Input color="primary" value={masAeshorYatsran} className="mt-10" size="sm" onValueChange={(value) => { setMasAeshorYatsran(value) }} defaultValue={`נגררי עירון שיווק 2020 בע"מ`} type="text" label="מס' אישור יצרן" />
                                                                 <Input color="primary" value={undercarriage} className="mt-10" size="sm" onValueChange={(value) => { setUndercarriage(value) }} type="text" label="מסד מרכב" />
                                                                 <Input color="primary" value={selfweightaxles} className="mt-10" size="sm" onValueChange={(value) => { setSelfweightaxles(value) }} type="text" label="משקל עצמי על הסרנים" />
-                                                                <Input color="primary" value={totalselfweight} className="mt-10" size="sm" onValueChange={(value) => { setTotalselfweight(value) }} type="text" label="משקל עצמי כולל" />
-                                                                <Input color="primary" value={masGlglemSrnem} className="mt-10" size="sm" onValueChange={(value) => { setMasGlglemSrnem(value) }} type="text" label="מס' גלגלים / סרנים" />
+                                                                <Input color="primary" value={wight} size="sm" className="mt-10" onValueChange={(value) => { setWight(value) }} type="text" label="משקל עצמי כולל" />
                                                             </div>
                                                             <div className="w-full m-2">
-                                                                <Input color="primary" value={authorizedweight} size="sm" onValueChange={(value) => { setAuthorizedweight(value) }} type="text" label="משקל מורשה" />
+                                                                <Input color="primary" value={masGlglemSrnem} className="" size="sm" onValueChange={(value) => { setMasGlglemSrnem(value) }} type="text" label="מס' גלגלים / סרנים" />
+                                                                <Input color="primary" value={authorizedweight} size="sm" className="mt-10" onValueChange={(value) => { setAuthorizedweight(value) }} type="text" label="משקל מורשה" />
                                                                 <Input color="primary" value={distributionloads} className="mt-10" size="sm" onValueChange={(value) => { setDistributionloads(value) }} type="text" label="חלוקת העומסים" />
                                                                 <Input color="primary" value={device} className="mt-10" size="sm" onValueChange={(value) => { setDevice(value) }} type="text" label="התקן" />
-                                                                <Input color="primary" value={installer} className="mt-10" size="sm" onValueChange={(value) => { setInstaller(value) }} type="text" label="שם המתקין" />
-                                                                <Input color="primary" value={medatTsmgem} className="mt-10" size="sm" onValueChange={(value) => { setMedatTsmgem(value) }} type="text" label="מידת צמגים" />
+                                                                <Input color="primary" value={installer} size="sm" className="mt-10" onValueChange={(value) => { setInstaller(value) }} type="text" defaultValue="נגררי עירון" label="שם המתקין" />
+                                                            </div>
+                                                            <div className="w-full m-2">
+                                                                <Input color="primary" value={medatTsmgem} className="" size="sm" onValueChange={(value) => { setMedatTsmgem(value) }} type="text" label="מידת צמגים" />
+                                                                <Input color="primary" value={foundation} size="sm" className="mt-10" onValueChange={(value) => { setFoundation(value) }} type="text" label="מסד" />
+                                                                <Input color="primary" value={safetyreview} className="mt-10" size="sm" onValueChange={(value) => { setSafetyreview(value) }} type="text" label="תסקיר בטיחות" />
+                                                                <Input color="primary" value={reviewerid} className="mt-10" size="sm" onValueChange={(value) => { setReviewerid(value) }} type="number" label="זהות סוקר" />
+                                                                <Input color="primary" value={labreport} size="sm" className="mt-10" onValueChange={(value) => { setLabreport(value) }} type="text" label="דוח מעבדה" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -619,47 +636,18 @@ export default function Activion() {
                                                     <div dir="rtl" className="h-full">
                                                         <div className="flex items-start overflow-auto h-full">
                                                             <div className="w-full m-2">
-                                                                <Input color="primary" value={foundation} size="sm" onValueChange={(value) => { setFoundation(value) }} type="text" label="מסד" />
-                                                                <Input color="primary" value={safetyreview} className="mt-10" size="sm" onValueChange={(value) => { setSafetyreview(value) }} type="text" label="תסקיר בטיחות" />
-                                                                <Input color="primary" value={reviewerid} className="mt-10" size="sm" onValueChange={(value) => { setReviewerid(value) }} type="number" label="זהות סוקר" />
-                                                                <Input color="primary" value={labreport} className="mt-10" size="sm" onValueChange={(value) => { setLabreport(value) }} type="text" label="דוח מעבדה" />
-                                                                <Input color="primary" value={labid} size="sm" className="mt-10" onValueChange={(value) => { setLabid(value) }} type="number" label="זהות מעבדה" />
-                                                            </div>
-                                                            <div className="w-full m-2">
-                                                                <Input color="primary" value={sheshAehad} size="sm" className="" onValueChange={(value) => { setSheshAehad(value) }} type="number" label="6.1" />
+                                                                <Input color="primary" value={labid} size="sm" className="" onValueChange={(value) => { setLabid(value) }} type="number" label="זהות מעבדה" />
+                                                                <Input color="primary" value={sheshAehad} size="sm" className="mt-10" onValueChange={(value) => { setSheshAehad(value) }} type="number" label="6.1" />
                                                                 <Input color="primary" value={sheshShtaeem} size="sm" className="mt-10" onValueChange={(value) => { setSheshShtaeem(value) }} type="number" label="6.2" />
                                                                 <Input color="primary" value={sheshShlosh} size="sm" className="mt-10" onValueChange={(value) => { setSheshShlosh(value) }} type="number" label="6.3" />
                                                                 <Input color="primary" value={sheshArbaa} size="sm" className="mt-10" onValueChange={(value) => { setSheshArbaa(value) }} type="number" label="6.4" />
                                                                 <Input color="primary" value={sheshHamesh} size="sm" className="mt-10" onValueChange={(value) => { setSheshHamesh(value) }} type="number" label="6.5" />
                                                             </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </motion.div>
-                                        </AnimatePresence>
-                                    }
-                                    {
-                                        showDragFour &&
-                                        <AnimatePresence mode="wait">
-                                            <motion.div
-                                                className="h-full"
-                                                initial={{ opacity: 0, x: 100 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: -100 }}
-                                                transition={{ duration: 0.5 }}
-                                            >
-                                                <div className="h-full">
-                                                    <div dir="rtl" className="h-full">
-                                                        <div className="flex items-start overflow-auto h-full">
                                                             <div className="w-full m-2">
-                                                                <Input color="primary" value={opendate} size="sm" onValueChange={(value) => { setOpendate(value) }} type="text" label="תאריך כניסה" />
-                                                                <Input color="primary" value={closedate} className="mt-10" size="sm" onValueChange={(value) => { setClosedate(value) }} type="text" label="תאריך יציאה" />
-                                                                <Input color="primary" value={opentime} className="mt-10" size="sm" onValueChange={(value) => { setOpentime(value) }} type="text" label="שעה כניסה" />
-                                                                <Input color="primary" value={closetime} className="mt-10" size="sm" onValueChange={(value) => { setClosetime(value) }} type="text" label="שעה יציאה" />
-                                                            </div>
-                                                            <div className="w-full m-2">
-                                                                <Input color="primary" value={wight} size="sm" onValueChange={(value) => { setWight(value) }} type="text" label="משקל" />
-                                                                <Input errorMessage={errorMessageMsbarAgla} color="primary" value={dragnum} className="mt-10" size="sm" onValueChange={(value) => { setDragnum(value) }} type="number" label="מספר גרור" />
+                                                                <Input color="primary" value={opendate} size="sm" className="" onValueChange={(value) => { setOpendate(value) }} defaultValue={format(new Date(),'yyyy-MM-dd')} type="date" label="תאריך כניסה" />
+                                                                <Input color="primary" value={closedate} className="mt-10" size="sm" onValueChange={(value) => { setClosedate(value) }} defaultValue={format(new Date(),'yyyy-MM-dd')} type="date" label="תאריך יציאה" />
+                                                                <Input color="primary" value={opentime} className="mt-10" size="sm" onValueChange={(value) => { setOpentime(value) }} type="time" label="שעה כניסה" />
+                                                                <Input color="primary" value={closetime} className="mt-10" size="sm" onValueChange={(value) => { setClosetime(value) }} defaultValue={format(new Date(),'HH:mm')} type='time' label="שעה יציאה" />
                                                                 <Input color="primary" value={skhom || ''} className="mt-10" size="sm" onValueChange={(value) => { setSkhom(value) }} type="number" label="סכום אגרה" />
                                                             </div>
                                                         </div>
@@ -689,14 +677,7 @@ export default function Activion() {
                                 showDragThree &&
                                 <>
                                     <Button onClick={() => { setShowDrag(false); setShowDragTwo(true); setShowDragThree(false); }} size="sm" variant="flat" color="warning">לחזור <MdOutlineArrowBack className="text-xl" /></Button>
-                                    <Button onClick={() => { setShowDrag(false); setShowDragTwo(false); setShowDragThree(false); setShowDragFour(true); }} size="sm" variant="flat" color="primary">המשך <MdOutlineArrowForward className="text-xl" /></Button>
-                                </>
-                            }
-                            {
-                                showDragFour &&
-                                <>
-                                    <Button onClick={() => { setShowDrag(false); setShowDragTwo(false); setShowDragThree(true); setShowDragFour(false); }} size="sm" variant="flat" color="warning">לחזור <MdOutlineArrowBack className="text-xl" /></Button>
-                                    <Button onClick={() => { setShowModalAddDrag(false); setShowDrag(true); setShowDragTwo(false); setShowDragThree(false); setShowDragFour(false); }} size="sm" variant="flat" color="primary">סגירה</Button>
+                                    <Button onClick={() => { setShowDrag(false); setShowDragTwo(false); setShowDragThree(true);setShowModalAddDrag(false);  }} size="sm" variant="flat" color="primary">סגור</Button>
                                 </>
                             }
                         </ModalFooter>
@@ -822,26 +803,26 @@ export default function Activion() {
                                                                                                 {
                                                                                                     buttonsDocuments.includes(index) &&
                                                                                                     <motion.div
-                                                                                                    className="h-full w-full"
-                                                                                                    initial={{ opacity: 0, x: -100 }}
-                                                                                                    animate={{ opacity: 1, x: 0 }}
-                                                                                                    exit={{ opacity: 0, x: -100 }}
-                                                                                                    transition={{ duration: 0.5 }}
-                                                                                                >
-                                                                                                    <div className="flex items-center">
-                                                                                                        <Button
-                                                                                                            className={`sm:block}`}
-                                                                                                            size='sm'
-                                                                                                            variant='flat'
-                                                                                                            color={checks?.includes(index) ? 'success' : 'default'}
-                                                                                                            onClick={() => handleToggleCheck(index)}
-                                                                                                        >
-                                                                                                            {checks?.includes(index) ? <FaCheck /> : '-'}
-                                                                                                        </Button>
-                                                                                                        <Button size="sm" className={`ml-2 sm:block `} variant="flat" color={chossedAgla?.existsFiles?.includes(index) ? 'success' : 'default'} onClick={() => { setShowModalUploadFile(true); setShowModalUploadFileIndex(index) }}><FiUpload className="text-base" /></Button>
-                                                                                                        <BiArrowFromRight onClick={() => { setButtonsDocuments(prev => prev.filter(item => item !== index)); }} className="h-[35px] ml-2 text-primary rounded-full w-[18px]" />
-                                                                                                    </div>
-                                                                                                </motion.div>
+                                                                                                        className="h-full w-full"
+                                                                                                        initial={{ opacity: 0, x: -100 }}
+                                                                                                        animate={{ opacity: 1, x: 0 }}
+                                                                                                        exit={{ opacity: 0, x: -100 }}
+                                                                                                        transition={{ duration: 0.5 }}
+                                                                                                    >
+                                                                                                        <div className="flex items-center">
+                                                                                                            <Button
+                                                                                                                className={`sm:block}`}
+                                                                                                                size='sm'
+                                                                                                                variant='flat'
+                                                                                                                color={checks?.includes(index) ? 'success' : 'default'}
+                                                                                                                onClick={() => handleToggleCheck(index)}
+                                                                                                            >
+                                                                                                                {checks?.includes(index) ? <FaCheck /> : '-'}
+                                                                                                            </Button>
+                                                                                                            <Button size="sm" className={`ml-2 sm:block `} variant="flat" color={chossedAgla?.existsFiles?.includes(index) ? 'success' : 'default'} onClick={() => { setShowModalUploadFile(true); setShowModalUploadFileIndex(index) }}><FiUpload className="text-base" /></Button>
+                                                                                                            <BiArrowFromRight onClick={() => { setButtonsDocuments(prev => prev.filter(item => item !== index)); }} className="h-[35px] ml-2 text-primary rounded-full w-[18px]" />
+                                                                                                        </div>
+                                                                                                    </motion.div>
                                                                                                 }
                                                                                             </AnimatePresence>
                                                                                         </div>
@@ -849,7 +830,7 @@ export default function Activion() {
                                                                                     <div className="">
                                                                                         {
                                                                                             !buttonsDocuments.includes(index) &&
-                                                                                                <BiArrowFromLeft onClick={() => { setButtonsDocuments(prev => [...prev, index]) }} className="h-[35px] text-primary rounded-full w-[18px]" />
+                                                                                            <BiArrowFromLeft onClick={() => { setButtonsDocuments(prev => [...prev, index]) }} className="h-[35px] text-primary rounded-full w-[18px]" />
                                                                                         }
                                                                                     </div>
                                                                                 </div>
@@ -1007,6 +988,28 @@ export default function Activion() {
                     </CardBody>
                 </Card>
                 <div className="h-full w-full m-0 sm:m-2">
+                    <div className="p-2 bg-white mb-1 rounded-xl flex justify-end items-center pr-5 pl-5">
+                        <Input dir='rtl' className='mr-5 max-w-[150px]' color='primary' label={<FaSearch />} labelPlacement='outside' size="xs" onValueChange={(val) => setSearchInput(val)} value={searchInput} />
+                        <Dropdown dir="rtl" className="select-none">
+                            <DropdownTrigger>
+                                <Button className="" dir="ltr" color="primary" variant='flat' size="sm">
+                                    <MdKeyboardArrowDown className="text-xl" /> מצב רישוי
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                aria-label="Multiple selection example"
+                                variant="flat"
+                                closeOnSelect={true}
+                                disallowEmptySelection
+                                selectionMode='multiple'
+                                selectedKeys={sort1}
+                                onSelectionChange={(keys) => setSort1([...keys])}
+                            >
+                                <DropdownItem key={'מוכן'}>{'מוכן'}</DropdownItem>
+                                <DropdownItem key={'לא מוכן'}>{'לא מוכן'}</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
                     <Table aria-labelledby="123" aria-label="1123" className="w-full h-full">
                         <TableHeader>
                             <TableColumn className="text-right text-[10px] lg:text-sm"></TableColumn>

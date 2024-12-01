@@ -21,7 +21,7 @@ export default function NavBar() {
     const menuItems = [
         "רישוי",
         "עובדים",
-        "ניהול",
+        "כספים",
         "יצור",
         "מלאי",
     ];
@@ -33,7 +33,7 @@ export default function NavBar() {
         else if (item === 'עובדים') {
             return '/aobdem';
         }
-        else if (item === 'ניהול') {
+        else if (item === 'כספים') {
             return '/management';
         }
         else if (item === 'יצור') {
@@ -51,7 +51,7 @@ export default function NavBar() {
         else if (item === 'עובדים') {
             return <GrUserWorker className="text-2xl text-black" />;
         }
-        else if (item === 'ניהול') {
+        else if (item === 'כספים') {
             return <FcManager className="text-[26px]" />;
         }
         else if (item === 'יצור') {
@@ -84,28 +84,28 @@ export default function NavBar() {
                     </NavbarItem>
                 }
                 <NavbarItem>
-                    <Link color="foreground" href="/procurement">
-                        <Button variant="light" color="primary" className="text-lg">מלאי<BiSolidPurchaseTag className="text-2xl text-green-400" /></Button>
-                    </Link>
-                </NavbarItem>
-                <NavbarItem>
                     <Link href="/" color="foreground">
                         <Button variant="light" color="primary" className="text-lg">ייצור<MdAddChart className="text-2xl text-danger-400" /></Button>
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
                     <Link color="foreground" href="/management">
-                        <Button variant="light" color="primary" className="text-lg">ניהול<FcManager className="text-[26px]" /></Button>
-                    </Link>
-                </NavbarItem>
-                <NavbarItem>
-                    <Link color="foreground" href="/aobdem">
-                        <Button variant="light" color="primary" className="text-lg">עובדים<GrUserWorker className="text-2xl text-black" /></Button>
+                        <Button variant="light" color="primary" className="text-lg">כספים<FcManager className="text-[26px]" /></Button>
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
                     <Link color="foreground" href="/activion">
                         <Button variant="light" color="primary" className="text-lg">רישוי<IoNewspaperSharp className="text-2xl text-gray-600" /></Button>
+                    </Link>
+                </NavbarItem>
+                <NavbarItem>
+                    <Link color="foreground" href="/procurement">
+                        <Button variant="light" color="primary" className="text-lg">מלאי<BiSolidPurchaseTag className="text-2xl text-green-400" /></Button>
+                    </Link>
+                </NavbarItem>
+                <NavbarItem>
+                    <Link color="foreground" href="/aobdem">
+                        <Button variant="light" color="primary" className="text-lg">עובדים<GrUserWorker className="text-2xl text-black" /></Button>
                     </Link>
                 </NavbarItem>
             </NavbarContent>

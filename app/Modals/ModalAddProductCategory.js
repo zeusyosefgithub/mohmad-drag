@@ -14,7 +14,6 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
     const [shem, setShem] = useState('');
     const [sog, setSog] = useState('');
     const [mherThlte, setMherThlte] = useState('');
-    const [zmanAsbka, setZmanAsbka] = useState('');
     const [msbarMdaf, setMsbarMdaf] = useState('');
     const [tmona, setTmona] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -47,10 +46,7 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
         return newarray;
     }
 
-
     const restAll = () => {
-        setShem('');
-        setZmanAsbka('');
         setSog('');
         setMherThlte('');
         setMsbarMdaf('');
@@ -84,7 +80,6 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
             alot: sckhom || 0,
             alotLeheda: parseFloat(sckhom) || parseFloat(mherThlte),
             kmot: sckhom ? 1 : 0,
-            zmanHsbaka: zmanAsbka,
             mededa: GetCategory(shem)?.mededa,
             msbarTfaol: msbarTfaol || 0,
             adconAhron: '',
@@ -155,9 +150,8 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                             </div>
                             <Input type="text" value={msbarMdaf} onValueChange={(val) => setMsbarMdaf(val)} className="mt-5 max-w-[150px]" label="מספר מדף" />
                             <Input errorMessage={errorMessage} type="text" value={sog} onValueChange={(val) => setSog(val)} className="mt-5 max-w-[150px]" label="שם פריט" />
-                            <Input type="number" value={mherThlte} onValueChange={(val) => setMherThlte(val)} className="mt-5 max-w-[150px]" label="מחיר תחלתי" />
-                            <Input type="number" value={zmanAsbka} onValueChange={(val) => setZmanAsbka(val)} className="mt-5 mb-5 max-w-[150px]" label="זמן הספקה בימים" />
-                            <CheckboxGroup
+                            <Input type="number" value={mherThlte} onValueChange={(val) => setMherThlte(val)} className="mt-5 mb-5 max-w-[150px]" label="מחיר תחלתי" />
+                            {/* <CheckboxGroup
                                 label="Select cities"
                                 defaultValue={["buenos-aires", "london"]}
                             >
@@ -169,7 +163,7 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                                     </Card>
                                 </Checkbox>
                                 <Checkbox value="sydney">Sydney</Checkbox>
-                            </CheckboxGroup>
+                            </CheckboxGroup> */}
                         </div>
                     </ModalBody>
                     <ModalFooter>
@@ -181,7 +175,7 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                         }}>
                             סגור
                         </Button>
-                        <Button isDisabled={!shem || !sog || !mherThlte || !zmanAsbka} isLoading={loading} size="lg" color="primary" onClick={AddSbak}>
+                        <Button isDisabled={!shem || !sog || !mherThlte} isLoading={loading} size="lg" color="primary" onClick={AddSbak}>
                             אישור
                         </Button>
                     </ModalFooter>
