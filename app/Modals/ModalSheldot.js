@@ -84,31 +84,31 @@ export default function ModalSheldot({ show, disable }) {
     const [loadingMotsar,setLoadingMotsar] = useState(false);
     const [isOpenPov, setIsOpenPov] = useState([]);
     
-    const checkAemMotsarKeam = (array) => {
-        for (let index = 0; index < array.length; index++) {
-            if(array[index].msbarSheldaError === msbarSheldaError){
-                return {res : true,num : 1,message : 'מספר שלדה כבר קיים!'}
-            }
-            if(array[index].degem === degem){
-                return {res : true,num : 2,message : 'שם דגם כבר קיים!'}
-            }
-        }
-        return {res : false}
-    }
+    // const checkAemMotsarKeam = (array) => {
+    //     for (let index = 0; index < array.length; index++) {
+    //         if(array[index].msbarSheldaError === msbarSheldaError){
+    //             return {res : true,num : 1,message : 'מספר שלדה כבר קיים!'}
+    //         }
+    //         if(array[index].degem === degem){
+    //             return {res : true,num : 2,message : 'שם דגם כבר קיים!'}
+    //         }
+    //     }
+    //     return {res : false}
+    // }
 
     const addMotsar = async (val) => {
-        setMsbarSheldaError('');
-        setDegemError('');
-        if (checkAemMotsarKeam(val?.motsarem).res) {
-            if(checkAemMotsarKeam(val?.motsarem).num === 1){
-                setMsbarSheldaError(checkAemMotsarKeam(val?.motsarem).message);
-                return;
-            }
-            if(checkAemMotsarKeam(val?.motsarem).num === 2){
-                setDegemError(checkAemMotsarKeam(val?.motsarem).message);
-                return;
-            }
-        }
+        // setMsbarSheldaError('');
+        // setDegemError('');
+        // if (checkAemMotsarKeam(val?.motsarem).res) {
+        //     if(checkAemMotsarKeam(val?.motsarem).num === 1){
+        //         setMsbarSheldaError(checkAemMotsarKeam(val?.motsarem).message);
+        //         return;
+        //     }
+        //     if(checkAemMotsarKeam(val?.motsarem).num === 2){
+        //         setDegemError(checkAemMotsarKeam(val?.motsarem).message);
+        //         return;
+        //     }
+        // }
         setLoadingMotsar(true);
         try{
             await updateDoc(doc(firestore,'sheldot',val.id),{

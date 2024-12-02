@@ -1,6 +1,6 @@
 'use client';
 import React, { useContext, useEffect, useRef } from "react";
-import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Checkbox, CheckboxGroup, Divider, Input, Modal, Skeleton, Spinner, Switch } from "@nextui-org/react";
+import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Checkbox, CheckboxGroup, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, Skeleton, Spinner, Switch } from "@nextui-org/react";
 import { useState } from "react";
 import ModalCreate from "./Modals/ModalCreate";
 import ModalTokhnetYetsor from "./Modals/ModalTokhnetYetsor";
@@ -92,7 +92,7 @@ import { AiOutlineAppstoreAdd } from "react-icons/ai";
 import Image from "next/image";
 import { CirclesWithBar, Comment, Hearts, Hourglass, Puff, ThreeCircles, Watch } from "react-loader-spinner";
 import GetDocs from "./FireBase/getDocs";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdKeyboardArrowDown } from "react-icons/md";
 import ModalCreateTest from "./Modals/ModalCreateTest";
 import ContactContext from "./auth/ContactContext";
 import ModalMtsavYetsor from "./Modals/ModalMtsavYetsor";
@@ -106,6 +106,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { FaLocationDot } from "react-icons/fa6";
 import ModalBheratMlae from "./Modals/ModalBheratMlae";
 import ModalSheldot from "./Modals/ModalSheldot";
+import { FaSearch } from "react-icons/fa";
 
 
 
@@ -607,8 +608,16 @@ export default function Home() {
 
   const [showModalReshematSheldot, setShowModalReshematSheldot] = useState(false);
 
+  const [searchInput, setSearchInput] = useState('');
+  const [sort1,setSort1] = useState(['עארה','מעלה אפריים']);
+  const [sort2,setSort2] = useState(['ייצור עגלה','הרכבת וו','תיקון']);
+
+  const GetPropsSearch = () => {
+
+  }
+
   return (
-    <div className="h-full">
+    <div className="h-full w-full select-none">
       <ModalSheldot show={showModalReshematSheldot} disable={() => setShowModalReshematSheldot(false)}/>
       <ModalMtsavYetsor res={{
         a: mtsavYetsorRes?.mtsavYetsor[0],
@@ -626,7 +635,7 @@ export default function Home() {
       }} show={showModalBheratMlae} disable={() => setShowModalBheratMlae(false)} />
       <ModalYetsor locationYetsorAgla={locationYetsorAgla} drag={drag} yetsorKeam={tfaolAgla} lkohTfaol={lkoh} Tokhneot={Tokhneot} sogAskaa={sogAska} mlae={mlae} aglot={aglot} lkhot={lkhot} category={category} show={showModalYetsor} disable={() => { setShowModalYetsor(false); setSogAska(''); setTfaolAgla(null); }} />
       <ModalReshematTokhneot sogAskaa={sogAskaYetsorTokhnet} category={category} mlae={mlae} Tokhneot={Tokhneot} show={showModalReshematTokhneot} disable={() => { setShowModalReshematTokhneot(false); setSogAskaYetsorTokhnet(''); }} />
-      <div dir="rtl" className="flex h-full bg-white shadow-2xl rounded-2xl">
+      <div dir="rtl" className="flex h-full bg-white shadow-2xl rounded-2xl w-full">
         <aside className="w-64 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-r-3xl">
           <div className="p-4">
             <h1 className="text-xl font-extrabold text-gray-800 dark:text-white">מצבי תפעול</h1>
@@ -745,7 +754,7 @@ export default function Home() {
             <Button size="sm" className="w-full mt-2" color="primary" variant="faded" onClick={() => { setShowModalReshematSheldot(true); }}><div className="flex items-center justify-start w-full"><AiOutlineAppstoreAdd className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">רשימות שלדות</div></div></Button>
           </div>
         </aside>
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden w-full">
           <header className="bg-white rounded-se-3xl dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700">
             <div className="flex items-center px-4 py-3">
               {
@@ -860,8 +869,8 @@ export default function Home() {
               }
             </div>
           </header>
-          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-white rounded-ee-3xl border-r-2">
-            <div className="container mx-auto px-6 py-8">
+          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-white rounded-ee-3xl border-r-2 w-full">
+            <div className="mx-auto px-6 py-8 w-full">
               {
                 mtsav === 'A' &&
                 <AnimatePresence mode="wait">
@@ -872,7 +881,49 @@ export default function Home() {
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ duration: 0.5 }}
                   >
-                    <div className="" dir="ltr">
+                    <div className="w-full" dir="ltr">
+                      <div dir="rtl" className="mb-3 flex items-center">
+                        <Input dir='rtl' className='ml-3 max-w-[150px]' color='primary' label={<FaSearch />} labelPlacement='outside' size="xs" onValueChange={(val) => setSearchInput(val)} value={searchInput} />
+                        <Dropdown dir="rtl" className="select-none">
+                          <DropdownTrigger>
+                            <Button className="" dir="ltr" color="primary" variant='flat' size="sm">
+                              <MdKeyboardArrowDown className="text-xl" />סוג תפעול
+                            </Button>
+                          </DropdownTrigger>
+                          <DropdownMenu
+                            aria-label="Multiple selection example"
+                            variant="flat"
+                            closeOnSelect={true}
+                            disallowEmptySelection
+                            selectionMode='multiple'
+                            selectedKeys={sort2}
+                            onSelectionChange={(keys) => setSort2([...keys])}
+                          >
+                            <DropdownItem key={'ייצור עגלה'}>{'ייצור עגלה'}</DropdownItem>
+                            <DropdownItem key={'הרכבת וו'}>{'הרכבת וו'}</DropdownItem>
+                            <DropdownItem key={'תיקון'}>{'תיקון'}</DropdownItem>
+                          </DropdownMenu>
+                        </Dropdown>
+                        <Dropdown dir="rtl" className="select-none">
+                          <DropdownTrigger>
+                            <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="sm">
+                              <MdKeyboardArrowDown className="text-xl" />סניף ייצור
+                            </Button>
+                          </DropdownTrigger>
+                          <DropdownMenu
+                            aria-label="Multiple selection example"
+                            variant="flat"
+                            closeOnSelect={true}
+                            disallowEmptySelection
+                            selectionMode='multiple'
+                            selectedKeys={sort1}
+                            onSelectionChange={(keys) => setSort1([...keys])}
+                          >
+                            <DropdownItem key={'עארה'}>{'עארה'}</DropdownItem>
+                            <DropdownItem key={'מעלה אפריים'}>{'מעלה אפריים'}</DropdownItem>
+                          </DropdownMenu>
+                        </Dropdown>
+                      </div>
                       <table className="w-full table-auto border-collapse">
                         <thead>
                           <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
@@ -882,11 +933,11 @@ export default function Home() {
                             <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך תחילה</th>
                             <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שם לקוח</th>
                             <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מספר פעולה</th>
-                            <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">סוג פעולה</th>
-                            <th className="px-4 py-2 text-center  font-medium text-black text-xs w-30"></th>
-                          </tr>
-                        </thead>
-                        <tbody>
+                              <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">סוג פעולה</th>
+                              <th className="px-4 py-2 text-center  font-medium text-black text-xs w-30"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
                           {
                             aglotA.map((agla, index) => {
                               return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
@@ -917,7 +968,7 @@ export default function Home() {
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ duration: 0.5 }}
                   >
-                    <div className="" dir="ltr">
+                    <div className="w-full" dir="ltr">
                       <table className="w-full table-auto border-collapse">
                         <thead>
                           <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
@@ -961,7 +1012,7 @@ export default function Home() {
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ duration: 0.5 }}
                   >
-                    <div className="" dir="ltr">
+                    <div className="w-full" dir="ltr">
                       <table className="w-full table-auto border-collapse">
                         <thead>
                           <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
@@ -1083,12 +1134,13 @@ export default function Home() {
                 <AnimatePresence mode="wait">
                   <motion.div
                     key="D"
+                    className="w-full"
                     initial={{ opacity: 0, x: 100 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ duration: 0.5 }}
                   >
-                    <div className="" dir="ltr">
+                    <div className="w-full" dir="ltr">
                       <table className="w-full table-auto border-collapse">
                         <thead>
                           <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
