@@ -105,6 +105,7 @@ import ModalReshematTokhneot from "./Modals/ModalReshematTokhneot";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaLocationDot } from "react-icons/fa6";
 import ModalBheratMlae from "./Modals/ModalBheratMlae";
+import ModalSheldot from "./Modals/ModalSheldot";
 
 
 
@@ -490,7 +491,7 @@ export default function Home() {
     }
   }, [tfaolAgla?.id]);
 
-  const GetColorMsbarAdefot = (val,val1) => {
+  const GetColorMsbarAdefot = (val, val1) => {
     if (val === 1) {
       return val1 ? 'text-danger' : 'text-danger';
     }
@@ -518,7 +519,7 @@ export default function Home() {
       }
     }
     else if (val === 'הרכבת וו') {
-      return <Image className={`text-3xl ${GetColorMsbarAdefot(val1,true)}`} src={hook} width={26} height={26}/>;
+      return <Image className={`text-3xl ${GetColorMsbarAdefot(val1, true)}`} src={hook} width={26} height={26} />;
     }
     else if (val === 'תיקון') {
       return <HiOutlineWrenchScrewdriver className={`text-3xl ${GetColorMsbarAdefot(val1)}`} />;
@@ -604,8 +605,11 @@ export default function Home() {
   const [sogAskaYetsorTokhnet, setSogAskaYetsorTokhnet] = useState('');
   const [locationYetsorAgla, setlocationYetsorAgla] = useState('');
 
+  const [showModalReshematSheldot, setShowModalReshematSheldot] = useState(false);
+
   return (
     <div className="h-full">
+      <ModalSheldot show={showModalReshematSheldot} disable={() => setShowModalReshematSheldot(false)}/>
       <ModalMtsavYetsor res={{
         a: mtsavYetsorRes?.mtsavYetsor[0],
         b: mtsavYetsorRes?.mtsavYetsor[1],
@@ -731,7 +735,14 @@ export default function Home() {
           </div>
           <Divider />
           <div className="mr-5 ml-5 mt-2 mb-2">
-            <Button size="sm" className="w-full mt-2" color="primary" variant="faded" onClick={() => { setShowModalReshematTokhneot(true); setSogAskaYetsorTokhnet('ייצור') }}><div className="flex items-center justify-start w-full"><AiOutlineAppstoreAdd className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">רישמת תוכניות</div></div></Button>
+            <Button size="sm" className="w-full mt-2" color="primary" variant="faded" onClick={() => { setShowModalReshematTokhneot(true); setSogAskaYetsorTokhnet('ייצור') }}><div className="flex items-center justify-start w-full"><AiOutlineAppstoreAdd className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">רשימת תוכניות</div></div></Button>
+          </div>
+          <div className="p-4">
+            <h1 className="text-xl font-extrabold text-gray-800 dark:text-white">שלדות</h1>
+          </div>
+          <Divider />
+          <div className="mr-5 ml-5 mt-2 mb-2">
+            <Button size="sm" className="w-full mt-2" color="primary" variant="faded" onClick={() => { setShowModalReshematSheldot(true); }}><div className="flex items-center justify-start w-full"><AiOutlineAppstoreAdd className="text-3xl text-primary ml-5" /><div className="text-xl font-bold tracking-wider">רשימות שלדות</div></div></Button>
           </div>
         </aside>
         <div className="flex-1 flex flex-col overflow-hidden">

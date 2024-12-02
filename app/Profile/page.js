@@ -7,7 +7,7 @@ import { useAuth } from "../auth/authContext";
 import { useGetDataByConditionWithoutUseEffect, useGetDataByConditionWithoutUseEffectTwoQueres } from "../FireBase/getDataByCondition";
 import { format } from "date-fns";
 import GetDocs from "../FireBase/getDocs";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { firestore } from "../FireBase/firebase";
 import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, Spinner } from "@nextui-org/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -91,7 +91,7 @@ export default function Profile() {
     const currentDate = format(new Date(), 'dd-MM-yyyy');
 
     useEffect(() => {
-        if (aobed?.name) {
+        if (aobed?.name && aobed?.taodatZhot) {
             const unsubscribe = useGetDataByConditionWithoutUseEffect(
                 'aobdem',
                 'taodatZhot',
