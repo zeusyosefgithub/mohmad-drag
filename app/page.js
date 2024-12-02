@@ -609,16 +609,71 @@ export default function Home() {
   const [showModalReshematSheldot, setShowModalReshematSheldot] = useState(false);
 
   const [searchInput, setSearchInput] = useState('');
-  const [sort1,setSort1] = useState(['עארה','מעלה אפריים']);
-  const [sort2,setSort2] = useState(['ייצור עגלה','הרכבת וו','תיקון']);
+  const [sort1, setSort1] = useState(['עארה', 'מעלה אפריים']);
+  const [sort2, setSort2] = useState(['ייצור עגלה', 'הרכבת וו', 'תיקון']);
 
-  const GetPropsSearch = () => {
+  const [searchInput1, setSearchInput1] = useState('');
+  const [sort11, setSort11] = useState(['עארה', 'מעלה אפריים']);
+  const [sort21, setSort21] = useState(['ייצור עגלה', 'הרכבת וו', 'תיקון']);
 
+  const [searchInput2, setSearchInput2] = useState('');
+  const [sort12, setSort12] = useState(['עארה', 'מעלה אפריים']);
+  const [sort22, setSort22] = useState(['ייצור עגלה', 'הרכבת וו', 'תיקון']);
+
+  const [searchInput3, setSearchInput3] = useState('');
+  const [sort13, setSort13] = useState(['עארה', 'מעלה אפריים']);
+  const [sort23, setSort23] = useState(['ייצור עגלה', 'הרכבת וו', 'תיקון']);
+
+  const GetPropsSearch = (searchInput,setSearchInput,sort1,setSort1,sort2,setSort2) => {
+    return (
+      <>
+        <Input dir='rtl' className='ml-3 max-w-[150px]' color='primary' label={<FaSearch />} labelPlacement='outside' size="xs" onValueChange={(val) => setSearchInput(val)} value={searchInput} />
+        <Dropdown dir="rtl" className="select-none">
+          <DropdownTrigger>
+            <Button className="" dir="ltr" color="primary" variant='flat' size="sm">
+              <MdKeyboardArrowDown className="text-xl" />סוג תפעול
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            aria-label="Multiple selection example"
+            variant="flat"
+            closeOnSelect={true}
+            disallowEmptySelection
+            selectionMode='multiple'
+            selectedKeys={sort2}
+            onSelectionChange={(keys) => setSort2([...keys])}
+          >
+            <DropdownItem key={'ייצור עגלה'}>{'ייצור עגלה'}</DropdownItem>
+            <DropdownItem key={'הרכבת וו'}>{'הרכבת וו'}</DropdownItem>
+            <DropdownItem key={'תיקון'}>{'תיקון'}</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+        <Dropdown dir="rtl" className="select-none">
+          <DropdownTrigger>
+            <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="sm">
+              <MdKeyboardArrowDown className="text-xl" />סניף ייצור
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            aria-label="Multiple selection example"
+            variant="flat"
+            closeOnSelect={true}
+            disallowEmptySelection
+            selectionMode='multiple'
+            selectedKeys={sort1}
+            onSelectionChange={(keys) => setSort1([...keys])}
+          >
+            <DropdownItem key={'עארה'}>{'עארה'}</DropdownItem>
+            <DropdownItem key={'מעלה אפריים'}>{'מעלה אפריים'}</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </>
+    );
   }
 
   return (
     <div className="h-full w-full select-none">
-      <ModalSheldot show={showModalReshematSheldot} disable={() => setShowModalReshematSheldot(false)}/>
+      <ModalSheldot show={showModalReshematSheldot} disable={() => setShowModalReshematSheldot(false)} />
       <ModalMtsavYetsor res={{
         a: mtsavYetsorRes?.mtsavYetsor[0],
         b: mtsavYetsorRes?.mtsavYetsor[1],
@@ -883,46 +938,7 @@ export default function Home() {
                   >
                     <div className="w-full" dir="ltr">
                       <div dir="rtl" className="mb-3 flex items-center">
-                        <Input dir='rtl' className='ml-3 max-w-[150px]' color='primary' label={<FaSearch />} labelPlacement='outside' size="xs" onValueChange={(val) => setSearchInput(val)} value={searchInput} />
-                        <Dropdown dir="rtl" className="select-none">
-                          <DropdownTrigger>
-                            <Button className="" dir="ltr" color="primary" variant='flat' size="sm">
-                              <MdKeyboardArrowDown className="text-xl" />סוג תפעול
-                            </Button>
-                          </DropdownTrigger>
-                          <DropdownMenu
-                            aria-label="Multiple selection example"
-                            variant="flat"
-                            closeOnSelect={true}
-                            disallowEmptySelection
-                            selectionMode='multiple'
-                            selectedKeys={sort2}
-                            onSelectionChange={(keys) => setSort2([...keys])}
-                          >
-                            <DropdownItem key={'ייצור עגלה'}>{'ייצור עגלה'}</DropdownItem>
-                            <DropdownItem key={'הרכבת וו'}>{'הרכבת וו'}</DropdownItem>
-                            <DropdownItem key={'תיקון'}>{'תיקון'}</DropdownItem>
-                          </DropdownMenu>
-                        </Dropdown>
-                        <Dropdown dir="rtl" className="select-none">
-                          <DropdownTrigger>
-                            <Button className="mr-3" dir="ltr" color="primary" variant='flat' size="sm">
-                              <MdKeyboardArrowDown className="text-xl" />סניף ייצור
-                            </Button>
-                          </DropdownTrigger>
-                          <DropdownMenu
-                            aria-label="Multiple selection example"
-                            variant="flat"
-                            closeOnSelect={true}
-                            disallowEmptySelection
-                            selectionMode='multiple'
-                            selectedKeys={sort1}
-                            onSelectionChange={(keys) => setSort1([...keys])}
-                          >
-                            <DropdownItem key={'עארה'}>{'עארה'}</DropdownItem>
-                            <DropdownItem key={'מעלה אפריים'}>{'מעלה אפריים'}</DropdownItem>
-                          </DropdownMenu>
-                        </Dropdown>
+                        {GetPropsSearch(searchInput,setSearchInput,sort1,setSort1,sort2,setSort2)}
                       </div>
                       <table className="w-full table-auto border-collapse">
                         <thead>
@@ -969,6 +985,9 @@ export default function Home() {
                     transition={{ duration: 0.5 }}
                   >
                     <div className="w-full" dir="ltr">
+                    <div dir="rtl" className="mb-3 flex items-center">
+                        {GetPropsSearch(searchInput,setSearchInput,sort1,setSort1,sort2,setSort2)}
+                      </div>
                       <table className="w-full table-auto border-collapse">
                         <thead>
                           <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">

@@ -171,7 +171,7 @@ export default function ModalSheldot({ show, disable }) {
                                 >
                                     {
                                         reshemot?.map((resh, index) => (
-                                            <Card className="min-w-[300px] mr-4 ml-4 h-full">
+                                            <Card className="min-w-[300px] mr-4 ml-4 h-full select-all">
                                                 <CardBody className="h-full w-full flex flex-col">
                                                     <div className="flex items-center border-b-1 p-2 cursor-default">
                                                         <div className="w-full text-right">{resh?.shem}</div>
