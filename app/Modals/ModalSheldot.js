@@ -131,7 +131,7 @@ export default function ModalSheldot({ show, disable }) {
 
     const handlePopoverChange = (index, open) => {
         setIsOpenPov((prev) => {
-            const newState = [...prev];
+            const newState = Array.isArray(prev) ? [...prev] : [];
             newState[index] = open;
             return newState;
         });
