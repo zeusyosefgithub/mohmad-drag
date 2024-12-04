@@ -267,7 +267,7 @@ export default function Procurement() {
             {<ModalAddProductCategory mlae={mlae} category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
             {loading && <Spinner className='absolute top-0 left-0 bottom-0 right-0' />}
 
-            <div className='w-full h-full'>
+            {/* <div className='w-full h-full'>
                 <Card className='h-full'>
                     <CardBody className='w-full'>
                         <div className='w-full flex items-center h-full'>
@@ -280,9 +280,9 @@ export default function Procurement() {
                         </div>
                     </CardBody>
                 </Card>
-            </div>
+            </div> */}
 
-            {/* <div className='flex items-center justify-around flex-wrap lg:flex-nowrap h-full'>
+            <div className='flex items-center justify-around flex-wrap lg:flex-nowrap h-full'>
                 <div className="w-1/3 h-full">
                     <div className="flex justify-around h-full">
                         <div className="w-full h-full mx-auto border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
@@ -402,7 +402,7 @@ export default function Procurement() {
                     </div>
                 </div>
 
-            </div> */}
+            </div>
 
         </div>
     )
