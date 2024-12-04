@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Input, Button, Divider, Autocomplete, AutocompleteItem, Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Spinner, Switch } from '@nextui-org/react';
+import { Input, Button, Divider, Autocomplete, AutocompleteItem, Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Spinner, Switch, Card, CardBody } from '@nextui-org/react';
 import { FiPlus } from "react-icons/fi";
 import { FaArrowUp } from 'react-icons/fa';
 import { FaArrowDown } from "react-icons/fa";
@@ -247,7 +247,7 @@ export default function Procurement() {
 
     const [showModalAdconBret, setShowModalAdconBret] = useState(false);
     return (
-        <div className='h-full'>
+        <div className='h-full p-5'>
             {<ModalMessage Aeshor={async (val) => {
                 if (val) {
                     setLoading(true);
@@ -267,7 +267,22 @@ export default function Procurement() {
             {<ModalAddProductCategory mlae={mlae} category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
             {loading && <Spinner className='absolute top-0 left-0 bottom-0 right-0' />}
 
-            <div className='flex items-center justify-around flex-wrap lg:flex-nowrap h-full'>
+            <div className='w-full h-full'>
+                <Card className='h-full'>
+                    <CardBody className='w-full'>
+                        <div className='w-full flex items-center h-full'>
+                            <div className='w-full h-full'>
+                                213
+                            </div>
+                            <div className='w-[250px] border-l-1 h-full'>
+                                12
+                            </div>
+                        </div>
+                    </CardBody>
+                </Card>
+            </div>
+
+            {/* <div className='flex items-center justify-around flex-wrap lg:flex-nowrap h-full'>
                 <div className="w-1/3 h-full">
                     <div className="flex justify-around h-full">
                         <div className="w-full h-full mx-auto border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
@@ -387,7 +402,7 @@ export default function Procurement() {
                     </div>
                 </div>
 
-            </div>
+            </div> */}
 
         </div>
     )

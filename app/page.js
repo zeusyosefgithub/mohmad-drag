@@ -688,7 +688,7 @@ export default function Home() {
         setlocationYetsorAgla(val);
         setShowModalYetsor(true);
       }} show={showModalBheratMlae} disable={() => setShowModalBheratMlae(false)} />
-      <ModalYetsor locationYetsorAgla={locationYetsorAgla} drag={drag} yetsorKeam={tfaolAgla} lkohTfaol={lkoh} Tokhneot={Tokhneot} sogAskaa={sogAska} mlae={mlae} aglot={aglot} lkhot={lkhot} category={category} show={showModalYetsor} disable={() => { setShowModalYetsor(false); setSogAska(''); setTfaolAgla(null); }} />
+      <ModalYetsor locationYetsor={locationYetsorAgla} drag={drag} yetsorKeam={tfaolAgla} lkohTfaol={lkoh} Tokhneot={Tokhneot} sogAskaa={sogAska} mlae={mlae} aglot={aglot} lkhot={lkhot} category={category} show={showModalYetsor} disable={() => { setShowModalYetsor(false); setSogAska(''); setTfaolAgla(null); }} />
       <ModalReshematTokhneot sogAskaa={sogAskaYetsorTokhnet} category={category} mlae={mlae} Tokhneot={Tokhneot} show={showModalReshematTokhneot} disable={() => { setShowModalReshematTokhneot(false); setSogAskaYetsorTokhnet(''); }} />
       <div dir="rtl" className="flex h-full bg-white shadow-2xl rounded-2xl w-full">
         <aside className="w-64 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-r-3xl">
