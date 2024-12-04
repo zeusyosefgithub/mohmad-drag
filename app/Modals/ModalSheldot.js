@@ -173,8 +173,8 @@ export default function ModalSheldot({ show, disable }) {
                                         reshemot?.map((resh, index) => (
                                             <Card className="min-w-[300px] mr-4 ml-4 h-full">
                                                 <CardBody className="h-full w-full flex flex-col">
-                                                    <div className="flex items-center border-b-1 p-2 cursor-default">
-                                                        <div className="w-full text-right select-text">{resh?.shem}</div>
+                                                    <div className="flex items-center border-b-1 p-2">
+                                                        <div className="w-full text-right">{resh?.shem}</div>
                                                         <div>
                                                             <Popover isOpen={isOpenPov[index] || false} onOpenChange={(open) => handlePopoverChange(index, open)} placement='bottom-end'>
                                                                 <PopoverTrigger>
@@ -206,21 +206,21 @@ export default function ModalSheldot({ show, disable }) {
                                                                         <div>
                                                                             מס' שלדה
                                                                         </div>
-                                                                        <div className="font-bold select-text cursor-default">
+                                                                        <div className="font-bold">
                                                                             {mot.msbarShelda}
                                                                         </div>
                                                                         <div className="border-1 w-full"></div>
                                                                         <div>
                                                                             שנה
                                                                         </div>
-                                                                        <div className="font-bold select-text cursor-default">
+                                                                        <div className="font-bold">
                                                                             {mot.shnaa}
                                                                         </div>
                                                                         <div className="border-1 w-full"></div>
                                                                         <div>
                                                                             דגם
                                                                         </div>
-                                                                        <div className="font-bold select-text cursor-default">
+                                                                        <div className="font-bold">
                                                                             {mot.degem}
                                                                         </div>
                                                                     </CardBody>

@@ -624,7 +624,7 @@ export default function Home() {
   const [sort13, setSort13] = useState(['עארה', 'מעלה אפריים']);
   const [sort23, setSort23] = useState(['ייצור עגלה', 'הרכבת וו', 'תיקון']);
 
-  const GetPropsSearch = (searchInput,setSearchInput,sort1,setSort1,sort2,setSort2) => {
+  const GetPropsSearch = (searchInput, setSearchInput, sort1, setSort1, sort2, setSort2) => {
     return (
       <>
         <Input dir='rtl' className='ml-3 max-w-[150px]' color='primary' label={<FaSearch />} labelPlacement='outside' size="xs" onValueChange={(val) => setSearchInput(val)} value={searchInput} />
@@ -937,9 +937,6 @@ export default function Home() {
                     transition={{ duration: 0.5 }}
                   >
                     <div className="w-full" dir="ltr">
-                      <div dir="rtl" className="mb-3 flex items-center">
-                        {GetPropsSearch(searchInput,setSearchInput,sort1,setSort1,sort2,setSort2)}
-                      </div>
                       <table className="w-full table-auto border-collapse">
                         <thead>
                           <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
@@ -949,11 +946,11 @@ export default function Home() {
                             <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">תאריך תחילה</th>
                             <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">שם לקוח</th>
                             <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">מספר פעולה</th>
-                              <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">סוג פעולה</th>
-                              <th className="px-4 py-2 text-center  font-medium text-black text-xs w-30"></th>
-                            </tr>
-                          </thead>
-                          <tbody>
+                            <th className="px-4 py-2 text-center  font-extrabold text-black text-xs">סוג פעולה</th>
+                            <th className="px-4 py-2 text-center  font-medium text-black text-xs w-30"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
                           {
                             aglotA.map((agla, index) => {
                               return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
@@ -985,9 +982,6 @@ export default function Home() {
                     transition={{ duration: 0.5 }}
                   >
                     <div className="w-full" dir="ltr">
-                    <div dir="rtl" className="mb-3 flex items-center">
-                        {GetPropsSearch(searchInput,setSearchInput,sort1,setSort1,sort2,setSort2)}
-                      </div>
                       <table className="w-full table-auto border-collapse">
                         <thead>
                           <tr className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">

@@ -322,9 +322,18 @@ export default function Aobdem() {
                                                     headrot: arrayKnesot[index1]?.headrot,
                                                     yom: Yom.tarekh
                                                 }); setShowModalAdconHosfaKnesa(true);
-                                            }} className="text-danger cursor-pointer text-[17px]" />
+                                            }} className="text-warning cursor-pointer text-[17px]" />
                                             :
-                                            null}</TableCell>
+                                            <TbClockEdit onClick={() => {
+                                                setBretemLaedconShaa({
+                                                    shem: arrayKnesot[index1]?.shem,
+                                                    knesa: arrayKnesot[index1]?.knesa,
+                                                    yetseah: arrayKnesot[index1]?.yetseah,
+                                                    msbar: arrayKnesot[index1]?.msbar,
+                                                    headrot: arrayKnesot[index1]?.headrot,
+                                                    yom: Yom.tarekh
+                                                }); setShowModalAdconHosfaKnesa(true);
+                                            }} className="text-danger cursor-pointer text-[17px]" />}</TableCell>
                             </TableRow>
                         );
                     }
