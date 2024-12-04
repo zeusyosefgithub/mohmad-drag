@@ -19,6 +19,7 @@ export default function NavBar() {
     const { signUp, signIn, signOutt, currentUser } = useAuth();
     const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol } = useContext(ContactContext);
     const menuItems = [
+        isNehol && "דף אישי",
         "רישוי",
         "עובדים",
         "כספים",
@@ -42,6 +43,9 @@ export default function NavBar() {
         else if (item === 'מלאי') {
             return '/procurement';
         }
+        else if (item === "דף אישי") {
+            return '/Profile';
+        }
     }
 
     const GetIconItem = (item) => {
@@ -59,6 +63,9 @@ export default function NavBar() {
         }
         else if (item === 'מלאי') {
             return <BiSolidPurchaseTag className="text-2xl text-green-400" />;
+        }
+        else if (item === "דף אישי") {
+            return <CgProfile className="text-2xl text-primary-400" />;
         }
     }
 
