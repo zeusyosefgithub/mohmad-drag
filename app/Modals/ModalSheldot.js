@@ -6,6 +6,8 @@ import { firestore } from "../FireBase/firebase";
 import GetDocs from "../FireBase/getDocs";
 import { format } from "date-fns";
 import { BiPlus } from "react-icons/bi";
+import { IoIosRemoveCircleOutline } from "react-icons/io";
+import { FaEdit } from "react-icons/fa";
 
 
 export default function ModalSheldot({ show, disable }) {
@@ -54,6 +56,15 @@ export default function ModalSheldot({ show, disable }) {
 
     const scrollContainerRef = useRef(null);
 
+    const [msbarShelda, setMsbarShelda] = useState('');
+    const [shnaa, setShnaa] = useState(0);
+    const [degem, setDegem] = useState('');
+    const [counterShelda,setCounterShelda] = useState(1);
+    const [msbarSheldaError, setMsbarSheldaError] = useState(0);
+    const [degemError, setDegemError] = useState('');
+    const [loadingMotsar, setLoadingMotsar] = useState(false);
+    const [isOpenPov, setIsOpenPov] = useState([]);
+
     const handleMouseDown = (e) => {
         const container = scrollContainerRef.current;
         container.isDragging = true;
@@ -75,14 +86,6 @@ export default function ModalSheldot({ show, disable }) {
         container.isDragging = false;
     };
 
-
-    const [msbarShelda,setMsbarShelda] = useState('');
-    const [shnaa,setShnaa] = useState(0);
-    const [degem,setDegem] = useState('');
-    const [msbarSheldaError,setMsbarSheldaError] = useState(0);
-    const [degemError,setDegemError] = useState('');
-    const [loadingMotsar,setLoadingMotsar] = useState(false);
-    const [isOpenPov, setIsOpenPov] = useState([]);
     
     // const checkAemMotsarKeam = (array) => {
     //     for (let index = 0; index < array.length; index++) {
@@ -116,7 +119,8 @@ export default function ModalSheldot({ show, disable }) {
                     msbarShelda,
                     shnaa,
                     degem
-                }]
+                }],
+                counter : val.counter + counterShelda
             })
         }
         catch(e){
@@ -140,6 +144,13 @@ export default function ModalSheldot({ show, disable }) {
     useEffect(() => {
         setIsOpenPov(Array(reshemot?.length || 0).fill(false));
     }, [reshemot]);
+
+    const GetCounterShelda = (remez, val) => {
+        if (val < 1000) {
+            return `${remez}${String(val).padStart(3, '0')}`;
+        }
+        return ''; // Handle values >= 1000
+    };
 
 
     //
@@ -178,16 +189,32 @@ export default function ModalSheldot({ show, disable }) {
                                                         <div>
                                                             <Popover isOpen={isOpenPov[index] || false} onOpenChange={(open) => handlePopoverChange(index, open)} placement='bottom-end'>
                                                                 <PopoverTrigger>
-                                                                    <Button size="sm"><BiPlus className="text-xl" /></Button>
+                                                                    <Button size="sm" onClick={() => { setDegem(resh?.shem); setMsbarShelda(GetCounterShelda(resh?.remez, resh?.counter + 1)); setCounterShelda(1);setShnaa(parseInt(format(new Date(), 'yyyy'))); }}><BiPlus className="text-xl" /></Button>
                                                                 </PopoverTrigger>
                                                                 <PopoverContent>
                                                                     <div dir="rtl" className="px-1 py-2">
                                                                         <div className="text-small font-bold">שלדה חדשה</div>
                                                                         <div className="mt-3">
-                                                                            <Input errorMessage={msbarSheldaError} size="sm" type="text" value={msbarShelda || ''} onValueChange={(val) => setMsbarShelda(val)} className='mt-3' color={msbarShelda ? 'primary' : 'default'} label={`מס' שלדה`}/>
-                                                                            <Input size="sm" type="number" value={shnaa || ''} onValueChange={(val) => {if (!/^\d*$/.test(val) || val.length > 4) return;setShnaa(val);}}onBlur={() => {if (shnaa) {const clampedValue = Math.max(1900, Math.min(2100, Number(shnaa)));setShnaa(clampedValue);}}} className='mt-3' color={shnaa ? 'primary' : 'default'} label='שנה'/>
-                                                                            <Input errorMessage={degemError} size="sm" type="text" value={degem} onValueChange={(val) => setDegem(val)} className='mt-3' color={degem ? 'primary' : 'default'} label='דגם'/>
-                                                                        </div> 
+                                                                            <Input errorMessage={msbarSheldaError} size="sm" type="text" value={msbarShelda || ''} onValueChange={(val) => setMsbarShelda(val)} className='mt-3' color={msbarShelda ? 'primary' : 'default'} label={`מס' שלדה`} />
+                                                                            <Input size="sm" type="number" value={shnaa || ''} onValueChange={(val) => { if (!/^\d*$/.test(val) || val.length > 4) return; setShnaa(val); }} onBlur={() => { if (shnaa) { const clampedValue = Math.max(1900, Math.min(2100, Number(shnaa))); setShnaa(clampedValue); } }} className='mt-3' color={shnaa ? 'primary' : 'default'} label='שנה' />
+                                                                            <Input errorMessage={degemError} size="sm" type="text" value={degem} onValueChange={(val) => setDegem(val)} className='mt-3' color={degem ? 'primary' : 'default'} label='דגם' />
+                                                                            <Input min="1" max="999" size="sm" type="number" value={counterShelda || ''} onValueChange={(val) => {
+                                                                                let parsedValue = parseInt(val, 10);
+
+                                                                                // Validate and constrain the value to the range [1, 999]
+                                                                                if (isNaN(parsedValue) || parsedValue < 1) {
+                                                                                    parsedValue = 1; // Ensure the minimum value is 1
+                                                                                } else if (parsedValue > 999) {
+                                                                                    parsedValue = 999; // Ensure the maximum value is 999
+                                                                                }
+
+                                                                                setCounterShelda(parsedValue);
+
+                                                                                // Calculate the new msbarShelda
+                                                                                const updatedCounter = parseInt(resh?.counter || 0, 10) + parsedValue;
+                                                                                setMsbarShelda(GetCounterShelda(resh?.remez, updatedCounter));
+                                                                            }} className='mt-3' color={counterShelda ? 'primary' : 'default'} label='מספר עגלות' />
+                                                                        </div>
                                                                         <div className="mt-5">
                                                                             <Button onClick={() => addMotsar(resh)} isLoading={loadingMotsar} isDisabled={!msbarShelda || !shnaa || !degem} size="sm" color="primary" variant="flat">
                                                                                 הוספה
@@ -200,9 +227,15 @@ export default function ModalSheldot({ show, disable }) {
                                                     </div>
                                                     <div className="p-3 w-full h-full flex flex-col overflow-auto">
                                                         {
-                                                            resh?.motsarem?.map((mot,index) => (
+                                                            resh?.motsarem?.map((mot, index) => (
                                                                 <Card className="w-full min-h-[175px] mt-3">
                                                                     <CardBody className="text-right h-full flex flex-col overflow-hidden">
+                                                                        <div className=" absolute left-1 top-1">
+                                                                            <IoIosRemoveCircleOutline className="text-xl text-danger cursor-pointer"/>
+                                                                        </div>
+                                                                        <div className=" absolute left-7 top-1">
+                                                                            <FaEdit className="text-lg text-primary cursor-pointer"/>
+                                                                        </div>
                                                                         <div>
                                                                             מס' שלדה
                                                                         </div>

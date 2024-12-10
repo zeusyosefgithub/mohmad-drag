@@ -1,6 +1,6 @@
 'use client';
 import React, { useContext, useEffect, useRef } from "react";
-import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Checkbox, CheckboxGroup, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, Skeleton, Spinner, Switch } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Avatar, Button, Card, CardBody, CardFooter, CardHeader, Checkbox, CheckboxGroup, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, Skeleton, Spinner, Switch } from "@nextui-org/react";
 import { useState } from "react";
 import ModalCreate from "./Modals/ModalCreate";
 import ModalTokhnetYetsor from "./Modals/ModalTokhnetYetsor";
@@ -97,7 +97,6 @@ import ModalCreateTest from "./Modals/ModalCreateTest";
 import ContactContext from "./auth/ContactContext";
 import ModalMtsavYetsor from "./Modals/ModalMtsavYetsor";
 import Link from "next/link";
-import { CardContent } from "@mui/material";
 import SlideButton from "./Components/SlideButton";
 import ModalYetsor from "./Modals/ModalYetsor";
 import { differenceInDays, format, parse } from "date-fns";
@@ -612,21 +611,26 @@ export default function Home() {
   const [sort1, setSort1] = useState(['עארה', 'מעלה אפריים']);
   const [sort2, setSort2] = useState(['ייצור עגלה', 'הרכבת וו', 'תיקון']);
 
-  const [searchInput1, setSearchInput1] = useState('');
-  const [sort11, setSort11] = useState(['עארה', 'מעלה אפריים']);
-  const [sort21, setSort21] = useState(['ייצור עגלה', 'הרכבת וו', 'תיקון']);
-
-  const [searchInput2, setSearchInput2] = useState('');
-  const [sort12, setSort12] = useState(['עארה', 'מעלה אפריים']);
-  const [sort22, setSort22] = useState(['ייצור עגלה', 'הרכבת וו', 'תיקון']);
-
-  const [searchInput3, setSearchInput3] = useState('');
-  const [sort13, setSort13] = useState(['עארה', 'מעלה אפריים']);
-  const [sort23, setSort23] = useState(['ייצור עגלה', 'הרכבת וו', 'תיקון']);
-
   const GetPropsSearch = (searchInput, setSearchInput, sort1, setSort1, sort2, setSort2) => {
     return (
-      <>
+      <div className="flex items-center">
+        {/* <Autocomplete
+          isDisabled={yetsorKeam?.brtemLkoh?.id}
+          label="בחר לקוח"
+          className="max-w-[200px]"
+          color="primary"
+          size="sm"
+          selectedKey={searchInput}
+          defaultItems={lkhot}
+        >
+          {
+            lkhot.map((lko, index) => (
+              <AutocompleteItem onClick={() => { setBrtemLkoh(lko); }} className='text-right' key={lko?.id} value={lko?.name}>
+                {lko?.name}
+              </AutocompleteItem>
+            ))
+          }
+        </Autocomplete> */}
         <Input dir='rtl' className='ml-3 max-w-[150px]' color='primary' label={<FaSearch />} labelPlacement='outside' size="xs" onValueChange={(val) => setSearchInput(val)} value={searchInput} />
         <Dropdown dir="rtl" className="select-none">
           <DropdownTrigger>
@@ -667,7 +671,7 @@ export default function Home() {
             <DropdownItem key={'מעלה אפריים'}>{'מעלה אפריים'}</DropdownItem>
           </DropdownMenu>
         </Dropdown>
-      </>
+      </div>
     );
   }
 
@@ -835,7 +839,10 @@ export default function Home() {
                           backgroundColor="#3b82f6"
                         />
                       </div>
-                      <div className="text-3xl">שלב הצעה</div>
+                      <div className="text-3xl w-[200px]">שלב הצעה</div>
+                      <div className="">
+                        {GetPropsSearch(searchInput, setSearchInput, sort1, setSort1, sort2, setSort2)}
+                      </div>
                     </div>
                   </motion.div>
                 </AnimatePresence>
@@ -863,7 +870,10 @@ export default function Home() {
                           backgroundColor="#3b82f6"
                         />
                       </div>
-                      <div className="text-3xl">שלב הזמנה</div>
+                      <div className="text-3xl w-[200px]">שלב הזמנה</div>
+                      <div className="">
+                        {GetPropsSearch(searchInput, setSearchInput, sort1, setSort1, sort2, setSort2)}
+                      </div>
                     </div>
                   </motion.div>
                 </AnimatePresence>
@@ -890,7 +900,10 @@ export default function Home() {
                           wrapperClass=""
                         />
                       </div>
-                      <div className="text-3xl">שלב ייצור</div>
+                      <div className="text-3xl w-[200px]">שלב ייצור</div>
+                      <div className="">
+                        {GetPropsSearch(searchInput, setSearchInput, sort1, setSort1, sort2, setSort2)}
+                      </div>
                     </div>
                   </motion.div>
                 </AnimatePresence>
@@ -917,7 +930,10 @@ export default function Home() {
                           wrapperClass=""
                         />
                       </div>
-                      <div className="text-3xl">שלב סיום</div>
+                      <div className="text-3xl w-[200px]">שלב סיום</div>
+                      <div className="">
+                        {GetPropsSearch(searchInput, setSearchInput, sort1, setSort1, sort2, setSort2)}
+                      </div>
                     </div>
                   </motion.div>
                 </AnimatePresence>

@@ -37,6 +37,8 @@ import rep89 from '../../images/rep89.jpg';
 import rep90 from '../../images/rep90.jpg';
 import { FaEdit } from "react-icons/fa";
 import ModalAdconBret from '../Modals/ModalAdconBret';
+import { AnimatePresence,motion } from 'framer-motion';
+import { IoIosArrowForward } from 'react-icons/io';
 
 
 export default function Procurement() {
@@ -246,6 +248,9 @@ export default function Procurement() {
     }
 
     const [showModalAdconBret, setShowModalAdconBret] = useState(false);
+
+    const [snefMlae, setSnefMlae] = useState('A');
+
     return (
         <div className='h-full p-5'>
             {<ModalMessage Aeshor={async (val) => {
@@ -267,22 +272,71 @@ export default function Procurement() {
             {<ModalAddProductCategory mlae={mlae} category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
             {loading && <Spinner className='absolute top-0 left-0 bottom-0 right-0' />}
 
-            {/* <div className='w-full h-full'>
-                <Card className='h-full'>
-                    <CardBody className='w-full'>
-                        <div className='w-full flex items-center h-full'>
-                            <div className='w-full h-full'>
-                                213
-                            </div>
-                            <div className='w-[250px] border-l-1 h-full'>
-                                12
-                            </div>
-                        </div>
+            <div dir="rtl" className="w-full h-full flex flex-col bg-black max-h-[92%] overflow-hidden">
+                <Card className="h-full flex flex-col">
+                    <CardBody className="h-full flex flex-col overflow-hidden">
+                        <AnimatePresence mode="wait">
+                            {snefMlae === "A" && (
+                                <motion.div
+                                    key="A"
+                                    dir="rtl"
+                                    className="w-full h-full flex flex-col"
+                                    initial={{ opacity: 0, x: 100 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -100 }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    {/* Header */}
+                                    <div className="flex items-center border-b-1 pb-2">
+                                        <div className="font-bold">מלאי עארה</div>
+                                        <div className="inline-block hover:animate-move-arrows cursor-pointer">
+                                            <IoIosArrowForward
+                                                onClick={() => setSnefMlae("B")}
+                                                className="text-4xl transform scale-x-[-1] hover:text-primary"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Scrollable Content */}
+                                    <div className="flex-grow p-3 bg-slate-500 overflow-auto">
+                                        {Array(40)
+                                            .fill("123")
+                                            .map((item, index) => (
+                                                <div key={index}>{item}</div>
+                                            ))}
+                                    </div>
+                                </motion.div>
+                            )}
+                            {snefMlae === "B" && (
+                                <motion.div
+                                    key="B"
+                                    dir="rtl"
+                                    className="w-full h-full flex flex-col"
+                                    initial={{ opacity: 0, x: 100 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -100 }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    {/* Header */}
+                                    <div className="flex items-center border-b-1 pb-2">
+                                        <div className="font-bold">מלאי מעלה אפריים</div>
+                                        <div className="inline-block hover:animate-move-arrows cursor-pointer">
+                                            <IoIosArrowForward
+                                                onClick={() => setSnefMlae("A")}
+                                                className="text-4xl transform scale-x-[-1] hover:text-primary"
+                                            />
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </CardBody>
                 </Card>
-            </div> */}
+            </div>
 
-            <div className='flex items-center justify-around flex-wrap lg:flex-nowrap h-full'>
+
+
+            {/* <div className='flex items-center justify-around flex-wrap lg:flex-nowrap h-full'>
                 <div className="w-1/3 h-full">
                     <div className="flex justify-around h-full">
                         <div className="w-full h-full mx-auto border border-gray-300 bg-white shadow-lg p-5 rounded-3xl">
@@ -402,7 +456,7 @@ export default function Procurement() {
                     </div>
                 </div>
 
-            </div>
+            </div> */}
 
         </div>
     )

@@ -496,7 +496,7 @@ export default function Activion() {
 
 
     return (
-        <div className="hebrow_font mb-20 h-full w-full select-none">
+        <div className="hebrow_font mb-20 h-full w-full select-none max-h-[92%]">
             <div className="fixed right-1/2 transform translate-x-1/2 z-50">
                 <div className={`w-[800px] transition-all duration-500 ease-in-out flex justify-center ${showAlert ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
                     <Alert className="max-w-[600px] w-full" dir="rtl" severity='error'>
@@ -1021,6 +1021,30 @@ export default function Activion() {
                             <TableColumn className="text-right text-[10px] lg:text-sm hidden sm:table-cell"></TableColumn>
                         </TableHeader>
                         <TableBody>
+                            {
+                                aglotYetsor.map((agla, index) => {
+                                    return <TableRow key={index} >
+                                        <TableCell className={`text-right ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}><Button onClick={() => {
+                                            if (agla?.msbar === chossedAgla?.msbar) {
+                                                setChoosedAgla(null);
+                                                setChecks([]);
+                                                resetAllProps();
+                                            }
+                                            else {
+                                                setChoosedAgla(agla);
+                                                setChecks(agla?.drag?.checks || []);
+                                                setAllProps(agla?.drag);
+                                            }
+                                        }} className="" size="sm" variant="flat" color={agla?.msbar === chossedAgla?.msbar ? 'danger' : 'default'}>{agla?.msbar === chossedAgla?.msbar ? 'דחות' : 'בחר'}</Button></TableCell>
+                                        <TableCell className={`text-right text-[10px] lg:text-sm ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla?.drag?.dragnum ? <div className="text-success">מוכן</div> : <div className="text-danger">לא מוכן</div>}</TableCell>
+                                        <TableCell className={`text-right text-[10px] lg:text-sm hidden sm:table-cell ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{GetShlavemInHebrow(agla.shlavNokhhe)}</TableCell>
+                                        <TableCell className={`text-right text-[10px] lg:text-sm ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla.brtemLkoh?.name || agla.newCustomer.customerName}</TableCell>
+                                        <TableCell className={`text-right text-[10px] lg:text-sm ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}>{agla.msbar}</TableCell>
+                                        <TableCell className={`text-right text-[10px] lg:text-sm hidden xs:table-cell ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}><div className="flex items-center justify-end"><div className="mr-1">{agla.locationYetsorAgla === 'עארה' ? '(עארה)' : '(מעלה אפריים)'}</div><div>{agla.sogAskaa === 'ייצור' ? 'עגלה' : agla.sogAskaa}</div></div></TableCell>
+                                        <TableCell className={`text-right text-[10px] lg:text-sm hidden sm:table-cell ${agla?.msbar === chossedAgla?.msbar ? 'text-primary' : ''}`}><div className="flex justify-center items-center">{GetTmonaLfeSog(agla.sogAskaa, agla.msbarAdefot, agla.locationYetsorAgla)}</div></TableCell>
+                                    </TableRow>
+                                })
+                            }
                             {
                                 aglotYetsor.map((agla, index) => {
                                     return <TableRow key={index} >
