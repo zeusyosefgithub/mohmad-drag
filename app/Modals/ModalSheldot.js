@@ -258,7 +258,19 @@ export default function ModalSheldot({ show, disable }) {
     };
 
 
-    //
+    function sortMotsaremByLastThreeDigits(motsarem) {
+        return motsarem.sort((a, b) => {
+            const lastThreeA = parseInt(a.msbarShelda.slice(-3), 10);
+            const lastThreeB = parseInt(b.msbarShelda.slice(-3), 10);
+            return lastThreeB - lastThreeA; // Descending order
+        });
+    }
+
+
+
+
+
+//
 
     return (
         <Modal placement="center" className="test-fontt select-none" backdrop={"blur"} size="full" isOpen={show} onClose={disable}>
@@ -353,7 +365,7 @@ export default function ModalSheldot({ show, disable }) {
                                                     </div>
                                                     <div className="p-3 w-full h-full flex flex-col overflow-auto">
                                                         {
-                                                            resh?.motsarem?.map((mot, index) => (
+                                                            sortMotsaremByLastThreeDigits(resh?.motsarem)?.map((mot, index) => (
                                                                 <Card className="w-full min-h-[175px] mt-3">
                                                                     <CardBody className="text-right h-full flex flex-col overflow-hidden">
                                                                         <div className=" absolute left-1 top-1">
