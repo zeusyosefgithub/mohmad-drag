@@ -13,8 +13,9 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
     //const counter = useGetDataByCondition('category', 'msbar', '==', category?.msbar || 'default-msbar-value');
     const [shem, setShem] = useState('');
     const [sog, setSog] = useState('');
-    const [mherThlte, setMherThlte] = useState('');
-    const [msbarMdaf, setMsbarMdaf] = useState('');
+    const [mherThlte, setMherThlte] = useState(0);
+    const [mherMkhera, setMherMkhera] = useState(0);
+    const [msbarMdaf, setMsbarMdaf] = useState(0);
     const [tmona, setTmona] = useState(null);
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -72,21 +73,23 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
         setLoading(true);
         let count = category?.dlbak + 1;
         let counter = GetCategory(shem)?.dlbak;
-        await addDoc(collection(firestore, "mlae"), {
-            category: category?.id,
-            categoryMotsar: GetCategory(shem)?.sog,
-            msbar: `${GetCategory(shem)?.sog}${counter < 10 ? `0${counter}` : counter}`,
-            shem: sog,
-            alot: sckhom || 0,
-            alotLeheda: parseFloat(sckhom) || parseFloat(mherThlte),
-            kmot: sckhom ? 1 : 0,
-            mededa: GetCategory(shem)?.mededa,
-            msbarTfaol: msbarTfaol || 0,
-            adconAhron: '',
-            kmotNefl: 0,
-            sakhHkolKneot: 0,
-            active: true,
-            msbarMdaf: msbarMdaf
+        await updateDoc(doc(firestore, 'mlae', 'Ara'),{
+            motsarem: [...mlae, {
+                category: category?.id,
+                categoryMotsar: GetCategory(shem)?.sog,
+                msbar: `${GetCategory(shem)?.sog}${counter < 10 ? `0${counter}` : counter}`,
+                shem: sog,
+                alot: sckhom || 0,
+                alotLeheda: parseFloat(sckhom) || parseFloat(mherThlte),
+                kmot: sckhom ? 1 : 0,
+                mededa: GetCategory(shem)?.mededa,
+                msbarTfaol: msbarTfaol || 0,
+                adconAhron: '',
+                kmotNefl: 0,
+                sakhHkolKneot: 0,
+                active: true,
+                msbarMdaf: msbarMdaf
+            }]
         });
         await updateDoc(doc(firestore, 'category', category?.id), {
             dlbak: count,
@@ -113,9 +116,10 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                                 <Dropdown dir="rtl">
                                     <DropdownTrigger>
                                         <Button
-
+                                            variant="flat"
+                                            color={shem ? 'primary' : 'default'}
                                             size="lg"
-                                            className='m-2'
+                                            className='mt-2 w-full max-w-[150px]'
                                         >
                                             {shem ? shem : "שם מוצר"}
                                         </Button>
@@ -141,29 +145,23 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                                 </Dropdown>
                                 {
                                     tmona &&
-                                    <div className="group relative">
-
-                                        
+                                    <div className="group relative mr-5">
                                         <Image src={GetTmonatHelek(tmona)} className="h-[40px] w-[40px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%] group-hover:translate-y-[100%]" />
                                     </div>
                                 }
                             </div>
-                            <Input type="text" value={msbarMdaf} onValueChange={(val) => setMsbarMdaf(val)} className="mt-5 max-w-[150px]" label="מספר מדף" />
-                            <Input errorMessage={errorMessage} type="text" value={sog} onValueChange={(val) => setSog(val)} className="mt-5 max-w-[150px]" label="שם פריט" />
-                            <Input type="number" value={mherThlte} onValueChange={(val) => setMherThlte(val)} className="mt-5 mb-5 max-w-[150px]" label="מחיר תחלתי" />
-                            {/* <CheckboxGroup
-                                label="Select cities"
-                                defaultValue={["buenos-aires", "london"]}
-                            >
-                                <Checkbox value="buenos-aires">
-                                    <Card>
-                                        <CardBody>
-                                            12
-                                        </CardBody>
-                                    </Card>
-                                </Checkbox>
-                                <Checkbox value="sydney">Sydney</Checkbox>
-                            </CheckboxGroup> */}
+                            <Input errorMessage={errorMessage} type="text" value={sog} onValueChange={(val) => setSog(val)} color={sog ? 'primary' : 'default'} className="mt-5 max-w-[150px]" label="שם פריט" />
+                            <Input type="number" value={msbarMdaf || ''} onValueChange={(val) => setMsbarMdaf(val)} color={msbarMdaf ? 'primary' : 'default'} className="mt-5 max-w-[150px]" label="מספר מדף" />
+                            <Input type="number" value={mherThlte || ''} onValueChange={(val) => setMherThlte(val)} color={mherThlte ? 'primary' : 'default'} className="mt-5 mb-5 max-w-[150px]" label="מחיר קנייה" />
+                            <Input type="number" value={mherMkhera || ''} onValueChange={(val) => setMherMkhera(val)} color={mherMkhera ? 'primary' : 'default'} className="mt-5 mb-5 max-w-[150px]" label="מחיר מכירה" />
+                            <CheckboxGroup label={<div className="text-primary">סניף</div>} orientation="horizontal" className="mt-5 mb-5">
+                                <Checkbox value="עארה">עארה</Checkbox>
+                                <Checkbox value="מעלה אפריים">מעלה אפריים</Checkbox>
+                            </CheckboxGroup>
+                            <CheckboxGroup label="ספירה" orientation="horizontal" className="mt-5 mb-5">
+                                <Checkbox value="נספר">נספר</Checkbox>
+                                <Checkbox value="לא נספר">לא נספר</Checkbox>
+                            </CheckboxGroup>
                         </div>
                     </ModalBody>
                     <ModalFooter>

@@ -334,7 +334,7 @@ export function GetTmonatHelek(remez, msbar) {
   else if (remez === 'S1') {
     return rep6;
   }
-  else if (remez === 'J1') {
+  else if (remez === 'A11') {
     return rep23;
   }
 
@@ -347,7 +347,7 @@ export function GetTmonatHelek(remez, msbar) {
 
 export default function Home() {
   const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol, aobedAuth } = useContext(ContactContext);
-  const mlae = GetDocs('mlae');
+  const mlae = GetDocs('mlae').find((count) => count.id === 'Ara')?.motsarem;
   const category = GetDocs('category');
   const aobdem = GetDocs('aobdem');
   const Tokhneot = GetDocs('TokhnetYetsorAgla');

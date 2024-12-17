@@ -10,6 +10,7 @@ import { differenceInDays, format } from "date-fns";
 import GetDocs from "../FireBase/getDocs";
 import { SferatMlae } from "../Page Components/SferatMlae";
 import { useReactToPrint } from "react-to-print";
+import { isArray } from "lodash";
 
 
 export default function ModalMtsavMlae({ disable, show, category, mlae, activeMlae }) {
@@ -20,8 +21,11 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
     const componentRefOne = useRef();
     const [fectevet,setFectevet] = useState(false);
     const counterHkhnsotAhrot = metadata.find((count) => count.id === 'counterHkhnsotAhrot');
+
     useEffect(() => {
-        setAedconemHadshem([...mlae]);
+        if(isArray(mlae)){
+            setAedconemHadshem([...mlae]);
+        }
     }, [mlae]);
 
     const handleChange = (index, key, value) => {

@@ -45,7 +45,7 @@ export default function Management() {
     const sbkem = GetDocs('sbkem');
     const hotsaot = GetDocs('hotsaot');
     const aobdem = GetDocs('aobdem');
-    const mlae = GetDocs('mlae');
+    const mlae = GetDocs('mlae').find((count) => count.id === 'Ara')?.motsarem;;
     const tnoahBmzomnem = GetDocsWithLimit('tnoahBmzomnem', 15);
     const router = useRouter();
     const [htsgatbrtem, sethtsagatBrtem] = useState('לקחות');

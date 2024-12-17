@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Input, Button, Divider, Autocomplete, AutocompleteItem, Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Spinner, Switch, Card, CardBody } from '@nextui-org/react';
+import { Input, Button, Divider, Autocomplete, AutocompleteItem, Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Spinner, Switch, Card, CardBody, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
 import { FiPlus } from "react-icons/fi";
 import { FaArrowUp } from 'react-icons/fa';
 import { FaArrowDown } from "react-icons/fa";
@@ -50,9 +50,11 @@ export default function Procurement() {
 
     const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol } = useContext(ContactContext);
     const category = GetDocs('category');
-    const mlae = GetDocs('mlae').sort((a, b) => {
-        const msbarA = a.msbar.toUpperCase();
-        const msbarB = b.msbar.toUpperCase();
+
+    const fsdfsd = GetDocs('mlae');
+    const mlae = GetDocs('mlae').find((count) => count.id === 'Ara')?.motsarem?.sort((a, b) => {
+        const msbarA = a?.msbar?.toUpperCase();
+        const msbarB = b?.msbar?.toUpperCase();
 
         if (msbarA < msbarB) return -1;
         if (msbarA > msbarB) return 1;
@@ -73,7 +75,7 @@ export default function Procurement() {
 
     const GetMotsaremBalem = () => {
         let newArrray = [];
-        for (let index = 0; index < mlae.length; index++) {
+        for (let index = 0; index < mlae?.length; index++) {
             if (mlae[index].active) {
                 newArrray.push(mlae[index]);
             }
@@ -268,71 +270,11 @@ export default function Procurement() {
             }} message={motsarMhekaItem?.kmot > 0 ? `אסור למחוק המוצר ${motsarMhekaItem?.shem} ויש כמות במלאי!!` : `האם אתה בטוח למחוק המוצר ${motsarMhekaItem?.shem} מהמלאי!!`} motsar={motsarMhekaItem} show={hodatMhekatMotsar} disable={() => setHodatMhekatMotsar(false)} />}
             <ModalAdconBret motsarem={mlae} motsar={motsarMhekaItem} categoryMotsar={motsarMhekaCat} show={showModalAdconBret} disable={() => setShowModalAdconBret(false)} />
             {<ModalZmanAbodaMotsar category={category} show={showModalZmanAbodaMotsar} disable={() => setShowModalZmanAbodaMotsar(false)} />}
-            {<ModalMtsavMlae activeMlae={activeMlae} category={category} mlae={mlae} show={showModalMtsavMlae} disable={() => setShowModalMtsavMlae(false)} />}
+            {/* {<ModalMtsavMlae activeMlae={activeMlae} category={category} mlae={mlae} show={showModalMtsavMlae} disable={() => setShowModalMtsavMlae(false)} />} */}
             {<ModalAddProductCategory mlae={mlae} category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
             {loading && <Spinner className='absolute top-0 left-0 bottom-0 right-0' />}
 
-            <div dir="rtl" className="w-full h-full flex flex-col bg-black max-h-[92%] overflow-hidden">
-                <Card className="h-full flex flex-col">
-                    <CardBody className="h-full flex flex-col overflow-hidden">
-                        <AnimatePresence mode="wait">
-                            {snefMlae === "A" && (
-                                <motion.div
-                                    key="A"
-                                    dir="rtl"
-                                    className="w-full h-full flex flex-col"
-                                    initial={{ opacity: 0, x: 100 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -100 }}
-                                    transition={{ duration: 0.5 }}
-                                >
-                                    {/* Header */}
-                                    <div className="flex items-center border-b-1 pb-2">
-                                        <div className="font-bold">מלאי עארה</div>
-                                        <div className="inline-block hover:animate-move-arrows cursor-pointer">
-                                            <IoIosArrowForward
-                                                onClick={() => setSnefMlae("B")}
-                                                className="text-4xl transform scale-x-[-1] hover:text-primary"
-                                            />
-                                        </div>
-                                    </div>
 
-                                    {/* Scrollable Content */}
-                                    <div className="flex-grow p-3 bg-slate-500 overflow-auto">
-                                        {Array(40)
-                                            .fill("123")
-                                            .map((item, index) => (
-                                                <div key={index}>{item}</div>
-                                            ))}
-                                    </div>
-                                </motion.div>
-                            )}
-                            {snefMlae === "B" && (
-                                <motion.div
-                                    key="B"
-                                    dir="rtl"
-                                    className="w-full h-full flex flex-col"
-                                    initial={{ opacity: 0, x: 100 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -100 }}
-                                    transition={{ duration: 0.5 }}
-                                >
-                                    {/* Header */}
-                                    <div className="flex items-center border-b-1 pb-2">
-                                        <div className="font-bold">מלאי מעלה אפריים</div>
-                                        <div className="inline-block hover:animate-move-arrows cursor-pointer">
-                                            <IoIosArrowForward
-                                                onClick={() => setSnefMlae("A")}
-                                                className="text-4xl transform scale-x-[-1] hover:text-primary"
-                                            />
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </CardBody>
-                </Card>
-            </div>
 
 
 
@@ -414,7 +356,7 @@ export default function Procurement() {
                                             </thead>
                                             <tbody>
                                                 {cat?.motsarem?.map((motsar, index1) => (
-                                                    mlae.map((item, index) => {
+                                                    mlae?.map((item, index) => {
                                                         return (item.categoryMotsar === motsar.sog) && (item.active) && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                                                             <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaTrash onClick={() => { setHodatMhekatMotsar(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-danger text-lg cursor-pointer' /></td>
                                                             <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaEdit onClick={() => { setShowModalAdconBret(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-primary text-lg cursor-pointer' /></td>
@@ -457,6 +399,128 @@ export default function Procurement() {
                 </div>
 
             </div> */}
+
+
+            <div dir="rtl" className="w-full h-full flex flex-col max-h-[92%] overflow-hidden">
+                <Card className="h-full flex flex-col">
+                    <CardBody className="h-full flex flex-col overflow-hidden">
+                        <AnimatePresence mode="wait">
+                            {snefMlae === "A" && (
+                                <motion.div
+                                    key="A"
+                                    dir="rtl"
+                                    className="w-full h-full flex flex-col"
+                                    initial={{ opacity: 0, x: 100 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -100 }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    {/* Header */}
+                                    <div className="flex items-center border-b-1 pb-2">
+                                        <div className="font-bold">מלאי עארה</div>
+                                        <div className="inline-block hover:animate-move-arrows cursor-pointer">
+                                            <IoIosArrowForward
+                                                onClick={() => setSnefMlae("B")}
+                                                className="text-4xl transform scale-x-[-1] hover:text-primary"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div dir='ltr' className="flex-grow p-3 overflow-auto">
+                                        {
+                                            category.map((cat, index) => {
+                                                return <div key={index} ref={categoryRefs.current[index]} className='bg-white rounded-lg p-2'>
+                                                    <div className='flex justify-between items-center'>
+                                                        <div className='flex items-center w-[200px]'>
+                                                            <Button size='sm' onClick={() => { setShowModalAddProductCategory(true); setCategoryData(cat) }} className='mr-3'><FaPlus className='text-xl' />מוצר חדש</Button>
+                                                        </div>
+                                                        <div className='text-base'>
+                                                            {
+                                                                cat.dlbak > 0 ?
+                                                                    <div>מוצרים {cat.dlbak}</div>
+                                                                    :
+                                                                    <div className='text-danger'>אין מוצרים כרגע</div>
+                                                            }
+                                                        </div>
+                                                        <div className='flex justify-end items-center w-[200px]'>
+                                                            <div className='mr-3 text-base'>{cat.shem}</div>
+                                                            <div className="group relative">
+                                                                <Image src={GetTmonatHelekCategory(cat?.shem)} className="rounded-full h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-slate-400 group-hover:translate-x-[-220%]" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+
+
+
+                                                    <Table>
+                                                        <TableHeader>
+                                                            <TableColumn></TableColumn>
+                                                            <TableColumn></TableColumn>
+                                                            <TableColumn>זמן הספקה</TableColumn>
+                                                            <TableColumn>עלות ממוצע</TableColumn>
+                                                            <TableColumn>סה"כ עלות</TableColumn>
+                                                            <TableColumn>כמות</TableColumn>
+                                                            <TableColumn>מדף</TableColumn>
+                                                            <TableColumn>שם פריט</TableColumn>
+                                                            <TableColumn>מק"ט</TableColumn>
+                                                            <TableColumn></TableColumn>
+                                                        </TableHeader>
+                                                        <TableBody>
+                                                            {cat?.motsarem?.map((motsar, index1) => (
+                                                                mlae?.map((item, index) => {
+                                                                    return (item.categoryMotsar === motsar.sog) && (item.active) &&
+                                                                        <TableRow>
+                                                                            <TableCell><FaTrash onClick={() => { setHodatMhekatMotsar(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-danger text-lg cursor-pointer' /></TableCell>
+                                                                            <TableCell><FaEdit onClick={() => { setShowModalAdconBret(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-primary text-lg cursor-pointer' /></TableCell>
+                                                                            <TableCell>{item.zmanHsbaka}</TableCell>
+                                                                            <TableCell>₪{item.alotLeheda}</TableCell>
+                                                                            <TableCell>₪{parseFloat(item.alot).toFixed(2)}</TableCell>
+                                                                            <TableCell>{GetKmotMtaema(item.mededa, item.kmot, item.msbar)}</TableCell>
+                                                                            <TableCell>{item.msbarMdaf}</TableCell>
+                                                                            <TableCell><div dir='rtl'>{item.shem}</div></TableCell>
+                                                                            <TableCell>{item.msbar}</TableCell>
+                                                                            <TableCell><div className="group relative">
+                                                                                <Image src={GetTmonatHelek(item.categoryMotsar, item?.msbar)} className="h-[50px] w-[50px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
+                                                                            </div></TableCell>
+                                                                        </TableRow>
+                                                                })
+                                                            ))}
+
+                                                        </TableBody>
+                                                    </Table>
+                                                </div>
+                                            })
+                                        }
+                                    </div>
+                                </motion.div>
+                            )}
+                            {snefMlae === "B" && (
+                                <motion.div
+                                    key="B"
+                                    dir="rtl"
+                                    className="w-full h-full flex flex-col"
+                                    initial={{ opacity: 0, x: 100 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -100 }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    {/* Header */}
+                                    <div className="flex items-center border-b-1 pb-2">
+                                        <div className="font-bold">מלאי מעלה אפריים</div>
+                                        <div className="inline-block hover:animate-move-arrows cursor-pointer">
+                                            <IoIosArrowForward
+                                                onClick={() => setSnefMlae("A")}
+                                                className="text-4xl transform scale-x-[-1] hover:text-primary"
+                                            />
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </CardBody>
+                </Card>
+            </div>
 
         </div>
     )

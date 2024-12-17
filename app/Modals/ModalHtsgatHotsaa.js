@@ -24,7 +24,7 @@ export default function ModalHtsgatHotsaa({ disable, show, hotsaa, aemTshlom, ao
     const [sbak, setSbak] = useState('');
     const [sbakObject, setSbakObject] = useState('');
     const [entries, setEntries] = useState([{ category: '', id: '', sogMotsar: '', remez: '', amount: '', price: '' }]);
-    const mlae = GetDocs('mlae');
+    const mlae = GetDocs('mlae').find((count) => count.id === 'Ara')?.motsarem;;
     const category = GetDocs('category');
     const endOfFormRef = useRef(null);
     const topOfFormRef = useRef(null);

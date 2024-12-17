@@ -103,6 +103,57 @@ export default function ModalSheldot({ show, disable }) {
     //     return {res : false}
     // }
 
+    const GetMaxCounter = (array, shelda) => {
+        let max = 0;
+        for (let index = 0; index < array.length; index++) {
+            if (array[index].msbarShelda !== shelda) {
+                max = Math.max(max, parseInt(array[index].msbarShelda.substring(14, array[index].msbarShelda.length)))
+            }
+        }
+        return max;
+    }
+
+    const editMotsar = async (val, valEdit) => {
+        setLoadingMotsar(true);
+        const counterToAdd = parseInt(msbarShEdit.substring(14, msbarShEdit.length));
+
+        let newArray = [];
+        for (let index = 0; index < val.motsarem.length; index++) {
+            if (val.motsarem[index].msbarShelda === valEdit) {
+                newArray.push({
+                    msbarShelda: msbarShEdit,
+                    shnaa: ShnaaEdit,
+                    degem: val.motsarem[index].degem
+                });
+            }
+            else {
+                newArray.push(val.motsarem[index]);
+            }
+        }
+        try {
+            if (counterToAdd > parseInt(valEdit.substring(14, valEdit.length))) {
+                await updateDoc(doc(firestore, 'sheldot', val.id), {
+                    motsarem: newArray,
+                    counter: val.counter + (counterToAdd - val.counter)
+                });
+            }
+            else {
+                await updateDoc(doc(firestore, 'sheldot', val.id), {
+                    motsarem: newArray,
+                    counter: GetMaxCounter(val.motsarem, valEdit)
+                });
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+        setMsbarShelda('');
+        setShnaa(0);
+        setDegem('');
+        setIsOpenPov(false);
+        setLoadingMotsar(false);
+    }
+
     const addMotsar = async (val) => {
         // setMsbarSheldaError('');
         // setDegemError('');
@@ -182,7 +233,7 @@ export default function ModalSheldot({ show, disable }) {
 
     const onValueChange = (index, newValue) => {
         setCounterPov((prevCounterPov) =>
-            prevCounterPov.map((item, i) => (i === index ? newValue : item))
+            prevCounterPov?.map((item, i) => (i === index ? newValue : item))
         );
     };
 
@@ -266,11 +317,38 @@ export default function ModalSheldot({ show, disable }) {
         });
     }
 
+    const checkIfMsbarShKeam = (array, val) => {
+        for (let index = 0; index < array.length; index++) {
+            if (array[index].msbarShelda === val) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const GetNewDegemMotsarem = (array,newShem) => {
+        let newArray = [];
+        for (let index = 0; index < array.length; index++) {
+            newArray.push({
+                degem : newShem,
+                msbarShelda : array[index].msbarShelda,
+                shnaa : array[index].shnaa
+            });
+        }
+        return newArray;
+    }
+
+    const [msbarShEdit, setMsbarShEdit] = useState('');
+    const [ShnaaEdit, setShnaaEdit] = useState(0);
+
+    const [shemReshemaEdit,setShemReshmaEdit] = useState('');
+    const [shemReshemaEditError,setShemReshmaEditError] = useState('');
 
 
 
 
-//
+
+    //
 
     return (
         <Modal placement="center" className="test-fontt select-none" backdrop={"blur"} size="full" isOpen={show} onClose={disable}>
@@ -308,7 +386,43 @@ export default function ModalSheldot({ show, disable }) {
                                                                 ReplaceIndexes('right', resh.msbar, index, resh.id);
                                                             }} className="text-4xl transform scale-x-[-1] hover:text-primary" />
                                                         </div>
-                                                        <div className="w-full text-center font-bold text-primary">{resh.msbar}</div>
+                                                        <div className="w-full text-center flex items-center justify-around font-bold text-primary">
+                                                            <div>
+                                                                <Popover placement='bottom-end'>
+                                                                    <PopoverTrigger>
+                                                                        <Button onClick={() => {setShemReshmaEdit(resh?.shem);}} size="sm" variant="flat"><FaEdit className="text-lg text-primary cursor-pointer" /></Button>
+                                                                    </PopoverTrigger>
+                                                                    <PopoverContent>
+                                                                        <div dir="rtl" className="px-1 py-2">
+                                                                            <Input errorMessage={shemReshemaEditError} size="sm" type="text" value={shemReshemaEdit || ''} onValueChange={(val) => setShemReshmaEdit(val)} className='mt-3' color={shemReshemaEdit ? 'primary' : 'default'} label={`שם רשימה`} />
+                                                                            <Button className="mt-5" onClick={async () => {
+                                                                                setShemReshmaEditError('');
+                                                                                for (let index = 0; index < reshemot.length; index++) {
+                                                                                    if(reshemot[index].shem === shemReshemaEdit){
+                                                                                        setShemReshmaEditError('השם כבר קיים!');
+                                                                                        return;
+                                                                                    }
+                                                                                }
+                                                                                setLoadingMotsar(true);
+                                                                                await updateDoc(doc(firestore,'sheldot',resh?.id),{
+                                                                                    shem : shemReshemaEdit,
+                                                                                    motsarem : GetNewDegemMotsarem(resh?.motsarem,shemReshemaEdit)
+                                                                                })
+                                                                                setLoadingMotsar(false);
+                                                                            }} isLoading={loadingMotsar} isDisabled={resh?.shem === shemReshemaEdit} size="sm" color="primary" variant="flat">
+                                                                                שמירה
+                                                                            </Button>
+                                                                        </div>
+                                                                    </PopoverContent>
+                                                                </Popover>
+                                                            </div>
+                                                            <div className="border-b-1 border-primary">{resh.msbar}</div>
+                                                            <div><Button size="sm" variant="flat" onClick={async () => {
+                                                                setLoading(true);
+                                                                await deleteDoc(doc(firestore, 'sheldot', resh.id));
+                                                                setLoading(false);
+                                                            }}><IoIosRemoveCircleOutline className="text-xl text-danger cursor-pointer" /></Button></div>
+                                                        </div>
                                                         <div className="inline-block hover:animate-move-arrows cursor-pointer">
                                                             <IoIosArrowForward onClick={() => {
                                                                 ReplaceIndexes('left', resh.msbar, index, resh.id);
@@ -368,17 +482,33 @@ export default function ModalSheldot({ show, disable }) {
                                                             sortMotsaremByLastThreeDigits(resh?.motsarem)?.map((mot, index) => (
                                                                 <Card className="w-full min-h-[175px] mt-3">
                                                                     <CardBody className="text-right h-full flex flex-col overflow-hidden">
-                                                                        <div className=" absolute left-1 top-1">
-                                                                            <IoIosRemoveCircleOutline onClick={async () => {
+                                                                        <div className="absolute left-1 top-1">
+                                                                            <Button size="sm" variant="flat" onClick={async () => {
                                                                                 setLoading(true);
                                                                                 await updateDoc(doc(firestore, 'sheldot', resh.id), {
                                                                                     motsarem: GetMotsremWithDeletedOne(resh.motsarem, index)
                                                                                 });
                                                                                 setLoading(false);
-                                                                            }} className="text-xl text-danger cursor-pointer" />
+                                                                            }} className=""><IoIosRemoveCircleOutline className="text-xl text-danger" /></Button>
                                                                         </div>
-                                                                        <div className=" absolute left-7 top-1">
-                                                                            <FaEdit className="text-lg text-primary cursor-pointer" />
+                                                                        <div className="absolute left-20 top-1">
+                                                                            <Popover placement='bottom-end'>
+                                                                                <PopoverTrigger>
+                                                                                    <Button size="sm" variant="flat" className="" onClick={() => {
+                                                                                        setMsbarShEdit(mot.msbarShelda);
+                                                                                        setShnaaEdit(mot.shnaa);
+                                                                                    }}><FaEdit className="text-lg text-primary" /></Button>
+                                                                                </PopoverTrigger>
+                                                                                <PopoverContent>
+                                                                                    <div dir="rtl" className="px-1 py-2">
+                                                                                        <Input size="sm" type="text" value={msbarShEdit || ''} onValueChange={(val) => setMsbarShEdit(val)} className='mt-3' color={msbarShEdit ? 'primary' : 'default'} label={`מס' שלדה חדש`} />
+                                                                                        <Input size="sm" type="number" value={ShnaaEdit || ''} onValueChange={(val) => { if (!/^\d*$/.test(val) || val.length > 4) return; setShnaaEdit(val); }} onBlur={() => { if (shnaa) { const clampedValue = Math.max(1900, Math.min(2100, Number(shnaa))); setShnaaEdit(clampedValue); } }} className='mt-3' color={ShnaaEdit ? 'primary' : 'default'} label='שנה' />
+                                                                                        <Button className="mt-5" onClick={() => editMotsar(resh, mot.msbarShelda)} isLoading={loadingMotsar} isDisabled={checkIfMsbarShKeam(resh?.motsarem, msbarShEdit) || msbarShEdit.substring(0, 14) !== resh?.motsarem[0]?.msbarShelda.substring(0, 14)} size="sm" color="primary" variant="flat">
+                                                                                            שמירה
+                                                                                        </Button>
+                                                                                    </div>
+                                                                                </PopoverContent>
+                                                                            </Popover>
                                                                         </div>
                                                                         <div>
                                                                             מס' שלדה
