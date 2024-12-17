@@ -3,12 +3,12 @@ import { Button, Card, CardBody, Checkbox, CheckboxGroup, Dropdown, DropdownItem
 import { firestore } from "../FireBase/firebase";
 import { addDoc, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import GetDocs from "../FireBase/getDocs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetDataByCondition } from "../FireBase/getDataByCondition";
 import { GetTmonatHelek } from "../page";
 import Image from "next/image";
 
-export default function ModalAddProductCategory({ show, disable, category, Aeshor, sckhom, msbarTfaol, mlae, motsarAher }) {
+export default function ModalAddProductCategory({ show, disable, category, Aeshor, sckhom, msbarTfaol, mlae,mlae2, motsarAher ,snefMlae}) {
 
     //const counter = useGetDataByCondition('category', 'msbar', '==', category?.msbar || 'default-msbar-value');
     const [shem, setShem] = useState('');
@@ -19,6 +19,12 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
     const [tmona, setTmona] = useState(null);
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [snfem,setSnfem] = useState([]);
+
+    useEffect(() => {
+        setSnfem([snefMlae]);
+    },[snefMlae]);
+
     const motsarem = category?.motsarem;
     function GetCategory(val) {
         for (let index = 0; index < motsarem?.length; index++) {
@@ -27,24 +33,6 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
             }
         }
         return;
-    }
-
-    function GetNewArrayMotsarem(val) {
-        let newarray = [];
-        for (let index = 0; index < motsarem?.length; index++) {
-            if (motsarem[index].shem === shem) {
-                newarray.push({
-                    dlbak: val + 1,
-                    mededa: motsarem[index].mededa,
-                    shem: motsarem[index].shem,
-                    sog: motsarem[index].sog
-                })
-            }
-            else {
-                newarray.push(motsarem[index]);
-            }
-        }
-        return newarray;
     }
 
     const restAll = () => {
@@ -65,45 +53,72 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
         return false;
     }
 
+    const GetCountCategoryM = (cat,array) => {
+        let counter = 0;
+        for (let index = 0; index < array.length; index++) {
+            if(array[index].categoryMotsar === cat){
+                counter++;
+            }
+        }
+        return counter;
+    }
+
     const AddSbak = async () => {
         setErrorMessage('');
         if (checkAemShemMotsarKeam()) {
             return;
         }
         setLoading(true);
-        let count = category?.dlbak + 1;
-        let counter = GetCategory(shem)?.dlbak;
-        await updateDoc(doc(firestore, 'mlae', 'Ara'),{
-            motsarem: [...mlae, {
-                category: category?.id,
-                categoryMotsar: GetCategory(shem)?.sog,
-                msbar: `${GetCategory(shem)?.sog}${counter < 10 ? `0${counter}` : counter}`,
-                shem: sog,
-                alot: sckhom || 0,
-                alotLeheda: parseFloat(sckhom) || parseFloat(mherThlte),
-                kmot: sckhom ? 1 : 0,
-                mededa: GetCategory(shem)?.mededa,
-                msbarTfaol: msbarTfaol || 0,
-                adconAhron: '',
-                kmotNefl: 0,
-                sakhHkolKneot: 0,
-                active: true,
-                msbarMdaf: msbarMdaf
-            }]
-        });
-        await updateDoc(doc(firestore, 'category', category?.id), {
-            dlbak: count,
-            motsarem: GetNewArrayMotsarem(counter)
-        });
+        if (snfem.includes('עארה')) {
+            let counter = GetCountCategoryM(GetCategory(shem)?.sog,mlae);
+            await updateDoc(doc(firestore, 'mlae', 'Ara'), {
+                motsarem: [...mlae, {
+                    category: category?.id,
+                    categoryMotsar: GetCategory(shem)?.sog,
+                    msbar: `${GetCategory(shem)?.sog}${counter < 10 ? `0${counter}` : counter}`,
+                    shem: sog,
+                    alot: sckhom || 0,
+                    alotLeheda: parseFloat(sckhom) || parseFloat(mherThlte),
+                    kmot: sckhom ? 1 : 0,
+                    mededa: GetCategory(shem)?.mededa,
+                    msbarTfaol: msbarTfaol || 0,
+                    adconAhron: '',
+                    kmotNefl: 0,
+                    sakhHkolKneot: 0,
+                    active: true,
+                    msbarMdaf: msbarMdaf
+                }]
+            });
+        }
+        if (snfem.includes('מעלה אפריים')) {
+            let counter = GetCountCategoryM(GetCategory(shem)?.sog,mlae2);
+            await updateDoc(doc(firestore, 'mlae', 'MaleAfraem'), {
+                motsarem: [...mlae2, {
+                    category: category?.id,
+                    categoryMotsar: GetCategory(shem)?.sog,
+                    msbar: `${GetCategory(shem)?.sog}${counter < 10 ? `0${counter}` : counter}`,
+                    shem: sog,
+                    alot: sckhom || 0,
+                    alotLeheda: parseFloat(sckhom) || parseFloat(mherThlte),
+                    kmot: sckhom ? 1 : 0,
+                    mededa: GetCategory(shem)?.mededa,
+                    msbarTfaol: msbarTfaol || 0,
+                    adconAhron: '',
+                    kmotNefl: 0,
+                    sakhHkolKneot: 0,
+                    active: true,
+                    msbarMdaf: msbarMdaf
+                }]
+            });
+        }
         restAll();
         if (Aeshor) {
             Aeshor(true);
         }
         setLoading(false);
     }
-    //       צמיג 1
 
-    console.log(motsarem);
+    console.log(snfem);
 
     return (
         <Modal placement="center" className="test-fontt" backdrop={"blur"} size="xl" isOpen={show} onClose={restAll}>
@@ -154,9 +169,9 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                             <Input type="number" value={msbarMdaf || ''} onValueChange={(val) => setMsbarMdaf(val)} color={msbarMdaf ? 'primary' : 'default'} className="mt-5 max-w-[150px]" label="מספר מדף" />
                             <Input type="number" value={mherThlte || ''} onValueChange={(val) => setMherThlte(val)} color={mherThlte ? 'primary' : 'default'} className="mt-5 mb-5 max-w-[150px]" label="מחיר קנייה" />
                             <Input type="number" value={mherMkhera || ''} onValueChange={(val) => setMherMkhera(val)} color={mherMkhera ? 'primary' : 'default'} className="mt-5 mb-5 max-w-[150px]" label="מחיר מכירה" />
-                            <CheckboxGroup label={<div className="text-primary">סניף</div>} orientation="horizontal" className="mt-5 mb-5">
-                                <Checkbox value="עארה">עארה</Checkbox>
-                                <Checkbox value="מעלה אפריים">מעלה אפריים</Checkbox>
+                            <CheckboxGroup onValueChange={setSnfem} defaultValue={snfem} label={<div className="text-primary">סניף</div>} orientation="horizontal" className="mt-5 mb-5">
+                                <Checkbox isReadOnly={snefMlae === 'עארה'} value="עארה">עארה</Checkbox>
+                                <Checkbox isReadOnly={snefMlae === 'מעלה אפריים'} value="מעלה אפריים">מעלה אפריים</Checkbox>
                             </CheckboxGroup>
                             <CheckboxGroup label="ספירה" orientation="horizontal" className="mt-5 mb-5">
                                 <Checkbox value="נספר">נספר</Checkbox>

@@ -23,8 +23,10 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
     const counterHkhnsotAhrot = metadata.find((count) => count.id === 'counterHkhnsotAhrot');
 
     useEffect(() => {
-        if(isArray(mlae)){
+        if (Array.isArray(mlae) && mlae.length > 0) {
             setAedconemHadshem([...mlae]);
+        } else {
+            setAedconemHadshem([]);
         }
     }, [mlae]);
 

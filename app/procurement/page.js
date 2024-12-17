@@ -37,7 +37,7 @@ import rep89 from '../../images/rep89.jpg';
 import rep90 from '../../images/rep90.jpg';
 import { FaEdit } from "react-icons/fa";
 import ModalAdconBret from '../Modals/ModalAdconBret';
-import { AnimatePresence,motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { IoIosArrowForward } from 'react-icons/io';
 
 
@@ -53,6 +53,15 @@ export default function Procurement() {
 
     const fsdfsd = GetDocs('mlae');
     const mlae = GetDocs('mlae').find((count) => count.id === 'Ara')?.motsarem?.sort((a, b) => {
+        const msbarA = a?.msbar?.toUpperCase();
+        const msbarB = b?.msbar?.toUpperCase();
+
+        if (msbarA < msbarB) return -1;
+        if (msbarA > msbarB) return 1;
+        return 0;
+    });
+
+    const mlae2 = GetDocs('mlae').find((count) => count.id === 'MaleAfraem')?.motsarem?.sort((a, b) => {
         const msbarA = a?.msbar?.toUpperCase();
         const msbarB = b?.msbar?.toUpperCase();
 
@@ -270,8 +279,8 @@ export default function Procurement() {
             }} message={motsarMhekaItem?.kmot > 0 ? `אסור למחוק המוצר ${motsarMhekaItem?.shem} ויש כמות במלאי!!` : `האם אתה בטוח למחוק המוצר ${motsarMhekaItem?.shem} מהמלאי!!`} motsar={motsarMhekaItem} show={hodatMhekatMotsar} disable={() => setHodatMhekatMotsar(false)} />}
             <ModalAdconBret motsarem={mlae} motsar={motsarMhekaItem} categoryMotsar={motsarMhekaCat} show={showModalAdconBret} disable={() => setShowModalAdconBret(false)} />
             {<ModalZmanAbodaMotsar category={category} show={showModalZmanAbodaMotsar} disable={() => setShowModalZmanAbodaMotsar(false)} />}
-            {/* {<ModalMtsavMlae activeMlae={activeMlae} category={category} mlae={mlae} show={showModalMtsavMlae} disable={() => setShowModalMtsavMlae(false)} />} */}
-            {<ModalAddProductCategory mlae={mlae} category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
+            {<ModalMtsavMlae activeMlae={activeMlae} category={category} mlae={mlae} show={showModalMtsavMlae} disable={() => setShowModalMtsavMlae(false)} />}
+            {<ModalAddProductCategory snefMlae={snefMlae === 'A' ? "עארה" : "מעלה אפריים"} mlae={mlae} mlae2={mlae2} category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
             {loading && <Spinner className='absolute top-0 left-0 bottom-0 right-0' />}
 
 
@@ -400,7 +409,7 @@ export default function Procurement() {
 
             </div> */}
 
-
+            <Button onClick={() => setShowModalMtsavMlae(true)}>ספירת מלאי</Button>
             <div dir="rtl" className="w-full h-full flex flex-col max-h-[92%] overflow-hidden">
                 <Card className="h-full flex flex-col">
                     <CardBody className="h-full flex flex-col overflow-hidden">
@@ -415,7 +424,6 @@ export default function Procurement() {
                                     exit={{ opacity: 0, x: -100 }}
                                     transition={{ duration: 0.5 }}
                                 >
-                                    {/* Header */}
                                     <div className="flex items-center border-b-1 pb-2">
                                         <div className="font-bold">מלאי עארה</div>
                                         <div className="inline-block hover:animate-move-arrows cursor-pointer">
@@ -428,10 +436,10 @@ export default function Procurement() {
                                     <div dir='ltr' className="flex-grow p-3 overflow-auto">
                                         {
                                             category.map((cat, index) => {
-                                                return <div key={index} ref={categoryRefs.current[index]} className='bg-white rounded-lg p-2'>
-                                                    <div className='flex justify-between items-center'>
+                                                return <div key={index} ref={categoryRefs.current[index]} className='bg-white rounded-lg p-2 shadow-xl mb-5'>
+                                                    <div className='flex justify-between items-center mb-2'>
                                                         <div className='flex items-center w-[200px]'>
-                                                            <Button size='sm' onClick={() => { setShowModalAddProductCategory(true); setCategoryData(cat) }} className='mr-3'><FaPlus className='text-xl' />מוצר חדש</Button>
+                                                            <Button variant='flat' color='primary' size='sm' onClick={() => { setShowModalAddProductCategory(true); setCategoryData(cat) }} className='mr-3'><FaPlus className='text-xl' />מוצר חדש</Button>
                                                         </div>
                                                         <div className='text-base'>
                                                             {
@@ -448,47 +456,44 @@ export default function Procurement() {
                                                             </div>
                                                         </div>
                                                     </div>
-
-
-
-
-
-                                                    <Table>
-                                                        <TableHeader>
-                                                            <TableColumn></TableColumn>
-                                                            <TableColumn></TableColumn>
-                                                            <TableColumn>זמן הספקה</TableColumn>
-                                                            <TableColumn>עלות ממוצע</TableColumn>
-                                                            <TableColumn>סה"כ עלות</TableColumn>
-                                                            <TableColumn>כמות</TableColumn>
-                                                            <TableColumn>מדף</TableColumn>
-                                                            <TableColumn>שם פריט</TableColumn>
-                                                            <TableColumn>מק"ט</TableColumn>
-                                                            <TableColumn></TableColumn>
-                                                        </TableHeader>
-                                                        <TableBody>
+                                                    <table className="w-full table-auto border-collapse">
+                                                        <thead>
+                                                            <tr className="bg-gray-100 dark:bg-gray-800 top-[-22px] sticky z-30">
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm"></th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm"></th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">זמן הספקה</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">עלות ממוצע</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">סה"כ עלות</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm w-[100px]">כמות</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">מדף</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm w-[200px]">שם פריט</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">מק"ט</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
                                                             {cat?.motsarem?.map((motsar, index1) => (
-                                                                mlae?.map((item, index) => {
-                                                                    return (item.categoryMotsar === motsar.sog) && (item.active) &&
-                                                                        <TableRow>
-                                                                            <TableCell><FaTrash onClick={() => { setHodatMhekatMotsar(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-danger text-lg cursor-pointer' /></TableCell>
-                                                                            <TableCell><FaEdit onClick={() => { setShowModalAdconBret(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-primary text-lg cursor-pointer' /></TableCell>
-                                                                            <TableCell>{item.zmanHsbaka}</TableCell>
-                                                                            <TableCell>₪{item.alotLeheda}</TableCell>
-                                                                            <TableCell>₪{parseFloat(item.alot).toFixed(2)}</TableCell>
-                                                                            <TableCell>{GetKmotMtaema(item.mededa, item.kmot, item.msbar)}</TableCell>
-                                                                            <TableCell>{item.msbarMdaf}</TableCell>
-                                                                            <TableCell><div dir='rtl'>{item.shem}</div></TableCell>
-                                                                            <TableCell>{item.msbar}</TableCell>
-                                                                            <TableCell><div className="group relative">
+                                                                mlae.map((item, index) => {
+                                                                    return (item.categoryMotsar === motsar.sog) && (item.active) && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaTrash onClick={() => { setHodatMhekatMotsar(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-danger text-lg cursor-pointer' /></td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaEdit onClick={() => { setShowModalAdconBret(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-primary text-lg cursor-pointer' /></td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.zmanHsbaka}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{item.alotLeheda}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{parseFloat(item.alot).toFixed(2)}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{GetKmotMtaema(item.mededa, item.kmot, item.msbar)}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbarMdaf}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><div dir='rtl'>{item.shem}</div></td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbar}</td>
+                                                                        <td>
+                                                                            <div className="group relative">
                                                                                 <Image src={GetTmonatHelek(item.categoryMotsar, item?.msbar)} className="h-[50px] w-[50px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
-                                                                            </div></TableCell>
-                                                                        </TableRow>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
                                                                 })
                                                             ))}
-
-                                                        </TableBody>
-                                                    </Table>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             })
                                         }
@@ -505,7 +510,6 @@ export default function Procurement() {
                                     exit={{ opacity: 0, x: -100 }}
                                     transition={{ duration: 0.5 }}
                                 >
-                                    {/* Header */}
                                     <div className="flex items-center border-b-1 pb-2">
                                         <div className="font-bold">מלאי מעלה אפריים</div>
                                         <div className="inline-block hover:animate-move-arrows cursor-pointer">
@@ -514,6 +518,71 @@ export default function Procurement() {
                                                 className="text-4xl transform scale-x-[-1] hover:text-primary"
                                             />
                                         </div>
+                                    </div>
+                                    <div dir='ltr' className="flex-grow p-3 overflow-auto">
+                                        {
+                                            category.map((cat, index) => {
+                                                return <div key={index} ref={categoryRefs.current[index]} className='bg-white rounded-lg p-2 shadow-xl mb-5'>
+                                                    <div className='flex justify-between items-center mb-2'>
+                                                        <div className='flex items-center w-[200px]'>
+                                                            <Button variant='flat' color='primary' size='sm' onClick={() => { setShowModalAddProductCategory(true); setCategoryData(cat) }} className='mr-3'><FaPlus className='text-xl' />מוצר חדש</Button>
+                                                        </div>
+                                                        <div className='text-base'>
+                                                            {
+                                                                cat.dlbak > 0 ?
+                                                                    <div>מוצרים {cat.dlbak}</div>
+                                                                    :
+                                                                    <div className='text-danger'>אין מוצרים כרגע</div>
+                                                            }
+                                                        </div>
+                                                        <div className='flex justify-end items-center w-[200px]'>
+                                                            <div className='mr-3 text-base'>{cat.shem}</div>
+                                                            <div className="group relative">
+                                                                <Image src={GetTmonatHelekCategory(cat?.shem)} className="rounded-full h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-slate-400 group-hover:translate-x-[-220%]" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <table className="w-full table-auto border-collapse">
+                                                        <thead>
+                                                            <tr className="bg-gray-100 dark:bg-gray-800 top-[-22px] sticky z-30">
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm"></th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm"></th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">זמן הספקה</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">עלות ממוצע</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">סה"כ עלות</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm w-[100px]">כמות</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">מדף</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm w-[200px]">שם פריט</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">מק"ט</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {cat?.motsarem?.map((motsar, index1) => (
+                                                                mlae2.map((item, index) => {
+                                                                    return (item.categoryMotsar === motsar.sog) && (item.active) && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaTrash onClick={() => { setHodatMhekatMotsar(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-danger text-lg cursor-pointer' /></td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaEdit onClick={() => { setShowModalAdconBret(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-primary text-lg cursor-pointer' /></td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.zmanHsbaka}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{item.alotLeheda}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{parseFloat(item.alot).toFixed(2)}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{GetKmotMtaema(item.mededa, item.kmot, item.msbar)}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbarMdaf}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><div dir='rtl'>{item.shem}</div></td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbar}</td>
+                                                                        <td>
+                                                                            <div className="group relative">
+                                                                                <Image src={GetTmonatHelek(item.categoryMotsar, item?.msbar)} className="h-[50px] w-[50px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                })
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            })
+                                        }
                                     </div>
                                 </motion.div>
                             )}
