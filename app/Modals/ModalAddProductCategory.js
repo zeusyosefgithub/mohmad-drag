@@ -1,5 +1,5 @@
 'use client';
-import { Button, Card, CardBody, Checkbox, CheckboxGroup, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@nextui-org/react";
+import { Button, Card, CardBody, Checkbox, CheckboxGroup, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Radio, RadioGroup, Spinner } from "@nextui-org/react";
 import { firestore } from "../FireBase/firebase";
 import { addDoc, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import GetDocs from "../FireBase/getDocs";
@@ -20,6 +20,7 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [snfem,setSnfem] = useState([]);
+    const [nsbar,setNsbar] = useState(false);
 
     useEffect(() => {
         setSnfem([snefMlae]);
@@ -82,11 +83,13 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                     kmot: sckhom ? 1 : 0,
                     mededa: GetCategory(shem)?.mededa,
                     msbarTfaol: msbarTfaol || 0,
+                    mherMkhera,
                     adconAhron: '',
                     kmotNefl: 0,
                     sakhHkolKneot: 0,
                     active: true,
-                    msbarMdaf: msbarMdaf
+                    msbarMdaf: msbarMdaf,
+                    nsbar : nsbar === 'נספר' ? true : false
                 }]
             });
         }
@@ -103,11 +106,13 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                     kmot: sckhom ? 1 : 0,
                     mededa: GetCategory(shem)?.mededa,
                     msbarTfaol: msbarTfaol || 0,
+                    mherMkhera,
                     adconAhron: '',
                     kmotNefl: 0,
                     sakhHkolKneot: 0,
                     active: true,
-                    msbarMdaf: msbarMdaf
+                    msbarMdaf: msbarMdaf,
+                    nsbar : nsbar === 'נספר' ? true : false
                 }]
             });
         }
@@ -173,10 +178,10 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                                 <Checkbox isReadOnly={snefMlae === 'עארה'} value="עארה">עארה</Checkbox>
                                 <Checkbox isReadOnly={snefMlae === 'מעלה אפריים'} value="מעלה אפריים">מעלה אפריים</Checkbox>
                             </CheckboxGroup>
-                            <CheckboxGroup label="ספירה" orientation="horizontal" className="mt-5 mb-5">
-                                <Checkbox value="נספר">נספר</Checkbox>
-                                <Checkbox value="לא נספר">לא נספר</Checkbox>
-                            </CheckboxGroup>
+                            <RadioGroup onValueChange={setNsbar} label="ספירה" orientation="horizontal" className="mt-5 mb-5">
+                                <Radio value="נספר">נספר</Radio>
+                                <Radio value="לא נספר">לא נספר</Radio>
+                            </RadioGroup>
                         </div>
                     </ModalBody>
                     <ModalFooter>
