@@ -348,6 +348,8 @@ export function GetTmonatHelek(remez, msbar) {
 export default function Home() {
   const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol, aobedAuth } = useContext(ContactContext);
   const mlae = GetDocs('mlae').find((count) => count.id === 'Ara')?.motsarem;
+  const mlaeMaleAfraem = GetDocs('mlae').find((count) => count.id === 'MaleAfraem')?.motsarem;
+  const [selectedMlae,setSelectedMlae] = useState([]);
   const category = GetDocs('category');
   const aobdem = GetDocs('aobdem');
   const Tokhneot = GetDocs('TokhnetYetsorAgla');
@@ -689,10 +691,11 @@ export default function Home() {
       <ModalTokhnetYetsor category={category} mlae={mlae} show={showModalCreateTokhnetYetsor} disable={() => setShowModalCreateTokhnetYetsor(false)} />
       {loading && <Spinner className="absolute top-0 bottom-0 right-0 left-0" />}
       <ModalBheratMlae Bhera={(val) => {
+        setSelectedMlae(val === 'עארה' ? mlae : mlaeMaleAfraem);
         setlocationYetsorAgla(val);
         setShowModalYetsor(true);
       }} show={showModalBheratMlae} disable={() => setShowModalBheratMlae(false)} />
-      <ModalYetsor locationYetsor={locationYetsorAgla} drag={drag} yetsorKeam={tfaolAgla} lkohTfaol={lkoh} Tokhneot={Tokhneot} sogAskaa={sogAska} mlae={mlae} aglot={aglot} lkhot={lkhot} category={category} show={showModalYetsor} disable={() => { setShowModalYetsor(false); setSogAska(''); setTfaolAgla(null); }} />
+      <ModalYetsor locationYetsor={locationYetsorAgla} drag={drag} yetsorKeam={tfaolAgla} lkohTfaol={lkoh} Tokhneot={Tokhneot} sogAskaa={sogAska} mlae={selectedMlae} aglot={aglot} lkhot={lkhot} category={category} show={showModalYetsor} disable={() => { setShowModalYetsor(false); setSogAska(''); setTfaolAgla(null); }} />
       <ModalReshematTokhneot sogAskaa={sogAskaYetsorTokhnet} category={category} mlae={mlae} Tokhneot={Tokhneot} show={showModalReshematTokhneot} disable={() => { setShowModalReshematTokhneot(false); setSogAskaYetsorTokhnet(''); }} />
       <div dir="rtl" className="flex h-full bg-white shadow-2xl rounded-2xl w-full">
         <aside className="w-64 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-r-3xl">

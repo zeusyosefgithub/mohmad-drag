@@ -83,13 +83,14 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                     kmot: sckhom ? 1 : 0,
                     mededa: GetCategory(shem)?.mededa,
                     msbarTfaol: msbarTfaol || 0,
-                    mherMkhera,
+                    mherMkhera : parseFloat(mherMkhera),
                     adconAhron: '',
                     kmotNefl: 0,
                     sakhHkolKneot: 0,
                     active: true,
                     msbarMdaf: msbarMdaf,
-                    nsbar : nsbar === 'נספר' ? true : false
+                    nsbar : nsbar === 'נספר' ? true : false,
+                    mtsavNsbar : 'לא נקבע' 
                 }]
             });
         }
@@ -106,13 +107,14 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                     kmot: sckhom ? 1 : 0,
                     mededa: GetCategory(shem)?.mededa,
                     msbarTfaol: msbarTfaol || 0,
-                    mherMkhera,
+                    mherMkhera : parseFloat(mherMkhera),
                     adconAhron: '',
                     kmotNefl: 0,
                     sakhHkolKneot: 0,
                     active: true,
                     msbarMdaf: msbarMdaf,
-                    nsbar : nsbar === 'נספר' ? true : false
+                    nsbar : nsbar === 'נספר' ? true : false,
+                    mtsavNsbar : 'לא נקבע' 
                 }]
             });
         }

@@ -146,6 +146,7 @@ export default function Profile() {
                     const userEntries = todayKnesa.knesot.find(knesa => knesa.msbar === aobedNkhhe?.msbar);
                     const fulled = (userEntries?.yetseah && userEntries?.knesa && userEntries?.headrot) ? true : false;
                     const res = (userEntries?.yetseah || userEntries?.knesa || userEntries?.headrot) ? true : false;
+                    console.log(aobedNkhhe);
                     setIsKnesaMAdminAndAobed((!fulled && !res && userEntries?.msbar) ? true : false);
                     setIsThereKnesa(res);
                     setIsFullKnesa(fulled);

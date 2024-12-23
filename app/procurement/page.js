@@ -43,15 +43,7 @@ import { IoIosArrowForward } from 'react-icons/io';
 
 export default function Procurement() {
 
-
-
-
-    const aglotB = useGetDataByCondition('tfaol', 'sogBaola', '==', 'B');
-
-    const { contactName, setContactName, customerSet, setCustomerSet, isNehol, setIsNehol } = useContext(ContactContext);
     const category = GetDocs('category');
-
-    const fsdfsd = GetDocs('mlae');
     const mlae = GetDocs('mlae').find((count) => count.id === 'Ara')?.motsarem?.sort((a, b) => {
         const msbarA = a?.msbar?.toUpperCase();
         const msbarB = b?.msbar?.toUpperCase();
@@ -76,10 +68,7 @@ export default function Procurement() {
     const [motsarMhekaItem, setMotsarMhekaItem] = useState(null);
     const [motsarMhekaCat, setMotsarMhekaCat] = useState(null);
     const [showModalZmanAbodaMotsar, setShowModalZmanAbodaMotsar] = useState(false);
-    const categoryRefs = useRef(Array(10).fill(null).map(() => React.createRef()));
     const [showModalMtsavMlae, setShowModalMtsavMlae] = useState(false);
-
-    console.log(mlae);
 
 
     const GetMotsaremBalem = () => {
@@ -91,135 +80,37 @@ export default function Procurement() {
         }
         return newArrray;
     }
-
-
     const activeMlae = GetMotsaremBalem();
 
-    function adconMhekatMotsar(val1, val2) {
-        let newArray = [];
-        let newArrayMotsarem = [];
-        for (let index = 0; index < category.length; index++) {
-            if (val2 === category[index].id) {
-                for (let index1 = 0; index1 < category[index]?.motsarem?.length; index1++) {
-                    if (category[index]?.motsarem[index1].sog === val1) {
-                        newArrayMotsarem.push({
-                            dlbak: 0,
-                            mededa: category[index]?.motsarem[index1].mededa - 1,
-                            shem: category[index]?.motsarem[index1].shem,
-                            sog: category[index]?.motsarem[index1].sog,
-                        });
-                    }
-                    else {
-                        newArrayMotsarem.push(category[index]?.motsarem[index1]);
-                    }
+    const GetKmotMtaema = (mededa, val, msbar,nsbar,mtsavNsbar) => {
+        if(nsbar){
+            if (mededa === 'Y') {
+                return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'יח</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
+            }
+            if (mededa === 'M') {
+                return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'מ</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
+            }
+            if (mededa === 'MS') {
+                return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>מ"ר</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
+            }
+            if (mededa === 'L') {
+                return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'ל</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
+            }
+            if (mededa === 'MM') {
+                return;
+            }
+            if (mededa === 'K') {
+                if (msbar === 'G400') {
+                    return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>ק"ג</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
                 }
-                newArray.push({ ...category[index], motsarem: newArrayMotsarem });
-            }
-            else {
-                newArray.push(category[index]);
-            }
-        }
-        return newArrayMotsarem;
-    }
-
-    const GetBrtemMotsarMlae = useCallback((remez, shem) => {
-        const motsarMlae = mlae?.filter(item => item.categoryMotsar === remez);
-        const alot = motsarMlae?.find(item => item.shem === shem)?.alotLeheda || 0;
-        const kmot = motsarMlae?.find(item => item.shem === shem)?.kmot || 0;
-        const hozman = motsarMlae?.find(item => item.shem === shem)?.hozman || 0;
-        const id = motsarMlae?.find(item => item.shem === shem)?.id || 0;
-        return { arrayResualt: motsarMlae, alot, kmot, hozman, id };
-    }, [mlae]);
-
-    function sumByRemez(arr) {
-        const result = [];
-        arr.forEach(item => {
-            const existingItem = result.find(obj => obj.remez === item.remez);
-            if (existingItem) {
-                existingItem.kmot += item.kmot;
-            } else {
-                console.log(item);
-                result.push({ kmot: item.kmot, remez: item.remez, shem: item.shem });
-            }
-        });
-        return result;
-    }
-    const formatNumberWithCommas = (num) => {
-        return parseFloat(num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')).toFixed(2);
-    };
-
-    const GetKmotMtaema = (mededa, val, msbar) => {
-        if (mededa === 'Y') {
-            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'יח</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
-        }
-        if (mededa === 'M') {
-            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'מ</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
-        }
-        if (mededa === 'MS') {
-            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>מ"ר</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
-        }
-        if (mededa === 'L') {
-            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>'ל</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
-        }
-        if (mededa === 'MM') {
-            return;
-        }
-        if (mededa === 'K') {
-            if (msbar === 'G400') {
-                return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>ק"ג</div><div className='font-bold'>{parseFloat(val).toFixed(2)}</div></div>;
-            }
-            else {
-                return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>ק"ג</div><div className='text-4xl'>∞</div></div>;
-            }
-        }
-
-    }
-
-    const GetMotsarMededa = (val) => {
-        console.log(val);
-        for (let index = 0; index < category.length; index++) {
-            for (let index1 = 0; index1 < category[index].motsarem.length; index1++) {
-                if (category[index].motsarem[index1].sog === val) {
-                    console.log(123);
-                    return category[index].motsarem[index1].mededa;
+                else {
+                    return <div className='flex items-center justify-end text-primary' dir='ltr'><div className='mr-1'>ק"ג</div><div className='text-4xl'>∞</div></div>;
                 }
             }
         }
-    }
-
-    const GetMotsarHoreg = () => {
-        let newArray = [];
-        for (let index1 = 0; index1 < aglotB?.length; index1++) {
-            for (let index = 0; index < aglotB[index1]?.newMafeneMotsarem?.length; index++) {
-                if (aglotB[index1].newMafeneMotsarem[index].kmot > GetBrtemMotsarMlae(aglotB[index1].newMafeneMotsarem[index].remez, aglotB[index1].newMafeneMotsarem[index].shem).kmot) {
-                    newArray.push(aglotB[index1].newMafeneMotsarem[index]);
-                }
-            }
+        else{
+            return <div className='flex items-center justify-end text-primary' dir='ltr'><div className={`font-bold text-${GetTsebaMataemLmtsavNsbar(mtsavNsbar)}`}>{mtsavNsbar}</div></div>;
         }
-        console.log(newArray);
-        let reduced = sumByRemez(newArray);
-        let newArray2 = [];
-        for (let index = 0; index < reduced.length; index++) {
-            console.log(reduced[index]);
-            newArray2.push(<>
-                <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200 text-xs"><Switch
-                        isSelected={GetBrtemMotsarMlae(reduced[index].remez, reduced[index].shem).hozman} onValueChange={async (val) => {
-                            await updateDoc(doc(firestore, 'mlae', GetBrtemMotsarMlae(reduced[index].remez, reduced[index].shem).id), {
-                                hozman: val
-                            })
-                        }} defaultValue={GetBrtemMotsarMlae(reduced[index].remez, reduced[index].shem).hozman} value={GetBrtemMotsarMlae(reduced[index].remez, reduced[index].shem).hozman}>
-                    </Switch></td>
-                    <td className="px-4 py-3 text-center text-danger-500 dark:text-gray-200 text-xs">{GetKmotMtaema(GetMotsarMededa(reduced[index].remez), reduced[index].kmot - GetBrtemMotsarMlae(reduced[index].remez, reduced[index].shem).kmot)}</td>
-                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200 text-xs">{reduced[index].shem}</td>
-                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200 text-xs"><div className="group relative">
-                        <Image src={GetTmonatHelek(reduced[index].remez)} className="h-[50px] w-[50px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
-                    </div></td>
-                </tr>
-            </>);
-
-        }
-        return newArray2;
     }
 
     const GetTmonatHelekCategory = (val) => {
@@ -259,27 +150,59 @@ export default function Procurement() {
     }
 
     const [showModalAdconBret, setShowModalAdconBret] = useState(false);
-
     const [snefMlae, setSnefMlae] = useState('A');
+
+    const GetAdconMotsarem = (motsarShem, array) => {
+        return array.map(item => {
+            if (item.shem === motsarShem) {
+                return {
+                    ...item,
+                    active: false,
+                };
+            }
+            return item;
+        });
+    };
+
+    const GetCountCatSog = (val, array) => {
+        let count = 0;
+        for (let index = 0; index < array.length; index++) {
+            if (array[index].category === val) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    const GetTsebaMataemLmtsavNsbar = (val) => {
+        if(val === 'ריק'){
+            return 'danger';
+        }
+        else if(val === 'חסר'){
+            return 'warning';
+        }
+        else if(val === 'מספיק'){
+            return 'success';
+        }
+        else{
+            return 'success';
+        }
+    }
 
     return (
         <div className='h-full p-5'>
             {<ModalMessage Aeshor={async (val) => {
                 if (val) {
                     setLoading(true);
-                    await updateDoc(doc(firestore, 'mlae', motsarMhekaItem.id), {
-                        active: false
+                    await updateDoc(doc(firestore, 'mlae', snefMlae === 'A' ? 'Ara' : 'MaleAfraem'), {
+                        motsarem: GetAdconMotsarem(motsarMhekaItem.shem, snefMlae === 'A' ? mlae : mlae2)
                     });
-                    await updateDoc(doc(firestore, 'category', motsarMhekaCat.id), {
-                        dlbak: motsarMhekaCat?.dlbak - 1,
-                        motsarem: adconMhekatMotsar(motsarMhekaItem.categoryMotsar, motsarMhekaCat.id)
-                    })
                     setLoading(false);
                 }
             }} message={motsarMhekaItem?.kmot > 0 ? `אסור למחוק המוצר ${motsarMhekaItem?.shem} ויש כמות במלאי!!` : `האם אתה בטוח למחוק המוצר ${motsarMhekaItem?.shem} מהמלאי!!`} motsar={motsarMhekaItem} show={hodatMhekatMotsar} disable={() => setHodatMhekatMotsar(false)} />}
-            <ModalAdconBret motsarem={mlae} motsar={motsarMhekaItem} categoryMotsar={motsarMhekaCat} show={showModalAdconBret} disable={() => setShowModalAdconBret(false)} />
+            <ModalAdconBret snefMlae={snefMlae === 'A' ? "עארה" : "מעלה אפריים"} motsarem={mlae} mlae={mlae} mlae2={mlae2} motsar={motsarMhekaItem} categoryMotsar={motsarMhekaCat} show={showModalAdconBret} disable={() => setShowModalAdconBret(false)} />
             {<ModalZmanAbodaMotsar category={category} show={showModalZmanAbodaMotsar} disable={() => setShowModalZmanAbodaMotsar(false)} />}
-            {<ModalMtsavMlae activeMlae={activeMlae} category={category} mlae={mlae} show={showModalMtsavMlae} disable={() => setShowModalMtsavMlae(false)} />}
+            {<ModalMtsavMlae snefMlae={snefMlae === 'A' ? 'Ara' : 'MaleAfraem'} activeMlae={activeMlae} category={category} mlae={snefMlae === 'A' ? mlae : mlae2} show={showModalMtsavMlae} disable={() => setShowModalMtsavMlae(false)} />}
             {<ModalAddProductCategory snefMlae={snefMlae === 'A' ? "עארה" : "מעלה אפריים"} mlae={mlae} mlae2={mlae2} category={categoryData} show={showModalAddProductCategory} disable={() => setShowModalAddProductCategory(false)} />}
             {loading && <Spinner className='absolute top-0 left-0 bottom-0 right-0' />}
 
@@ -409,7 +332,7 @@ export default function Procurement() {
 
             </div> */}
 
-            <Button onClick={() => setShowModalMtsavMlae(true)}>ספירת מלאי</Button>
+
             <div dir="rtl" className="w-full h-full flex flex-col max-h-[92%] overflow-hidden">
                 <Card className="h-full flex flex-col">
                     <CardBody className="h-full flex flex-col overflow-hidden">
@@ -425,6 +348,7 @@ export default function Procurement() {
                                     transition={{ duration: 0.5 }}
                                 >
                                     <div className="flex items-center border-b-1 pb-2">
+                                        <Button onClick={() => setShowModalMtsavMlae(true)}>ספירת מלאי</Button>
                                         <div className="font-bold">מלאי עארה</div>
                                         <div className="inline-block hover:animate-move-arrows cursor-pointer">
                                             <IoIosArrowForward
@@ -436,15 +360,15 @@ export default function Procurement() {
                                     <div dir='ltr' className="flex-grow p-3 overflow-auto">
                                         {
                                             category.map((cat, index) => {
-                                                return <div key={index} ref={categoryRefs.current[index]} className='bg-white rounded-lg p-2 shadow-xl mb-5'>
+                                                return <div key={index} className='bg-white rounded-lg p-2 shadow-xl mb-5'>
                                                     <div className='flex justify-between items-center mb-2'>
                                                         <div className='flex items-center w-[200px]'>
                                                             <Button variant='flat' color='primary' size='sm' onClick={() => { setShowModalAddProductCategory(true); setCategoryData(cat) }} className='mr-3'><FaPlus className='text-xl' />מוצר חדש</Button>
                                                         </div>
                                                         <div className='text-base'>
                                                             {
-                                                                cat.dlbak > 0 ?
-                                                                    <div>מוצרים {cat.dlbak}</div>
+                                                                GetCountCatSog(cat.id,mlae) > 0 ?
+                                                                    <div>מוצרים {GetCountCatSog(cat.id,mlae)}</div>
                                                                     :
                                                                     <div className='text-danger'>אין מוצרים כרגע</div>
                                                             }
@@ -461,12 +385,12 @@ export default function Procurement() {
                                                             <tr className="bg-gray-100 dark:bg-gray-800 top-[-22px] sticky z-30">
                                                                 <th className="px-4 py-3 text-right font-bolder text-black text-sm"></th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black text-sm"></th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">זמן הספקה</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">עלות ממוצע</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">מחיר מכירה</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black text-sm">סה"כ עלות</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm w-[100px]">כמות</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">עלות לי"ח</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">כמות</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black text-sm">מדף</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm w-[200px]">שם פריט</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">שם פריט</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black text-sm">מק"ט</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black text-sm"></th>
                                                             </tr>
@@ -477,10 +401,10 @@ export default function Procurement() {
                                                                     return (item.categoryMotsar === motsar.sog) && (item.active) && <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaTrash onClick={() => { setHodatMhekatMotsar(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-danger text-lg cursor-pointer' /></td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><FaEdit onClick={() => { setShowModalAdconBret(true); setMotsarMhekaItem(item); setMotsarMhekaCat(cat); }} className='text-primary text-lg cursor-pointer' /></td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.zmanHsbaka}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{item.alotLeheda}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.mherMkhera}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{parseFloat(item.alot).toFixed(2)}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{GetKmotMtaema(item.mededa, item.kmot, item.msbar)}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{item.alotLeheda}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{GetKmotMtaema(item.mededa, item.kmot, item.msbar,item.nsbar,item.mtsavNsbar)}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbarMdaf}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><div dir='rtl'>{item.shem}</div></td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbar}</td>
@@ -511,6 +435,7 @@ export default function Procurement() {
                                     transition={{ duration: 0.5 }}
                                 >
                                     <div className="flex items-center border-b-1 pb-2">
+                                        <Button onClick={() => setShowModalMtsavMlae(true)}>ספירת מלאי</Button>
                                         <div className="font-bold">מלאי מעלה אפריים</div>
                                         <div className="inline-block hover:animate-move-arrows cursor-pointer">
                                             <IoIosArrowForward
@@ -522,15 +447,15 @@ export default function Procurement() {
                                     <div dir='ltr' className="flex-grow p-3 overflow-auto">
                                         {
                                             category.map((cat, index) => {
-                                                return <div key={index} ref={categoryRefs.current[index]} className='bg-white rounded-lg p-2 shadow-xl mb-5'>
+                                                return <div key={index} className='bg-white rounded-lg p-2 shadow-xl mb-5'>
                                                     <div className='flex justify-between items-center mb-2'>
                                                         <div className='flex items-center w-[200px]'>
                                                             <Button variant='flat' color='primary' size='sm' onClick={() => { setShowModalAddProductCategory(true); setCategoryData(cat) }} className='mr-3'><FaPlus className='text-xl' />מוצר חדש</Button>
                                                         </div>
                                                         <div className='text-base'>
-                                                            {
-                                                                cat.dlbak > 0 ?
-                                                                    <div>מוצרים {cat.dlbak}</div>
+                                                        {
+                                                                GetCountCatSog(cat.id,mlae2) > 0 ?
+                                                                    <div>מוצרים {GetCountCatSog(cat.id,mlae2)}</div>
                                                                     :
                                                                     <div className='text-danger'>אין מוצרים כרגע</div>
                                                             }
@@ -550,9 +475,9 @@ export default function Procurement() {
                                                                 <th className="px-4 py-3 text-right font-bolder text-black text-sm">זמן הספקה</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black text-sm">עלות ממוצע</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black text-sm">סה"כ עלות</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm w-[100px]">כמות</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">כמות</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black text-sm">מדף</th>
-                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm w-[200px]">שם פריט</th>
+                                                                <th className="px-4 py-3 text-right font-bolder text-black text-sm">שם פריט</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black text-sm">מק"ט</th>
                                                                 <th className="px-4 py-3 text-right font-bolder text-black text-sm"></th>
                                                             </tr>
@@ -566,7 +491,7 @@ export default function Procurement() {
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.zmanHsbaka}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{item.alotLeheda}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">₪{parseFloat(item.alot).toFixed(2)}</td>
-                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{GetKmotMtaema(item.mededa, item.kmot, item.msbar)}</td>
+                                                                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{GetKmotMtaema(item.mededa, item.kmot, item.msbar,item.nsbar,item.mtsavNsbar)}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbarMdaf}</td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs"><div dir='rtl'>{item.shem}</div></td>
                                                                         <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200 text-xs">{item.msbar}</td>

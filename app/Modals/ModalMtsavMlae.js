@@ -13,13 +13,14 @@ import { useReactToPrint } from "react-to-print";
 import { isArray } from "lodash";
 
 
-export default function ModalMtsavMlae({ disable, show, category, mlae, activeMlae }) {
+export default function ModalMtsavMlae({ disable, show, category, mlae, activeMlae,snefMlae }) {
 
-    const [AdconemHadshem, setAedconemHadshem] = useState();
+    const [AdconemHadshem, setAedconemHadshem] = useState([]);
+    const [mtsavNsbar, setMtsavNsbar] = useState([]);
     const [loading, setLoading] = useState(false);
     const metadata = GetDocs('metadata');
     const componentRefOne = useRef();
-    const [fectevet,setFectevet] = useState(false);
+    const [fectevet, setFectevet] = useState(false);
     const counterHkhnsotAhrot = metadata.find((count) => count.id === 'counterHkhnsotAhrot');
 
     useEffect(() => {
@@ -39,7 +40,7 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
 
     const BdekatMlaeHdash = () => {
         for (let index = 0; index < mlae?.length; index++) {
-            if (AdconemHadshem[index]?.kmot !== mlae[index]?.kmot) {
+            if (AdconemHadshem[index]?.kmot !== mlae[index]?.kmot || AdconemHadshem[index]?.mtsavNsbar !== mlae[index]?.mtsavNsbar) {
                 return true;
             }
         }
@@ -50,22 +51,6 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
             size: A4;
             margin: 0;
         }
-        @media print {
-        .print-title {
-            display: block;
-            position: running(header);
-            width: 100%;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        @page {
-        @top-center {
-            content: element(header);
-          }
-        }
-      }
         `,
         content: () => componentRefOne.current,
     });
@@ -92,10 +77,19 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
         return isNegative ? `${0}` : firstTwoDigits;
     }
 
-    function truncateToTwoDecimals(num) {
-        // Convert the number to a string with two decimal places
-        const truncatedNum = num.toFixed(2);
-        return parseFloat(truncatedNum);
+    const GetTsebaMataemLmtsavNsbar = (val) => {
+        if(val === 'ריק'){
+            return 'danger';
+        }
+        else if(val === 'חסר'){
+            return 'warning';
+        }
+        else if(val === 'מספיק'){
+            return 'success';
+        }
+        else{
+            return 'success';
+        }
     }
 
     return (
@@ -105,15 +99,12 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
         }}>
             <ModalContent>
                 <>
-                    <ModalHeader className="shadow-2xl flex justify-center">
+                    <ModalHeader className="shadow-2xl flex justify-center bg-white border-b-2">
                         <div className="w-full flex justify-around items-center">
-                            <Switch color="danger" value={fectevet} onValueChange={async(val) => {
-                                setFectevet(val);
-                            }}>ספירה פיקטיבית</Switch>
                             <div>מצב ספירת מלאי</div>
                         </div>
                     </ModalHeader>
-                    <ModalBody className="shadow-2xl">
+                    <ModalBody className="shadow-2xl bg-white">
                         <div className='hidden'>
                             <SferatMlae mlae={activeMlae} ref={componentRefOne} />
                         </div>
@@ -122,15 +113,15 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
                                 <div className='mt-5 bg-white'>
                                     <table className="w-full table-auto border-collapse">
                                         <thead>
-                                            <tr className="bg-gray-500 dark:bg-gray-800 top-0 sticky z-30">
-                                                <th className="px-4 py-3 text-center font-medium text-white">אחוז נפל</th>
-                                                <th className="px-4 py-3 text-center font-medium text-white">כמות נפל</th>
-                                                <th className="px-4 py-3 text-center font-medium text-white">כמות בפועל</th>
-                                                <th className="px-4 py-3 text-center font-medium text-white">כמות במערכת</th>
-                                                <th className="px-6 py-3 text-center font-medium text-white">עדכון אחרון</th>
-                                                <th className="px-4 py-3 text-right font-medium text-white">שם פריט</th>
-                                                <th className="px-4 py-3 text-right font-medium text-white">מק"ט</th>
-                                                <th className="px-4 py-3 text-right font-medium text-white"></th>
+                                            <tr className="bg-gray-100 dark:bg-gray-800 top-[-22px] sticky z-30">
+                                                <th className="px-4 py-3 text-right font-medium text-black">אחוז נפל</th>
+                                                <th className="px-4 py-3 text-right font-medium text-black">כמות נפל</th>
+                                                <th className="px-4 py-3 text-right font-medium text-black">כמות בפועל</th>
+                                                <th className="px-4 py-3 text-right font-medium text-black">כמות במערכת</th>
+                                                <th className="px-6 py-3 text-right font-medium text-black">עדכון אחרון</th>
+                                                <th className="px-4 py-3 text-right font-medium text-black">שם פריט</th>
+                                                <th className="px-4 py-3 text-right font-medium text-black">מק"ט</th>
+                                                <th className="px-4 py-3 text-right font-medium text-black"></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -142,9 +133,41 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
                                                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">%{(getFirstTwoDigitsAfterDot(item?.kmotNefl / item?.sakhHkolKneot) || '')}</td>
                                                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item?.kmotNefl}</td>
                                                                 <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">
-                                                                    <div className="w-full flex justify-center">
-                                                                        <Input type="number" value={AdconemHadshem[index]?.kmot} onValueChange={(val) => handleChange(index, 'kmot', (parseFloat(val) || 0))} dir="rtl" className="max-w-[150px]" />
-                                                                    </div>
+                                                                    {
+                                                                        item?.nsbar ?
+                                                                            <div className="w-full flex justify-center">
+                                                                                <Input size="xs" type="number" value={AdconemHadshem[index]?.kmot} onValueChange={(val) => handleChange(index, 'kmot', (parseFloat(val) || 0))} dir="rtl" className="w-full max-w-[150px]" />
+                                                                            </div>
+                                                                            :
+                                                                            <div className="w-full flex justify-center">
+                                                                                <Dropdown dir="rtl">
+                                                                                    <DropdownTrigger>
+                                                                                        <Button
+                                                                                            variant="flat"
+                                                                                            color={AdconemHadshem[index]?.mtsavNsbar ? GetTsebaMataemLmtsavNsbar(AdconemHadshem[index]?.mtsavNsbar) : 'default'}
+                                                                                            size="md"
+                                                                                            className='mt-2 w-full max-w-[150px]'
+                                                                                        >
+                                                                                            {AdconemHadshem[index]?.mtsavNsbar || "שם מוצר"}
+                                                                                        </Button>
+                                                                                    </DropdownTrigger>
+                                                                                    <DropdownMenu
+                                                                                        aria-label="Multiple selection example"
+                                                                                        variant="flat"
+                                                                                        closeOnSelect={true}
+                                                                                        disallowEmptySelection
+                                                                                        selectionMode="single"
+                                                                                        selectedKeys={AdconemHadshem[index]?.mtsavNsbar}
+                                                                                        onSelectionChange={(val) => handleChange(index, 'mtsavNsbar', val.currentKey)}
+                                                                                    >
+                                                                                        <DropdownItem key={'ריק'}>ריק</DropdownItem>
+                                                                                        <DropdownItem key={'חסר'}>חסר</DropdownItem>
+                                                                                        <DropdownItem key={'מספיק'}>מספיק</DropdownItem>
+                                                                                        <DropdownItem key={'מלא'}>מלא</DropdownItem>
+                                                                                    </DropdownMenu>
+                                                                                </Dropdown>
+                                                                            </div>
+                                                                    }
                                                                 </td>
                                                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item?.kmot}</td>
                                                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200 text-xs"><div className={`p-1 rounded-xl text-white ${!item?.adconAhron ? '' : BdekatTarekhAdcon(item?.adconAhron) < 7 ? 'bg-success' : BdekatTarekhAdcon(item?.adconAhron) >= 7 && BdekatTarekhAdcon(item?.adconAhron) < 30 ? 'bg-warning' : 'bg-danger'}`}>{item?.adconAhron}</div></td>
@@ -167,48 +190,20 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
                             </div>
                         </div>
                     </ModalBody>
-                    <ModalFooter>
-                        <div className="flex w-full items-center justify-between">
+                    <ModalFooter className="bg-white border-t-2">
+                        <div className="flex w-full items-center justify-end">
                             <div>
-                                <Button size="lg" color="primary" onClick={handelPrintHeshvonit}>הדפסת טופס</Button>
-
-                                <Button className="mr-2 ml-2" size="lg" color="primary" onClick={() => {
+                                <Button className="mr-2 ml-2" size="sm" variant="flat" color="warning" onClick={() => {
                                     //setAedconemHadshem([...mlae]);
                                     disable();
                                 }}>
                                     סגור
                                 </Button>
-                                <Button className="mr-2 ml-2" isDisabled={!BdekatMlaeHdash()} isLoading={loading} size="lg" color="primary" onClick={async () => {
+                                <Button size="sm" color="primary" variant="flat" onClick={handelPrintHeshvonit}>הדפסת טופס</Button>
+                                <Button className="ml-2" isDisabled={!BdekatMlaeHdash()} isLoading={loading} size="sm" variant="flat" color="primary" onClick={async () => {
                                     setLoading(true);
-                                    let countUp = 0;
-                                    let countDown = 0;
-                                    for (let index = 0; index < AdconemHadshem.length; index++) {
-                                        if (AdconemHadshem[index].kmot !== mlae[index]?.kmot) {
-                                            if (AdconemHadshem[index].kmot > mlae[index]?.kmot) {
-                                                countUp += parseFloat(((AdconemHadshem[index].kmot - mlae[index]?.kmot) * mlae[index]?.alotLeheda).toFixed(2));
-                                            }
-                                            else if (AdconemHadshem[index].kmot < mlae[index]?.kmot) {
-                                                countDown += parseFloat(((mlae[index]?.kmot - AdconemHadshem[index].kmot) * mlae[index]?.alotLeheda).toFixed(2));
-                                            }
-                                            await updateDoc(doc(firestore, 'mlae', mlae[index].id), {
-                                                kmot: AdconemHadshem[index].kmot,
-                                                adconAhron: format(new Date(), 'dd-MM-yyyy'),
-                                                kmotNefl: (mlae[index].kmotNefl + (mlae[index].kmot - AdconemHadshem[index].kmot)),
-                                                alot: AdconemHadshem[index].kmot * mlae[index].alotLeheda,
-                                                alotLeheda: truncateToTwoDecimals(parseFloat((AdconemHadshem[index].kmot * mlae[index].alotLeheda) / AdconemHadshem[index].kmot))
-                                            });
-                                        }
-                                    }
-                                    if(!fectevet){
-                                        await updateDoc(doc(firestore, 'metadata', 'counterHkhnsotAhrot'), {
-                                            count: counterHkhnsotAhrot?.munth === format(new Date(), 'MM-yyyy') ? (counterHkhnsotAhrot?.count + (-countUp + countDown)) : 0,
-                                            munth: format(new Date(), 'MM-yyyy'),
-                                            countAll: counterHkhnsotAhrot?.countAll + parseFloat(-countUp + countDown),
-                                            countMunths: counterHkhnsotAhrot.munth !== format(new Date(), 'MM-yyyy') ? (counterHkhnsotAhrot.countMunths + 1) : (1)
-                                        }); 
-                                    }
+                                    await updateDoc(doc(firestore,'mlae',snefMlae),{motsarem : AdconemHadshem})
                                     disable();
-                                    setAedconemHadshem([...mlae]);
                                     setLoading(false);
                                 }}>
                                     עדכון
