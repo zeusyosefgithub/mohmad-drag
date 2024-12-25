@@ -19,12 +19,8 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
     const [tmona, setTmona] = useState(null);
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [snfem,setSnfem] = useState([]);
+    const [snfem,setSnfem] = useState(['עארה','מעלה אפריים']);
     const [nsbar,setNsbar] = useState(false);
-
-    useEffect(() => {
-        setSnfem([snefMlae]);
-    },[snefMlae]);
 
     const motsarem = category?.motsarem;
     function GetCategory(val) {
@@ -177,8 +173,8 @@ export default function ModalAddProductCategory({ show, disable, category, Aesho
                             <Input type="number" value={mherThlte || ''} onValueChange={(val) => setMherThlte(val)} color={mherThlte ? 'primary' : 'default'} className="mt-5 mb-5 max-w-[150px]" label="מחיר קנייה" />
                             <Input type="number" value={mherMkhera || ''} onValueChange={(val) => setMherMkhera(val)} color={mherMkhera ? 'primary' : 'default'} className="mt-5 mb-5 max-w-[150px]" label="מחיר מכירה" />
                             <CheckboxGroup onValueChange={setSnfem} defaultValue={snfem} label={<div className="text-primary">סניף</div>} orientation="horizontal" className="mt-5 mb-5">
-                                <Checkbox isReadOnly={snefMlae === 'עארה'} value="עארה">עארה</Checkbox>
-                                <Checkbox isReadOnly={snefMlae === 'מעלה אפריים'} value="מעלה אפריים">מעלה אפריים</Checkbox>
+                                <Checkbox isDisabled={snefMlae === 'עארה'} value="עארה">עארה</Checkbox>
+                                <Checkbox isDisabled={snefMlae === 'מעלה אפריים'} value="מעלה אפריים">מעלה אפריים</Checkbox>
                             </CheckboxGroup>
                             <RadioGroup onValueChange={setNsbar} label="ספירה" orientation="horizontal" className="mt-5 mb-5">
                                 <Radio value="נספר">נספר</Radio>

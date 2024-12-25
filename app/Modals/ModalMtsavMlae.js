@@ -113,14 +113,13 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
                                 <div className='mt-5 bg-white'>
                                     <table className="w-full table-auto border-collapse">
                                         <thead>
-                                            <tr className="bg-gray-100 dark:bg-gray-800 top-[-22px] sticky z-30">
+                                            <tr className="bg-gray-100 dark:bg-gray-800 top-[0px] sticky z-30">
                                                 <th className="px-4 py-3 text-right font-medium text-black">אחוז נפל</th>
                                                 <th className="px-4 py-3 text-right font-medium text-black">כמות נפל</th>
                                                 <th className="px-4 py-3 text-right font-medium text-black">כמות בפועל</th>
                                                 <th className="px-4 py-3 text-right font-medium text-black">כמות במערכת</th>
                                                 <th className="px-6 py-3 text-right font-medium text-black">עדכון אחרון</th>
                                                 <th className="px-4 py-3 text-right font-medium text-black">שם פריט</th>
-                                                <th className="px-4 py-3 text-right font-medium text-black">מק"ט</th>
                                                 <th className="px-4 py-3 text-right font-medium text-black"></th>
                                             </tr>
                                         </thead>
@@ -171,9 +170,7 @@ export default function ModalMtsavMlae({ disable, show, category, mlae, activeMl
                                                                 </td>
                                                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200">{item?.kmot}</td>
                                                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-200 text-xs"><div className={`p-1 rounded-xl text-white ${!item?.adconAhron ? '' : BdekatTarekhAdcon(item?.adconAhron) < 7 ? 'bg-success' : BdekatTarekhAdcon(item?.adconAhron) >= 7 && BdekatTarekhAdcon(item?.adconAhron) < 30 ? 'bg-warning' : 'bg-danger'}`}>{item?.adconAhron}</div></td>
-                                                                <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item?.shem}</td>
-                                                                <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item?.msbar}</td>
-                                                                <td>
+                                                                <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-200">{item?.shem}</td>                                                                <td>
                                                                     <div className="group relative">
                                                                         <Image src={GetTmonatHelek(item?.categoryMotsar)} className="h-[60px] w-[60px] object-cover transition-transform duration-300 ease-in-out group-hover:scale-300 group-hover:shadow-lg hover:z-50 bg-white group-hover:translate-x-[-220%]" />
                                                                     </div>
