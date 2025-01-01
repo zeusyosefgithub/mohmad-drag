@@ -501,7 +501,6 @@ export default function ModalYetsorTokhnet({ show, disable, sogAskaa, motsaremRg
                             resetAll();
                         }
                     }} yetsor message={'האם אתה בטוח לשחזור כל הנתונים !?'} show={showResetAllMessage} disable={() => setShowResetAllMessage(false)} />
-
                     <div dir="rtl" className="h-full w-full flex justify-center">
                         {
                             sogAskaa === 'ייצור' &&
@@ -1184,7 +1183,7 @@ export default function ModalYetsorTokhnet({ show, disable, sogAskaa, motsaremRg
                                         <div className={`w-full border-t-1 mt-4 mb-4 ${(vnel !== 'בחר') && (gobahVnel || '') && (msgertVnel !== 'בחר') && (tvahAofkeVnel || '') && (msbarBroAofkeVnel || '') && (tvahAnkheVnel || '') && (msbarBroAnkheVnel || '') && 'border-primary-200'}`}></div>
                                     </>
                                 }
-                                <div className="flex flex-col gap-1 w-full mb-20">
+                                <div className="flex flex-col gap-1 w-full pb-20">
                                     <CheckboxGroup
                                         label="תוספות"
                                         value={GetTosfotValues()}

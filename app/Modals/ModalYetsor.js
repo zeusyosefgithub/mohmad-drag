@@ -411,7 +411,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         const kmot = motsarMlae?.find(item => item.shem === shem)?.kmot || 0;
         const msbar = motsarMlae?.find(item => item.shem === shem)?.msbar || '';
         const id = motsarMlae?.find(item => item.shem === shem)?.id || '';
-        return { arrayResualt: motsarMlae, alot, kmot, msbar, id };
+        const motsar = motsarMlae?.find(item => item.shem === shem) || {};
+        return { arrayResualt: motsarMlae, alot, kmot, msbar, id,motsar };
     }, [mlae]);
 
 
@@ -451,6 +452,10 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         return String.fromCharCode(nextCharCode);
     };
 
+
+
+    // -------------------------------------- for check amount proucts
+
     const CheckMotsarem = () => {
         const invalidItems = motsaremRglem.filter(({ msbar, remez, shem, kmot }) => {
             return kmot > GetBrtemMotsarMlae(remez, shem).kmot;
@@ -462,6 +467,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         console.log("All product amounts are valid.");
         return true;
     }
+
     const GetErrorMessages = () => {
         const updatedMotsarem = motsaremRglem.map(({ msbar, remez, shem, kmot }, index) => {
             const message = kmot > GetBrtemMotsarMlae(remez, shem).kmot ? "קמות חורגת" : "";
@@ -470,23 +476,35 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         setMotsaremRglem(updatedMotsarem);
     };
 
-    const UpdateInventory = async () => {
-        try {
-            const batch = writeBatch(firestore);
-            for (const { remez, msbar, shem, kmot } of motsaremRglem) {
-                if (!GetBrtemMotsarMlae(remez, shem).id) {
-                    continue;
-                }
-                const newKmot = Math.max(GetBrtemMotsarMlae(remez, shem).kmot - kmot, 0);
-                const docRef = doc(firestore, "mlae", GetBrtemMotsarMlae(remez, shem).id);
-                batch.update(docRef, { kmot: newKmot });
+
+
+
+
+
+
+
+
+
+
+    const GetMotsarKmot = (shem) => {
+        for (let index = 0; index < motsaremRglem.length; index++) {
+            if(shem === motsaremRglem[index].shem){
+                return motsaremRglem[index].kmot;
             }
-            await batch.commit();
-            console.log("Inventory successfully updated!");
-        } catch (error) {
-            console.error("Error updating inventory:", error);
         }
+    }
+
+    const GetNewMotsaremAfterUpdate = () => {
+        let newArray = [];
+        for (let index = 0; index < mlae.length; index++) {
+            newArray.push({
+                ...mlae[index],
+                kmot : parseFloat((mlae[index].kmot) || 0) - parseFloat(GetMotsarKmot(mlae[index].shem) || 0)
+            });
+        }
+        return newArray;
     };
+    
 
     const updateMotsaremRglemYredatMlae = () => {
         setMotsaremRglem((prevMotsaremRglem) =>
@@ -499,7 +517,6 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
 
     const Next = async () => {
         if (shlavNokhhe === shlav()) {
-            console.log(124124);
             if (getNextLetter(shlavNokhhe) === 'D' && !yetsorKeam?.shlavYetsor) {
                 setShowAlertMessage('חייב להשלים שלבי ייצור מצד העובדים!!');
                 setShowAlertType('warning');
@@ -518,21 +535,12 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
             return;
         }
         if (getNextLetter(shlavNokhhe) === 'C') {
-            if (!CheckMotsarem()) {
-                GetErrorMessages();
-                setErrorMotsaremRglem(true);
-                setShowAlertMessage('כמויות מוצרים לא חוקית.');
-                setShowAlertType('error');
-                setShowAlert(true);
-                setTimeout(() => {
-                    setShowAlert(false);
-                }, 1500);
-                return;
-            }
-            else {
-                await UpdateInventory();
-                updateMotsaremRglemYredatMlae();
-            }
+            await updateDoc(doc(firestore,'mlae','Ara'),{
+                motsarem : GetNewMotsaremAfterUpdate()
+            });
+            saveValues(true,'C');
+            setShlavNokhhe('C');
+            updateMotsaremRglemYredatMlae();
         }
         if (getNextLetter(shlavNokhhe) === 'B' && (!brtemLkoh?.id && !customerName) || !tnaeTshlom || !shemTokhnet || !mherKlale || !mherKlaleAhre || !BdekatMotsarem()) {
             setShowAlertMessage('חסר פרטיים לשלב הבא.');
@@ -691,7 +699,9 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
         return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
 
-    const saveValues = async (res) => {
+    const saveValues = async (res,shlav) => {
+
+        console.log(motsaremRglem);
         setLoading(true);
         const Props = {
             ymeAskem,
@@ -716,7 +726,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
             mherKlale: parseFloat(mherKlale),
             msbarAgla : yetsorKeam?.drag?.dragnum || '',
             brtemLkoh,
-            shlavNokhhe,
+            shlavNokhhe : shlav || shlavNokhhe,
             tarekh: format(new Date(), 'dd-MM-yyyy'),
             seomYetsor,
             mtsavYetsor: [
@@ -844,7 +854,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                     tarekhAsbka,
                     tnaeTshlom,
                     mherKlale: parseFloat(mherKlale),
-                    shlavNokhhe,
+                    shlavNokhhe : shlav || shlavNokhhe,
                     sogAglaBS,
                     msbarAgla : yetsorKeam?.drag?.dragnum || '',
                     seomYetsor,
@@ -1184,6 +1194,8 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
             }
         }
     }, [lkohHdash]);
+
+    console.log(motsaremRglem);
 
 
     const GetMotionTitels = (titel) => {
@@ -1538,7 +1550,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
 
 
 
-    console.log(motsaremLhatseg);
+    console.log(mlae);
 
 
     return (
@@ -1562,7 +1574,7 @@ export default function ModalYetsor({ show, disable, Tokhneot, locationYetsor, d
                         }
                     }} message={'האם אתה בטוח שאתה רוצה לסגור את הדף, הפרטיים שהזנו לא ישמרו'} show={showModalMessage} disable={() => setShowModalMessage(false)} />
                     <TokhnetContext.Provider value={contextValue}>
-                        <ModalYetsorTokhnet category={category} motsaremLhatseg={motsaremLhatseg} shlav={getNextLetter(shlavNokhhe)} motsaremRglem={motsaremRglem} sogAskaa={sogAskaa} setMotsaremRglem={(value) => setMotsaremRglem(value)} yetsorKeam={yetsorKeam} resetBro={(val1, val2) => RemoveMotsaremBro(val1, val2)} reset={(val) => ResetMotsaremLhANDRe(val)} addBro={(val) => UpdateMotsaremBroLhANDRe(val)} add={(val) => UpdateMotsaremLhANDRe(val)} mlae={mlae} setMotsaremLhatseg={(value) => setMotsaremLhatseg(value)} show={showModalTokhnetYetsor} disable={() => setShowModalTokhnetYetsor(false)} />
+                        <ModalYetsorTokhnet category={category} motsaremLhatseg={motsaremLhatseg} shlav={getNextLetter(shlavNokhhe)} motsaremRglem={motsaremRglem} sogAskaa={yetsorKeam?.sogAskaa || sogAskaa} setMotsaremRglem={(value) => setMotsaremRglem(value)} yetsorKeam={yetsorKeam} resetBro={(val1, val2) => RemoveMotsaremBro(val1, val2)} reset={(val) => ResetMotsaremLhANDRe(val)} addBro={(val) => UpdateMotsaremBroLhANDRe(val)} add={(val) => UpdateMotsaremLhANDRe(val)} mlae={mlae} setMotsaremLhatseg={(value) => setMotsaremLhatseg(value)} show={showModalTokhnetYetsor} disable={() => setShowModalTokhnetYetsor(false)} />
                     </TokhnetContext.Provider>
                     <ModalBerotMotsrem GetError={(val) => setErrorMotsaremRglem(val)} shlav={getNextLetter(shlavNokhhe)} category={category} mlae={mlae} setMotsaremRglem={(value) => setMotsaremRglem(value)} setMotsaremBrofelem={(value) => setMotsaremBrofelem(value)} motsaremLhatseg={motsaremLhatseg} motsaremBrofelem={motsaremBrofelem} motsaremRglem={motsaremRglem} show={showModalBerotMotsrem} disable={() => setShowModalBerotMotsrem(false)} />
                     <ModalAddCustomer LkohHdash={(val1, val2) => {

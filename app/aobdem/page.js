@@ -1,6 +1,6 @@
 'use client';
 import { Accordion, AccordionItem, Button, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@nextui-org/react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { addYears, differenceInMinutes, format, getDaysInMonth, getYear, parse, parseISO, subYears } from 'date-fns';
 import GetDocs from "../FireBase/getDocs";
 import { addDoc, collection, doc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
@@ -231,16 +231,27 @@ export default function Aobdem() {
     }
 
 
-    const GetHodshem = () => {
+    const GetHodshem = (year) => {
         let newArray = [];
-        let AadHkhshav = parseInt(format(new Date(), 'MM'));
-        for (let index = 0; index < 12; index++) {
-            let munth = `${format(new Date(), 'yyyy')}-${(index + 1) < 10 ? ('0' + (index + 1)) : (index + 1)}`;
-            newArray.push({
-                shem: format(munth, 'LLLL', { locale: he }),
-                tarekh: `${format(new Date(), 'yyyy')}-${(index + 1) < 10 ? ('0' + (index + 1)) : (index + 1)}`,
-                msbar: index + 1
-            });
+        if(year === parseInt(format(new Date(),'yyyy'))){
+            for (let index = 0; index < 12; index++) {
+                let munth = `${format(new Date(), 'yyyy')}-${(index + 1) < 10 ? ('0' + (index + 1)) : (index + 1)}`;
+                newArray.push({
+                    shem: format(munth, 'LLLL', { locale: he }),
+                    tarekh: `${format(new Date(), 'yyyy')}-${(index + 1) < 10 ? ('0' + (index + 1)) : (index + 1)}`,
+                    msbar: index + 1
+                });
+            }
+        }
+        else{
+            for (let index = 0; index < 12; index++) {
+                let munth = `${year}-${(index + 1) < 10 ? ('0' + (index + 1)) : (index + 1)}`;
+                newArray.push({
+                    shem: format(munth, 'LLLL', { locale: he }),
+                    tarekh: `${year}-${(index + 1) < 10 ? ('0' + (index + 1)) : (index + 1)}`,
+                    msbar: index + 1
+                });
+            }
         }
         return newArray;
     }
@@ -368,18 +379,13 @@ export default function Aobdem() {
 
     const [showModalAddKnesot, setShowModalAddKnesot] = useState(false);
     const [yomAddKnesa, setYomAddKnesa] = useState('');
+    const [currentYear, setCurrentYear] = useState(parseInt(format(new Date(),'yyyy')));
 
-    const getYearsRange = () => {
-        const currentYear = getYear(new Date());
-        const lastThreeYears = Array.from({ length: 3 }, (_, i) => getYear(subYears(new Date(), i + 1))).reverse();
-        const nextThreeYears = Array.from({ length: 3 }, (_, i) => getYear(addYears(new Date(), i + 1)));
-        return [...lastThreeYears, currentYear, ...nextThreeYears];
-    };
-
-    console.log(getYearsRange());
+    const handlePreviousYear = () => setCurrentYear((prev) => prev - 1);
+    const handleNextYear = () => setCurrentYear((prev) => prev + 1);
 
     return showInfo && (
-        <div className="h-full pb-10">
+        <div className="h-full pb-10 overflow-auto">
             <ModalAddKnesot aeshor={(val1, val2, val3) => {
                 if (val1) {
                     setShowAlertMessage(`השעות של ${val2} לתאריך ${val3} נוספו בהצלחה.`);
@@ -413,7 +419,7 @@ export default function Aobdem() {
                 </div>
             </div>
             <div className="h-full flex flex-wrap xl:flex-nowrap">
-                <div className="p-5 m-5 justify-center w-full bg-white rounded-xl shadow-xl mb-20 h-full">
+                <div className="p-2 m-2 justify-center w-full bg-white rounded-xl shadow-xl mb-5 h-full">
                     <div className="overflow-auto h-fit w-full" dir="rtl">
                         <div dir="ltr">
                             <div className="mt-5 mb-5 flex justify-around items-center">
@@ -455,7 +461,7 @@ export default function Aobdem() {
                         </div>
                     </div>
                 </div>
-                <div className="p-5 m-5 w-full bg-white rounded-xl shadow-xl mb-20 h-full flex flex-col">
+                <div className="p-2 m-2 w-full bg-white rounded-xl shadow-xl mb-5 h-full flex flex-col">
                     <div className="p-3 flex justify-around border-b-1">
                         <Button variant='flat' className={loh === 'לוח כללי' && 'font-extrabold text-base'} color={loh === 'לוח כללי' ? 'primary' : 'default'} onClick={() => setLoh('לוח כללי')}><FaList className="text-base" />לוח כללי</Button>
                         <Button variant='flat' className={loh === 'לוח היום' && 'font-extrabold text-base'} color={loh === 'לוח היום' ? 'primary' : 'default'} onClick={() => setLoh('לוח היום')}><FaListCheck className="text-base" />לוח היום</Button>
@@ -525,19 +531,19 @@ export default function Aobdem() {
                             loh === 'לוח כללי' &&
                             <div className="h-full flex flex-col">
                                 <div className="h-full flex flex-col justify-around">
-                                    <div className="flex justify-center gap-24 items-center p-5 border-b-1">
+                                    <div className="flex justify-center gap-24 items-center p-5 border-b-1 select-none">
                                         <div className="inline-block hover:animate-move-arrows cursor-pointer">
-                                            <IoIosArrowForward className="text-4xl transform scale-x-[-1] hover:text-primary" />
+                                            <IoIosArrowForward onClick={() => {handleNextYear();setTarekhKlaleNbhar('');}} className="text-4xl transform scale-x-[-1] hover:text-primary" />
                                         </div>
                                         <div className="text-lg text-primary">
-                                            2024
+                                            {currentYear}
                                         </div>
                                         <div className="inline-block hover:animate-move-arrows cursor-pointer">
-                                            <IoIosArrowBack className="text-4xl transform scale-x-[-1] hover:text-primary" />
+                                            <IoIosArrowBack onClick={() => {handlePreviousYear();setTarekhKlaleNbhar('');}} className="text-4xl transform scale-x-[-1] hover:text-primary" />
                                         </div>
                                     </div>
                                     {
-                                        !tarekhKlaleNbhar && GetHodshem()?.map((hodesh, index) => {
+                                        !tarekhKlaleNbhar && GetHodshem(currentYear)?.map((hodesh, index) => {
                                             return <div key={hodesh?.tarekh} className="flex items-center mt-1 mb-1 p-1 border-b-1">
                                                 <div className="w-full flex justify-center"><Button variant='flat' onClick={() => { setTarekhKlaleNbhar(hodesh?.tarekh) }} color={format(parse(hodesh?.tarekh, 'yyyy-MM', new Date()), 'MM-yyyy') === format(new Date(), 'MM-yyyy') ? 'primary' : 'default'} size="sm">פתח</Button></div>
                                                 <div className={`w-full text-center min-w-[100px] ${format(parse(hodesh?.tarekh, 'yyyy-MM', new Date()), 'MM-yyyy') === format(new Date(), 'MM-yyyy') ? 'text-primary' : ''}`}>

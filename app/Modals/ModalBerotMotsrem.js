@@ -8,7 +8,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import { IoIosArrowBack } from "react-icons/io";
 import { GoPlusCircle } from "react-icons/go";
 import ProductCard from "../Components/ProductCard";
-import { doc, getDoc, runTransaction, writeBatch } from "firebase/firestore";
+import { doc, getDoc, runTransaction, updateDoc, writeBatch } from "firebase/firestore";
 import { firestore } from "../FireBase/firebase";
 import { GrPowerReset } from "react-icons/gr";
 import ModalMessage from "./ModalMessage";
@@ -152,23 +152,6 @@ export default function ModalBerotMotsrem({ show, disable, motsaremLhatseg, shla
         setMotsaremRglem(updatedMotsarem);
     };
 
-    const UpdateInventory = async () => {
-        try {
-            const batch = writeBatch(firestore);
-            for (const { remez, msbar, shem, kmot, yredatMlae } of motsaremRglem) {
-                if (!GetBrtemMotsarMlae(remez, shem).id) {
-                    continue;
-                }
-                const newKmot = Math.max(GetBrtemMotsarMlae(remez, shem).kmot - (kmot - yredatMlae), 0);
-                const docRef = doc(firestore, "mlae", GetBrtemMotsarMlae(remez, shem).id);
-                batch.update(docRef, { kmot: newKmot });
-            }
-            await batch.commit();
-        } catch (error) {
-            console.error("Error updating inventory:", error);
-        }
-    };
-
     const updateMotsaremRglemYredatMlae = () => {
         setMotsaremRglem((prevMotsaremRglem) =>
             prevMotsaremRglem.map((item) => ({
@@ -178,19 +161,35 @@ export default function ModalBerotMotsrem({ show, disable, motsaremLhatseg, shla
         );
     };
 
+    console.log(mlae);
+
+    const GetMotsarKmot = (shem) => {
+        for (let index = 0; index < motsaremRglem.length; index++) {
+            if(shem === motsaremRglem[index].shem){
+                return motsaremRglem[index].kmot;
+            }
+        }
+    }
+
+    const GetNewMotsaremAfterUpdate = () => {
+        let newArray = [];
+        for (let index = 0; index < mlae.length; index++) {
+            newArray.push({
+                ...mlae[index],
+                kmot : parseFloat((mlae[index].kmot) || 0) - parseFloat(GetMotsarKmot(mlae[index].shem) || 0)
+            });
+        }
+        return newArray;
+    };
+
     const GetAddValues = async () => {
         setLoading(true);
         if (shlav === 'D') {
-            if (!CheckMotsarem()) {
-                GetError(true);
-                GetErrorMessages();
-                setLoading(false);
-            }
-            else {
-                GetError(false);
-                await UpdateInventory();
-                updateMotsaremRglemYredatMlae();
-            }
+            GetError(false);
+            await updateDoc(doc(firestore, 'mlae', 'Ara'), {
+                motsarem: GetNewMotsaremAfterUpdate()
+            });
+            updateMotsaremRglemYredatMlae();
         }
         setLoading(false);
         disable();
@@ -235,6 +234,8 @@ export default function ModalBerotMotsrem({ show, disable, motsaremLhatseg, shla
         }, []);
         return uniqueItems;
     };
+
+    console.log(motsaremRglem);
 
     return (
         <Modal placement="center" className="test-fontt select-none" backdrop={"blur"} size="full" isOpen={show} onClose={disable}>

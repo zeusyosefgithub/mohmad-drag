@@ -37,7 +37,8 @@ const ProductCard = ({ motsarem, index, mlae, change, reset, src, add, remove,sh
         const kmot = motsarMlae?.find(item => item.shem === shem)?.kmot || 0;
         const msbar = motsarMlae?.find(item => item.shem === shem)?.msbar || '';
         const id = motsarMlae?.find(item => item.shem === shem)?.id || '';
-        return { arrayResualt: motsarMlae, alot, kmot, msbar,id };
+        const motsar = motsarMlae?.find(item => item.shem === shem) || {};
+        return { arrayResualt: motsarMlae, alot, kmot, msbar,id,motsar };
     }, [mlae]);
 
     const [products, setProducts] = useState([]);
@@ -189,7 +190,7 @@ const ProductCard = ({ motsarem, index, mlae, change, reset, src, add, remove,sh
                             }
                             <div className='w-full flex items-center max-w-[190px]'>
                                 {
-                                    product.shem && !Tokhnet && <div className='ml-1 w-[200px] text-sm text-right text-primary flex items-center'><div className='ml-1 font-black'>{GetBrtemMotsarMlae(product.remez, product.shem).kmot}</div> במלאי</div>
+                                    product.shem && GetBrtemMotsarMlae(product.remez, product.shem)?.motsar?.nsbar && !Tokhnet && <div className='ml-1 w-[200px] text-sm text-right text-primary flex items-center'><div className='ml-1 font-black'>{GetBrtemMotsarMlae(product.remez, product.shem).kmot}</div> במלאי</div>
                                 }
                                 <Dropdown dir="rtl">
                                     <DropdownTrigger>
@@ -225,10 +226,10 @@ const ProductCard = ({ motsarem, index, mlae, change, reset, src, add, remove,sh
                                     content={GetMessageKmotInput()}
                                     placement="top"
                                     trigger="hover"
-                                    className={`z-50 ${product.kmot && product.shem ? '' : 'hidden'}`}
+                                    className={`z-50 ${product.kmot && product.shem && GetBrtemMotsarMlae(product.remez, product.shem)?.motsar?.nsbar ? '' : 'hidden'}`}
                                     showArrow={product.kmot && product.shem && true}
                                 >
-                                    <Input type='number' color={product.message ? 'danger' : product.kmot ? 'primary' : 'default'} size='xs' value={product.kmot || ''} onValueChange={(val) => change(product.id, 'kmot', Math.min(val, (shlav === 'D') ? (GetBrtemMotsarMlae(product.remez,product.shem).kmot + product.yredatMlae) : 999))} className="mt-2 w-full max-w-[190px]" />
+                                    <Input type='number' color={product.message ? 'danger' : product.kmot ? 'primary' : 'default'} size='xs' value={product.kmot || ''} onValueChange={(val) => change(product.id, 'kmot', Math.min(val,999))} className="mt-2 w-full max-w-[190px]" />
                                 </Tooltip>
                             </div>
 

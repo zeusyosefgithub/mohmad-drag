@@ -191,6 +191,14 @@ export default function Procurement() {
         }
     }
 
+    const Gettttt = (array) => {
+        let newArray = [];
+        for (let index = 0; index < array.length; index++) {
+            newArray.push({...array[index],kmot : 0});
+        }
+        return newArray;
+    }
+
     return (
         <div className='h-full p-5'>
             {<ModalMessage Aeshor={async (val) => {
@@ -209,6 +217,14 @@ export default function Procurement() {
             {loading && <Spinner className='absolute top-0 left-0 bottom-0 right-0' />}
 
 
+
+            <Button onClick={async () => {
+                await updateDoc(doc(firestore, 'mlae', 'Ara'), {
+                    motsarem: mlae2
+                })
+            }}>
+                123123
+            </Button>
 
 
 

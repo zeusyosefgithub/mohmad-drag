@@ -973,7 +973,7 @@ export default function Home() {
                           {
                             aglotA.map((agla, index) => {
                               return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh);setSelectedMlae(agla.locationYetsorAgla === 'עארה' ? mlae : mlaeMaleAfraem); }}>פתח</Button></td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center">{daysSinceOrUntil(flipDate(agla.tarekhAsbka))} {agla.tarekhAsbka && flipDate(agla.tarekhAsbka)}</div></td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaA.tarekh) || '0'}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaA.tarekh}</td>
@@ -1018,7 +1018,7 @@ export default function Home() {
                           {
                             aglotB.map((agla, index) => {
                               return <tr key={index} className={`border-b border-gray-200 dark:border-gray-700`}>
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh);setSelectedMlae(agla.locationYetsorAgla === 'עארה' ? mlae : mlaeMaleAfraem); }}>פתח</Button></td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><div className="flex items-center justify-center">{daysSinceOrUntil(flipDate(agla.tarekhAsbka))} {agla.tarekhAsbka && flipDate(agla.tarekhAsbka)}</div></td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{daysGoneSince(agla.zmanThelaB.tarekh) || '0'}</td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">{agla.zmanThelaB.tarekh}</td>
@@ -1063,7 +1063,7 @@ export default function Home() {
                           {
                             aglotC.map((agla, index) => {
                               return <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
-                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh); }}>פתח</Button></td>
+                                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs"><Button color='primary' variant='flat' size="sm" onClick={() => { setShowModalYetsor(true); setTfaolAgla(agla); setMsbarDrag(agla.msbarAgla); setMsbarLkoh(agla.msbarLkoh);setSelectedMlae(agla.locationYetsorAgla === 'עארה' ? mlae : mlaeMaleAfraem); }}>פתח</Button></td>
                                 <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300 text-xs">
                                   <div className="w-[120px] flex items-center cursor-pointer" onClick={() => { setShowModalMtsavYetsor(true); setMtsavYetsorRes(agla); }}>
                                     <div className="w-[120px] text-center fixed font-black text-primary tracking-widest z-10">
